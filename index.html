@@ -1,553 +1,583 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Recast — Executive Click-Through (Branded)</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="color-scheme" content="dark light">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Recast — Executive Overview</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://unpkg.com">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: { brand: { 50: "#fff7ed", 500: "#f97316", 600: "#f97316", 700: "#ea580c" } }
+        }
+      }
+    }
+  </script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
-    .focus-ring:focus-visible{outline:2px solid #facc15; outline-offset: 2px}
+    .fade { transition: opacity .25s ease, transform .25s ease; }
+    .fade[data-show="true"] { opacity: 1; transform: translateY(0); }
+    .fade[data-show="false"] { opacity: 0; transform: translateY(8px); }
+
+    /* Animated flow */
+    .tile{width:.5rem;height:.5rem;border-radius:.25rem;background:#334155;opacity:.9}
+    .run .tile{animation: tilePulse 1.1s ease-in-out var(--d,0s) 1 forwards}
+    @keyframes tilePulse{0%{transform:scale(.7);background:#334155;opacity:.4}60%{transform:scale(1);background:#38bdf8;opacity:1}100%{background:#334155;opacity:.9}}
+    .flow-bar{height:.25rem;border-radius:.25rem;transform-origin:left center;transform:scaleX(0)}
+    .run .flow-bar{animation: barGrow 1s ease forwards var(--d,0s)}
+    @keyframes barGrow{to{transform:scaleX(1)}}
+    .bolt-line{width:.25rem;border-radius:.25rem;transform-origin:top center;transform:scaleY(0)}
+    .run .bolt-line{animation: boltDrop .9s ease forwards var(--d,0s)}
+    @keyframes boltDrop{to{transform:scaleY(1)}}
   </style>
 </head>
-<body class="min-h-screen bg-[#0b1020] text-slate-100">
-  <div id="app" class="min-h-screen"></div>
+<body class="min-h-screen bg-slate-950 text-slate-100">
+  <header class="relative">
+    <div aria-hidden class="absolute inset-0 bg-[radial-gradient(60%_50%_at_50%_-10%,#1f2937_0%,transparent_60%),linear-gradient(90deg,#0b1220,#0b1220)]"></div>
+    <div class="relative mx-auto max-w-7xl px-4 pt-10 pb-8">
+      <div class="inline-flex items-center gap-2 rounded-full border border-slate-800 bg-slate-900/60 px-3 py-1 text-xs text-slate-300">Executive overview</div>
+      <h1 class="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">Keep apps current, secure, and ready—without packaging.</h1>
+      <p class="mt-2 max-w-3xl text-slate-400">Three tabs: the current challenge, how Recast solves it, and the impact & ROI calculator.</p>
+    </div>
+  </header>
 
-  <script>
-    const STATE = {
-      activeTab: 'problems',
-      impact: { minutes: 9, pkgHours: 191.2, riskHrs: 0 },
-      defaults: { impact: { minutes: 9, pkgHours: 191.2, riskHrs: 0 } },
-      ctx: { device: 'Windows', network: 'Corporate', compliant: true },
-      packHrs: 8,
-      configHrs: 2,
-      currentHrs: 24,
-      roiInputs: {
-        users: 5000,
-        ticketsPerUserPerMonth: 0.035,
-        avgHandleMins: 18,
-        loadedCostPerHour: 85,
-        recastAnnualCost: 120000
-      },
-      copied: false
-    };
+  <main class="mx-auto max-w-7xl px-4 pb-24">
+    <nav role="tablist" aria-label="Sections" class="sticky top-0 z-10 -mx-4 mb-4 bg-slate-950/80 px-4 py-2 backdrop-blur">
+      <div class="flex w-full flex-wrap gap-2 rounded-full bg-slate-900 p-1 ring-1 ring-slate-800">
+        <button id="tab-challenge" role="tab" aria-selected="true" class="tab-btn bg-brand-600 text-white"><i data-lucide="alert-triangle" class="h-4 w-4"></i><span>Current Challenge</span></button>
+        <button id="tab-solution" role="tab" class="tab-btn"><i data-lucide="wand-2" class="h-4 w-4"></i><span>How Recast Solves It</span></button>
+        <button id="tab-impact" role="tab" class="tab-btn"><i data-lucide="bar-chart-3" class="h-4 w-4"></i><span>Impact & ROI</span></button>
+      </div>
+    </nav>
 
-    const TABS = [
-      { id: 'problems', label: 'Current Problems', icon: 'alert-triangle' },
-      { id: 'solution', label: 'How We Solve It', icon: 'workflow' },
-      { id: 'roi', label: 'Impact & ROI', icon: 'bar-chart-3' }
-    ];
+    <section id="panel-challenge" class="fade" data-show="true" aria-labelledby="tab-challenge">
+      <div class="grid grid-cols-1 gap-6">
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <div class="rounded-2xl border border-slate-800 bg-slate-900 p-5">
+            <div class="flex items-center gap-2 text-lg font-semibold"><i data-lucide="layers" class="h-5 w-5 text-brand-500"></i> Fragmented delivery</div>
+            <p class="mt-1 text-sm text-slate-400">Windows / Mac / VDI / Web — users guess the right way.</p>
+          </div>
+          <div class="rounded-2xl border border-slate-800 bg-slate-900 p-5">
+            <div class="flex items-center gap-2 text-lg font-semibold"><i data-lucide="boxes" class="h-5 w-5 text-brand-500"></i> Packaging backlog</div>
+            <p class="mt-1 text-sm text-slate-400">Rebuild per version; updates stall.</p>
+          </div>
+          <div class="rounded-2xl border border-slate-800 bg-slate-900 p-5">
+            <div class="flex items-center gap-2 text-lg font-semibold"><i data-lucide="shield-alert" class="h-5 w-5 text-brand-500"></i> Zero-day exposure</div>
+            <p class="mt-1 text-sm text-slate-400">Patching takes days, not minutes.</p>
+          </div>
+        </div>
 
-    function track(event, payload = {}) {
-      window.__recastAnalytics = window.__recastAnalytics || [];
-      window.__recastAnalytics.push({ ts: Date.now(), event, payload });
-      try { console.log('[analytics]', event, payload); } catch {}
-    }
-
-    function cx(...a){ return a.filter(Boolean).join(' '); }
-    function round(n){ return Math.round(n * 100) / 100; }
-    function num(n){ return new Intl.NumberFormat().format(Math.round(n)); }
-    function routeRecommendation(ctx){
-      if(!ctx.compliant) return 'Web';
-      if(ctx.device === 'Windows' && ctx.network !== 'Home') return 'Local';
-      return 'VDI';
-    }
-
-    function render() {
-      const root = document.getElementById('app');
-      root.innerHTML = `
-        <header class="relative overflow-hidden">
-          <div aria-hidden="true" class="absolute inset-0 bg-gradient-to-br from-indigo-600/40 via-fuchsia-500/25 to-sky-500/25 blur-[90px]"></div>
-          <div class="relative mx-auto max-w-7xl px-4 pt-12 pb-10">
-            <div class="opacity-0 translate-y-2 animate-[fadeInUp_.35s_ease_forwards]">
-              <div class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs tracking-wide">
-                Executive click-thru
-              </div>
-              <h1 class="mt-4 text-3xl font-semibold tracking-tight sm:text-4xl">
-                <span class="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-fuchsia-400">All Your Applications. One Workspace. Always Secure and Up to Date.</span>
-              </h1>
-              <p class="mt-2 max-w-3xl text-slate-300">From challenges to results: how Application Workspace reduces risk, saves time, and proves ROI.</p>
+        <div class="rounded-2xl border border-slate-800 bg-slate-900 p-5">
+          <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
+            <div class="rounded-xl bg-slate-900/60 p-4 ring-1 ring-slate-800">
+              <div class="mb-2 inline-flex items-center gap-2 text-slate-200"><i data-lucide="triangle-alert" class="h-4 w-4 text-brand-500"></i> Why change</div>
+              <ul class="list-inside list-disc space-y-1 text-sm text-slate-400">
+                <li>App delivery is siloed and slow.</li>
+                <li>Packaging absorbs scarce time.</li>
+                <li>Patching lags widen risk windows.</li>
+              </ul>
+            </div>
+            <div class="rounded-xl bg-slate-900/60 p-4 ring-1 ring-slate-800">
+              <div class="mb-2 inline-flex items-center gap-2 text-slate-200"><i data-lucide="clock-4" class="h-4 w-4 text-brand-500"></i> Why now</div>
+              <ul class="list-inside list-disc space-y-1 text-sm text-slate-400">
+                <li>Migration deadlines & renewals are fixed.</li>
+                <li>Threats move faster than old processes.</li>
+                <li>Delays carry real $ and risk costs.</li>
+              </ul>
+            </div>
+            <div class="rounded-xl bg-slate-900/60 p-4 ring-1 ring-slate-800">
+              <div class="mb-2 inline-flex items-center gap-2 text-slate-200"><i data-lucide="sparkles" class="h-4 w-4 text-brand-500"></i> What “good” looks like</div>
+              <ul class="list-inside list-disc space-y-1 text-sm text-slate-400">
+                <li>Unified app access: one workspace, any device.</li>
+                <li>Configure once, deploy anywhere, patch automatically.</li>
+                <li>Zero-day closed in hours, not days.</li>
+              </ul>
             </div>
           </div>
-        </header>
-
-        <main class="mx-auto max-w-7xl px-4 pb-24">
-          ${renderTabs()}
-          <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
-            ${renderMetricChip('Minutes saved (per user)', String(STATE.impact.minutes), 'emerald')}
-            ${renderMetricChip('Packaging hours avoided', String(STATE.impact.pkgHours), 'sky')}
-            ${renderMetricChip('Zero-day window reduced (hrs)', String(round(STATE.impact.riskHrs)), 'yellow')}
-          </div>
-          <section class="mt-8">${renderActivePanel()}</section>
-        </main>
-      `;
-      if (window.lucide && window.lucide.createIcons) {
-        try { window.lucide.createIcons(); } catch {}
-      }
-      attachGlobalEvents();
-    }
-
-    function renderTabs() {
-      return `
-        <div role="tablist" aria-label="Demo sections" class="flex w-full flex-wrap gap-2 rounded-full bg-slate-900/60 p-1 ring-1 ring-white/10">
-          ${TABS.map(t => `
-            <button
-              type="button"
-              class="${cx('group inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm sm:text-base focus-ring', STATE.activeTab === t.id ? 'bg-yellow-400 text-slate-900' : 'text-slate-200 hover:bg-white/10')}"
-              role="tab"
-              id="tab-${t.id}"
-              aria-selected="${STATE.activeTab === t.id}"
-              aria-controls="panel-${t.id}"
-              data-action="switch-tab"
-              data-tab="${t.id}"
-            >
-              <i data-lucide="${t.icon}" class="w-4 h-4" aria-hidden="true"></i>
-              <span>${t.label}</span>
-            </button>
-          `).join('')}
-        </div>
-      `;
-    }
-
-    function renderMetricChip(label, value, tone){
-      const tones = {
-        emerald: 'from-emerald-400/80 to-teal-400/80',
-        sky: 'from-sky-400/80 to-indigo-400/80',
-        yellow: 'from-yellow-300/90 to-amber-400/90'
-      };
-      return `
-        <div class="rounded-xl border border-white/10 bg-white/5 p-3">
-          <div class="text-xs text-slate-300">${label}</div>
-          <div class="mt-1 inline-flex items-center gap-2 rounded-full bg-gradient-to-r px-2.5 py-0.5 text-slate-900 ${tones[tone]}">
-            <i data-lucide="check-circle-2" class="w-4 h-4" aria-hidden="true"></i>
-            <span class="text-sm font-semibold">${value}</span>
+          <div class="mt-5 flex justify-end">
+            <button id="ctaToSolution" class="inline-flex items-center gap-2 rounded-full bg-brand-600 px-5 py-2 text-sm font-semibold text-white hover:bg-brand-700"><i data-lucide="arrow-right" class="h-4 w-4"></i> How Recast solves it</button>
           </div>
         </div>
-      `;
-    }
+      </div>
+    </section>
 
-    function renderActivePanel(){
-      if (STATE.activeTab === 'problems') return renderProblems();
-      if (STATE.activeTab === 'solution') return renderSolution();
-      if (STATE.activeTab === 'roi') return renderROI();
-      return '';
-    }
+    <section id="panel-solution" class="fade hidden" data-show="false" aria-labelledby="tab-solution">
+      <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <!-- LEFT: Animated Flow Preview -->
+        <div class="rounded-2xl border border-slate-800 bg-slate-900 p-6" aria-labelledby="flowTitle">
+          <div class="flex items-start justify-between">
+            <div>
+              <h3 id="flowTitle" class="text-xl font-semibold">👉 Recast Animated Flow (Preview)</h3>
+              <p class="mt-1 text-sm text-slate-400">Configure once → staged rollout → delivered to every device.</p>
+            </div>
+            <button id="btnFlowStart" class="rounded-full bg-slate-100 px-4 py-1.5 text-sm font-semibold text-slate-900 hover:bg-white">Start</button>
+          </div>
 
-    function renderProblems(){
-      const problems = [
-        { key: 'frag', title: 'Fragmented delivery', sub: 'Windows / Mac / VDI / Web — users guess the right way.', icon: 'layers' },
-        { key: 'package', title: 'Packaging backlog', sub: 'Rebuild per version; updates stall.', icon: 'boxes' },
-        { key: 'zeroday', title: 'Zero-day exposure', sub: 'Patching takes days, not minutes.', icon: 'shield-check' },
-        { key: 'migration', title: 'Slow upgrades', sub: 'Stuck to old images; change is slow.', icon: 'building-2' }
-      ];
-      return `
-        <section role="tabpanel" id="panel-problems" aria-labelledby="tab-problems">
-          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            ${problems.map(p => `
-              <div class="group flex h-full flex-col gap-2 rounded-2xl border border-white/10 bg-white/5 p-5 transition-transform duration-200 will-change-transform hover:-translate-y-0.5">
-                <div class="flex items-center gap-2">
-                  <i data-lucide="${p.icon}" class="w-5 h-5 text-sky-300" aria-hidden="true"></i>
-                  <h3 class="text-lg font-semibold">${p.title}</h3>
+          <div id="flowCard" class="mt-4 rounded-xl bg-slate-900/60 p-4 ring-1 ring-slate-800" role="region" aria-label="Animated flow">
+            <!-- HUB -->
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="h-7 w-7 rounded-xl bg-gradient-to-br from-sky-500 via-indigo-500 to-fuchsia-500 flex items-center justify-center">
+                  <i data-lucide="boxes" class="h-4 w-4 text-white"></i>
                 </div>
-                <p class="text-sm text-slate-300">${p.sub}</p>
-                <div class="mt-auto h-1 rounded bg-gradient-to-r from-sky-400/70 to-fuchsia-400/70 opacity-0 transition-opacity group-hover:opacity-100"></div>
+                <div>
+                  <div class="text-slate-200 font-medium">Recast Hub</div>
+                  <div class="text-xs text-slate-400">Curated & secured catalog</div>
+                </div>
               </div>
-            `).join('')}
+              <div class="text-xs text-slate-400 inline-flex items-center gap-1"><i data-lucide="user-cog" class="h-4 w-4"></i> Admin publishes update</div>
+            </div>
+            <div id="flowHubGrid" class="mt-3 grid grid-cols-12 gap-1.5" aria-hidden="true"></div>
+            <div id="flowHubFlash" class="mt-2 hidden text-amber-300 text-xs inline-flex items-center gap-1"><i data-lucide="bolt" class="h-4 w-4"></i><span>Update published</span></div>
+
+            <!-- CONNECTORS -->
+            <div class="mt-5 grid grid-cols-1 gap-3 md:grid-cols-3">
+              <div class="rounded-lg bg-slate-900/60 p-3 ring-1 ring-slate-800">
+                <div class="text-slate-300 text-sm inline-flex items-center gap-1"><i data-lucide="server" class="h-4 w-4"></i> Existing Platforms</div>
+                <div id="flowConnA" class="mt-2 grid grid-cols-10 gap-1.5" aria-hidden="true"></div>
+                <div class="mt-2 flow-bar w-full bg-gradient-to-r from-sky-400 via-indigo-400 to-fuchsia-400" style="--d: .6s" aria-hidden="true"></div>
+              </div>
+              <div class="rounded-lg bg-slate-900/60 p-3 ring-1 ring-slate-800">
+                <div class="text-slate-300 text-sm inline-flex items-center gap-1"><i data-lucide="shield-check" class="h-4 w-4"></i> Staged Rings</div>
+                <div id="flowConnB" class="mt-2 grid grid-cols-10 gap-1.5" aria-hidden="true"></div>
+                <div class="mt-2 flow-bar w-full bg-gradient-to-r from-sky-400 via-indigo-400 to-fuchsia-400" style="--d: .75s" aria-hidden="true"></div>
+              </div>
+              <div class="rounded-lg bg-slate-900/60 p-3 ring-1 ring-slate-800">
+                <div class="text-slate-300 text-sm inline-flex items-center gap-1"><i data-lucide="cloud" class="h-4 w-4"></i> Access & Policy</div>
+                <div id="flowConnC" class="mt-2 grid grid-cols-10 gap-1.5" aria-hidden="true"></div>
+                <div class="mt-2 flow-bar w-full bg-gradient-to-r from-sky-400 via-indigo-400 to-fuchsia-400" style="--d: .9s" aria-hidden="true"></div>
+              </div>
+            </div>
+
+            <!-- GROUPS -->
+            <div class="mt-5 grid grid-cols-1 gap-3 md:grid-cols-3">
+              <div class="rounded-lg bg-slate-900/60 p-3 ring-1 ring-slate-800">
+                <div class="text-slate-300 text-sm">Business Unit</div>
+                <div id="flowGrpA" class="mt-2 grid grid-cols-8 gap-1.5" aria-hidden="true"></div>
+                <div class="mx-auto mt-2 bolt-line h-24 w-1 bg-gradient-to-b from-amber-300 via-white to-amber-300" style="--d: 1.1s" aria-hidden="true"></div>
+              </div>
+              <div class="rounded-lg bg-slate-900/60 p-3 ring-1 ring-slate-800">
+                <div class="text-slate-300 text-sm">Subsidiary</div>
+                <div id="flowGrpB" class="mt-2 grid grid-cols-8 gap-1.5" aria-hidden="true"></div>
+                <div class="mx-auto mt-2 bolt-line h-24 w-1 bg-gradient-to-b from-amber-300 via-white to-amber-300" style="--d: 1.25s" aria-hidden="true"></div>
+              </div>
+              <div class="rounded-lg bg-slate-900/60 p-3 ring-1 ring-slate-800">
+                <div class="text-slate-300 text-sm">Region</div>
+                <div id="flowGrpC" class="mt-2 grid grid-cols-8 gap-1.5" aria-hidden="true"></div>
+                <div class="mx-auto mt-2 bolt-line h-24 w-1 bg-gradient-to-b from-amber-300 via-white to-amber-300" style="--d: 1.4s" aria-hidden="true"></div>
+              </div>
+            </div>
+
+            <!-- DEVICES -->
+            <div class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
+              <div class="flex flex-col items-center gap-2">
+                <div class="rounded-xl bg-slate-900/60 p-3 ring-1 ring-slate-800 w-36 h-24">
+                  <i data-lucide="monitor-smartphone" class="h-6 w-6 text-slate-300"></i>
+                  <div id="flowDevA" class="mt-2 grid grid-cols-6 gap-1.5" aria-hidden="true"></div>
+                </div>
+                <div class="text-xs text-slate-400">Windows & macOS</div>
+              </div>
+              <div class="flex flex-col items-center gap-2">
+                <div class="rounded-xl bg-slate-900/60 p-3 ring-1 ring-slate-800 w-36 h-24">
+                  <i data-lucide="laptop" class="h-6 w-6 text-slate-300"></i>
+                  <div id="flowDevB" class="mt-2 grid grid-cols-6 gap-1.5" aria-hidden="true"></div>
+                </div>
+                <div class="text-xs text-slate-400">VDI / Web</div>
+              </div>
+              <div class="flex flex-col items-center gap-2">
+                <div class="rounded-xl bg-slate-900/60 p-3 ring-1 ring-slate-800 w-36 h-24">
+                  <i data-lucide="smartphone" class="h-6 w-6 text-slate-300"></i>
+                  <div id="flowDevC" class="mt-2 grid grid-cols-6 gap-1.5" aria-hidden="true"></div>
+                </div>
+                <div class="text-xs text-slate-400">Mobile</div>
+              </div>
+            </div>
+
+            <div id="flowSuccess" class="mt-4 hidden text-emerald-300 text-sm inline-flex items-center gap-1"><i data-lucide="check-circle-2" class="h-4 w-4"></i><span>Configured once, delivered everywhere — faster updates, smaller risk windows.</span></div>
+          </div>
+        </div>
+
+        <!-- RIGHT: Three Approach Cards stacked -->
+        <div class="flex flex-col gap-6">
+          <div class="rounded-2xl border border-slate-800 bg-slate-900 p-6">
+            <h3 class="text-xl font-semibold">👉 One Icon, Always the Right App</h3>
+            <p class="mt-1 text-sm text-slate-400">Users click once. Workspace chooses the right version (Windows, Mac, Web, VPN, VDI) automatically.</p>
+
+            <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3 text-sm">
+              <div>
+                <div class="mb-1 text-[11px] uppercase tracking-wide text-slate-400">Location</div>
+                <div class="flex flex-wrap gap-1.5">
+                  <button data-loc="Local" class="pill pill-active">Local</button>
+                  <button data-loc="VPN" class="pill">VPN</button>
+                  <button data-loc="Home" class="pill">Home</button>
+                </div>
+              </div>
+              <div>
+                <div class="mb-1 text-[11px] uppercase tracking-wide text-slate-400">OS</div>
+                <div class="flex flex-wrap gap-1.5">
+                  <button data-os="Windows" class="pill pill-active">Windows</button>
+                  <button data-os="Mac" class="pill">Mac</button>
+                </div>
+              </div>
+              <div>
+                <div class="mb-1 text-[11px] uppercase tracking-wide text-slate-400">Posture</div>
+                <div class="flex flex-wrap gap-1.5">
+                  <button data-posture="Compliant" class="pill pill-active">Compliant</button>
+                  <button data-posture="Non-compliant" class="pill">Non-compliant</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4 text-sm text-slate-300">Recommended route:</div>
+            <div class="mt-1 inline-flex items-center gap-2 rounded-full bg-brand-600 px-3 py-1 text-white"><i data-lucide="check-circle-2" class="h-4 w-4"></i><span id="route">Local</span></div>
+            <div id="routeReason" class="mt-1 text-xs text-slate-400">Fastest + compliant</div>
+
+            <div class="mt-3">
+              <button id="btnAddMinutes" class="rounded-full border border-slate-800 bg-slate-800 px-3 py-1 text-xs text-slate-200 hover:bg-slate-700">Add 2 mins / user to impact</button>
+            </div>
           </div>
 
-          <p class="mt-6 text-sm text-slate-300">Outcome first: apps that just work — always current and secure — without constant IT firefighting.</p>
-          <div class="mt-2 grid grid-cols-1 gap-4 md:grid-cols-3">
-            ${renderCallout('alert-triangle','Why change',[
-              'App delivery is siloed and slow',
-              'Packaging absorbs scarce time',
-              'Patching lags widen risk windows'
-            ])}
-            ${renderCallout('timer','Why now',[
-              'Migration deadlines & renewals are fixed',
-              'Threats move faster than old processes',
-              'Delays carry hard $ & risk costs'
-            ])}
-            ${renderCallout('rocket','What good looks like with Application Workspace',[
-              'Unified app access: One workspace, all apps—delivered the right way on any device.',
-              'Frictionless management: Configure once, deploy anywhere, patch automatically.',
-              'Faster response: Zero-day vulnerabilities closed in minutes, not days.',
-              'Scalable control: 7,000+ curated apps, staged rollouts, and full audit visibility.',
-              'User empowerment: Self-service with SSO access anywhere, anytime.'
-            ])}
+          <div class="rounded-2xl border border-slate-800 bg-slate-900 p-6">
+            <h3 class="text-xl font-semibold">👉 Update Once, Deploy Everywhere</h3>
+            <p class="mt-1 text-sm text-slate-400">Package an app one time and roll it out across all environments (cloud, on-prem, hybrid) with staged rollouts.</p>
+            <label class="mt-3 flex flex-col gap-1">
+              <span class="text-xs text-slate-400">Hours per package → configure</span>
+              <div class="flex items-center gap-2">
+                <input id="inpPackHrs" class="w-24 rounded bg-slate-800 px-2 py-1 text-sm shadow-inner" value="8" />
+                <span>→</span>
+                <input id="inpConfigHrs" class="w-24 rounded bg-slate-800 px-2 py-1 text-sm shadow-inner" value="2" />
+              </div>
+            </label>
+            <div class="mt-2 text-sm"><span id="lblDeltaPerApp" class="font-semibold">6</span> hrs saved per app.</div>
+            <div class="mt-2 flex items-center justify-between rounded bg-slate-800 px-3 py-2 text-sm">
+              <span>Packaging hours avoided / mo</span>
+              <strong id="lblPkgMonth">192</strong>
+            </div>
+            <div class="mt-1 text-[11px] text-slate-500">Assumes ~32 curated updates/month (illustrative).</div>
+            <button id="btnAddPackaging" class="mt-2 rounded-full bg-brand-600 px-3 py-1 text-xs font-semibold text-white hover:bg-brand-700">Add to impact</button>
           </div>
 
-          <div class="mt-6 flex justify-end">
-            <button type="button" data-action="advance" data-next="solution" class="inline-flex items-center gap-2 rounded-full bg-yellow-400 px-5 py-2 text-sm font-semibold text-slate-900 shadow-sm transition hover:brightness-95 focus-ring">
-              Show the solution
-            </button>
+          <div class="rounded-2xl border border-slate-800 bg-slate-900 p-6">
+            <h3 class="text-xl font-semibold">👉 Zero-Day Patches in Hours</h3>
+            <p class="mt-1 text-sm text-slate-400">Security fixes roll out in 1–2 hours instead of a full day, cutting exposure windows by 90%.</p>
+            <label class="mt-3 flex flex-col gap-1">
+              <span class="text-xs text-slate-400">Current time-to-deploy (hrs)</span>
+              <input id="inpCurrentHrs" class="w-24 rounded bg-slate-800 px-2 py-1 text-sm shadow-inner" value="24" />
+            </label>
+            <div class="mt-2 flex items-center justify-between rounded bg-slate-800 px-3 py-2 text-sm" title="(Current − Target) × critical updates / mo">
+              <span class="inline-flex items-center gap-1">Exposure window reduced <i data-lucide="info" class="h-3.5 w-3.5 opacity-70"></i></span>
+              <strong id="lblZeroDayReduced">22</strong><span class="ml-1">hrs</span>
+            </div>
+            <div class="mt-1 text-[11px] text-slate-500">Target: 2 hrs; critical updates/month: 1 (illustrative).</div>
+            <button id="btnAddZeroDay" class="mt-2 rounded-full bg-brand-600 px-3 py-1 text-xs font-semibold text-white hover:bg-brand-700">Add to impact</button>
           </div>
-        </section>
-      `;
+
+          <div class="flex justify-end">
+            <button id="ctaToImpact" class="inline-flex items-center gap-2 rounded-full bg-brand-600 px-5 py-2 text-sm font-semibold text-white hover:bg-brand-700"><i data-lucide="arrow-right" class="h-4 w-4"></i> Go to Impact & ROI</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="panel-impact" class="fade hidden" data-show="false" aria-labelledby="tab-impact">
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <div class="rounded-2xl border border-slate-800 bg-slate-900 p-4">
+          <div class="text-xs text-slate-400">Hours saved / month</div>
+          <div id="kpiHours" class="mt-1 text-2xl font-semibold">0</div>
+        </div>
+        <div class="rounded-2xl border border-slate-800 bg-slate-900 p-4">
+          <div class="text-xs text-slate-400">$ saved / year</div>
+          <div id="kpiYear" class="mt-1 text-2xl font-semibold">$0</div>
+        </div>
+        <div class="rounded-2xl border border-slate-800 bg-slate-900 p-4">
+          <div class="text-xs text-slate-400">ROI</div>
+          <div id="kpiRoi" class="mt-1 text-2xl font-semibold">0%</div>
+        </div>
+      </div>
+
+      <div class="mt-5 grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <div class="rounded-2xl border border-slate-800 bg-slate-900 p-6 lg:col-span-2">
+          <h3 class="text-lg font-semibold">Assumptions (edit)</h3>
+          <div class="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <label class="flex flex-col gap-1">
+              <span class="text-xs text-slate-400"># users</span>
+              <input id="inpUsers" inputmode="numeric" value="5000" class="rounded-xl border border-slate-800 bg-slate-800 px-3 py-2 text-sm shadow-inner focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600"/>
+            </label>
+            <label class="flex flex-col gap-1">
+              <span class="text-xs text-slate-400">Tickets per user / mo</span>
+              <input id="inpTixPerUser" inputmode="numeric" value="0.035" class="rounded-xl border border-slate-800 bg-slate-800 px-3 py-2 text-sm shadow-inner focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600"/>
+            </label>
+            <label class="flex flex-col gap-1">
+              <span class="text-xs text-slate-400">Avg handle (mins)</span>
+              <input id="inpHandle" inputmode="numeric" value="18" class="rounded-xl border border-slate-800 bg-slate-800 px-3 py-2 text-sm shadow-inner focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600"/>
+            </label>
+            <label class="flex flex-col gap-1">
+              <span class="text-xs text-slate-400">Loaded cost ($/hr)</span>
+              <input id="inpCost" inputmode="numeric" value="85" class="rounded-xl border border-slate-800 bg-slate-800 px-3 py-2 text-sm shadow-inner focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600"/>
+            </label>
+            <label class="flex flex-col gap-1">
+              <span class="text-xs text-slate-400">Recast annual cost ($)</span>
+              <input id="inpSub" inputmode="numeric" value="120000" class="rounded-xl border border-slate-800 bg-slate-800 px-3 py-2 text-sm shadow-inner focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600"/>
+            </label>
+          </div>
+          <label class="mt-4 inline-flex items-center gap-2 text-sm text-slate-300">
+            <input id="chkSupport" type="checkbox" class="h-4 w-4 rounded border-slate-700 bg-slate-800"/>
+            Include support ticket handle time in hours saved
+          </label>
+          <div class="mt-2 text-xs text-slate-500">All values are examples. Replace with your data for accurate estimates.</div>
+        </div>
+
+        <div class="rounded-2xl border border-slate-800 bg-slate-900 p-6">
+          <h3 class="text-lg font-semibold">Results</h3>
+          <div class="mt-3 space-y-2 text-sm">
+            <div class="flex items-center justify-between rounded-lg bg-slate-800 px-3 py-2"><span class="text-slate-300">Hours saved / month</span><span id="resHours" class="font-semibold text-slate-100">0</span></div>
+            <div class="flex items-center justify-between rounded-lg bg-slate-800 px-3 py-2"><span class="text-slate-300">$ saved / month</span><span id="resMonth" class="font-semibold text-slate-100">$0</span></div>
+            <div class="flex items-center justify-between rounded-lg bg-slate-800 px-3 py-2"><span class="text-slate-300">$ saved / year</span><span id="resYear" class="font-semibold text-slate-100">$0</span></div>
+            <div class="flex items-center justify-between rounded-lg bg-brand-600/10 px-3 py-2"><span class="text-slate-300">Net benefit / year</span><span id="resNet" class="font-semibold text-brand-500">$0</span></div>
+            <div class="flex items-center justify-between rounded-lg bg-slate-800 px-3 py-2"><span class="text-slate-300">ROI</span><span id="resRoi" class="font-semibold text-slate-100">0%</span></div>
+            <div class="flex items-center justify-between rounded-lg bg-slate-800 px-3 py-2"><span class="text-slate-300">Tickets / month (context)</span><span id="resTix" class="font-semibold text-slate-100">0</span></div>
+            <div id="rowSupport" class="hidden flex items-center justify-between rounded-lg bg-slate-800 px-3 py-2"><span class="text-slate-300">Support hours (included)</span><span id="resSupport" class="font-semibold text-slate-100">0</span></div>
+          </div>
+          <div class="mt-4 flex flex-wrap gap-2">
+            <button id="btnCopy" class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-white"><i data-lucide="clipboard" class="h-4 w-4"></i><span id="copyLabel">Copy executive one-pager</span></button>
+            <button id="btnReset" class="inline-flex items-center gap-2 rounded-full bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700"><i data-lucide="rotate-ccw" class="h-4 w-4"></i> Reset</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="sr-only" aria-live="polite" id="aria-live"></div>
+  </main>
+
+  <script>
+    function refreshIcons(){ if (window.lucide) window.lucide.createIcons(); }
+    refreshIcons();
+
+    const $ = (s)=>document.querySelector(s);
+    const $$ = (s)=>Array.from(document.querySelectorAll(s));
+    const num = (n)=> new Intl.NumberFormat().format(Math.round(Number(n)||0));
+    const round = (n)=> Math.round(n*100)/100;
+
+    const STATE = {
+      tab: 'challenge',
+      impact: { minutes: 0, pkgHours: 0, riskHrs: 0 },
+      users: 5000,
+      loadedCost: 85,
+      subCost: 120000,
+      tixPerUser: 0.035,
+      handleMins: 18,
+      includeSupport: false,
+      packHrs: 8, configHrs: 2, updatesPerMonth: 32,
+      currentHrs: 24, targetHrs: 2, criticalPerMonth: 1,
+      location: 'Local', os: 'Windows', compliant: true
+    };
+
+    function setTab(id){
+      STATE.tab = id;
+      const ids = ['challenge','solution','impact'];
+      ids.forEach(t=>{
+        const active = t===id;
+        const btn = document.getElementById('tab-'+t);
+        const panel = document.getElementById('panel-'+t);
+        if(btn){
+          btn.className = 'tab-btn ' + (active ? 'bg-brand-600 text-white' : '');
+          btn.setAttribute('aria-selected', active ? 'true' : 'false');
+        }
+        if(panel){
+          panel.dataset.show = active ? 'true' : 'false';
+          panel.classList.toggle('hidden', !active);
+        }
+      });
+      refreshIcons();
+      render();
     }
 
-    function renderCallout(icon,label,bullets){
-      return `
-        <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
-          <div class="flex items-center gap-2 text-sm font-semibold"><i data-lucide="${icon}" class="w-4 h-4 text-yellow-300" aria-hidden="true"></i> ${label}</div>
-          <ul class="mt-2 list-disc pl-5 text-sm text-slate-300">
-            ${bullets.map(b=>`<li>${b}</li>`).join('')}
-          </ul>
-        </div>
-      `;
+    function computeRoute(){
+      if(!STATE.compliant) return { route:'Web', reason:'Security policy: non-compliant → Web' };
+      if(STATE.location==='Local' && STATE.os==='Windows') return { route:'Local', reason:'Fastest + compliant' };
+      if(STATE.location==='VPN') return { route:'Local', reason:'On network via VPN' };
+      if(STATE.location==='Home') return { route:'VDI', reason:'Off-network → consistent VDI' };
+      return { route:'Web', reason:'Cross-platform access' };
     }
 
     function renderSolution(){
-      const saved = Math.max(0, Number(STATE.packHrs) - Number(STATE.configHrs));
-      const target = 1.5;
-      const reduced = Math.max(0, Number(STATE.currentHrs) - target);
-      const route = routeRecommendation(STATE.ctx);
-      return `
-        <section role="tabpanel" id="panel-solution" aria-labelledby="tab-solution" class="space-y-4">
-          <p class="text-sm text-slate-300">Here’s how Application Workspace solves these problems — step by step — and turns them into measurable business impact.</p>
-          <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-            <div class="group flex h-full flex-col gap-3 rounded-2xl border border-white/10 bg-white/5 p-5">
-              <div class="flex items-center gap-2">
-                <span aria-hidden="true">🖥️</span>
-                <h3 class="text-lg font-semibold">One Icon, Always the Right App</h3>
-              </div>
-              <p class="text-sm text-slate-300">Users click once. Workspace chooses the right version (Windows, Mac, Web, VPN, VDI) automatically.</p>
-              <div class="mt-2 grid grid-cols-3 gap-2 text-sm">
-                ${['Windows','Mac'].map(d=>pill(d, STATE.ctx.device===d, 'set-device', d)).join('')}
-                ${['Corporate','VPN'].map(n=>pill(n, STATE.ctx.network===n, 'set-network', n)).join('')}
-                ${pill(STATE.ctx.compliant?'Compliant':'Non-compliant', STATE.ctx.compliant, 'toggle-compliance', '')}
-              </div>
-              <div class="text-sm text-slate-300">Recommended route:</div>
-              <div class="inline-flex w-fit items-center gap-2 rounded-full bg-yellow-400 px-3 py-1 text-slate-900">
-                <i data-lucide="check-circle-2" class="w-4 h-4" aria-hidden="true"></i> ${route}
-              </div>
-              <div class="mt-auto">
-                <button type="button" class="rounded-full border border-white/10 bg-white/10 px-3 py-1 text-xs hover:bg-white/20" data-action="add-impact" data-kind="minutes" data-value="2">Add to impact</button>
-              </div>
-            </div>
+      const { route, reason } = computeRoute();
+      const routeEl = $('#route'); if(routeEl) routeEl.textContent = route;
+      const reasonEl = $('#routeReason'); if(reasonEl) reasonEl.textContent = reason;
 
-            <div class="group flex h-full flex-col gap-3 rounded-2xl border border-white/10 bg-white/5 p-5">
-              <div class="flex items-center gap-2">
-                <span aria-hidden="true">⚙️</span>
-                <h3 class="text-lg font-semibold">Update Once, Deploy Everywhere</h3>
-              </div>
-              <p class="text-sm text-slate-300">Package an app one time and roll it out across all environments (cloud, on-prem, hybrid) with staged rollouts.</p>
-              <div class="rounded-xl border border-white/10 bg-slate-900 p-4 text-sm">
-                <div class="flex items-center gap-2 font-medium"><i data-lucide="wand-2" class="w-4 h-4" aria-hidden="true"></i> Roll out critical app updates</div>
-                <label class="mt-2 flex flex-col gap-1">
-                  <span class="text-xs text-slate-400">Hours per package → configure</span>
-                  <div class="flex items-center gap-2">
-                    <input aria-label="Hours per package" class="w-20 rounded bg-slate-950 px-2 py-1" inputmode="decimal" value="${STATE.packHrs}" data-action="set-pack-hrs">
-                    <span>→</span>
-                    <input aria-label="Hours to configure" class="w-20 rounded bg-slate-950 px-2 py-1" inputmode="decimal" value="${STATE.configHrs}" data-action="set-config-hrs">
-                  </div>
-                </label>
-                <div class="mt-2 flex items-center justify-between rounded bg-black/20 px-3 py-2"><span>${STATE.packHrs} → ${STATE.configHrs} hrs</span><strong>${saved} hrs saved</strong></div>
-                <div class="mt-3 flex flex-wrap items-center gap-2 text-xs text-slate-300">
-                  <span class="rounded-full bg-black/30 px-2 py-1" aria-hidden="true">☁️ Cloud</span>
-                  <span class="rounded-full bg-black/30 px-2 py-1" aria-hidden="true">🖥️ On-Prem</span>
-                  <span class="rounded-full bg-black/30 px-2 py-1" aria-hidden="true">🔀 Hybrid</span>
-                </div>
-                <div class="mt-1 text-xs text-slate-400">One console → multiple tenants (A, B, C) with staged rollouts.</div>
-                <button type="button" class="mt-2 rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-900" data-action="add-impact" data-kind="pkgHours" data-value="${saved}">Add to impact</button>
-              </div>
-            </div>
+      const delta = Math.max(0, Number(STATE.packHrs)-Number(STATE.configHrs));
+      const monthly = delta * STATE.updatesPerMonth;
+      const dApp = $('#lblDeltaPerApp'); if(dApp) dApp.textContent = round(delta);
+      const pkg = $('#lblPkgMonth'); if(pkg) pkg.textContent = num(monthly);
 
-            <div class="group flex h-full flex-col gap-3 rounded-2xl border border-white/10 bg-white/5 p-5">
-              <div class="flex items-center gap-2">
-                <span aria-hidden="true">🛡️</span>
-                <h3 class="text-lg font-semibold">Zero-Day Patches in Hours</h3>
-              </div>
-              <p class="text-sm text-slate-300">Security fixes roll out in 1–2 hours instead of a full day, cutting exposure windows by 90%.</p>
-              <div class="rounded-xl border border-white/10 bg-slate-900 p-4 text-sm">
-                <div class="flex items-center gap-2 font-medium"><i data-lucide="shield-check" class="w-4 h-4" aria-hidden="true"></i> Zero-day rollout</div>
-                <label class="mt-2 flex flex-col gap-1">
-                  <span class="text-xs text-slate-400">Current time-to-deploy (hrs)</span>
-                  <input class="rounded bg-slate-950 px-2 py-1" aria-label="Current time to deploy (hours)" inputmode="decimal" value="${STATE.currentHrs}" data-action="set-current-hrs">
-                </label>
-                <div class="mt-2 flex items-center justify-between rounded bg-black/20 px-3 py-2"><span>${STATE.currentHrs} → 1.5 hrs</span><strong>${round(reduced)} hrs reduced</strong></div>
-                <button type="button" class="mt-2 rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-900" data-action="add-impact" data-kind="riskHrs" data-value="${reduced}">Add to impact</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="mt-2 rounded-2xl border border-white/10 bg-white/5 p-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <div class="text-sm">Manage once. Deploy anywhere — every step here drives measurable ROI.</div>
-            <button type="button" data-action="advance" data-next="roi" class="inline-flex items-center gap-2 rounded-full bg-yellow-400 px-5 py-2 text-sm font-semibold text-slate-900 shadow-sm transition hover:brightness-95 focus-ring">See Impact & ROI</button>
-          </div>
-        </section>
-      `;
+      const reduced = Math.max(0, (Number(STATE.currentHrs)-Number(STATE.targetHrs))*Number(STATE.criticalPerMonth));
+      const zd = $('#lblZeroDayReduced'); if(zd) zd.textContent = round(reduced);
+      return { monthly, reduced };
     }
 
-    function pill(label, active, action, value){
-      return `
-        <button type="button" class="${cx('rounded-full px-3 py-1 border text-sm', active ? 'bg-yellow-400 text-slate-900 border-transparent' : 'bg-slate-900 text-slate-200 hover:bg-white/10 border-white/10')}" data-action="${action}" data-value="${String(value)}">${label}</button>
-      `;
-    }
-
-    function renderROI(){
-      const i = STATE.roiInputs;
-      const ticketsMonth = i.users * i.ticketsPerUserPerMonth;
-      const hoursFromMinutes = (STATE.impact.minutes * i.users) / 60;
-      const totalHoursSavedMonth = hoursFromMinutes + STATE.impact.pkgHours;
-      const dollarSavedMonth = totalHoursSavedMonth * i.loadedCostPerHour;
+    function computeOutputs(){
+      const ticketsMonth = STATE.users * STATE.tixPerUser;
+      const supportHours = (ticketsMonth * STATE.handleMins) / 60;
+      const hoursFromMinutes = (STATE.impact.minutes * STATE.users) / 60;
+      const totalHoursSavedMonth = hoursFromMinutes + STATE.impact.pkgHours + STATE.impact.riskHrs + (STATE.includeSupport ? supportHours : 0);
+      const dollarSavedMonth = totalHoursSavedMonth * STATE.loadedCost;
       const dollarSavedYear = dollarSavedMonth * 12;
-      const netBenefitYear = dollarSavedYear - i.recastAnnualCost;
-      const roiPct = i.recastAnnualCost ? (netBenefitYear / i.recastAnnualCost) * 100 : 0;
-      const fteHoursYear = 2080;
-      const fteEquivalent = (totalHoursSavedMonth * 12) / fteHoursYear;
-
-      return `
-        <section role="tabpanel" id="panel-roi" aria-labelledby="tab-roi" class="space-y-6">
-          <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
-            <div class="text-sm font-medium">Application Workspace pays for itself in weeks, not years.</div>
-          </div>
-
-          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            ${kpi('timer','Hours saved / mo', round(totalHoursSavedMonth), 'Per-user minutes × users + packaging')}
-            ${kpi('line-chart','$ saved / yr', `$${num(dollarSavedYear)}`, 'Illustrative only')}
-            ${kpi('bar-chart-3','ROI', `${round(roiPct)}%`, 'Net of subscription')}
-            ${kpi('rocket','Tickets / mo', num(ticketsMonth), 'Scale context')}
-          </div>
-
-          <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
-            <div class="rounded-2xl border border-white/10 bg-white/5 p-5 lg:col-span-2">
-              <h3 class="text-lg font-semibold">Assumptions (edit)</h3>
-              <div class="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
-                ${numInput('# users','users', i.users)}
-                ${numInput('Tickets per user / mo','ticketsPerUserPerMonth', i.ticketsPerUserPerMonth)}
-                ${numInput('Avg handle (mins)','avgHandleMins', i.avgHandleMins)}
-                ${numInput('Loaded cost ($/hr)','loadedCostPerHour', i.loadedCostPerHour)}
-                ${numInput('Recast annual cost ($)','recastAnnualCost', i.recastAnnualCost)}
-              </div>
-              <div class="mt-4 text-xs text-slate-400">All values are examples. Replace with your data for accurate estimates.</div>
-            </div>
-
-            <div class="rounded-2xl border border-white/10 bg-white/5 p-5">
-              <h3 class="text-lg font-semibold">Results</h3>
-              <div class="mt-3 space-y-2 text-sm">
-                ${kv('Hours saved / month', round(totalHoursSavedMonth))}
-                ${kv('$ saved / month', `$${num(dollarSavedMonth)}`)}
-                ${kv('$ saved / year', `$${num(dollarSavedYear)}`)}
-                ${kv('Net benefit / year', `$${num(netBenefitYear)}`)}
-                ${kv('ROI', `${round(roiPct)}%`)}
-                ${kv('Equivalent IT FTEs freed', round(fteEquivalent))}
-              </div>
-              <div class="mt-2 text-xs text-slate-400 italic">Add a short customer proof-point here for credibility (e.g., “Cut packaging time by 80% in first 30 days”).</div>
-              <div class="mt-4 flex flex-wrap gap-2">
-                <button type="button" data-action="reset-calculator" class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-white/20 focus-ring">Reset calculator</button>
-                <button type="button" data-action="copy-onepager" class="inline-flex items-center gap-2 rounded-full bg-yellow-400 px-4 py-2 text-sm font-semibold text-slate-900 shadow-sm transition hover:brightness-95 focus-ring">
-                  <i data-lucide="clipboard" class="w-4 h-4" aria-hidden="true"></i> ${STATE.copied ? 'Copied!' : 'Copy executive one-pager'}
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div class="text-xs text-slate-400">Transparency: Recast AW complements device management (e.g., Intune). Windows/macOS focus. Metrics are illustrative; actuals vary.</div>
-        </section>
-      `;
+      const netBenefitYear = dollarSavedYear - STATE.subCost;
+      const roiPct = STATE.subCost ? (netBenefitYear / STATE.subCost) * 100 : 0;
+      return { ticketsMonth, supportHours, totalHoursSavedMonth, dollarSavedMonth, dollarSavedYear, netBenefitYear, roiPct };
     }
 
-    function kpi(icon,label,value,hint){
-      return `
-        <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
-          <div class="flex items-center justify-between">
-            <div>
-              <div class="text-xs text-slate-300">${label}</div>
-              <div class="text-xl font-semibold">${value}</div>
-            </div>
-            <i data-lucide="${icon}" class="w-5 h-5 text-yellow-300" aria-hidden="true"></i>
-          </div>
-          ${hint ? `<div class="mt-1 text-xs text-slate-400">${hint}</div>` : ''}
-        </div>
-      `;
+    function renderImpact(){
+      const o = computeOutputs();
+      const h=$('#kpiHours'); if(h) h.textContent = round(o.totalHoursSavedMonth);
+      const y=$('#kpiYear'); if(y) y.textContent = '$'+num(o.dollarSavedYear);
+      const r=$('#kpiRoi'); if(r) r.textContent = round(o.roiPct)+'%';
+      const rh=$('#resHours'); if(rh) rh.textContent = round(o.totalHoursSavedMonth);
+      const rm=$('#resMonth'); if(rm) rm.textContent = '$'+num(o.dollarSavedMonth);
+      const ry=$('#resYear'); if(ry) ry.textContent = '$'+num(o.dollarSavedYear);
+      const rn=$('#resNet'); if(rn) rn.textContent = '$'+num(o.netBenefitYear);
+      const rrp=$('#resRoi'); if(rrp) rrp.textContent = round(o.roiPct)+'%';
+      const rt=$('#resTix'); if(rt) rt.textContent = num(o.ticketsMonth);
+      const row=$('#rowSupport'); if(row) row.classList.toggle('hidden', !STATE.includeSupport);
+      const rs=$('#resSupport'); if(rs) rs.textContent = round(o.supportHours);
     }
 
-    function numInput(label, key, value){
-      return `
-        <label class="flex flex-col gap-1">
-          <span class="text-xs text-slate-300">${label}</span>
-          <input class="rounded-xl border border-white/10 bg-slate-900 px-3 py-2 text-sm focus-ring" inputmode="decimal" value="${value}" data-action="set-roi" data-key="${key}">
-        </label>
-      `;
+    function render(){ renderSolution(); renderImpact(); }
+
+    const style = document.createElement('style');
+    style.textContent = `
+      .tab-btn{display:inline-flex;align-items:center;gap:.5rem;border-radius:9999px;padding:.5rem 1rem;font-size:.875rem;color:#cbd5e1;background:transparent}
+      .tab-btn:hover{background:#0f172a}
+      .pill{border:1px solid #1f2937;border-radius:9999px;padding:.25rem .75rem;background:#0b1220;color:#e2e8f0}
+      .pill:hover{background:#111827}
+      .pill-active{background:#f97316;border-color:#f97316;color:white}
+    `;
+    document.head.appendChild(style);
+
+    // --- Events: Tabs ---
+    $('#tab-challenge').addEventListener('click', ()=> setTab('challenge'));
+    $('#tab-solution').addEventListener('click', ()=> setTab('solution'));
+    $('#tab-impact').addEventListener('click', ()=> setTab('impact'));
+    $('#ctaToSolution')?.addEventListener('click', ()=> setTab('solution'));
+
+    // --- Events: Solution controls ---
+    $$('[data-loc]').forEach(b=> b.addEventListener('click', (e)=>{ STATE.location=e.target.getAttribute('data-loc'); updatePills('[data-loc]','data-loc',STATE.location); renderSolution(); announce('Location set to '+STATE.location); }));
+    $$('[data-os]').forEach(b=> b.addEventListener('click', (e)=>{ STATE.os=e.target.getAttribute('data-os'); updatePills('[data-os]','data-os',STATE.os); renderSolution(); announce('OS set to '+STATE.os); }));
+    $$('[data-posture]').forEach(b=> b.addEventListener('click', (e)=>{ STATE.compliant = e.target.getAttribute('data-posture')==='Compliant'; updatePills('[data-posture]','data-posture', STATE.compliant? 'Compliant':'Non-compliant'); renderSolution(); announce('Posture set'); }));
+
+    function updatePills(groupSel, attr, val){
+      $$(groupSel).forEach(b=>{
+        const active = b.getAttribute(attr)===val;
+        b.className = 'pill ' + (active ? 'pill-active' : '');
+      });
     }
 
-    function kv(label, value){
-      return `
-        <div class="flex items-center justify-between rounded-lg bg-black/20 px-3 py-2">
-          <span class="text-slate-300">${label}</span>
-          <span class="font-semibold">${value}</span>
-        </div>
-      `;
-    }
+    $('#inpPackHrs')?.addEventListener('input', (e)=>{ STATE.packHrs=parseFloat(e.target.value||'0'); renderSolution(); });
+    $('#inpConfigHrs')?.addEventListener('input', (e)=>{ STATE.configHrs=parseFloat(e.target.value||'0'); renderSolution(); });
+    $('#inpCurrentHrs')?.addEventListener('input', (e)=>{ STATE.currentHrs=parseFloat(e.target.value||'0'); renderSolution(); });
 
-    function attachGlobalEvents(){
-      const root = document.getElementById('app');
+    $('#btnAddMinutes')?.addEventListener('click', ()=>{ const add=2; STATE.impact.minutes += add; render(); announce('Added 2 minutes per user to impact'); });
+    $('#btnAddPackaging')?.addEventListener('click', ()=>{ const {monthly}=renderSolution(); STATE.impact.pkgHours += monthly; render(); announce('Added packaging hours to impact'); });
+    $('#btnAddZeroDay')?.addEventListener('click', ()=>{ const {reduced}=renderSolution(); STATE.impact.riskHrs += reduced; render(); announce('Added zero-day reduction to impact'); });
 
-      root.querySelectorAll('[data-action="switch-tab"]').forEach(btn=>{
-        btn.addEventListener('click', (e)=>{
-          const next = e.currentTarget.getAttribute('data-tab');
-          STATE.activeTab = next;
-          track('scene_viewed', { scene: next });
-          render();
-        });
-      });
+    // --- Events: Calculator + copy/reset ---
+    $('#inpUsers')?.addEventListener('input', (e)=>{ STATE.users = Number((e.target.value||'').replace(/[^0-9.\-]/g,'')); renderImpact(); });
+    $('#inpTixPerUser')?.addEventListener('input', (e)=>{ STATE.tixPerUser = Number((e.target.value||'').replace(/[^0-9.\-]/g,'')); renderImpact(); });
+    $('#inpHandle')?.addEventListener('input', (e)=>{ STATE.handleMins = Number((e.target.value||'').replace(/[^0-9.\-]/g,'')); renderImpact(); });
+    $('#inpCost')?.addEventListener('input', (e)=>{ STATE.loadedCost = Number((e.target.value||'').replace(/[^0-9.\-]/g,'')); renderImpact(); });
+    $('#inpSub')?.addEventListener('input', (e)=>{ STATE.subCost = Number((e.target.value||'').replace(/[^0-9.\-]/g,'')); renderImpact(); });
+    $('#chkSupport')?.addEventListener('change', (e)=>{ STATE.includeSupport = e.target.checked; renderImpact(); });
 
-      root.querySelectorAll('[data-action="advance"]').forEach(btn=>{
-        btn.addEventListener('click', (e)=>{
-          const next = e.currentTarget.getAttribute('data-next');
-          STATE.activeTab = next;
-          track('toggle_changed', { control: 'tab', value: next });
-          track('scene_viewed', { scene: next });
-          render();
-        });
-      });
+    $('#btnReset')?.addEventListener('click', ()=>{
+      STATE.impact = { minutes:0, pkgHours:0, riskHrs:0 };
+      STATE.users=5000; STATE.tixPerUser=0.035; STATE.handleMins=18; STATE.loadedCost=85; STATE.subCost=120000; STATE.includeSupport=false;
+      $('#inpUsers').value='5000'; $('#inpTixPerUser').value='0.035'; $('#inpHandle').value='18'; $('#inpCost').value='85'; $('#inpSub').value='120000'; $('#chkSupport').checked=false;
+      renderImpact(); announce('Calculator reset to defaults');
+    });
 
-      root.querySelectorAll('[data-action="set-device"]').forEach(btn=>{
-        btn.addEventListener('click', e=>{
-          STATE.ctx.device = e.currentTarget.getAttribute('data-value');
-          track('toggle_changed', { control: 'device', value: STATE.ctx.device });
-          render();
-        });
-      });
-
-      root.querySelectorAll('[data-action="set-network"]').forEach(btn=>{
-        btn.addEventListener('click', e=>{
-          STATE.ctx.network = e.currentTarget.getAttribute('data-value');
-          track('toggle_changed', { control: 'network', value: STATE.ctx.network });
-          render();
-        });
-      });
-
-      root.querySelectorAll('[data-action="toggle-compliance"]').forEach(btn=>{
-        btn.addEventListener('click', ()=>{
-          STATE.ctx.compliant = !STATE.ctx.compliant;
-          track('toggle_changed', { control: 'compliant', value: STATE.ctx.compliant });
-          render();
-        });
-      });
-
-      const pack = root.querySelector('[data-action="set-pack-hrs"]');
-      if (pack) pack.addEventListener('input', (e)=>{
-        const v = Number(String(e.target.value).replace(/[^0-9.\-]/g,''));
-        STATE.packHrs = isFinite(v) ? v : 0;
-      });
-
-      const cfg = root.querySelector('[data-action="set-config-hrs"]');
-      if (cfg) cfg.addEventListener('input', (e)=>{
-        const v = Number(String(e.target.value).replace(/[^0-9.\-]/g,''));
-        STATE.configHrs = isFinite(v) ? v : 0;
-      });
-
-      const cur = root.querySelector('[data-action="set-current-hrs"]');
-      if (cur) cur.addEventListener('input', (e)=>{
-        const v = Number(String(e.target.value).replace(/[^0-9.\-]/g,''));
-        STATE.currentHrs = isFinite(v) ? v : 0;
-      });
-
-      root.querySelectorAll('[data-action="add-impact"]').forEach(btn=>{
-        btn.addEventListener('click', (e)=>{
-          const kind = e.currentTarget.getAttribute('data-kind');
-          const val = Number(e.currentTarget.getAttribute('data-value')) || 0;
-          if (kind === 'minutes') STATE.impact.minutes = Number(STATE.impact.minutes) + val;
-          if (kind === 'pkgHours') STATE.impact.pkgHours = Number(STATE.impact.pkgHours) + val;
-          if (kind === 'riskHrs') STATE.impact.riskHrs = Number(STATE.impact.riskHrs) + val;
-          track('toggle_changed', { control: `impact_${kind}`, value: val });
-          render();
-        });
-      });
-
-      root.querySelectorAll('[data-action="set-roi"]').forEach(inp=>{
-        inp.addEventListener('input', (e)=>{
-          const key = e.currentTarget.getAttribute('data-key');
-          const v = Number(String(e.target.value).replace(/[^0-9.\-]/g,''));
-          STATE.roiInputs[key] = isFinite(v) ? v : 0;
-        });
-      });
-
-      const resetBtn = root.querySelector('[data-action="reset-calculator"]');
-      if (resetBtn) resetBtn.addEventListener('click', ()=>{
-        STATE.roiInputs = {
-          users: 5000,
-          ticketsPerUserPerMonth: 0.035,
-          avgHandleMins: 18,
-          loadedCostPerHour: 85,
-          recastAnnualCost: 120000
-        };
-        STATE.impact = { ...STATE.defaults.impact };
-        track('cta_clicked', { cta: 'reset_calculator' });
-        render();
-      });
-
-      const copyBtn = root.querySelector('[data-action="copy-onepager"]');
-      if (copyBtn) copyBtn.addEventListener('click', async ()=>{
-        const i = STATE.roiInputs;
-        const ticketsMonth = i.users * i.ticketsPerUserPerMonth;
-        const hoursFromMinutes = (STATE.impact.minutes * i.users) / 60;
-        const totalHoursSavedMonth = hoursFromMinutes + STATE.impact.pkgHours;
-        const dollarSavedMonth = totalHoursSavedMonth * i.loadedCostPerHour;
-        const dollarSavedYear = dollarSavedMonth * 12;
-        const netBenefitYear = dollarSavedYear - i.recastAnnualCost;
-        const roiPct = i.recastAnnualCost ? (netBenefitYear / i.recastAnnualCost) * 100 : 0;
-        const fteHoursYear = 2080;
-        const fteEquivalent = (totalHoursSavedMonth * 12) / fteHoursYear;
-
-        const body =
-`Recast Application Workspace — Executive One-Pager (Per-User Model)
+    $('#btnCopy')?.addEventListener('click', async ()=>{
+      const o = computeOutputs();
+      const body =
+`Recast — Executive One-Pager
 
 Assumptions
- - Users: ${i.users}
- - Tickets per user / month: ${i.ticketsPerUserPerMonth}
- - Avg handle: ${i.avgHandleMins} mins
- - Loaded cost: $${i.loadedCostPerHour}/hr
- - Subscription (annual): $${i.recastAnnualCost}
+ - Users: ${STATE.users}
+ - Tickets per user / month: ${STATE.tixPerUser}
+ - Avg handle: ${STATE.handleMins} mins
+ - Loaded cost: $${STATE.loadedCost}/hr
+ - Subscription (annual): $${STATE.subCost}
 
-Observed demo impact (illustrative)
+Observed impact (illustrative)
  - Minutes saved per user (monthly): ${STATE.impact.minutes}
- - Packaging hours avoided (org): ${STATE.impact.pkgHours}
- - Zero-day window reduced (hrs): ${STATE.impact.riskHrs}
+ - Packaging hours avoided (org / mo): ${STATE.impact.pkgHours}
+ - Zero-day exposure reduced (hrs / mo): ${STATE.impact.riskHrs}
 
 Calculated outcomes
- - Tickets / month: ${num(ticketsMonth)}
- - Hours saved / month: ${round(totalHoursSavedMonth)}
- - $ saved / month: $${num(dollarSavedMonth)}
- - $ saved / year: $${num(dollarSavedYear)}
- - Net benefit / year: $${num(netBenefitYear)}
- - ROI: ${round(roiPct)}%
- - Equivalent IT FTEs freed: ${round(fteEquivalent)}
+ - Tickets / month: ${num(o.ticketsMonth)}
+ - Hours saved / month: ${round(o.totalHoursSavedMonth)}
+ - $ saved / month: $${num(o.dollarSavedMonth)}
+ - $ saved / year: $${num(o.dollarSavedYear)}
+ - Net benefit / year: $${num(o.netBenefitYear)}
+ - ROI: ${round(o.roiPct)}%
 
-Notes: All values are examples; replace with your data for accurate estimates.`;
-        try {
-          await navigator.clipboard.writeText(body);
-        } catch {
-          const ta = document.createElement('textarea');
-          ta.value = body;
-          document.body.appendChild(ta);
-          ta.select();
-          document.execCommand('copy');
-          document.body.removeChild(ta);
-        }
-        STATE.copied = true;
-        track('cta_clicked', { cta: 'copy_onepager' });
-        render();
-        setTimeout(()=>{ STATE.copied = false; render(); }, 1200);
-      });
+Notes: Replace with your data for accurate estimates.`;
+      try{ await navigator.clipboard.writeText(body); }catch{
+        const ta=document.createElement('textarea'); ta.value=body; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove();
+      }
+      const lbl=$('#copyLabel'); if(!lbl) return; const prev=lbl.textContent; lbl.textContent='Copied!'; setTimeout(()=>lbl.textContent=prev,1200);
+      announce('Executive one-pager copied to clipboard');
+    });
+
+    $('#ctaToImpact')?.addEventListener('click', ()=> setTab('impact'));
+
+    function announce(msg){ const el = document.getElementById('aria-live'); el.textContent=''; setTimeout(()=>{ el.textContent=msg; }, 50); }
+
+    // ---------- Animated Flow (vanilla, single-file) ----------
+    function buildTiles(container, count, baseDelay){
+      if(!container) return;
+      container.innerHTML='';
+      for(let i=0;i<count;i++){
+        const d=document.createElement('div');
+        d.className='tile';
+        d.style.setProperty('--d', (baseDelay + i*0.04).toFixed(2)+'s');
+        container.appendChild(d);
+      }
     }
 
-    (function injectAnimations(){
-      const style = document.createElement('style');
-      style.textContent = `
-        @keyframes fadeInUp { from { opacity:.0; transform: translateY(8px); } to { opacity:1; transform: translateY(0); } }
-      `;
-      document.head.appendChild(style);
-    })();
+    function buildFlow(){
+      buildTiles($('#flowHubGrid'), 36, 0);
+      buildTiles($('#flowConnA'), 20, .5);
+      buildTiles($('#flowConnB'), 20, .55);
+      buildTiles($('#flowConnC'), 20, .6);
+      buildTiles($('#flowGrpA'), 24, 1.0);
+      buildTiles($('#flowGrpB'), 24, 1.05);
+      buildTiles($('#flowGrpC'), 24, 1.1);
+      buildTiles($('#flowDevA'), 12, 1.6);
+      buildTiles($('#flowDevB'), 12, 1.7);
+      buildTiles($('#flowDevC'), 12, 1.8);
+    }
 
-    document.addEventListener('DOMContentLoaded', ()=>{
-      track('scene_viewed', { scene: STATE.activeTab });
-      render();
-    });
+    function startFlow(){
+      const card = $('#flowCard');
+      if(!card) return;
+      card.classList.remove('run'); void card.offsetWidth; // restart animations
+      card.classList.add('run');
+      $('#flowHubFlash')?.classList.remove('hidden');
+      $('#flowSuccess')?.classList.add('hidden');
+      setTimeout(()=> $('#flowHubFlash')?.classList.add('hidden'), 1200);
+      setTimeout(()=> $('#flowSuccess')?.classList.remove('hidden'), 2200);
+      announce('Animated flow started');
+      // auto reset after cycle
+      setTimeout(()=>{ card.classList.remove('run'); $('#flowSuccess')?.classList.add('hidden'); }, 7000);
+    }
+
+    $('#btnFlowStart')?.addEventListener('click', startFlow);
+
+    // Initial render + build flow
+    buildFlow();
+    render();
+    refreshIcons();
   </script>
-
 </body>
 </html>
