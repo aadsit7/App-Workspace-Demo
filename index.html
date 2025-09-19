@@ -26,6 +26,19 @@
     .app{width:2rem;height:2rem;border-radius:.5rem;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.75rem;letter-spacing:.2px;color:white;box-shadow:0 1px 0 0 rgba(0,0,0,.35) inset, 0 8px 20px -8px rgba(0,0,0,.6)}
     .run .app{animation: appPop .9s cubic-bezier(.2,.8,.2,1) var(--d,0s) 1 forwards}
     @keyframes appPop{0%{transform:scale(.85);filter:saturate(.4);opacity:.5}60%{transform:scale(1.05);filter:saturate(1);opacity:1}100%{transform:scale(1)}}
+
+    /* Condensed catalog rows */
+    .cat-row{display:grid;grid-template-columns: 12ch 1fr;gap:.5rem;align-items:center}
+    .cat-title{font-size:.7rem;letter-spacing:.08em}
+
+    /* End-user animation */
+    .user-beam{height:.4rem;border-radius:.4rem;transform-origin:left center;transform:scaleX(0)}
+    .run .user-beam{animation: barGrow 1.1s ease forwards var(--d,0s)}
+    .user-line{width:.25rem;border-radius:.25rem;transform-origin:top center;transform:scaleY(0)}
+    .run .user-line{animation: boltDrop 1s ease forwards var(--d,0s)}
+    .badge{width:1.25rem;height:1.25rem;border-radius:.3rem;opacity:0;transform:translateY(-6px) scale(.9)}
+    .run .badge{animation: badgeDrop .9s ease-out var(--d,0s) forwards}
+    @keyframes badgeDrop{to{opacity:1;transform:translateY(0) scale(1)}}
   </style>
 </head>
 <body class="min-h-screen bg-[#0b1020] text-slate-100 antialiased">
@@ -324,7 +337,7 @@
           <div class="flex items-start justify-between">
             <div>
               <h3 class="text-lg font-semibold">Animated Flow — Configure Once, Deliver Everywhere</h3>
-              <p class="mt-1 text-sm text-slate-300">Recast Hub → Connectors & Rings → Groups → Devices. Recommended route: <span class="font-semibold text-yellow-300">${route}</span>.</p>
+              <p class="mt-1 text-sm text-slate-300">Recast Hub → Connectors & Rings → Groups → Devices → <span class="font-semibold text-yellow-300">End user</span>. Recommended route: <span class="font-semibold text-yellow-300">${route}</span>.</p>
             </div>
             <button type="button" data-action="start-flow" class="rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-slate-900">Start</button>
           </div>
@@ -337,38 +350,46 @@
                 </div>
                 <div>
                   <div class="text-slate-200 font-medium">Recast Hub</div>
-                  <div class="text-xs text-slate-400">Curated & secured catalog</div>
+                  <div class="text-xs text-slate-400">Curated & secured catalog (condensed)</div>
                 </div>
               </div>
               <div class="text-xs text-slate-400 inline-flex items-center gap-1"><i data-lucide="user-cog" class="h-4 w-4"></i> Admin publishes update</div>
             </div>
 
-            <div class="mt-3 space-y-3">
-              <div>
-                <div class="mb-1 text-[11px] uppercase tracking-wide text-slate-400">Productivity & Collaboration</div>
-                <div id="hub-prod" class="grid grid-cols-12 gap-1.5"></div>
+            <!-- Consolidated catalog: condensed, easy-to-scan rows -->
+            <details class="mt-3 rounded-lg border border-white/10 bg-black/20 open:bg-black/20" open>
+              <summary class="cursor-pointer list-none px-3 py-2 text-xs text-slate-300 hover:text-slate-200 flex items-center gap-2">
+                <i data-lucide="library" class="w-4 h-4"></i>
+                <span>Catalog — Productivity, Browsers, Enterprise, Security, Utilities</span>
+                <span class="ml-auto text-[10px] text-slate-400">Click to collapse/expand</span>
+              </summary>
+              <div class="space-y-2 px-3 pb-3">
+                <div class="cat-row">
+                  <div class="cat-title text-slate-400 uppercase">Productivity</div>
+                  <div id="hub-prod" class="flex flex-wrap gap-1.5 overflow-x-auto"></div>
+                </div>
+                <div class="cat-row">
+                  <div class="cat-title text-slate-400 uppercase">Browsers</div>
+                  <div id="hub-browsers" class="flex flex-wrap gap-1.5 overflow-x-auto"></div>
+                </div>
+                <div class="cat-row">
+                  <div class="cat-title text-slate-400 uppercase">Enterprise</div>
+                  <div id="hub-enterprise" class="flex flex-wrap gap-1.5 overflow-x-auto"></div>
+                </div>
+                <div class="cat-row">
+                  <div class="cat-title text-slate-400 uppercase">Security</div>
+                  <div id="hub-security" class="flex flex-wrap gap-1.5 overflow-x-auto"></div>
+                </div>
+                <div class="cat-row">
+                  <div class="cat-title text-slate-400 uppercase">Utilities</div>
+                  <div id="hub-utilities" class="flex flex-wrap gap-1.5 overflow-x-auto"></div>
+                </div>
               </div>
-              <div>
-                <div class="mb-1 text-[11px] uppercase tracking-wide text-slate-400">Browsers & Web Tools</div>
-                <div id="hub-browsers" class="grid grid-cols-12 gap-1.5"></div>
-              </div>
-              <div>
-                <div class="mb-1 text-[11px] uppercase tracking-wide text-slate-400">Enterprise Apps</div>
-                <div id="hub-enterprise" class="grid grid-cols-12 gap-1.5"></div>
-              </div>
-              <div>
-                <div class="mb-1 text-[11px] uppercase tracking-wide text-slate-400">Security & Access</div>
-                <div id="hub-security" class="grid grid-cols-12 gap-1.5"></div>
-              </div>
-              <div>
-                <div class="mb-1 text-[11px] uppercase tracking-wide text-slate-400">Utilities / Everyday Tools</div>
-                <div id="hub-utilities" class="grid grid-cols-12 gap-1.5"></div>
-              </div>
-            </div>
+            </details>
 
             <div id="flowHubFlash" class="mt-2 hidden text-amber-300 text-xs inline-flex items-center gap-1"><i data-lucide="bolt" class="h-4 w-4"></i><span>Update published</span></div>
 
-            <div class="mt-5 grid grid-cols-1 gap-3 md:grid-cols-3">
+            <div class="mt-4 grid grid-cols-1 gap-3 md:grid-cols-3">
               <div class="rounded-lg bg-black/30 p-3 ring-1 ring-white/10">
                 <div class="text-slate-300 text-sm inline-flex items-center gap-1"><i data-lucide="server" class="h-4 w-4"></i> Existing Platforms</div>
                 <div id="flowConnA" class="mt-2 grid grid-cols-10 gap-1.5" aria-hidden="true"></div>
@@ -386,7 +407,7 @@
               </div>
             </div>
 
-            <div class="mt-5 grid grid-cols-1 gap-3 md:grid-cols-3">
+            <div class="mt-4 grid grid-cols-1 gap-3 md:grid-cols-3">
               <div class="rounded-lg bg-black/30 p-3 ring-1 ring-white/10">
                 <div class="text-slate-300 text-sm">Business Unit</div>
                 <div id="flowGrpA" class="mt-2 grid grid-cols-8 gap-1.5" aria-hidden="true"></div>
@@ -404,7 +425,7 @@
               </div>
             </div>
 
-            <div class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
+            <div class="mt-4 grid grid-cols-1 gap-5 sm:grid-cols-3">
               <div class="flex flex-col items-center gap-2">
                 <div class="rounded-xl bg-black/30 p-3 ring-1 ring-white/10 w-36 h-24">
                   <i data-lucide="monitor-smartphone" class="h-6 w-6 text-slate-300"></i>
@@ -425,6 +446,31 @@
                   <div id="flowDevC" class="mt-2 grid grid-cols-6 gap-1.5" aria-hidden="true"></div>
                 </div>
                 <div class="text-xs text-slate-400">Mobile</div>
+              </div>
+            </div>
+
+            <!-- End User: single destination with device -->
+            <div class="mt-6">
+              <div class="mx-auto max-w-md rounded-2xl border border-white/10 bg-black/20 p-4">
+                <div class="flex items-center gap-3">
+                  <div class="relative">
+                    <div class="h-10 w-10 rounded-full bg-gradient-to-br from-sky-500 to-indigo-500 grid place-items-center font-semibold">U</div>
+                    <div class="absolute left-1/2 top-10 -ml-0.5 user-line h-20 w-1 bg-gradient-to-b from-amber-300 via-white to-amber-300" style="--d: 1.9s"></div>
+                  </div>
+                  <div class="text-sm">
+                    <div class="font-medium text-slate-200">End user</div>
+                    <div class="text-slate-400">Just opens the app from Workspace</div>
+                  </div>
+                </div>
+
+                <div class="mt-6 grid grid-cols-6 gap-2">
+                  <div class="col-span-6 user-beam bg-gradient-to-r from-sky-400 via-indigo-400 to-fuchsia-400" style="--d: 2.2s" aria-hidden="true"></div>
+                  <div class="col-span-6 relative rounded-xl border border-white/10 bg-[#0b1328] p-6">
+                    <i data-lucide="laptop" class="h-7 w-7 opacity-80"></i>
+                    <div class="absolute right-4 top-4 badge bg-green-500 text-black grid place-items-center font-bold" style="--d: 2.5s">✓</div>
+                    <div class="mt-1 text-xs text-slate-400">Workspace launches the correct app instantly</div>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -812,7 +858,7 @@ Notes: All values are examples; replace with your data for accurate estimates.`;
       if(flash) flash.classList.remove('hidden');
       if(success) success.classList.add('hidden');
       setTimeout(()=> flash && flash.classList.add('hidden'), 1200);
-      setTimeout(()=> success && success.classList.remove('hidden'), 2200);
+      setTimeout(()=> success && success.classList.remove('hidden'), 2600);
       setTimeout(()=>{ card.classList.remove('run'); success && success.classList.add('hidden'); }, 7000);
     }
 
