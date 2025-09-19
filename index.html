@@ -30,6 +30,11 @@
     .bolt-line{width:.25rem;border-radius:.25rem;transform-origin:top center;transform:scaleY(0)}
     .run .bolt-line{animation: boltDrop .9s ease forwards var(--d,0s)}
     @keyframes boltDrop{to{transform:scaleY(1)}}
+
+    /* App icons */
+    .app{width:2rem;height:2rem;border-radius:.5rem;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.75rem;letter-spacing:.2px;color:white;box-shadow:0 1px 0 0 rgba(0,0,0,.35) inset, 0 8px 20px -8px rgba(0,0,0,.6)}
+    .run .app{animation: appPop .9s cubic-bezier(.2,.8,.2,1) var(--d,0s) 1 forwards}
+    @keyframes appPop{0%{transform:scale(.85);filter:saturate(.4);opacity:.5}60%{transform:scale(1.05);filter:saturate(1);opacity:1}100%{transform:scale(1)}}
   </style>
 </head>
 <body class="min-h-screen bg-slate-950 text-slate-100">
@@ -104,7 +109,7 @@
 
     <section id="panel-solution" class="fade hidden" data-show="false" aria-labelledby="tab-solution">
       <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <!-- LEFT: Animated Flow Preview -->
+        <!-- LEFT: Animated Flow Preview with App Icons -->
         <div class="rounded-2xl border border-slate-800 bg-slate-900 p-6" aria-labelledby="flowTitle">
           <div class="flex items-start justify-between">
             <div>
@@ -128,7 +133,31 @@
               </div>
               <div class="text-xs text-slate-400 inline-flex items-center gap-1"><i data-lucide="user-cog" class="h-4 w-4"></i> Admin publishes update</div>
             </div>
-            <div id="flowHubGrid" class="mt-3 grid grid-cols-12 gap-1.5" aria-hidden="true"></div>
+
+            <!-- NEW: Catalog icons grouped by business unit -->
+            <div class="mt-3 space-y-3">
+              <div>
+                <div class="mb-1 text-[11px] uppercase tracking-wide text-slate-400">Productivity & Collaboration</div>
+                <div id="hub-prod" class="grid grid-cols-12 gap-1.5" aria-label="Productivity and Collaboration app icons"></div>
+              </div>
+              <div>
+                <div class="mb-1 text-[11px] uppercase tracking-wide text-slate-400">Browsers & Web Tools</div>
+                <div id="hub-browsers" class="grid grid-cols-12 gap-1.5" aria-label="Browsers and web tools app icons"></div>
+              </div>
+              <div>
+                <div class="mb-1 text-[11px] uppercase tracking-wide text-slate-400">Enterprise Apps</div>
+                <div id="hub-enterprise" class="grid grid-cols-12 gap-1.5" aria-label="Enterprise apps icons"></div>
+              </div>
+              <div>
+                <div class="mb-1 text-[11px] uppercase tracking-wide text-slate-400">Security & Access</div>
+                <div id="hub-security" class="grid grid-cols-12 gap-1.5" aria-label="Security and access app icons"></div>
+              </div>
+              <div>
+                <div class="mb-1 text-[11px] uppercase tracking-wide text-slate-400">Utilities / Everyday Tools</div>
+                <div id="hub-utilities" class="grid grid-cols-12 gap-1.5" aria-label="Utilities and everyday tools app icons"></div>
+              </div>
+            </div>
+
             <div id="flowHubFlash" class="mt-2 hidden text-amber-300 text-xs inline-flex items-center gap-1"><i data-lucide="bolt" class="h-4 w-4"></i><span>Update published</span></div>
 
             <!-- CONNECTORS -->
@@ -533,7 +562,77 @@ Notes: Replace with your data for accurate estimates.`;
 
     function announce(msg){ const el = document.getElementById('aria-live'); el.textContent=''; setTimeout(()=>{ el.textContent=msg; }, 50); }
 
-    // ---------- Animated Flow (vanilla, single-file) ----------
+    // ---------- Animated Flow (with App Icons) ----------
+    const APP_GROUPS = [
+      {
+        id:'hub-prod',
+        items: [
+          { name:'Word', short:'W', bg:'bg-blue-600' },
+          { name:'Excel', short:'X', bg:'bg-green-600' },
+          { name:'PowerPoint', short:'P', bg:'bg-orange-600' },
+          { name:'Outlook', short:'O', bg:'bg-sky-600' },
+          { name:'Microsoft Teams', short:'T', bg:'bg-indigo-600' },
+          { name:'Zoom', short:'Z', bg:'bg-blue-500' },
+          { name:'Slack', short:'S', bg:'bg-violet-600' },
+          { name:'Gmail', short:'G', bg:'bg-red-500' },
+          { name:'Drive', short:'D', bg:'bg-green-500' },
+          { name:'Docs', short:'Dc', bg:'bg-sky-500' },
+          { name:'Sheets', short:'Sh', bg:'bg-green-600' },
+          { name:'Meet', short:'M', bg:'bg-emerald-600' }
+        ]
+      },
+      {
+        id:'hub-browsers',
+        items: [
+          { name:'Microsoft Edge', short:'E', bg:'bg-cyan-600' },
+          { name:'Google Chrome', short:'C', bg:'bg-red-600' },
+          { name:'Mozilla Firefox', short:'F', bg:'bg-orange-500' }
+        ]
+      },
+      {
+        id:'hub-enterprise',
+        items: [
+          { name:'Salesforce', short:'SF', bg:'bg-sky-500' },
+          { name:'Workday', short:'WD', bg:'bg-blue-500' },
+          { name:'ServiceNow', short:'SN', bg:'bg-emerald-600' },
+          { name:'SAP', short:'SAP', bg:'bg-blue-700' },
+          { name:'Oracle NetSuite', short:'NS', bg:'bg-red-700' }
+        ]
+      },
+      {
+        id:'hub-security',
+        items: [
+          { name:'Duo', short:'D', bg:'bg-emerald-600' },
+          { name:'Okta', short:'O', bg:'bg-sky-600' },
+          { name:'Ping Identity', short:'P', bg:'bg-fuchsia-600' },
+          { name:'Cisco AnyConnect', short:'AC', bg:'bg-teal-600' },
+          { name:'Microsoft Defender', short:'MD', bg:'bg-green-700' },
+          { name:'CrowdStrike Falcon', short:'CS', bg:'bg-red-600' }
+        ]
+      },
+      {
+        id:'hub-utilities',
+        items: [
+          { name:'Adobe Acrobat / Creative Cloud', short:'A', bg:'bg-red-700' },
+          { name:'Dropbox', short:'DB', bg:'bg-blue-700' },
+          { name:'Box', short:'BX', bg:'bg-blue-500' },
+          { name:'OneDrive', short:'OD', bg:'bg-sky-600' },
+          { name:'ZoomIt', short:'ZI', bg:'bg-zinc-700' }
+        ]
+      }
+    ];
+
+    function appIconEl({name, short, bg}, delay){
+      const d=document.createElement('div');
+      d.className='app '+bg;
+      d.setAttribute('title', name);
+      d.setAttribute('role','img');
+      d.setAttribute('aria-label', name);
+      d.style.setProperty('--d', delay.toFixed(2)+'s');
+      d.textContent = short;
+      return d;
+    }
+
     function buildTiles(container, count, baseDelay){
       if(!container) return;
       container.innerHTML='';
@@ -546,7 +645,20 @@ Notes: Replace with your data for accurate estimates.`;
     }
 
     function buildFlow(){
-      buildTiles($('#flowHubGrid'), 36, 0);
+      // Build hub app icons by groups
+      let offset = 0;
+      APP_GROUPS.forEach(group=>{
+        const wrap = document.getElementById(group.id);
+        if(!wrap) return;
+        wrap.innerHTML='';
+        group.items.forEach((app, idx)=>{
+          const el = appIconEl(app, 0.08*idx + offset);
+          wrap.appendChild(el);
+        });
+        offset += 0.4; // small stagger between groups
+      });
+
+      // Connectors / groups / devices pulse tiles
       buildTiles($('#flowConnA'), 20, .5);
       buildTiles($('#flowConnB'), 20, .55);
       buildTiles($('#flowConnC'), 20, .6);
@@ -561,14 +673,13 @@ Notes: Replace with your data for accurate estimates.`;
     function startFlow(){
       const card = $('#flowCard');
       if(!card) return;
-      card.classList.remove('run'); void card.offsetWidth; // restart animations
+      card.classList.remove('run'); void card.offsetWidth;
       card.classList.add('run');
       $('#flowHubFlash')?.classList.remove('hidden');
       $('#flowSuccess')?.classList.add('hidden');
       setTimeout(()=> $('#flowHubFlash')?.classList.add('hidden'), 1200);
       setTimeout(()=> $('#flowSuccess')?.classList.remove('hidden'), 2200);
       announce('Animated flow started');
-      // auto reset after cycle
       setTimeout(()=>{ card.classList.remove('run'); $('#flowSuccess')?.classList.add('hidden'); }, 7000);
     }
 
