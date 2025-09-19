@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -211,9 +210,9 @@
             <div class="group flex h-full flex-col gap-3 rounded-2xl border border-white/10 bg-white/5 p-5">
               <div class="flex items-center gap-2">
                 <span aria-hidden="true">🖥️</span>
-                <h3 class="text-lg font-semibold">One click. Right app. Every time.</h3>
+                <h3 class="text-lg font-semibold">One Icon, Always the Right App</h3>
               </div>
-              <p class="text-sm text-slate-300">One icon for all apps. Users click once; Workspace routes to the right version (Windows, Mac, VPN, or Web).</p>
+              <p class="text-sm text-slate-300">Users click once. Workspace chooses the right version (Windows, Mac, Web, VPN, VDI) automatically.</p>
               <div class="mt-2 grid grid-cols-3 gap-2 text-sm">
                 ${['Windows','Mac'].map(d=>pill(d, STATE.ctx.device===d, 'set-device', d)).join('')}
                 ${['Corporate','VPN'].map(n=>pill(n, STATE.ctx.network===n, 'set-network', n)).join('')}
@@ -231,9 +230,9 @@
             <div class="group flex h-full flex-col gap-3 rounded-2xl border border-white/10 bg-white/5 p-5">
               <div class="flex items-center gap-2">
                 <span aria-hidden="true">⚙️</span>
-                <h3 class="text-lg font-semibold">Update once. Done. Everywhere.</h3>
+                <h3 class="text-lg font-semibold">Update Once, Deploy Everywhere</h3>
               </div>
-              <p class="text-sm text-slate-300">Configure once; updates flow across all tenants and environments — cloud, on-prem, hybrid.</p>
+              <p class="text-sm text-slate-300">Package an app one time and roll it out across all environments (cloud, on-prem, hybrid) with staged rollouts.</p>
               <div class="rounded-xl border border-white/10 bg-slate-900 p-4 text-sm">
                 <div class="flex items-center gap-2 font-medium"><i data-lucide="wand-2" class="w-4 h-4" aria-hidden="true"></i> Roll out critical app updates</div>
                 <label class="mt-2 flex flex-col gap-1">
@@ -258,9 +257,9 @@
             <div class="group flex h-full flex-col gap-3 rounded-2xl border border-white/10 bg-white/5 p-5">
               <div class="flex items-center gap-2">
                 <span aria-hidden="true">🛡️</span>
-                <h3 class="text-lg font-semibold">Zero-day closed in hours.</h3>
+                <h3 class="text-lg font-semibold">Zero-Day Patches in Hours</h3>
               </div>
-              <p class="text-sm text-slate-300">Security patches roll out in hours, not days — shrinking exposure windows.</p>
+              <p class="text-sm text-slate-300">Security fixes roll out in 1–2 hours instead of a full day, cutting exposure windows by 90%.</p>
               <div class="rounded-xl border border-white/10 bg-slate-900 p-4 text-sm">
                 <div class="flex items-center gap-2 font-medium"><i data-lucide="shield-check" class="w-4 h-4" aria-hidden="true"></i> Zero-day rollout</div>
                 <label class="mt-2 flex flex-col gap-1">
