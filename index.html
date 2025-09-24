@@ -164,23 +164,26 @@
             `).join('')}
           </div>
           <p class="text-sm text-slate-300">Too many apps, too many updates — IT can’t keep up, leaving systems behind and security at risk.</p>
-          <div class="grid grid-cols-1 gap-3 md:grid-cols-3">
-            ${callout('alert-triangle','Why change',[
-              'App delivery is siloed and slow.',
-              'Manual work drains scarce IT time and talent.',
-              'Every delay leaves the business more exposed to risk'
-            ])}
-            ${callout('clock-4','Why now',[
-              'Updates never stop. What used to be yearly is now every week.',
-              'Teams aren’t growing. The only way to keep up is with automation.',
-              'Rules got stricter. Regulators and insurers demand proof of fast patching.'
-            ])}
-            ${callout('sparkles','Why Recast',[
-              'One place to package and deliver apps to every device.',
-              'Set it up once — deploy anywhere, patches run automatically.',
-              'Zero-day closed in hours, not days.'
-            ],true)}
-          </div>
+         <div class="grid grid-cols-1 gap-8 md:grid-cols-3 md:gap-10">
+  ${callout('alert-triangle','Why Change (the problem)',[
+    'App delivery is slow and messy. Too many steps, too many tools.',
+    'Updates pile up. Every new version means more work and more risk.',
+    'Delays leave systems unpatched and wide open to attacks.'
+  ])}
+
+  ${callout('clock-4','Why Now (the urgency)',[
+    'Updates never stop. What used to be yearly is now every week.',
+    'Rules got stricter. Regulators and insurers demand proof of fast patching.',
+    'Teams aren’t growing. The only way to keep up is with automation.'
+  ])}
+
+  ${callout('sparkles','Why Recast (the solution)',[
+    'One place to package and deliver apps to every device.',
+    'Set it up once — deploy anywhere, patches run automatically.',
+    'Fix zero-days in hours, not days, cutting risk and passing audits.'
+  ], true)}
+</div>
+
         </section>
       `;
     }
