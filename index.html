@@ -59,7 +59,8 @@
       packHrs: 8, configHrs: 2, currentHrs: 24,
       roiInputs: { users: 5000, ticketsPerUserPerMonth: 0.035, avgHandleMins: 18, loadedCostPerHour: 85, recastAnnualCost: 120000 },
       copied: false,
-      showLabels: false
+      showLabels: false,
+      showSolutionCards: true
     };
 
     const TABS = [
@@ -203,9 +204,15 @@
           <div class="grid grid-cols-1 gap-3 lg:grid-cols-2">
             ${renderFlow()}
             <div class="flex flex-col gap-3">
-              ${cardUpdateOnce(saved)}
-              ${cardZeroDay(reduced)}
-              ${cardOneIcon(route)}
+              ${STATE.showSolutionCards ? `
+                ${cardUpdateOnce(saved)}
+                ${cardZeroDay(reduced)}
+                ${cardOneIcon(route)}
+              ` : `
+                <div class="section-card p-4 flex items-center justify-center">
+                  <button type="button" data-action="show-solution-cards" class="rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-900 focus-ring">Show</button>
+                </div>
+              `}
             </div>
           </div>
         </section>
@@ -547,10 +554,14 @@
       const root=document.getElementById('app');
 
       root.querySelectorAll('[data-action="switch-tab"]').forEach(b=>b.addEventListener('click',e=>{
-        STATE.activeTab=e.currentTarget.getAttribute('data-tab'); render();
+        STATE.activeTab=e.currentTarget.getAttribute('data-tab');
+        if(STATE.activeTab==='solution'){ STATE.showSolutionCards=false; }
+        render();
       }));
       root.querySelectorAll('[data-action="advance"]').forEach(b=>b.addEventListener('click',e=>{
-        STATE.activeTab=e.currentTarget.getAttribute('data-next'); render();
+        STATE.activeTab=e.currentTarget.getAttribute('data-next'); 
+        if(STATE.activeTab==='solution'){ STATE.showSolutionCards=false; }
+        render();
       }));
 
       root.querySelectorAll('[data-action="set-device"]').forEach(b=>b.addEventListener('click',e=>{ STATE.ctx.device=e.currentTarget.getAttribute('data-value'); render(); }));
@@ -631,6 +642,9 @@ Notes: Illustrative; replace with your data.`;
       const startBtn=root.querySelector('[data-action="start-flow"]'); if(startBtn) startBtn.addEventListener('click', startFlow);
       const resetBtn=root.querySelector('[data-action="reset-flow"]'); if(resetBtn) resetBtn.addEventListener('click', resetFlow);
       const toggleLabels=root.querySelector('[data-action="toggle-labels"]'); if(toggleLabels) toggleLabels.addEventListener('click', ()=>{ STATE.showLabels=!STATE.showLabels; buildFlow(); });
+
+      const showCards=root.querySelector('[data-action="show-solution-cards"]');
+      if(showCards) showCards.addEventListener('click', ()=>{ STATE.showSolutionCards=true; render(); });
     }
 
     /* ---------- Build Flow ---------- */
