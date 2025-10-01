@@ -15,8 +15,6 @@
     html,body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji"}
     .section-card{border-radius:1rem;border:1px solid rgba(255,255,255,.08);background:#0c142b}
     .sub-card{border-radius:.75rem;border:1px solid rgba(255,255,255,.08);background:#0a1124}
-
-    /* Flow primitives */
     .tile{width:.45rem;height:.45rem;border-radius:.25rem;background:#334155;opacity:.9}
     .run .tile{animation:tilePulse 1s ease-in-out var(--d,0s) 1 forwards}
     @keyframes tilePulse{0%{transform:scale(.7);background:#334155;opacity:.4}60%{transform:scale(1);background:#38bdf8;opacity:1}100%{background:#334155;opacity:.9}}
@@ -26,22 +24,16 @@
     .bolt-line{width:.22rem;border-radius:.25rem;transform-origin:top center;transform:scaleY(0)}
     .run .bolt-line{animation:boltDrop .9s ease forwards var(--d,0s)}
     @keyframes boltDrop{to{transform:scaleY(1)}}
-
-    /* Catalog logos */
     .logo-ring{width:2.1rem;height:2.1rem;border-radius:9999px;display:grid;place-items:center;background:#0a1226;box-shadow:inset 0 0 0 1px rgba(255,255,255,.15)}
     .logo-wrap{display:flex;align-items:center;gap:.4rem}
     .logo-name{font-size:.7rem;color:#cbd5e1;white-space:nowrap}
     .run .logo-ring{animation:appPop .85s cubic-bezier(.2,.8,.2,1) var(--d,0s) 1 forwards}
     @keyframes appPop{0%{transform:scale(.85);filter:saturate(.4);opacity:.65}60%{transform:scale(1.05);filter:saturate(1);opacity:1}100%{transform:scale(1)}}
-
-    /* End user */
     .user-beam{height:.38rem;border-radius:.38rem;transform-origin:left center;transform:scaleX(0)}
     .run .user-beam{animation:barGrow 1s ease forwards var(--d,0s)}
     .badge{width:1.15rem;height:1.15rem;border-radius:.3rem;opacity:0;transform:translateY(-6px) scale(.9)}
     .run .badge{animation:badgeDrop .8s ease-out var(--d,0s) forwards}
     @keyframes badgeDrop{to{opacity:1;transform:translateY(0) scale(1)}}
-
-    /* Catalog rows */
     .cat-row{display:grid;grid-template-columns:15ch 1fr;gap:.5rem;align-items:center}
     .cat-title{font-size:.7rem;letter-spacing:.08em}
   </style>
@@ -50,7 +42,6 @@
   <div id="app" class="min-h-screen"></div>
 
   <script>
-    /* ---------- STATE ---------- */
     const STATE = {
       activeTab: 'problems',
       impact: { minutes: 9, pkgHours: 6, riskHrs: 0 },
@@ -61,7 +52,45 @@
       copied: false,
       showLabels: false,
       showSolutionCards: true,
-      openWhy: null, // ensures only one dropdown open at a time
+      openWhy: null,
+      modalOpen: false,
+      editBuffers: { change: '', now: '', recast: '' },
+      currentStateTexts: {
+        change: [
+          'App management is the #1 bottleneck. New devices, platforms, and projects stall until apps are packaged, patched, and proven.',
+          'Too many apps, too many updates. Thousands of apps, constant versions — IT can’t keep up, slowing adoption and raising risk.',
+          'Innovation waits on apps. Every transformation — cloud, security, AI — gets delayed if app delivery isn’t solved first.'
+        ],
+        now: [
+          'Faster change cycles. OS updates, AI tools, and SaaS shifts are constant — apps must keep pace.',
+          'Rising risk. Zero-days and compliance rules make delayed patching unacceptable',
+          'Shrinking teams. IT capacity isn’t growing, but demands are. Fix app management first, or nothing else moves.'
+        ],
+        recast: [
+          'One platform for every app. Package, patch, and deliver from a single place across all devices and management tools.',
+          'Proven scale. 7,000+ curated apps, automated updates, and instant delivery slash manual effort.',
+          'Fuel for innovation. By removing app friction, Recast lets enterprises adopt new tech faster, safer, and with less risk.'
+        ]
+      },
+      defaultsCurrentState() {
+        return JSON.parse(JSON.stringify({
+          change: [
+            'App management is the #1 bottleneck. New devices, platforms, and projects stall until apps are packaged, patched, and proven.',
+            'Too many apps, too many updates. Thousands of apps, constant versions — IT can’t keep up, slowing adoption and raising risk.',
+            'Innovation waits on apps. Every transformation — cloud, security, AI — gets delayed if app delivery isn’t solved first.'
+          ],
+          now: [
+            'Faster change cycles. OS updates, AI tools, and SaaS shifts are constant — apps must keep pace.',
+            'Rising risk. Zero-days and compliance rules make delayed patching unacceptable',
+            'Shrinking teams. IT capacity isn’t growing, but demands are. Fix app management first, or nothing else moves.'
+          ],
+          recast: [
+            'One platform for every app. Package, patch, and deliver from a single place across all devices and management tools.',
+            'Proven scale. 7,000+ curated apps, automated updates, and instant delivery slash manual effort.',
+            'Fuel for innovation. By removing app friction, Recast lets enterprises adopt new tech faster, safer, and with less risk.'
+          ]
+        }));
+      }
     };
 
     const TABS = [
@@ -70,7 +99,6 @@
       { id: 'roi', label: 'Impact & ROI', icon: 'bar-chart-3' }
     ];
 
-    /* ---------- Utils ---------- */
     function cx(...a){ return a.filter(Boolean).join(' '); }
     function round(n){ return Math.round(n*100)/100; }
     function num(n){ return new Intl.NumberFormat().format(Math.round(n)); }
@@ -81,7 +109,6 @@
     }
     function cleanNum(v){ v = Number(String(v).replace(/[^0-9.\-]/g,'')); return isFinite(v) ? v : 0; }
 
-    /* ---------- Root render ---------- */
     function render(){
       const root=document.getElementById('app');
       root.innerHTML = `
@@ -120,11 +147,12 @@
           </div>` : ''}
           <section class="mt-5">${renderActivePanel()}</section>
         </main>
+        ${renderModal()}
       `;
       if (window.lucide?.createIcons) { try { window.lucide.createIcons(); } catch {} }
       attachEvents();
-      if (STATE.activeTab === 'solution') { buildFlow(); } // keep original order: flow left, cards right
-      if (STATE.activeTab === 'roi') { updateROIOutputs(); } // ensure math works
+      if (STATE.activeTab === 'solution') { buildFlow(); }
+      if (STATE.activeTab === 'roi') { updateROIOutputs(); }
     }
 
     function chip(label,value,tone){
@@ -146,7 +174,6 @@
       return '';
     }
 
-    /* ---------- Tab 1: Current State (with working dropdowns) ---------- */
     function renderProblems(){
       const items=[
         {t:'Fragmented delivery',s:'Windows / Mac / VDI / Web — users guess the right way.',i:'layers'},
@@ -165,25 +192,10 @@
             `).join('')}
           </div>
 
-          <!-- Dropdown cards: Why Change / Why Now / Why Recast (one open at a time) -->
           <div class="grid grid-cols-1 md:grid-cols-3 gap-16 items-stretch">
-            ${calloutDropdown('change','alert-triangle','Why Change',[
-              'App management is the #1 bottleneck. New devices, platforms, and projects stall until apps are packaged, patched, and proven.',
-              'Too many apps, too many updates. Thousands of apps, constant versions — IT can’t keep up, slowing adoption and raising risk.',
-              'Innovation waits on apps. Every transformation — cloud, security, AI — gets delayed if app delivery isn’t solved first.'
-            ], 'bg-teal-900')}
-
-            ${calloutDropdown('now','clock-4','Why Now',[
-              'Faster change cycles. OS updates, AI tools, and SaaS shifts are constant — apps must keep pace.',
-              'Rising risk. Zero-days and compliance rules make delayed patching unacceptable',
-              'Shrinking teams. IT capacity isn’t growing, but demands are. Fix app management first, or nothing else moves.'
-            ], 'bg-purple-900')}
-
-            ${calloutDropdown('recast','sparkles','Why Recast',[
-              'One platform for every app. Package, patch, and deliver from a single place across all devices and management tools.',
-              'Proven scale. 7,000+ curated apps, automated updates, and instant delivery slash manual effort.',
-              'Fuel for innovation. By removing app friction, Recast lets enterprises adopt new tech faster, safer, and with less risk.'
-            ], 'bg-fuchsia-900', true)}
+            ${calloutDropdown('change','alert-triangle','Why Change',STATE.currentStateTexts.change, 'bg-teal-900')}
+            ${calloutDropdown('now','clock-4','Why Now',STATE.currentStateTexts.now, 'bg-purple-900')}
+            ${calloutDropdown('recast','sparkles','Why Recast',STATE.currentStateTexts.recast, 'bg-fuchsia-900', true)}
           </div>
         </section>
       `;
@@ -228,7 +240,6 @@
       `;
     }
 
-    /* ---------- Tab 2: Recast Approach (original order preserved) ---------- */
     function renderSolution(){
       const saved=Math.max(0, Number(STATE.packHrs)-Number(STATE.configHrs));
       const reduced=Math.max(0, Number(STATE.currentHrs)-1.5);
@@ -315,7 +326,6 @@
       `;
     }
 
-    /* ---------- Tab 2 left: Animated Flow (unchanged) ---------- */
     function renderFlow(){
       return `
         <div class="section-card p-4">
@@ -399,7 +409,6 @@
       `;
     }
 
-    /* ---------- Tab 3: Impact & ROI (math working) ---------- */
     function renderROI(){
       const r = calcROI();
       return `
@@ -424,6 +433,11 @@
                 ${numInput('Recast annual cost ($)','recastAnnualCost', r.i.recastAnnualCost)}
               </div>
               <div class="mt-3 text-[11px] text-slate-400">All values are examples. Replace with your data for accurate estimates.</div>
+              <div class="mt-4">
+                <button type="button" data-action="open-currentstate-editor" class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold text-white hover:bg-white/20 focus-ring">
+                  <i data-lucide="edit-3" class="w-4 h-4"></i> Current State: Edit
+                </button>
+              </div>
             </div>
 
             <div class="section-card p-4">
@@ -451,7 +465,6 @@
       `;
     }
 
-    /* ROI helpers (unchanged, verified) */
     function calcROI(){
       const i = STATE.roiInputs;
       const ticketsMonth = i.users * i.ticketsPerUserPerMonth;
@@ -511,7 +524,6 @@
       return `<label class="flex flex-col gap-1 text-sm"><span class="text-[12px] text-slate-300">${label}</span><input class="rounded-lg border border-white/10 bg-[#0b1328] px-3 py-1.5 text-sm focus-ring" inputmode="decimal" value="${value}" data-action="set-roi" data-key="${key}"></label>`;
     }
 
-    /* ---------- Realistic Catalog (brand-like marks) ---------- */
     const CATALOG=[
       {title:'CORE PRODUCTIVITY',id:'cat-core',items:[
         logo('Microsoft Word','W','#185ABD'),
@@ -582,7 +594,48 @@
     }
     function shade(hex,m){ const c=hex.replace('#',''); const n=[0,1,2].map(i=>parseInt(c.slice(i*2,i*2+2),16)); const s=n.map(v=>Math.max(0,Math.min(255,Math.round(v*m)))); return '#'+s.map(v=>v.toString(16).padStart(2,'0')).join(''); }
 
-    /* ---------- Events ---------- */
+    function renderModal(){
+      if(!STATE.modalOpen) return '';
+      const buf = STATE.editBuffers;
+      const toLines = arr => arr.join('\n');
+      const ensure = v => v ?? '';
+      return `
+        <div role="dialog" aria-modal="true" aria-labelledby="cs-editor-title" class="fixed inset-0 z-50 grid place-items-center">
+          <div class="absolute inset-0 bg-black/60" data-action="close-modal" aria-hidden="true"></div>
+          <div class="relative w-full max-w-3xl rounded-2xl bg-[#0c142b] ring-1 ring-white/10 p-5">
+            <div class="flex items-center justify-between">
+              <h2 id="cs-editor-title" class="text-xl font-extrabold tracking-tight">Edit Current State</h2>
+              <button type="button" class="rounded-full bg-white/10 p-2 hover:bg-white/20 focus-ring" data-action="close-modal" aria-label="Close">
+                <i data-lucide="x" class="w-4 h-4"></i>
+              </button>
+            </div>
+            <p class="mt-1 text-sm text-slate-300">Enter up to three bullet points per section. Each new line becomes a bullet.</p>
+            <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-3">
+              ${editorBox('change','Why Change', ensure(buf.change) || toLines(STATE.currentStateTexts.change))}
+              ${editorBox('now','Why Now', ensure(buf.now) || toLines(STATE.currentStateTexts.now))}
+              ${editorBox('recast','Why Recast', ensure(buf.recast) || toLines(STATE.currentStateTexts.recast))}
+            </div>
+            <div class="mt-5 flex flex-wrap gap-2">
+              <button type="button" data-action="save-currentstate" class="inline-flex items-center gap-2 rounded-full bg-yellow-400 px-4 py-2 text-sm font-semibold text-slate-900 hover:brightness-95 focus-ring">
+                <i data-lucide="save" class="w-4 h-4"></i> Save
+              </button>
+              <button type="button" data-action="reset-currentstate-defaults" class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold text-white hover:bg-white/20 focus-ring">
+                <i data-lucide="rotate-ccw" class="w-4 h-4"></i> Reset to default
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+    function editorBox(key,label,value){
+      return `
+        <label class="flex flex-col gap-2">
+          <span class="text-sm font-semibold">${label}</span>
+          <textarea data-action="edit-buffer" data-key="${key}" class="min-h-[160px] rounded-lg border border-white/10 bg-[#0b1328] p-3 text-sm leading-5 focus-ring" aria-label="${label} editor" placeholder="One bullet per line (max 3)">${value}</textarea>
+        </label>
+      `;
+    }
+
     function attachEvents(){
       const root=document.getElementById('app');
 
@@ -597,7 +650,6 @@
         render();
       }));
 
-      // Dropdown toggles (only one open at a time)
       root.querySelectorAll('[data-action="toggle-why"]').forEach(b=>b.addEventListener('click',e=>{
         const id=e.currentTarget.getAttribute('data-why');
         STATE.openWhy = (STATE.openWhy === id) ? null : id;
@@ -637,7 +689,7 @@
       });
 
       const copyBtn=root.querySelector('[data-action="copy-onepager"]');
-      ifcopy: if(copyBtn) copyBtn.addEventListener('click', async ()=>{
+      if(copyBtn) copyBtn.addEventListener('click', async ()=>{
         const i = STATE.roiInputs;
         const ticketsMonth = i.users * i.ticketsPerUserPerMonth;
         const hoursFromMinutes = (STATE.impact.minutes * i.users) / 60;
@@ -685,9 +737,16 @@ Notes: Illustrative; replace with your data.`;
 
       const showCards=root.querySelector('[data-action="show-solution-cards"]');
       if(showCards) showCards.addEventListener('click', ()=>{ STATE.showSolutionCards=true; render(); });
+
+      const openEditor=root.querySelector('[data-action="open-currentstate-editor"]');
+      if(openEditor) openEditor.addEventListener('click', ()=>{
+        STATE.modalOpen = true;
+        STATE.editBuffers = { change: '', now: '', recast: '' };
+        render();
+        setTimeout(()=>{ try { window.lucide.createIcons(); } catch{} }, 0);
+      });
     }
 
-    /* ---------- Build Flow ---------- */
     function buildFlow(){
       let base=0;
       CATALOG.forEach(section=>{
@@ -713,7 +772,6 @@ Notes: Illustrative; replace with your data.`;
       buildTiles(document.getElementById('flowDevB'), 10, 1.55);
       buildTiles(document.getElementById('flowDevC'), 10, 1.6);
 
-      // Reset end-user state to "red"
       const avatar=document.getElementById('endUserAvatar');
       const badge=document.getElementById('endUserBadge');
       if(avatar){ avatar.classList.remove('bg-emerald-500'); avatar.classList.add('bg-rose-600/90'); avatar.textContent='U'; }
@@ -747,8 +805,54 @@ Notes: Illustrative; replace with your data.`;
       if(badge){ badge.textContent='!'; badge.classList.remove('bg-green-500'); badge.classList.add('bg-rose-500'); }
     }
 
-    /* ---------- Init ---------- */
     document.addEventListener('DOMContentLoaded', render);
+
+    document.addEventListener('click', (e)=>{
+      const act = e.target.closest('[data-action]');
+      if(!act) return;
+      const action = act.getAttribute('data-action');
+
+      if(action==='close-modal'){
+        STATE.modalOpen=false; render();
+      }
+
+      if(action==='edit-buffer'){
+        const key = act.getAttribute('data-key');
+        act.addEventListener('input', (evt)=>{ STATE.editBuffers[key] = evt.target.value; });
+      }
+
+      if(action==='save-currentstate'){
+        const parseLines = (s)=> (s||'').split('\n').map(l=>l.trim()).filter(Boolean).slice(0,3);
+        const change = parseLines(STATE.editBuffers.change || document.querySelector('textarea[data-key="change"]')?.value || '');
+        const now = parseLines(STATE.editBuffers.now || document.querySelector('textarea[data-key="now"]')?.value || '');
+        const recast = parseLines(STATE.editBuffers.recast || document.querySelector('textarea[data-key="recast"]')?.value || '');
+        const fallback = STATE.defaultsCurrentState();
+        STATE.currentStateTexts = {
+          change: change.length?change:fallback.change,
+          now: now.length?now:fallback.now,
+          recast: recast.length?recast:fallback.recast
+        };
+        STATE.modalOpen=false;
+        STATE.activeTab='problems';
+        STATE.openWhy=null;
+        render();
+      }
+
+      if(action==='reset-currentstate-defaults'){
+        STATE.currentStateTexts = STATE.defaultsCurrentState();
+        const areas = document.querySelectorAll('textarea[data-action="edit-buffer"]');
+        const src = STATE.currentStateTexts;
+        areas.forEach(a=>{
+          const k=a.getAttribute('data-key');
+          a.value = (src[k]||[]).join('\n');
+          STATE.editBuffers[k]='';
+        });
+      }
+    });
+
+    document.addEventListener('keydown',(e)=>{
+      if(e.key==='Escape' && STATE.modalOpen){ STATE.modalOpen=false; render(); }
+    });
   </script>
 </body>
 </html>
