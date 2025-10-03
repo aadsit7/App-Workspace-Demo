@@ -5,40 +5,68 @@
   <title>Recast — Compact Click-Through (Realistic Catalog)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="dark light">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet"></noscript>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet"></noscript>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://unpkg.com">
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
-    .focus-ring:focus-visible{outline:2px solid #facc15;outline-offset:2px}
-    html,body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji"}
-    .section-card{border-radius:1rem;border:1px solid rgba(255,255,255,.08);background:#0c142b}
-    .sub-card{border-radius:.75rem;border:1px solid rgba(255,255,255,.08);background:#0a1124}
-    .tile{width:.45rem;height:.45rem;border-radius:.25rem;background:#334155;opacity:.9}
+    :root{
+      --re-navy:#1F289C;
+      --re-orange:#F05928;
+      --re-blue-mid:#284CBA;
+      --re-blue-bright:#0475FF;
+      --re-blue-light:#679CE8;
+      --re-white:#FFFFFF;
+      --radius:2px;
+      --border-subtle:rgba(255,255,255,0.2);
+    }
+
+    html,body{
+      background:var(--re-navy);
+      color:var(--re-white);
+      font-family:Inter,"SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    }
+
+    .focus-ring:focus-visible{outline:2px solid rgba(255,255,255,0.5);outline-offset:2px}
+
+    /* Brand card surface on navy */
+    .section-card{border-radius:var(--radius);border:1px solid var(--border-subtle);background:rgba(255,255,255,0.08)}
+    .sub-card{border-radius:var(--radius);border:1px solid var(--border-subtle);background:rgba(255,255,255,0.06)}
+
+    /* Minimal tile + flow styles (kept from original) */
+    .tile{width:.45rem;height:.45rem;border-radius:0;background:#334155;opacity:.9}
     .run .tile{animation:tilePulse 1s ease-in-out var(--d,0s) 1 forwards}
     @keyframes tilePulse{0%{transform:scale(.7);background:#334155;opacity:.4}60%{transform:scale(1);background:#38bdf8;opacity:1}100%{background:#334155;opacity:.9}}
-    .flow-bar{height:.22rem;border-radius:.25rem;transform-origin:left center;transform:scaleX(0)}
+    .flow-bar{height:.22rem;border-radius:0;transform-origin:left center;transform:scaleX(0)}
     .run .flow-bar{animation:barGrow .9s ease forwards var(--d,0s)}
     @keyframes barGrow{to{transform:scaleX(1)}}
-    .bolt-line{width:.22rem;border-radius:.25rem;transform-origin:top center;transform:scaleY(0)}
+    .bolt-line{width:.22rem;border-radius:0;transform-origin:top center;transform:scaleY(0)}
     .run .bolt-line{animation:boltDrop .9s ease forwards var(--d,0s)}
     @keyframes boltDrop{to{transform:scaleY(1)}}
+
     .logo-ring{width:2.1rem;height:2.1rem;border-radius:9999px;display:grid;place-items:center;background:#0a1226;box-shadow:inset 0 0 0 1px rgba(255,255,255,.15)}
     .logo-wrap{display:flex;align-items:center;gap:.4rem}
-    .logo-name{font-size:.7rem;color:#cbd5e1;white-space:nowrap}
+    .logo-name{font-size:.7rem;color:#e5e7eb;white-space:nowrap}
     .run .logo-ring{animation:appPop .85s cubic-bezier(.2,.8,.2,1) var(--d,0s) 1 forwards}
     @keyframes appPop{0%{transform:scale(.85);filter:saturate(.4);opacity:.65}60%{transform:scale(1.05);filter:saturate(1);opacity:1}100%{transform:scale(1)}}
-    .user-beam{height:.38rem;border-radius:.38rem;transform-origin:left center;transform:scaleX(0)}
+    .user-beam{height:.38rem;border-radius:0;transform-origin:left center;transform:scaleX(0)}
     .run .user-beam{animation:barGrow 1s ease forwards var(--d,0s)}
-    .badge{width:1.15rem;height:1.15rem;border-radius:.3rem;opacity:0;transform:translateY(-6px) scale(.9)}
+    .badge{width:1.15rem;height:1.15rem;border-radius:0;opacity:0;transform:translateY(-6px) scale(.9)}
     .run .badge{animation:badgeDrop .8s ease-out var(--d,0s) forwards}
     @keyframes badgeDrop{to{opacity:1;transform:translateY(0) scale(1)}}
     .cat-row{display:grid;grid-template-columns:15ch 1fr;gap:.5rem;align-items:center}
     .cat-title{font-size:.7rem;letter-spacing:.08em}
+
+    /* Brand buttons */
+    .re-primary{background:var(--re-orange)!important;color:#fff!important;border:0;border-radius:var(--radius)}
+    .re-primary:hover{background:#D64F22!important}
+    .re-primary:focus-visible{outline:2px solid rgba(255,255,255,0.5);outline-offset:2px}
+    .re-secondary{background:transparent!important;color:#fff!important;border:2px solid #fff!important;border-radius:var(--radius)}
+    .re-secondary:hover{color:var(--re-blue-light)!important;border-color:var(--re-blue-light)!important}
   </style>
 </head>
-<body class="min-h-screen bg-[#0b1020] text-slate-100 antialiased">
+<body class="min-h-screen antialiased">
   <div id="app" class="min-h-screen"></div>
 
   <script>
@@ -112,25 +140,19 @@
     function render(){
       const root=document.getElementById('app');
       root.innerHTML = `
-        <header class="relative overflow-hidden">
-          <div aria-hidden="true" class="absolute inset-0">
-            <div class="absolute -top-40 -left-28 h-[420px] w-[420px] blur-[110px] rounded-full bg-gradient-to-br from-sky-500/25 via-indigo-500/20 to-fuchsia-500/30"></div>
-            <div class="absolute -top-16 right-0 h-[280px] w-[280px] blur-[110px] rounded-full bg-gradient-to-br from-fuchsia-400/25 via-purple-500/20 to-sky-500/25"></div>
-          </div>
+        <header class="relative">
           <div class="relative mx-auto max-w-6xl px-4 pt-8 pb-6">
-            <h1 class="text-[32px] font-extrabold leading-tight">
-              <span class="text-white">Recast Software</span>
-            </h1>
-            <p class="mt-2 max-w-2xl text-[16px] leading-[1.5] text-slate-300">
+            <h1 class="text-[40px] md:text-[56px] font-semibold leading-tight">Recast Software</h1>
+            <p class="mt-2 max-w-2xl text-[16px] leading-[1.5] opacity-90">
               ${STATE.activeTab==='problems'
                 ? 'Application deployment isn’t the problem. Doing it fast, consistently, and securely across the business is. — Microsoft MVP'
                 : 'Recast works across SCCM, Intune, Citrix, VMware Workspace ONE, and more—making the tools you already use faster, smarter, and easier to manage'}
             </p>
           </div>
           <div class="relative mx-auto max-w-6xl px-4">
-            <div role="tablist" aria-label="Demo sections" class="flex w-full flex-wrap gap-2 rounded-full bg-[#0b152f] p-1 ring-1 ring-white/10">
+            <div role="tablist" aria-label="Demo sections" class="flex w-full flex-wrap gap-2 rounded-[2px] bg-white/5 p-1 ring-1 ring-white/20">
               ${TABS.map(t=>`
-                <button type="button" class="${cx('inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-sm focus-ring transition', STATE.activeTab===t.id ? 'bg-yellow-400 text-slate-900' : 'text-slate-200 hover:bg-white/5')}" data-action="switch-tab" data-tab="${t.id}" aria-controls="panel-${t.id}" aria-selected="${STATE.activeTab===t.id}">
+                <button type="button" class="${cx('inline-flex items-center gap-2 px-3.5 py-1.5 text-sm focus-ring transition', STATE.activeTab===t.id ? 're-primary' : 'text-white hover:bg-white/10 rounded-[2px]')}" data-action="switch-tab" data-tab="${t.id}" aria-controls="panel-${t.id}" aria-selected="${STATE.activeTab===t.id}">
                   <i data-lucide="${t.icon}" class="w-4 h-4"></i><span>${t.label}</span>
                 </button>
               `).join('')}
@@ -159,8 +181,8 @@
       const tones={emerald:'from-emerald-400/80 to-teal-400/80',sky:'from-sky-400/80 to-indigo-400/80',yellow:'from-yellow-300/90 to-amber-400/90'};
       return `
         <div class="section-card p-3">
-          <div class="text-[11px] text-slate-300">${label}</div>
-          <div class="mt-1 inline-flex items-center gap-2 rounded-full bg-gradient-to-r px-2 py-0.5 text-slate-900 ${tones[tone]}">
+          <div class="text-[11px] opacity-90">${label}</div>
+          <div class="mt-1 inline-flex items-center gap-2 rounded-[2px] bg-gradient-to-r px-2 py-0.5 text-slate-900 ${tones[tone]}">
             <i data-lucide="badge-check" class="w-4 h-4"></i><span class="text-sm font-semibold tabular-nums">${value}</span>
           </div>
         </div>
@@ -186,16 +208,16 @@
           <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
             ${items.map(p=>`
               <article class="section-card p-4">
-                <div class="flex items-center gap-2"><i data-lucide="${p.i}" class="w-5 h-5 text-sky-300"></i><h3 class="text-base font-semibold">${p.t}</h3></div>
-                <p class="mt-1 text-sm text-slate-300">${p.s}</p>
+                <div class="flex items-center gap-2"><i data-lucide="${p.i}" class="w-5 h-5" style="color:var(--re-blue-light)"></i><h3 class="text-base font-semibold">${p.t}</h3></div>
+                <p class="mt-1 text-sm opacity-90">${p.s}</p>
               </article>
             `).join('')}
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-3 gap-16 items-stretch">
-            ${calloutDropdown('change','alert-triangle','Why Change',STATE.currentStateTexts.change, 'bg-teal-900')}
-            ${calloutDropdown('now','clock-4','Why Now',STATE.currentStateTexts.now, 'bg-purple-900')}
-            ${calloutDropdown('recast','sparkles','Why Recast',STATE.currentStateTexts.recast, 'bg-fuchsia-900', true)}
+            ${calloutDropdown('change','alert-triangle','Why Change',STATE.currentStateTexts.change, 'bg-[rgba(255,255,255,0.06)]')}
+            ${calloutDropdown('now','clock-4','Why Now',STATE.currentStateTexts.now, 'bg-[rgba(255,255,255,0.06)]')}
+            ${calloutDropdown('recast','sparkles','Why Recast',STATE.currentStateTexts.recast, 'bg-[rgba(255,255,255,0.06)]', true)}
           </div>
         </section>
       `;
@@ -208,16 +230,17 @@
         <div class="h-full flex flex-col">
           <button
             type="button"
-            class="w-full rounded-2xl overflow-hidden shadow-sm ring-1 ring-white/10 focus-ring transition hover:ring-white/20"
+            class="w-full overflow-hidden ring-1 ring-white/20 focus-ring transition hover:ring-white/30"
             data-action="toggle-why"
             data-why="${id}"
             aria-expanded="${expanded}"
             aria-controls="${contentId}"
+            style="border-radius:var(--radius)"
           >
-            <div class="${cx('flex items-center justify-between px-5', headerTone)}">
+            <div class="${cx('flex items-center justify-between px-5', headerTone)}" style="border-bottom:1px solid var(--border-subtle)">
               <div class="flex items-center gap-2">
                 <i data-lucide="${icon}" class="w-5 h-5 text-white/95" aria-hidden="true"></i>
-                <span class="py-4 text-[22px] font-extrabold tracking-tight text-white">${label}</span>
+                <span class="py-4 text-[22px] font-semibold tracking-normal text-white">${label}</span>
               </div>
               <i data-lucide="${expanded?'chevron-up':'chevron-down'}" class="w-5 h-5 text-white/90 transition-transform duration-300 ${expanded?'rotate-180':''}" aria-hidden="true"></i>
             </div>
@@ -228,7 +251,7 @@
               </ul>
               ${cta?`
                 <div class="mt-6 flex justify-end">
-                  <button type="button" data-action="advance" data-next="solution" class="inline-flex rounded-full bg-[#0b1020] text-white text-[14px] font-semibold px-4 py-2 items-center gap-2 hover:brightness-110 focus-ring">
+                  <button type="button" data-action="advance" data-next="solution" class="inline-flex re-primary text-[14px] font-semibold px-4 py-2 items-center gap-2 focus-ring">
                     <i data-lucide="arrow-right" class="w-4 h-4"></i>
                     How Recast solves it
                   </button>
@@ -255,7 +278,7 @@
                 ${cardOneIcon(route)}
               ` : `
                 <div class="section-card p-4 flex items-center justify-center">
-                  <button type="button" data-action="show-solution-cards" class="rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-900 focus-ring">Show</button>
+                  <button type="button" data-action="show-solution-cards" class="re-secondary px-4 py-2 text-sm font-semibold focus-ring">Show</button>
                 </div>
               `}
             </div>
@@ -265,22 +288,22 @@
     }
 
     function pill(label,active,action,value){
-      return `<button type="button" class="${cx('rounded-full px-3 py-1 border text-xs transition hover:bg-white/10',active?'bg-yellow-400 text-slate-900 border-transparent':'bg-[#0a1124] text-slate-200 border-white/10')}" data-action="${action}" data-value="${String(value)}">${label}</button>`;
+      return `<button type="button" class="${cx('px-3 py-1 border text-xs transition',active?'re-primary border-transparent':'bg-transparent text-white border-white/20 hover:border-white')} rounded-[2px]" data-action="${action}" data-value="${String(value)}">${label}</button>`;
     }
 
     function cardOneIcon(route){
       return `
         <div class="section-card p-4">
           <div class="flex items-center gap-2"><span>🖥️</span><h3 class="text-base font-semibold">Always the Right App, No Matter Where You Work.</h3></div>
-          <p class="mt-1 text-sm text-slate-300">Smart Icons open apps the best way for each user—on Windows, macOS, Web, VPN, or VDI.</p>
+          <p class="mt-1 text-sm opacity-90">Smart Icons open apps the best way for each user—on Windows, macOS, Web, VPN, or VDI.</p>
           <div class="mt-2 grid grid-cols-3 gap-2 text-xs">
             ${['Windows','Mac'].map(d=>pill(d,STATE.ctx.device===d,'set-device',d)).join('')}
             ${['Corporate','VPN'].map(n=>pill(n,STATE.ctx.network===n,'set-network',n)).join('')}
             ${pill(STATE.ctx.compliant?'Compliant':'Non-compliant',STATE.ctx.compliant,'toggle-compliance','')}
           </div>
-          <div class="mt-2 text-sm text-slate-300">Recommended route:</div>
-          <div class="inline-flex items-center gap-2 rounded-full bg-yellow-400 px-3 py-1 text-slate-900 text-sm"><i data-lucide="check-circle-2" class="w-4 h-4"></i>${route}</div>
-          <div class="mt-3"><button type="button" class="rounded-full border border-white/10 bg-white/10 px-3 py-1 text-xs hover:bg-white/20" data-action="add-impact" data-kind="minutes" data-value="2">Add to impact (+2 min saved per user)</button></div>
+          <div class="mt-2 text-sm opacity-90">Recommended route:</div>
+          <div class="inline-flex items-center gap-2 re-primary px-3 py-1 text-sm"><i data-lucide="check-circle-2" class="w-4 h-4"></i>${route}</div>
+          <div class="mt-3"><button type="button" class="re-secondary px-3 py-1 text-xs" data-action="add-impact" data-kind="minutes" data-value="2">Add to impact (+2 min saved per user)</button></div>
         </div>
       `;
     }
@@ -288,22 +311,22 @@
       return `
         <div class="section-card p-4">
           <div class="flex items-center gap-2"><span>⚙️</span><h3 class="text-base font-semibold">Update Once, Deploy Everywhere</h3></div>
-          <p class="mt-1 text-sm text-slate-300">Package one time; push to cloud, on-prem, or hybrid with rings.</p>
+          <p class="mt-1 text-sm opacity-90">Package one time; push to cloud, on-prem, or hybrid with rings.</p>
           <div class="sub-card p-3 text-sm">
             <div class="flex items-center gap-2 font-medium"><i data-lucide="wand-2" class="w-4 h-4"></i> Critical app updates</div>
             <label class="mt-2 flex items-center gap-2 text-xs">
-              <span class="text-slate-400">Hours/package</span>
-              <input class="w-16 rounded bg-slate-950 px-2 py-1" value="${STATE.packHrs}" inputmode="decimal" data-action="set-pack-hrs" aria-label="Hours per package">
+              <span class="opacity-80">Hours/package</span>
+              <input class="w-16 rounded bg-black/30 px-2 py-1" value="${STATE.packHrs}" inputmode="decimal" data-action="set-pack-hrs" aria-label="Hours per package">
               <span>→</span>
-              <input class="w-16 rounded bg-slate-950 px-2 py-1" value="${STATE.configHrs}" inputmode="decimal" data-action="set-config-hrs" aria-label="Hours to configure">
+              <input class="w-16 rounded bg-black/30 px-2 py-1" value="${STATE.configHrs}" inputmode="decimal" data-action="set-config-hrs" aria-label="Hours to configure">
             </label>
-            <div class="mt-2 flex items-center justify-between rounded bg-black/20 px-3 py-2"><span class="tabular-nums">${STATE.packHrs} → ${STATE.configHrs} hrs</span><strong class="tabular-nums">${saved} hrs saved</strong></div>
-            <div class="mt-2 text-[12px] text-slate-300 flex flex-wrap gap-2">
-              <span class="rounded-full bg-black/30 px-2 py-1">☁️ Cloud</span>
-              <span class="rounded-full bg-black/30 px-2 py-1">🖥️ On-Prem</span>
-              <span class="rounded-full bg-black/30 px-2 py-1">🔀 Hybrid</span>
+            <div class="mt-2 flex items-center justify-between rounded bg-black/30 px-3 py-2"><span class="tabular-nums">${STATE.packHrs} → ${STATE.configHrs} hrs</span><strong class="tabular-nums">${saved} hrs saved</strong></div>
+            <div class="mt-2 text-[12px] flex flex-wrap gap-2">
+              <span class="rounded px-2 py-1 bg-black/30">☁️ Cloud</span>
+              <span class="rounded px-2 py-1 bg-black/30">🖥️ On-Prem</span>
+              <span class="rounded px-2 py-1 bg-black/30">🔀 Hybrid</span>
             </div>
-            <button type="button" class="mt-2 rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-900 hover:brightness-95" data-action="add-impact" data-kind="pkgHours" data-value="${saved}">Add to impact</button>
+            <button type="button" class="mt-2 re-primary px-3 py-1 text-xs font-semibold" data-action="add-impact" data-kind="pkgHours" data-value="${saved}">Add to impact</button>
           </div>
         </div>
       `;
@@ -312,15 +335,15 @@
       return `
         <div class="section-card p-4">
           <div class="flex items-center gap-2"><span>🛡️</span><h3 class="text-base font-semibold">Zero-Day Patches in Hours</h3></div>
-          <p class="mt-1 text-sm text-slate-300">Security fixes deploy in 1–2 hours instead of a full day (~90% faster).</p>
+          <p class="mt-1 text-sm opacity-90">Security fixes deploy in 1–2 hours instead of a full day (~90% faster).</p>
           <div class="sub-card p-3 text-sm">
             <div class="flex items-center gap-2 font-medium"><i data-lucide="shield-check" class="w-4 h-4"></i> Zero-day rollout</div>
             <label class="mt-2 flex items-center gap-2 text-xs">
-              <span class="text-slate-400">Current hrs</span>
-              <input class="w-20 rounded bg-slate-950 px-2 py-1" value="${STATE.currentHrs}" inputmode="decimal" data-action="set-current-hrs" aria-label="Current time to deploy (hours)">
+              <span class="opacity-80">Current hrs</span>
+              <input class="w-20 rounded bg-black/30 px-2 py-1" value="${STATE.currentHrs}" inputmode="decimal" data-action="set-current-hrs" aria-label="Current time to deploy (hours)">
             </label>
-            <div class="mt-2 flex items-center justify-between rounded bg-black/20 px-3 py-2"><span class="tabular-nums">${STATE.currentHrs} → 1.5 hrs</span><strong class="tabular-nums">${round(reduced)} hrs reduced</strong></div>
-            <button type="button" class="mt-2 rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-900 hover:brightness-95" data-action="add-impact" data-kind="riskHrs" data-value="${reduced}">Add to impact</button>
+            <div class="mt-2 flex items-center justify-between rounded bg-black/30 px-3 py-2"><span class="tabular-nums">${STATE.currentHrs} → 1.5 hrs</span><strong class="tabular-nums">${round(reduced)} hrs reduced</strong></div>
+            <button type="button" class="mt-2 re-primary px-3 py-1 text-xs font-semibold" data-action="add-impact" data-kind="riskHrs" data-value="${reduced}">Add to impact</button>
           </div>
         </div>
       `;
@@ -331,16 +354,16 @@
         <div class="section-card p-4">
           <div class="flex items-center justify-between gap-3">
             <div class="flex items-center gap-2">
-              <div class="h-6 w-6 rounded-lg bg-gradient-to-br from-sky-500 via-indigo-500 to-fuchsia-500 grid place-items-center"><i data-lucide="boxes" class="h-3.5 w-3.5 text-white"></i></div>
+              <div class="h-6 w-6 rounded-[2px] grid place-items-center" style="background:var(--re-blue-mid)"><i data-lucide="boxes" class="h-3.5 w-3.5 text-white"></i></div>
               <div>
                 <h3 class="text-base font-semibold">Application Workspace</h3>
-                <div class="text-[12px] text-slate-400">Curated & secured catalog</div>
+                <div class="text-[12px] opacity-80">Curated & secured catalog</div>
               </div>
             </div>
-            <div class="flex items-center gap-2 text-[12px] text-slate-300">
-              <button type="button" class="rounded-full border border-white/15 bg-white/10 px-2.5 py-1 hover:bg-white/20" data-action="toggle-labels">${STATE.showLabels?'Hide':'Show'} labels</button>
-              <button type="button" data-action="start-flow" class="rounded-full bg-white px-2.5 py-1.5 text-[12px] font-semibold text-slate-900 hover:brightness-95">Start</button>
-              <button type="button" data-action="reset-flow" class="rounded-full border border-white/20 bg-white/10 px-2.5 py-1.5 text-[12px] hover:bg-white/20">Reset</button>
+            <div class="flex items-center gap-2 text-[12px]">
+              <button type="button" class="re-secondary px-2.5 py-1" data-action="toggle-labels">${STATE.showLabels?'Hide':'Show'} labels</button>
+              <button type="button" data-action="start-flow" class="re-primary px-2.5 py-1.5 text-[12px] font-semibold">Start</button>
+              <button type="button" data-action="reset-flow" class="re-secondary px-2.5 py-1.5">Reset</button>
             </div>
           </div>
 
@@ -348,20 +371,20 @@
             <div class="space-y-2">
               ${CATALOG.map(s=>`
                 <div class="cat-row">
-                  <div class="cat-title text-slate-400 uppercase">${s.title}</div>
+                  <div class="cat-title uppercase opacity-90">${s.title}</div>
                   <div id="${s.id}" class="flex flex-wrap gap-2"></div>
                 </div>
               `).join('')}
             </div>
 
-            <div id="flowHubFlash" class="mt-2 hidden text-amber-300 text-[12px] inline-flex items-center gap-1"><i data-lucide="bolt" class="h-4 w-4"></i><span>Update published</span></div>
+            <div id="flowHubFlash" class="mt-2 hidden" style="color:var(--re-blue-light)"><span class="inline-flex items-center gap-1 text-[12px]"><i data-lucide="bolt" class="h-4 w-4"></i><span>Update published</span></span></div>
 
             <div class="mt-3 grid grid-cols-3 gap-2" aria-hidden="true">
               ${['A','B','C'].map((k,i)=>`
                 <div class="sub-card p-2">
-                  <div class="text-[12px] text-slate-300">${['Existing Platforms','Staged Rings','Access & Policy'][i]}</div>
+                  <div class="text-[12px] opacity-90">${['Existing Platforms','Staged Rings','Access & Policy'][i]}</div>
                   <div id="flowConn${k}" class="mt-1 grid grid-cols-10 gap-1.5"></div>
-                  <div class="mt-1 flow-bar w-full bg-gradient-to-r from-sky-400 via-indigo-400 to-fuchsia-400" style="--d:${.55 + .12*i}s"></div>
+                  <div class="mt-1 flow-bar w-full" style="background:linear-gradient(to right,var(--re-blue-light),var(--re-blue-bright));--d:${.55 + .12*i}s"></div>
                 </div>
               `).join('')}
             </div>
@@ -369,9 +392,9 @@
             <div class="mt-3 grid grid-cols-3 gap-2" aria-hidden="true">
               ${['A','B','C'].map((k,i)=>`
                 <div class="sub-card p-2">
-                  <div class="text-[12px] text-slate-300">${['Business Unit','Subsidiary','Region'][i]}</div>
+                  <div class="text-[12px] opacity-90">${['Business Unit','Subsidiary','Region'][i]}</div>
                   <div id="flowGrp${k}" class="mt-1 grid grid-cols-8 gap-1.5"></div>
-                  <div class="mx-auto mt-1 bolt-line h-16 w-1 bg-gradient-to-b from-amber-300 via-white to-amber-300" style="--d:${1 + .15*i}s"></div>
+                  <div class="mx-auto mt-1 bolt-line h-16 w-1" style="background:linear-gradient(to bottom,#fff,var(--re-blue-light));--d:${1 + .15*i}s"></div>
                 </div>
               `).join('')}
             </div>
@@ -379,9 +402,9 @@
             <div class="mt-3 grid grid-cols-3 gap-2" aria-hidden="true">
               ${['A','B','C'].map((k,i)=>`
                 <div class="sub-card p-2 text-center">
-                  <i data-lucide="${['monitor-smartphone','laptop','smartphone'][i]}" class="h-5 w-5 text-slate-300"></i>
+                  <i data-lucide="${['monitor-smartphone','laptop','smartphone'][i]}" class="h-5 w-5 opacity-80"></i>
                   <div id="flowDev${k}" class="mt-1 grid grid-cols-6 gap-1.5"></div>
-                  <div class="mt-1 text-[11px] text-slate-400">${['Windows & macOS','VDI / Web','Mobile'][i]}</div>
+                  <div class="mt-1 text-[11px] opacity-80">${['Windows & macOS','VDI / Web','Mobile'][i]}</div>
                 </div>
               `).join('')}
             </div>
@@ -389,20 +412,20 @@
             <div class="mt-3">
               <div id="endUserCard" class="sub-card p-3">
                 <div class="flex items-center gap-3">
-                  <div id="endUserAvatar" class="h-9 w-9 rounded-full bg-rose-600/90 grid place-items-center font-semibold">U</div>
+                  <div id="endUserAvatar" class="h-9 w-9 grid place-items-center font-semibold" style="background:#EA4335;border-radius:9999px">U</div>
                   <div class="text-sm">
-                    <div class="font-medium text-slate-200">End user</div>
-                    <div class="text-slate-400">Apps on demand — no waiting, no tickets.</div>
+                    <div class="font-medium">End user</div>
+                    <div class="opacity-80">Apps on demand — no waiting, no tickets.</div>
                   </div>
                 </div>
-                <div class="mt-3 user-beam bg-gradient-to-r from-sky-400 via-indigo-400 to-fuchsia-400" style="--d:2.1s"></div>
-                <div class="relative mt-2 rounded-lg border border-white/10 bg-[#0b1328] p-4">
+                <div class="mt-3 user-beam" style="background:linear-gradient(to right,var(--re-blue-light),var(--re-blue-bright));--d:2.1s"></div>
+                <div class="relative mt-2" style="border:1px solid var(--border-subtle);background:rgba(255,255,255,0.06);border-radius:var(--radius);padding:1rem">
                   <i data-lucide="laptop" class="h-5 w-5 opacity-80"></i>
-                  <div id="endUserBadge" class="absolute right-2 top-2 badge bg-rose-500 text-black grid place-items-center font-bold" style="--d:2.4s">!</div>
-                  <div class="mt-1 text-[11px] text-slate-400">Workspace launches the correct app instantly</div>
+                  <div id="endUserBadge" class="absolute right-2 top-2 badge grid place-items-center font-bold" style="--d:2.4s;background:#E11D48;color:#000">!</div>
+                  <div class="mt-1 text-[11px] opacity-80">Workspace launches the correct app instantly</div>
                 </div>
               </div>
-              <div id="flowSuccess" class="mt-2 hidden text-emerald-300 text-[13px] inline-flex items-center gap-1"><i data-lucide="sparkles" class="h-4 w-4"></i><span>Configured once → delivered everywhere.</span></div>
+              <div id="flowSuccess" class="mt-2 hidden inline-flex items-center gap-1 text-[13px]" style="color:#10B981"><i data-lucide="sparkles" class="h-4 w-4"></i><span>Configured once → delivered everywhere.</span></div>
             </div>
           </div>
         </div>
@@ -433,7 +456,7 @@
                 ${numInput('Recast annual cost ($)','recastAnnualCost', r.i.recastAnnualCost)}
               </div>
               <div class="mt-4">
-                <button type="button" data-action="open-currentstate-editor" class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold text-white hover:bg-white/20 focus-ring">
+                <button type="button" data-action="open-currentstate-editor" class="inline-flex items-center gap-2 re-secondary px-4 py-2 text-sm font-semibold focus-ring">
                   <i data-lucide="edit-3" class="w-4 h-4"></i> Current State
                 </button>
               </div>
@@ -450,8 +473,8 @@
                 ${kvId('Equivalent IT FTEs freed', r.fteEquivalent, 'res-fte')}
               </div>
               <div class="mt-4 flex flex-wrap gap-2">
-                <button type="button" data-action="reset-calculator" class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold text-white hover:bg-white/20 focus-ring">Reset</button>
-                <button type="button" data-action="copy-onepager" class="inline-flex items-center gap-2 rounded-full bg-yellow-400 px-4 py-2 text-sm font-semibold text-slate-900 hover:brightness-95 focus-ring">
+                <button type="button" data-action="reset-calculator" class="inline-flex items-center gap-2 re-secondary px-4 py-2 text-sm font-semibold focus-ring">Reset</button>
+                <button type="button" data-action="copy-onepager" class="inline-flex items-center gap-2 re-primary px-4 py-2 text-sm font-semibold focus-ring">
                   <i data-lucide="clipboard" class="w-4 h-4"></i> ${STATE.copied ? 'Copied!' : 'Copy executive one-pager'}
                 </button>
               </div>
@@ -505,20 +528,20 @@
         <div class="section-card p-3">
           <div class="flex items-center justify-between">
             <div>
-              <div class="text-[11px] text-slate-300">${label}</div>
+              <div class="text-[11px] opacity-90">${label}</div>
               <div id="${id}" class="text-xl font-semibold tabular-nums">${value}</div>
             </div>
-            <i data-lucide="${icon}" class="w-5 h-5 text-sky-300"></i>
+            <i data-lucide="${icon}" class="w-5 h-5" style="color:var(--re-blue-light)"></i>
           </div>
-          ${hint ? `<div class="mt-1 text-[11px] text-slate-400">${hint}</div>` : ''}
+          ${hint ? `<div class="mt-1 text-[11px] opacity-80">${hint}</div>` : ''}
         </div>
       `;
     }
     function kvId(label,value,id){
-      return `<div class="flex items-center justify-between rounded-lg bg-black/20 px-3 py-2"><span class="text-slate-300">${label}</span><span id="${id}" class="font-semibold tabular-nums">${value}</span></div>`;
+      return `<div class="flex items-center justify-between rounded-[2px] bg-black/30 px-3 py-2"><span class="opacity-90">${label}</span><span id="${id}" class="font-semibold tabular-nums">${value}</span></div>`;
     }
     function numInput(label,key,value){
-      return `<label class="flex flex-col gap-1 text-sm"><span class="text-[12px] text-slate-300">${label}</span><input class="rounded-lg border border-white/10 bg-[#0b1328] px-3 py-1.5 text-sm focus-ring" inputmode="decimal" value="${value}" data-action="set-roi" data-key="${key}"></label>`;
+      return `<label class="flex flex-col gap-1 text-sm"><span class="text-[12px] opacity-90">${label}</span><input class="rounded-[2px] border border-white/20 bg-black/30 px-3 py-1.5 text-sm focus-ring" inputmode="decimal" value="${value}" data-action="set-roi" data-key="${key}"></label>`;
     }
 
     const CATALOG=[
@@ -599,24 +622,24 @@
       return `
         <div role="dialog" aria-modal="true" aria-labelledby="cs-editor-title" class="fixed inset-0 z-50 grid place-items-center">
           <div class="absolute inset-0 bg-black/60" data-action="close-modal" aria-hidden="true"></div>
-          <div class="relative w-full max-w-3xl rounded-2xl bg-[#0c142b] ring-1 ring-white/10 p-5">
+          <div class="relative w-full max-w-3xl p-5" style="border-radius:var(--radius);background:rgba(255,255,255,0.08);border:1px solid var(--border-subtle)">
             <div class="flex items-center justify-between">
-              <h2 id="cs-editor-title" class="text-xl font-extrabold tracking-tight">Edit Current State</h2>
-              <button type="button" class="rounded-full bg-white/10 p-2 hover:bg-white/20 focus-ring" data-action="close-modal" aria-label="Close">
+              <h2 id="cs-editor-title" class="text-xl font-semibold tracking-normal">Edit Current State</h2>
+              <button type="button" class="re-secondary p-2 focus-ring" data-action="close-modal" aria-label="Close">
                 <i data-lucide="x" class="w-4 h-4"></i>
               </button>
             </div>
-            <p class="mt-1 text-sm text-slate-300">Enter up to three bullet points per section. Each new line becomes a bullet.</p>
+            <p class="mt-1 text-sm opacity-90">Enter up to three bullet points per section. Each new line becomes a bullet.</p>
             <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-3">
               ${editorBox('change','Why Change', ensure(buf.change) || toLines(STATE.currentStateTexts.change))}
               ${editorBox('now','Why Now', ensure(buf.now) || toLines(STATE.currentStateTexts.now))}
               ${editorBox('recast','Why Recast', ensure(buf.recast) || toLines(STATE.currentStateTexts.recast))}
             </div>
             <div class="mt-5 flex flex-wrap gap-2">
-              <button type="button" data-action="save-currentstate" class="inline-flex items-center gap-2 rounded-full bg-yellow-400 px-4 py-2 text-sm font-semibold text-slate-900 hover:brightness-95 focus-ring">
+              <button type="button" data-action="save-currentstate" class="inline-flex items-center gap-2 re-primary px-4 py-2 text-sm font-semibold focus-ring">
                 <i data-lucide="save" class="w-4 h-4"></i> Save
               </button>
-              <button type="button" data-action="reset-currentstate-defaults" class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold text-white hover:bg-white/20 focus-ring">
+              <button type="button" data-action="reset-currentstate-defaults" class="inline-flex items-center gap-2 re-secondary px-4 py-2 text-sm font-semibold focus-ring">
                 <i data-lucide="rotate-ccw" class="w-4 h-4"></i> Reset to default
               </button>
             </div>
@@ -628,7 +651,7 @@
       return `
         <label class="flex flex-col gap-2">
           <span class="text-sm font-semibold">${label}</span>
-          <textarea data-action="edit-buffer" data-key="${key}" class="min-h-[160px] rounded-lg border border-white/10 bg-[#0b1328] p-3 text-sm leading-5 focus-ring" aria-label="${label} editor" placeholder="One bullet per line (max 3)">${value}</textarea>
+          <textarea data-action="edit-buffer" data-key="${key}" class="min-h-[160px] rounded-[2px] border border-white/20 bg-black/30 p-3 text-sm leading-5 focus-ring" aria-label="${label} editor" placeholder="One bullet per line (max 3)">${value}</textarea>
         </label>
       `;
     }
@@ -771,8 +794,8 @@ Notes: Illustrative; replace with your data.`;
 
       const avatar=document.getElementById('endUserAvatar');
       const badge=document.getElementById('endUserBadge');
-      if(avatar){ avatar.classList.remove('bg-emerald-500'); avatar.classList.add('bg-rose-600/90'); avatar.textContent='U'; }
-      if(badge){ badge.textContent='!'; badge.classList.remove('bg-rose-500'); badge.classList.add('bg-rose-500'); }
+      if(avatar){ avatar.style.background='#EA4335'; avatar.textContent='U'; }
+      if(badge){ badge.textContent='!'; badge.style.background='#E11D48'; }
     }
     function buildTiles(container,count,baseDelay){
       if(!container) return; container.innerHTML='';
@@ -787,8 +810,8 @@ Notes: Illustrative; replace with your data.`;
       if(flash){ flash.classList.remove('hidden'); setTimeout(()=>flash.classList.add('hidden'),1000); }
       if(success) success.classList.add('hidden');
       setTimeout(()=>{
-        if(avatar){ avatar.classList.remove('bg-rose-600/90'); avatar.classList.add('bg-emerald-500'); }
-        if(badge){ badge.textContent='✓'; badge.classList.remove('bg-rose-500'); badge.classList.add('bg-green-500'); }
+        if(avatar){ avatar.style.background='#10B981'; }
+        if(badge){ badge.textContent='✓'; badge.style.background='#10B981'; }
       }, 2100);
       setTimeout(()=> success && success.classList.remove('hidden'), 2500);
       setTimeout(()=> card.classList.remove('run'), 6000);
@@ -798,8 +821,8 @@ Notes: Illustrative; replace with your data.`;
       card.classList.remove('run');
       const success=document.getElementById('flowSuccess'); if(success) success.classList.add('hidden');
       const avatar=document.getElementById('endUserAvatar'); const badge=document.getElementById('endUserBadge');
-      if(avatar){ avatar.classList.remove('bg-emerald-500'); avatar.classList.add('bg-rose-600/90'); }
-      if(badge){ badge.textContent='!'; badge.classList.remove('bg-green-500'); badge.classList.add('bg-rose-500'); }
+      if(avatar){ avatar.style.background='#EA4335'; }
+      if(badge){ badge.textContent='!'; badge.style.background='#E11D48'; }
     }
 
     document.addEventListener('DOMContentLoaded', render);
