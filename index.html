@@ -85,39 +85,39 @@
         editBuffers: { change: '', now: '', recast: '' },
         currentStateTexts: {
           change: [
-            'The challenge has changed. Hardware is stable, networks are solid — but apps keep IT teams running in circles.',
-            'The volume and pace are overwhelming. You can’t keep thousands of apps current and secure with the same tools and headcount you’ve always had.',
-            'Big plans keep getting delayed. You want to move from Citrix to AVD, shift from SCCM to Intune, or pilot Windows on ARM — but app readiness keeps blocking progress.'
+            'The work has outgrown the tools. Enterprises now manage thousands of applications across hybrid platforms — each requiring updates, validation, and packaging. Manual effort no longer scales.',
+            'The team hasn’t grown, but the demand has. Headcount and budgets stay flat while the number of apps, devices, and compliance needs keeps climbing. Teams are forced to do more with less — and it’s not sustainable.',
+            'Transformation keeps stalling at the app layer. Every initiative — Intune migrations, AVD deployments, ARM pilots — hits the same wall: app readiness. Modernization isn’t waiting on vision; it’s waiting on capacity.'
           ],
           now: [
-            'The math doesn’t add up. Most IT teams haven’t doubled in size, but the workload has. Teams are being asked to manage twice as much with the same hands.',
-            'People work everywhere now. Apps have to follow them — securely — no matter what device or network they’re on.',
-            'Falling behind has consequences. Every delayed update is another open door for attackers and another roadblock for your users.'
+            'Workloads have doubled, but headcount hasn’t. Teams are being asked to manage twice as much with the same tools.',
+            'Apps must move with users. Work happens everywhere — across clouds, devices, and networks — and the old control models can’t keep up.',
+            'Every delay adds risk. Each missed update opens new vulnerabilities and creates friction for users who expect secure, instant access everywhere.'
           ],
           recast: [
-            'One workspace for every app. Recast brings installs, updates, and access together in one simple place — no matter the platform or environment.',
-            'Built on Azure, designed to extend Intune. Recast connects deeply with Intune, ConfigMgr, AVD, and the Microsoft ecosystem — acting as the intelligent layer that automates and scales what you already use.',
-            'Frees IT to move faster. Teams go from hours of packaging and patching to minutes — reducing tickets and making room for projects like SCCM-to-Intune moves, Citrix-to-AVD migrations, or ARM device pilots.',
-            'A seamless experience for users. Employees find and launch apps the same way, even as IT shifts platforms behind the scenes — no retraining, no confusion, just business as usual.'
+            'One workspace for every app. Installs, updates, and access — unified across platforms. No more tool sprawl or manual packaging.',
+            'Built for Microsoft’s ecosystem. Recast extends Intune, ConfigMgr, and AVD — automating what teams still do by hand and scaling what already works.',
+            'Frees IT to move faster. What took hours now takes minutes — freeing time for migrations, pilots, and modernization work that drives progress.',
+            'Seamless for users. Apps just work — no retraining, no disruption, no new tools — even as IT shifts everything behind the scenes.'
           ]
         },
         defaultsCurrentState() {
           return JSON.parse(JSON.stringify({
             change: [
-              'The challenge has changed. Hardware is stable, networks are solid — but apps keep IT teams running in circles.',
-              'The volume and pace are overwhelming. You can’t keep thousands of apps current and secure with the same tools and headcount you’ve always had.',
-              'Big plans keep getting delayed. You want to move from Citrix to AVD, shift from SCCM to Intune, or pilot Windows on ARM — but app readiness keeps blocking progress.'
+              'The work has outgrown the tools. Enterprises now manage thousands of applications across hybrid platforms — each requiring updates, validation, and packaging. Manual effort no longer scales.',
+              'The team hasn’t grown, but the demand has. Headcount and budgets stay flat while the number of apps, devices, and compliance needs keeps climbing. Teams are forced to do more with less — and it’s not sustainable.',
+              'Transformation keeps stalling at the app layer. Every initiative — Intune migrations, AVD deployments, ARM pilots — hits the same wall: app readiness. Modernization isn’t waiting on vision; it’s waiting on capacity.'
             ],
             now: [
-              'The math doesn’t add up. Most IT teams haven’t doubled in size, but the workload has. Teams are being asked to manage twice as much with the same hands.',
-              'People work everywhere now. Apps have to follow them — securely — no matter what device or network they’re on.',
-              'Falling behind has consequences. Every delayed update is another open door for attackers and another roadblock for your users.'
+              'Workloads have doubled, but headcount hasn’t. Teams are being asked to manage twice as much with the same tools.',
+              'Apps must move with users. Work happens everywhere — across clouds, devices, and networks — and the old control models can’t keep up.',
+              'Every delay adds risk. Each missed update opens new vulnerabilities and creates friction for users who expect secure, instant access everywhere.'
             ],
             recast: [
-              'One workspace for every app. Recast brings installs, updates, and access together in one simple place — no matter the platform or environment.',
-              'Built on Azure, designed to extend Intune. Recast connects deeply with Intune, ConfigMgr, AVD, and the Microsoft ecosystem — acting as the intelligent layer that automates and scales what you already use.',
-              'Frees IT to move faster. Teams go from hours of packaging and patching to minutes — reducing tickets and making room for projects like SCCM-to-Intune moves, Citrix-to-AVD migrations, or ARM device pilots.',
-              'A seamless experience for users. Employees find and launch apps the same way, even as IT shifts platforms behind the scenes — no retraining, no confusion, just business as usual.'
+              'One workspace for every app. Installs, updates, and access — unified across platforms. No more tool sprawl or manual packaging.',
+              'Built for Microsoft’s ecosystem. Recast extends Intune, ConfigMgr, and AVD — automating what teams still do by hand and scaling what already works.',
+              'Frees IT to move faster. What took hours now takes minutes — freeing time for migrations, pilots, and modernization work that drives progress.',
+              'Seamless for users. Apps just work — no retraining, no disruption, no new tools — even as IT shifts everything behind the scenes.'
             ]
           }));
         }
@@ -296,6 +296,16 @@
         const id = STATE.openWhyModal;
         const iconMap = { change: 'alert-triangle', now: 'clock-4', recast: 'sparkles' };
         const labelMap = { change: 'Why Change', now: 'Why Now', recast: 'Why Recast' };
+        const introMap = {
+          change: "The world around IT has evolved — but the way we manage applications hasn’t. Infrastructure is mature. Security is strong. Yet the way organizations manage and deliver applications remains the top barrier to transformation.",
+          now: "Because the gap between what IT can handle and what the business demands is widening fast.",
+          recast: "Recast closes the gap between how fast IT needs to move and how fast app management allows them to."
+        };
+        const analystMap = {
+          change: "Analyst trends | In Forrester’s latest application-modernization wave, 4 out of 5 enterprises identified application readiness and ongoing operations as their primary barrier to cloud/multicloud migration — not infrastructure",
+          now: "Analyst trends | Gartner predicts that by 2026, 75% of large enterprises will face significant operational risk due to delays in modernizing legacy applications — making app readiness the new competitive gap.",
+          recast: "Analyst trends | According to Forrester, organizations that automate 50% or more of their app lifecycle processes realize projects 3× faster and with 40% less operational cost — proving automation is now the differentiator in digital transformation."
+        };
         const bullets = STATE.currentStateTexts[id];
         const headerTone = 'bg-slate-50';
         const cta = id === 'recast';
@@ -312,6 +322,7 @@
                 </button>
               </div>
               <div class="p-8 bg-slate-50">
+                <p class="text-lg leading-relaxed text-[#4A5568] mb-4">${introMap[id]}</p>
                 <div class="space-y-4">
                   ${bullets.map(b=>`
                     <div class="flex items-start gap-3">
@@ -320,6 +331,7 @@
                     </div>
                   `).join('')}
                 </div>
+                <p class="mt-6 text-md italic text-[#4A5568]">${analystMap[id]}</p>
                 ${cta?`
                   <div class="mt-8 flex justify-center">
                     <button id="btnAdvanceToSolution" type="button" data-action="advance" data-next="solution" class="inline-flex bg-[#0070F3] text-white text-base font-semibold px-6 py-3 items-center gap-3 focus-ring shadow-md hover:shadow-lg hover:bg-[#005AD0] transition-shadow">
@@ -831,14 +843,14 @@
         const ensure = v => v ?? '';
         return `
           <div role="dialog" aria-modal="true" aria-labelledby="cs-editor-title" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 overflow-auto p-4 md:p-8">
-            <div class="max-w-6xl mx-auto bg-white rounded-2xl shadow-2xl p-6">
+            <div class="w-[95vw] h-[95vh] bg-white rounded-2xl shadow-2xl p-8 overflow-y-auto">
               <div class="flex items-center justify-between">
                 <h2 id="cs-editor-title" class="text-xl font-semibold tracking-normal">Edit Current State</h2>
                 <button type="button" class="bg-transparent text-[#0A1C60] p-2 focus-ring rounded" data-action="close-modal" aria-label="Close">
                   <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
               </div>
-              <p class="mt-1 text-sm text-[#4A5568]">Enter up to three bullet points per section. Each new line becomes a bullet.</p>
+              <p class="mt-1 text-sm text-[#4A5568]">Enter up to four bullet points per section. Each new line becomes a bullet.</p>
               <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-3">
                 ${editorBox('change','Why Change', ensure(buf.change) || toLines(STATE.currentStateTexts.change))}
                 ${editorBox('now','Why Now', ensure(buf.now) || toLines(STATE.currentStateTexts.now))}
@@ -862,7 +874,7 @@
         return `
           <label class="flex flex-col gap-2">
             <span class="text-sm font-semibold">${label}</span>
-            <textarea id="${tid}" data-autosave data-action="edit-buffer" data-key="${key}" class="min-h-[160px] rounded-[2px] border border-slate-200 bg-white p-3 text-sm leading-5 focus-ring" aria-label="${label} editor" placeholder="One bullet per line (max 3)">${value}</textarea>
+            <textarea id="${tid}" data-autosave data-action="edit-buffer" data-key="${key}" class="min-h-[160px] rounded-[2px] border border-slate-200 bg-white p-3 text-sm leading-5 focus-ring" aria-label="${label} editor" placeholder="One bullet per line (max 4)">${value}</textarea>
           </label>
         `;
       }
@@ -1082,7 +1094,7 @@
           act.addEventListener('input', (evt)=>{ STATE.editBuffers[key] = evt.target.value; });
         }
         if(action==='save-currentstate'){
-          const parseLines = (s)=> (s||'').split('\n').map(l=>l.trim()).filter(Boolean).slice(0,3);
+          const parseLines = (s)=> (s||'').split('\n').map(l=>l.trim()).filter(Boolean).slice(0,4);
           const change = parseLines($('#whyChange')?.value || '');
           const now = parseLines($('#whyNow')?.value || '');
           const recast = parseLines($('#whyRecast')?.value || '');
