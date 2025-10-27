@@ -15,14 +15,16 @@
         --re-navy:#F7F9FB;
         --re-blue-mid:#0A1C60;
         --re-blue-bright:#0070F3;
-        --re-blue-light:#4A5568;
-        --re-white:#0A1C60;
+        --re-blue-hover:#005AD0;
+        --re-green:#10B981;
+        --re-gray:#E2E8F0;
+        --re-white:#FFFFFF;
         --radius:12px;
         --border-subtle:#E2E8F0;
       }
       html,body{
         background:var(--re-navy);
-        color:var(--re-white);
+        color:var(--re-blue-mid);
         font-family:Inter,"SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
       }
       .focus-ring:focus-visible{outline:2px solid rgba(0,0,0,0.3);outline-offset:2px}
@@ -30,25 +32,30 @@
       .sub-card{border-radius:var(--radius);border:1px solid var(--border-subtle);background:#F7F9FB}
       .tile{width:.45rem;height:.45rem;border-radius:0;background:#E2E8F0;opacity:.9}
       .run .tile{animation:tilePulse 1s ease-in-out var(--d,0s) 1 forwards}
-      @keyframes tilePulse{0%{transform:scale(.7);background:#E2E8F0;opacity:.4}60%{transform:scale(1);background:#0070F3;opacity:1}100%{background:#E2E8F0;opacity:.9}}
+      @keyframes tilePulse{0%{transform:scale(.7);background:var(--re-gray);opacity:.4}60%{transform:scale(1);background:var(--re-blue-bright);opacity:1}100%{background:var(--re-gray);opacity:.9}}
       .flow-bar{height:.22rem;border-radius:0;transform-origin:left center;transform:scaleX(0)}
       .run .flow-bar{animation:barGrow .9s ease forwards var(--d,0s)}
       @keyframes barGrow{to{transform:scaleX(1)}}
       .bolt-line{width:.22rem;border-radius:0;transform-origin:top center;transform:scaleY(0)}
       .run .bolt-line{animation:boltDrop .9s ease forwards var(--d,0s)}
       @keyframes boltDrop{to{transform:scaleY(1)}}
-      .logo-ring{width:2.1rem;height:2.1rem;border-radius:9999px;display:grid;place-items:center;background:#FFFFFF;box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}
-      .logo-wrap{display:flex;align-items:center;gap:.4rem}
-      .logo-name{font-size:.7rem;color:#4A5568;white-space:nowrap}
-      .run .logo-ring{animation:appPop .85s cubic-bezier(.2,.8,.2,1) var(--d,0s) 1 forwards}
-      @keyframes appPop{0%{transform:scale(.85);filter:saturate(.4);opacity:.65}60%{transform:scale(1.05);filter:saturate(1);opacity:1}100%{transform:scale(1)}}
+      .logo-ring{width:2.1rem;height:2.1rem;border-radius:9999px;display:grid;place-items:center;background:#FFFFFF;box-shadow:inset 0 0 0 1px rgba(0,0,0,.15);transition:all 0.2s ease}
+      .logo-ring:hover{box-shadow:0 0 8px rgba(0,112,243,0.5)}
+      .logo-wrap{display:flex;align-items:center;gap:.4rem;position:relative}
+      .logo-name{font-size:.7rem;color:#4A5568;opacity:0;transform:translateX(-10px);transition:all 0.3s ease}
+      .show-labels .logo-wrap{flex-direction:column;align-items:flex-start;gap:0.2rem}
+      .show-labels .logo-name{opacity:1;transform:translateX(0);white-space:normal;text-align:left}
+      .show-labels .logo-wrap .logo-ring{width:1.8rem;height:1.8rem}
+      .run .logo-ring{animation:appLiftPulse 1.2s cubic-bezier(.2,.8,.2,1) var(--d,0s) 1 forwards}
+      @keyframes appLiftPulse{0%{transform:translateY(0) scale(1);filter:saturate(.4);opacity:.65}30%{transform:translateY(-4px) scale(1.05)}60%{transform:translateY(-2px) scale(1.02);filter:saturate(1);opacity:1}100%{transform:translateY(0) scale(1)}}
       .user-beam{height:.38rem;border-radius:0;transform-origin:left center;transform:scaleX(0)}
       .run .user-beam{animation:barGrow 1s ease forwards var(--d,0s)}
       .badge{width:1.15rem;height:1.15rem;border-radius:0;opacity:0;transform:translateY(-6px) scale(.9)}
       .run .badge{animation:badgeDrop .8s ease-out var(--d,0s) forwards}
       @keyframes badgeDrop{to{opacity:1;transform:translateY(0) scale(1)}}
-      .cat-row{display:grid;grid-template-columns:15ch 1fr;gap:.5rem;align-items:center}
-      .cat-title{font-size:.7rem;letter-spacing:.08em}
+      .cat-row{display:grid;grid-template-columns:15ch 1fr;gap:.5rem;align-items:center;border-top:1px solid var(--re-gray);padding-top:0.5rem}
+      .cat-row:first-child{border-top:none;padding-top:0}
+      .cat-title{font-size:.7rem;letter-spacing:.08em;display:flex;align-items:center;gap:0.5rem}
       .re-primary{background:#0070F3!important;color:#fff!important;border:0;border-radius:var(--radius)}
       .re-primary:hover{background:#005AD0!important}
       .re-primary:focus-visible{outline:2px solid rgba(0,0,0,0.3);outline-offset:2px}
@@ -61,6 +68,23 @@
       .modal-content { transition: transform 300ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 300ms ease; }
       .modal-open .modal-content { transform: scale(1); opacity: 1; }
       .modal-closed .modal-content { transform: scale(0.95); opacity: 0; }
+      .check-appear{opacity:0;animation:fadeInOut 1.5s ease var(--d,0s) forwards}
+      @keyframes fadeInOut{0%{opacity:0}30%{opacity:1}70%{opacity:1}100%{opacity:0}}
+      .flow-connect{background-image:linear-gradient(to right, transparent 50%, var(--re-gray) 50%);background-size:4px 1px;background-repeat:repeat-x;height:1px;opacity:0.5}
+      .end-user-expand{transition:all 0.5s ease;transform:scale(1.05);background:var(--re-white);border-color:var(--re-green)}
+      .icon-launch{animation:iconLaunch 0.5s ease forwards}
+      @keyframes iconLaunch{0%{transform:scale(1)}50%{transform:scale(1.1)}100%{transform:scale(1)}}
+      .tagline-fade{opacity:0;animation:fadeIn 1s ease 10s forwards}
+      @keyframes fadeIn{to{opacity:1}}
+      .overlay-tag{opacity:0;transition:opacity 0.3s ease;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(255,255,255,0.9);padding:1rem;border-radius:var(--radius);box-shadow:0 4px 6px rgba(0,0,0,0.1);z-index:10}
+      .show-labels .overlay-tag{opacity:1;transition-delay:0.5s}
+      .meta-label{font-size:0.6rem;color:#4A5568;background:#F7F9FB;border:1px solid var(--border-subtle);border-radius:4px;padding:0.1rem 0.3rem;opacity:0;transform:translateY(5px);transition:all 0.3s ease;position:relative;top:auto;left:auto;z-index:5;white-space:nowrap}
+      .show-labels .meta-label{opacity:1;transform:translateY(0);display:flex;flex-wrap:wrap;gap:0.2rem;width:100%;justify-content:flex-start}
+      .show-labels .logo-wrap:hover .meta-label{background:var(--re-white);box-shadow:0 2px 4px rgba(0,0,0,0.1)}
+      .logo-wrap .meta-label span{margin-right:0}
+      .show-labels .cat-row{grid-template-columns:15ch 1fr;gap:1rem}
+      .show-labels #flowCard .flex-wrap{gap:1rem}
+      .show-labels .logo-wrap{width:calc(33.333% - 0.666rem);margin-bottom:0.5rem}
     </style>
   </head>
   <body class="min-h-screen antialiased">
@@ -120,7 +144,8 @@
               'Seamless for users. Apps just work — no retraining, no disruption, no new tools — even as IT shifts everything behind the scenes.'
             ]
           }));
-        }
+        },
+        progress: { apps: 0, time: 0, tickets: 0 }
       };
       const TABS = [
         { id: 'problems', label: 'Current State', icon: 'alert-triangle' },
@@ -532,65 +557,88 @@
                 <button type="button" data-action="reset-flow" class="bg-transparent text-[#0A1C60] border-2 border-[#0A1C60] px-2.5 py-1.5 rounded hover:text-[#0070F3] hover:border-[#0070F3]">Reset</button>
               </div>
             </div>
-            <div id="flowCard" class="mt-3 sub-card p-3" role="region" aria-label="Animated flow">
-              <div class="space-y-2">
+            <div class="mt-2 flex gap-2 text-xs">
+            </div>
+            <div id="flowCard" class="mt-3 sub-card p-3 relative bg-gradient-to-b from-white to-slate-50 shadow-inner ${STATE.showLabels ? 'show-labels' : ''}" role="region" aria-label="Animated flow">
+              <div id="progressCounters" class="hidden mb-3 grid grid-cols-3 gap-2 text-sm text-center">
+                <div><span class="font-semibold tabular-nums" id="appsProcessed">0</span> apps processed</div>
+                <div><span class="font-semibold tabular-nums" id="timeSaved">0</span> hours saved</div>
+                <div><span class="font-semibold tabular-nums" id="ticketsAvoided">0</span> tickets avoided</div>
+              </div>
+              <div class="space-y-2 relative">
                 ${CATALOG.map(s=>`
                   <div class="cat-row">
-                    <div class="cat-title uppercase text-[#4A5568]">${s.title}</div>
+                    <div class="cat-title uppercase text-[#4A5568]"><i data-lucide="folder" class="w-3 h-3"></i>${s.title}</div>
                     <div id="${s.id}" class="flex flex-wrap gap-2"></div>
                   </div>
                 `).join('')}
+                <div id="overlayTag" class="overlay-tag hidden text-center text-sm text-[#4A5568]">Every app mapped to ring, policy, and scope.</div>
               </div>
               <div id="flowHubFlash" class="mt-2 hidden text-[#0070F3]"><span class="inline-flex items-center gap-1 text-[12px]"><i data-lucide="bolt" class="h-4 w-4"></i><span>Update published</span></span></div>
-              <div class="mt-3 grid grid-cols-3 gap-2" aria-hidden="true">
+              <div class="mt-3 grid grid-cols-3 gap-2 relative" aria-hidden="true">
                 ${['A','B','C'].map((k,i)=>`
-                  <div class="sub-card p-2">
+                  <div class="sub-card p-2 relative">
                     <div class="text-[12px] text-[#4A5568]">${['Existing Platforms','Staged Rings','Access & Policy'][i]}</div>
                     <div id="flowConn${k}" class="mt-1 grid grid-cols-10 gap-1.5"></div>
-                    <div class="mt-1 flow-bar w-full" style="background:linear-gradient(to right,#0070F3,#005AD0);--d:${.55 + .12*i}s"></div>
+                    <div class="mt-1 flow-bar w-full" style="background:linear-gradient(to right,#0070F3,#005AD0);--d:${3 + .5*i}s"></div>
+                    <i data-lucide="check-circle" class="check-appear absolute top-1 right-1 w-4 h-4 text-var(--re-green)" style="--d:${4 + .5*i}s"></i>
                   </div>
                 `).join('')}
+                <div class="flow-connect absolute top-[-0.5rem] left-0 w-full"></div>
               </div>
-              <div class="mt-3 grid grid-cols-3 gap-2" aria-hidden="true">
+              <div class="mt-3 grid grid-cols-3 gap-2 relative" aria-hidden="true">
                 ${['A','B','C'].map((k,i)=>`
-                  <div class="sub-card p-2">
+                  <div class="sub-card p-2 relative">
                     <div class="text-[12px] text-[#4A5568]">${['Business Unit','Subsidiary','Region'][i]}</div>
                     <div id="flowGrp${k}" class="mt-1 grid grid-cols-8 gap-1.5"></div>
-                    <div class="mx-auto mt-1 bolt-line h-16 w-1" style="background:linear-gradient(to bottom,#0A1C60,#0070F3);--d:${1 + .15*i}s"></div>
+                    <div class="mx-auto mt-1 bolt-line h-16 w-1" style="background:linear-gradient(to bottom,#0A1C60,#0070F3);--d:${5 + .5*i}s"></div>
+                    <i data-lucide="shield-check" class="check-appear absolute top-1 right-1 w-4 h-4 text-var(--re-green)" style="--d:${6 + .5*i}s"></i>
                   </div>
                 `).join('')}
+                <div class="flow-connect absolute top-[-0.5rem] left-0 w-full"></div>
               </div>
-              <div class="mt-3 grid grid-cols-3 gap-2" aria-hidden="true">
+              <div class="mt-3 grid grid-cols-3 gap-2 relative" aria-hidden="true">
                 ${['A','B','C'].map((k,i)=>`
-                  <div class="sub-card p-2 text-center">
+                  <div class="sub-card p-2 text-center relative">
                     <i data-lucide="${['monitor-smartphone','laptop','smartphone'][i]}" class="h-5 w-5 text-[#4A5568]"></i>
                     <div id="flowDev${k}" class="mt-1 grid grid-cols-6 gap-1.5"></div>
                     <div class="mt-1 text-[11px] text-[#4A5568]">${['Windows & macOS','VDI / Web','Mobile'][i]}</div>
+                    <i data-lucide="check-circle" class="check-appear absolute top-1 right-1 w-4 h-4 text-var(--re-green)" style="--d:${8 + .5*i}s"></i>
                   </div>
                 `).join('')}
+                <div class="flow-connect absolute top-[-0.5rem] left-0 w-full"></div>
               </div>
               <div class="mt-3">
-                <div id="endUserCard" class="sub-card p-3">
+                <div id="endUserCard" class="sub-card p-3 transition-all duration-500">
                   <div class="flex items-center gap-3">
                     <div id="endUserAvatar" class="h-9 w-9 grid place-items-center font-semibold rounded-full" style="background:#EA4335">U</div>
                     <div class="text-sm">
                       <div class="font-medium">End user</div>
-                      <div class="text-[#4A5568]">Apps on demand — no waiting, no tickets.</div>
+                      <div id="endUserMessage" class="text-[#4A5568]">Apps on demand — no waiting, no tickets.</div>
                     </div>
                   </div>
-                  <div class="mt-3 user-beam" style="background:linear-gradient(to right,#0070F3,#005AD0);--d:2.1s"></div>
+                  <div class="mt-3 user-beam" style="background:linear-gradient(to right,#0070F3,#005AD0);--d:10s"></div>
                   <div class="relative mt-2" style="border:1px solid var(--border-subtle);background:#F7F9FB;border-radius:var(--radius);padding:1rem">
                     <i data-lucide="laptop" class="h-5 w-5 text-[#4A5568]"></i>
-                    <div id="endUserBadge" class="absolute right-2 top-2 badge grid place-items-center font-bold" style="--d:2.4s;background:#E11D48;color:#000">!</div>
+                    <div id="endUserBadge" class="absolute right-2 top-2 badge grid place-items-center font-bold" style="--d:11s;background:#E11D48;color:#000">!</div>
                     <div class="mt-1 text-[11px] text-[#4A5568]">Workspace launches the correct app instantly</div>
                   </div>
+                  <div id="miniWorkspace" class="mt-3 hidden grid grid-cols-4 gap-2">
+                    ${miniApps.map(app => `<div class="logo-ring cursor-pointer" data-action="launch-icon">${app.svg}</div>`).join('')}
+                  </div>
                 </div>
-                <div id="flowSuccess" class="mt-2 hidden inline-flex items-center gap-1 text-[13px]" style="color:#10B981"><i data-lucide="sparkles" class="h-4 w-4"></i><span>Configured once → delivered everywhere.</span></div>
+                <div id="flowSuccess" class="mt-2 hidden inline-flex items-center gap-1 text-[13px] tagline-fade" style="color:#10B981"><i data-lucide="sparkles" class="h-4 w-4"></i><span>Configured once → delivered everywhere.</span></div>
               </div>
             </div>
           </div>
         `;
       }
+      const miniApps = [
+        logo('Microsoft Word','W','#185ABD'),
+        logo('Microsoft Teams','T','#5B53D6'),
+        logo('SAP','SAP','#0A6ED1'),
+        logo('Zoom','Z','#0B5CFF')
+      ];
       function renderROI(){
         const r = calcROI();
         return `
@@ -991,7 +1039,8 @@
         });
         const startBtn=root.querySelector('[data-action="start-flow"]'); if(startBtn) startBtn.addEventListener('click', startFlow);
         const resetBtn=root.querySelector('[data-action="reset-flow"]'); if(resetBtn) resetBtn.addEventListener('click', resetFlow);
-        const toggleLabels=root.querySelector('[data-action="toggle-labels"]'); if(toggleLabels) toggleLabels.addEventListener('click', ()=>{ STATE.showLabels=!STATE.showLabels; buildFlow(); });
+        const toggleLabels=root.querySelector('[data-action="toggle-labels"]'); if(toggleLabels) toggleLabels.addEventListener('click', ()=>{ STATE.showLabels=!STATE.showLabels; toggleOverlay(); buildFlow(); });
+        root.querySelectorAll('[data-action="launch-icon"]').forEach(icon=>icon.addEventListener('click', ()=>{ icon.classList.add('icon-launch'); setTimeout(()=>icon.classList.remove('icon-launch'), 500); }));
         const openEditor=root.querySelector('[data-action="open-currentstate-editor"]');
         if(openEditor) openEditor.addEventListener('click', ()=>{
           STATE.modalOpen = true;
@@ -1001,59 +1050,99 @@
           setTimeout(()=>{ initCurrentStateModal(); }, 0);
         });
       }
+      function toggleOverlay(){
+        const overlay = document.getElementById('overlayTag');
+        if(STATE.showLabels){
+          overlay.classList.remove('hidden');
+          setTimeout(()=>{ overlay.classList.add('hidden'); }, 3000);
+        }
+      }
       function buildFlow(){
         let base=0;
         CATALOG.forEach(section=>{
           const mount=document.getElementById(section.id); if(!mount) return;
           mount.innerHTML='';
           section.items.forEach((itm,idx)=>{
-            const wrap=document.createElement('div'); wrap.className='logo-wrap'; wrap.style.setProperty('--d',(base+idx*0.06).toFixed(2)+'s');
+            const wrap=document.createElement('div'); wrap.className='logo-wrap'; wrap.style.setProperty('--d',(base+idx*0.2).toFixed(2)+'s');
             const ring=document.createElement('div'); ring.className='logo-ring'; ring.innerHTML=itm.svg; ring.title=itm.name; ring.setAttribute('role','img'); ring.setAttribute('aria-label',itm.name);
             wrap.appendChild(ring);
-            if(STATE.showLabels){ const label=document.createElement('span'); label.className='logo-name'; label.textContent=itm.name; wrap.appendChild(label); }
+            if(STATE.showLabels){
+              const label=document.createElement('span'); label.className='logo-name'; label.textContent=itm.name; wrap.appendChild(label);
+              const meta=document.createElement('div'); meta.className='meta-label flex flex-wrap gap-1 mt-1';
+              meta.innerHTML = `<span>Ring: Pilot</span><span>Policy: MFA required</span><span>Region: EMEA</span>`;
+              wrap.appendChild(meta);
+            }
             mount.appendChild(wrap);
           });
-          base+=0.25;
+          base+=1.5;
         });
-        buildTiles(document.getElementById('flowConnA'), 14, .5);
-        buildTiles(document.getElementById('flowConnB'), 14, .56);
-        buildTiles(document.getElementById('flowConnC'), 14, .62);
-        buildTiles(document.getElementById('flowGrpA'), 18, .95);
-        buildTiles(document.getElementById('flowGrpB'), 18, 1.0);
-        buildTiles(document.getElementById('flowGrpC'), 18, 1.05);
-        buildTiles(document.getElementById('flowDevA'), 10, 1.5);
-        buildTiles(document.getElementById('flowDevB'), 10, 1.55);
-        buildTiles(document.getElementById('flowDevC'), 10, 1.6);
+        buildTiles(document.getElementById('flowConnA'), 14, 3);
+        buildTiles(document.getElementById('flowConnB'), 14, 3.5);
+        buildTiles(document.getElementById('flowConnC'), 14, 4);
+        buildTiles(document.getElementById('flowGrpA'), 18, 5);
+        buildTiles(document.getElementById('flowGrpB'), 18, 5.5);
+        buildTiles(document.getElementById('flowGrpC'), 18, 6);
+        buildTiles(document.getElementById('flowDevA'), 10, 8);
+        buildTiles(document.getElementById('flowDevB'), 10, 8.5);
+        buildTiles(document.getElementById('flowDevC'), 10, 9);
         const avatar=document.getElementById('endUserAvatar');
         const badge=document.getElementById('endUserBadge');
         if(avatar){ avatar.style.background='#EA4335'; avatar.textContent='U'; }
         if(badge){ badge.textContent='!'; badge.style.background='#E11D48'; }
+        const message = document.getElementById('endUserMessage');
+        if(message) message.textContent = 'Apps on demand — no waiting, no tickets.';
+        const mini = document.getElementById('miniWorkspace');
+        if(mini) mini.classList.add('hidden');
+        const counters = document.getElementById('progressCounters');
+        if(counters) counters.classList.add('hidden');
+        const card = document.getElementById('flowCard');
+        if(card) card.classList.remove('run');
+        if(STATE.showLabels) card.classList.add('show-labels');
+        else card.classList.remove('show-labels');
+        const endCard = document.getElementById('endUserCard');
+        if(endCard) endCard.classList.remove('end-user-expand');
+        STATE.progress = { apps: 0, time: 0, tickets: 0 };
+        updateProgress();
+        const success=document.getElementById('flowSuccess'); if(success) success.classList.add('hidden');
       }
       function buildTiles(container,count,baseDelay){
         if(!container) return; container.innerHTML='';
-        for(let i=0;i<count;i++){ const d=document.createElement('div'); d.className='tile'; d.style.setProperty('--d',(baseDelay+i*0.04).toFixed(2)+'s'); container.appendChild(d); }
+        for(let i=0;i<count;i++){ const d=document.createElement('div'); d.className='tile'; d.style.setProperty('--d',(baseDelay+i*0.1).toFixed(2)+'s'); container.appendChild(d); }
       }
       function startFlow(){
         const card=document.getElementById('flowCard'); if(!card) return;
         card.classList.remove('run'); void card.offsetWidth; card.classList.add('run');
         const flash=document.getElementById('flowHubFlash'); const success=document.getElementById('flowSuccess');
         const avatar=document.getElementById('endUserAvatar'); const badge=document.getElementById('endUserBadge');
-        if(flash){ flash.classList.remove('hidden'); setTimeout(()=>flash.classList.add('hidden'),1000); }
+        const message = document.getElementById('endUserMessage'); const mini = document.getElementById('miniWorkspace');
+        const counters = document.getElementById('progressCounters'); const endCard = document.getElementById('endUserCard');
+        if(flash){ flash.classList.remove('hidden'); setTimeout(()=>flash.classList.add('hidden'),2000); }
         if(success) success.classList.add('hidden');
+        if(counters) counters.classList.remove('hidden');
+        let interval = setInterval(updateProgress, 100);
         setTimeout(()=>{
-          if(avatar){ avatar.style.background='#10B981'; }
-          if(badge){ badge.textContent='✓'; badge.style.background='#10B981'; }
-        }, 2100);
-        setTimeout(()=> success && success.classList.remove('hidden'), 2500);
-        setTimeout(()=> card.classList.remove('run'), 6000);
+          if(avatar){ avatar.style.background= 'var(--re-green)'; }
+          if(badge){ badge.textContent='✓'; badge.style.background= 'var(--re-green)'; }
+          if(message) message.textContent = 'Apps on demand — no waiting, no tickets. Workspace launches the correct app instantly.';
+          if(mini) mini.classList.remove('hidden');
+          if(endCard) endCard.classList.add('end-user-expand');
+          if(success) success.classList.remove('hidden');
+          clearInterval(interval);
+        }, 11000);
+        setTimeout(()=> card.classList.remove('run'), 12000);
+      }
+      function updateProgress(){
+        if(STATE.progress.apps < 128) STATE.progress.apps += 4;
+        if(STATE.progress.time < 46) STATE.progress.time += 2;
+        if(STATE.progress.tickets < 73) STATE.progress.tickets += 3;
+        setText('appsProcessed', STATE.progress.apps > 128 ? 128 : STATE.progress.apps);
+        setText('timeSaved', STATE.progress.time > 46 ? 46 : STATE.progress.time);
+        setText('ticketsAvoided', STATE.progress.tickets > 73 ? 73 : STATE.progress.tickets);
       }
       function resetFlow(){
-        const card=document.getElementById('flowCard'); if(!card) return;
-        card.classList.remove('run');
-        const success=document.getElementById('flowSuccess'); if(success) success.classList.add('hidden');
-        const avatar=document.getElementById('endUserAvatar'); const badge=document.getElementById('endUserBadge');
-        if(avatar){ avatar.style.background='#EA4335'; }
-        if(badge){ badge.textContent='!'; badge.style.background='#E11D48'; }
+        STATE.progress = { apps: 0, time: 0, tickets: 0 };
+        STATE.showLabels = false;
+        buildFlow();
       }
       function attachAccordionKeyboard(){
         document.addEventListener('keydown', (e) => {
