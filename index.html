@@ -302,9 +302,9 @@
           <main class="mx-auto max-w-6xl px-6 lg:px-12 pb-8 gap-4">
             ${STATE.activeTab==='roi' ? `
             <div class="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-3">
-              ${chip('Reactive Work Reduced', String(STATE.impact.minutes)+' min/user/mo', 'emerald')}
-              ${chip('Hours Saved from Packaging', String(round(STATE.impact.pkgHours)), 'sky')}
-              ${chip('Hours Saved from Faster Patching', String(round(STATE.impact.riskHrs)), 'yellow')}
+              ${chip('Sources of Capacity Returned', String(STATE.impact.minutes)+' minutes per user per month reclaimed', 'emerald')}
+              ${chip('Packaging effort reduced', String(round(STATE.impact.pkgHours)), 'sky')}
+              ${chip('Patching effort reduced through standardization', String(round(STATE.impact.riskHrs)), 'yellow')}
             </div>` : ''}
             <section class="mt-4">${renderActivePanel()}</section>
           </main>
@@ -335,16 +335,16 @@
         return '';
       }
       const pressures = [
-        { id: 'cost', title: 'COST-TO-OPERATE REDUCTION', bullets: ['Manual app management creates avoidable, costly overhead.', 'Redundant installs inflate spend and block strategic work.', 'Teams can’t scale delivery to match business growth.', 'Lack of standardization hides costs across the lifecycle.'] },
-        { id: 'risk', title: 'RISK, COMPLIANCE & SECURITY', bullets: ['Version sprawl and patch gaps expose persistent risks.', 'No unified view blocks governance and fast response.', 'Manual oversight increases error, audit, and compliance failure.'] },
-        { id: 'capacity', title: 'CAPACITY & DELIVERY VELOCITY', bullets: ['Flat headcount can’t meet rising app demands.', 'Repetitive tasks delay modernization and cloud shifts.', 'App readiness issues stall critical business initiatives.'] },
-        { id: 'employee', title: 'EMPLOYEE EXPERIENCE & ENABLEMENT', bullets: ['App delays stall workflows and reduce productivity.', 'Version mismatches break processes and fuel IT distrust.', 'Inconsistent delivery drives shadow IT and support load.'] }
+        { id: 'cost', title: 'CAPACITY & OPERATIONAL DRAG', bullets: ['Manual app management consumes skilled IT capacity.', 'Redundant installs create rework and escalation.', 'Teams can’t scale delivery as application demand increases.', 'Lack of standardization hides friction across the lifecycle.'] },
+        { id: 'risk', title: 'RISK, COMPLIANCE & SECURITY', bullets: ['Version sprawl and patch gaps increase organizational risk.', 'No unified view limits governance and response speed.', 'Manual processes increase human error and audit exposure.'] },
+        { id: 'capacity', title: 'CAPACITY & DELIVERY VELOCITY', bullets: ['Flat headcount limits the pace of change.', 'Repetitive tasks crowd out modernization efforts.', 'App readiness issues stall critical initiatives.'] },
+        { id: 'employee', title: 'EMPLOYEE EXPERIENCE & ENABLEMENT', bullets: ['App delays stall workflows and frustrate users.', 'Version mismatches break processes and erode IT trust.', 'Inconsistent delivery drives shadow IT and ticket volume.'] }
       ];
       function renderProblems(){
         return `
           <section id="panel-problems" class="space-y-3">
-            <h2 class="text-3xl font-semibold leading-tight">Top Pressures Organizations Face in 2025</h2>
-            <p class="text-xl text-gray-700 leading-relaxed">- Application Layer is the #1 bottleneck for continuous transformation.</p>
+            <h2 class="text-3xl font-semibold leading-tight">Where Application Delivery Creates Friction</h2>
+            <p class="text-xl text-gray-700 leading-relaxed">- The application layer is the #1 bottleneck to operational change.</p>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-start">
               ${pressures.map(p=>`
                 <div class="rounded-2xl bg-white shadow-md hover:shadow-lg hover:-translate-y-[2px] transition-shadow duration-300 transition-transform p-4 flex flex-col space-y-1 h-full">
@@ -654,8 +654,8 @@
               <div class="flex items-center gap-1.5">
                 <div class="h-5 w-5 rounded grid place-items-center bg-gray-900"><i data-lucide="boxes" class="h-3 w-3 text-white"></i></div>
                 <div>
-                  <h3 class="text-[14px] font-semibold">Application Workspace</h3>
-                  <div class="text-[11px] text-gray-700">Curated & secured catalog</div>
+                  <h3 class="text-[14px] font-semibold">One Application Workspace. One Way to Deliver Apps.</h3>
+                  <div class="text-[11px] text-gray-700">A consistent front door for enterprise applications</div>
                 </div>
               </div>
               <div class="flex items-center gap-1.5 text-[11px]">
@@ -668,12 +668,12 @@
             <div class="mt-1 flex items-center justify-center gap-3 text-[13px] font-medium">
               <div class="flex items-center gap-1">
                 <i data-lucide="building" class="w-4.5 h-4.5 text-gray-700"></i>
-                <span>App Manager = SCCM / Intune</span>
+                <span>Existing App Managers (SCCM, Intune, etc.)</span>
               </div>
               <i data-lucide="arrow-right" class="w-4.5 h-4.5 text-gray-500"></i>
               <div class="flex items-center gap-1">
                 <i data-lucide="truck" class="w-4.5 h-4.5 text-blue-600"></i>
-                <span>App Delivery = Recast</span>
+                <span>Application Delivery Control Plane</span>
               </div>
               <i data-lucide="arrow-right" class="w-4.5 h-4.5 text-gray-500"></i>
               <div class="flex items-center gap-1">
@@ -685,6 +685,7 @@
               </span>
             </div>
             <div class="mt-1 text-center bg-blue-50 p-1.5 rounded-lg text-[12px]">
+            Recast sits between your existing tools and your users, standardizing how applications are delivered without changing where they come from.
             </div>
             <div id="flowCard" class="mt-2 rounded-xl border border-gray-200 bg-gradient-to-b from-white to-gray-50 shadow-inner ${STATE.showLabels ? 'show-labels' : ''}" role="region" aria-label="Animated flow">
               <div id="progressCounters" class="hidden mb-2 grid grid-cols-3 gap-1.5 text-[13px] text-center">
@@ -741,14 +742,14 @@
                     <div id="endUserAvatar" class="h-8 w-8 grid place-items-center font-semibold rounded-full bg-red-600 text-white">U</div>
                     <div class="text-[13px]">
                       <div class="font-medium">End user</div>
-                      <div id="endUserMessage" class="text-gray-700">Apps on demand — no waiting, no tickets.</div>
+                      <div id="endUserMessage" class="text-gray-700">Apps on demand — without retraining users when IT changes.</div>
                     </div>
                   </div>
                   <div class="mt-2 h-[0.38rem] rounded-[2px] origin-left scale-x-0 bg-gradient-to-r from-blue-600 to-blue-700" style="--d:10s"></div>
                   <div class="relative mt-1 border border-gray-200 bg-gray-50 rounded-2xl p-3">
                     <i data-lucide="laptop" class="h-4.5 w-4.5 text-gray-700"></i>
                     <div id="endUserBadge" class="absolute right-1.5 top-1.5 w-[1rem] h-[1rem] rounded-full opacity-0 translate-y-[-6px] scale-90 grid place-items-center font-bold text-black bg-red-600" style="--d:11s">!</div>
-                    <div class="mt-0.5 text-[10px] text-gray-700">Workspace launches the correct app instantly</div>
+                    <div class="mt-0.5 text-[10px] text-gray-700">The workspace delivers the right app, every time, regardless of backend platform.</div>
                   </div>
                   <div id="miniWorkspace" class="mt-2 hidden grid grid-cols-4 gap-1.5">
                     ${miniApps.map(app => `<div class="w-[1.8rem] h-[1.8rem] rounded-full grid place-items-center bg-white shadow-[inset_0_0_0_1px_rgba(0,0,0,0.1)] transition-all duration-300 hover:shadow-[0_0_8px_rgba(37,99,235,0.3)] hover:scale-105 cursor-pointer" data-action="launch-icon">${app.svg}</div>`).join('')}
@@ -771,13 +772,14 @@
         const fteContext = `≈ ${Math.round(r.totalHoursMonth / 160)}+ FTE months or ${Math.round(r.totalHoursYear / 3000)} strategic projects/year unblocked`;
         return `
           <section id="panel-roi" class="space-y-4">
+            <p class="text-sm text-gray-600">Impacts shown are scenario-based and depend on environment assumptions.</p>
             <h1 class="text-3xl font-bold">The application layer is where friction becomes visible</h1>
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 bg-gray-50 rounded-xl p-4 shadow-md">
               <div class="space-y-1">
                 <h2 class="text-lg font-semibold">Total Time Returned</h2>
                 <p class="text-3xl font-bold text-blue-700">${num(r.totalHoursMonth)} hrs/month</p>
                 <p class="text-xl font-bold text-blue-700">${num(r.totalHoursYear)} hrs/year</p>
-                <p class="text-[13px] text-gray-500">${fteContext}</p>
+                <p class="text-[13px] text-gray-500">Equivalent to avoiding additional operational hires or accelerating strategic initiatives.</p>
               </div>
               <div class="space-y-1">
                 <h2 class="text-lg font-semibold">Where the Hours Come From</h2>
@@ -786,7 +788,7 @@
                   <li>Faster patch cycles: ${num(r.patchHoursMonth)} hrs/mo</li>
                   <li>Packaging automation: ${num(r.packagingHoursMonth)} hrs/mo</li>
                 </ul>
-                <p class="text-[13px] text-gray-500">High-volume pain, solved at the root.</p>
+                <p class="text-[13px] text-gray-500">High-volume operational pain addressed at the application layer — not the help desk.</p>
               </div>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
@@ -807,7 +809,7 @@
                 </ul>
               </div>
             </div>
-            <div class="mt-4 text-lg italic text-gray-800">“This isn’t just saved time — it’s recovered momentum.”</div>
+            <div class="mt-4 text-lg italic text-gray-800">“This isn’t cost savings — it’s recovered momentum.”</div>
             <div class="mt-6">
               ${bucketAccordion('edit', 'edit-3', 'Edit Assumptions & Impacts', editContent)}
             </div>
@@ -1266,7 +1268,7 @@ Notes: Illustrative; replace with your data.`;
         if(avatar){ avatar.classList.add('bg-red-600'); avatar.textContent='U'; }
         if(badge){ badge.textContent='!'; badge.classList.add('bg-red-600'); }
         const message = document.getElementById('endUserMessage');
-        if(message) message.textContent = 'Apps on demand — no waiting, no tickets.';
+        if(message) message.textContent = 'Apps on demand — without retraining users when IT changes.';
         const mini = document.getElementById('miniWorkspace');
         if(mini) mini.classList.add('hidden');
         const counters = document.getElementById('progressCounters');
@@ -1317,7 +1319,7 @@ Notes: Illustrative; replace with your data.`;
         setTimeout(()=>{
           if(avatar){ avatar.classList.remove('bg-red-600'); avatar.classList.add('bg-green-500'); }
           if(badge){ badge.textContent='✓'; badge.classList.remove('bg-red-600'); badge.classList.add('bg-green-500'); }
-          if(message) message.textContent = 'Apps on demand — no waiting, no tickets. Workspace launches the correct app instantly.';
+          if(message) message.textContent = 'Apps on demand — without retraining users when IT changes.';
           if(mini) mini.classList.remove('hidden');
           if(endCard) endCard.classList.add('scale-105','bg-white','border-green-500');
           if(success) success.classList.remove('hidden');
