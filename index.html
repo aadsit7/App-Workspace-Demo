@@ -1,1285 +1,680 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>Recast — Compact Click-Through (Realistic Catalog)</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="color-scheme" content="dark light">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://unpkg.com">
-    <script src="https://unpkg.com/lucide@latest"></script>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Recast — Delivery Flow (Motorcycle Rider)</title>
 
-    <!-- ✅ Lottie runtime (your code uses `lottie.loadAnimation`) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.13.0/lottie.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 
-    <!-- ✅ Confetti (subtle / professional burst) -->
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.4/dist/confetti.browser.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
 
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            keyframes: {
-              tilePulse: {
-                '0%': { transform: 'scale(0.7)', backgroundColor: '#e5e7eb', opacity: '0.4' },
-                '60%': { transform: 'scale(1)', backgroundColor: '#2563eb', opacity: '1' },
-                '100%': { backgroundColor: '#e5e7eb', opacity: '0.9' },
-              },
-              barGrow: { to: { transform: 'scaleX(1)' } },
-              boltDrop: { to: { transform: 'scaleY(1)' } },
-              appLiftPulse: {
-                '0%': { transform: 'translateY(0) scale(1)', filter: 'saturate(0.4)', opacity: '0.65' },
-                '30%': { transform: 'translateY(-4px) scale(1.05)' },
-                '60%': { transform: 'translateY(-2px) scale(1.02)', filter: 'saturate(1)', opacity: '1' },
-                '100%': { transform: 'translateY(0) scale(1)' },
-              },
-              badgeDrop: { to: { opacity: '1', transform: 'translateY(0) scale(1)' } },
-              fadeInOut: {
-                '0%': { opacity: '0' },
-                '30%': { opacity: '1' },
-                '70%': { opacity: '1' },
-                '100%': { opacity: '0' },
-              },
-              iconLaunch: {
-                '0%': { transform: 'scale(1)' },
-                '50%': { transform: 'scale(1.1)' },
-                '100%': { transform: 'scale(1)' },
-              },
-              fadeIn: { to: { opacity: '1' } },
-              modalEnter: {
-                '0%': { transform: 'scale(0.95)', opacity: '0' },
-                '100%': { transform: 'scale(1)', opacity: '1' },
-              },
-              overlayFade: {
-                '0%': { opacity: '0' },
-                '100%': { opacity: '1' },
-              },
-            },
-            animation: {
-              tilePulse: 'tilePulse 1s ease-in-out var(--d, 0s) 1 forwards',
-              barGrow: 'barGrow 0.9s ease forwards var(--d, 0s)',
-              boltDrop: 'boltDrop 0.9s ease forwards var(--d, 0s)',
-              appLiftPulse: 'appLiftPulse 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) var(--d, 0s) 1 forwards',
-              badgeDrop: 'badgeDrop 0.8s ease-out var(--d, 0s) forwards',
-              fadeInOut: 'fadeInOut 1.5s ease var(--d,0s) forwards',
-              iconLaunch: 'iconLaunch 0.5s ease forwards',
-              fadeIn: 'fadeIn 1s ease 10s forwards',
-              modalEnter: 'modalEnter 300ms cubic-bezier(0.2, 0.8, 0.2, 1)',
-              overlayFade: 'overlayFade 300ms ease',
-            },
-          },
-        },
-      };
-    </script>
+  <!-- lottie-web (required for lottie.loadAnimation) -->
+  <script src="https://unpkg.com/lottie-web@5.12.2/build/player/lottie.min.js"></script>
 
-    <style>
-      /* Overlay sits on top of the Application Workspace card */
-      #recast-approach-animation-layer {
-        position: absolute;
-        inset: 0;
-        pointer-events: none;
-        z-index: 50;
-        border-radius: 0.75rem;
-        overflow: hidden;
+  <!-- confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.4/dist/confetti.browser.min.js"></script>
 
-        /* more “professional”: soft wash + blur */
-        background: rgba(255, 255, 255, 0.66);
-        backdrop-filter: blur(7px);
-        -webkit-backdrop-filter: blur(7px);
+  <style>
+    :root { --ease: cubic-bezier(0.2,0.8,0.2,1); }
+    body { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
 
-        opacity: 0;
-        transition: opacity 220ms ease;
-      }
-      #recast-approach-animation-layer.is-active {
-        opacity: 1;
-      }
-      #recast-approach-animation-layer .lottie {
-        position: absolute;
-        inset: 0;
-        display: none;
-        opacity: 0;
-        transition: opacity 180ms ease;
-      }
-      #recast-approach-animation-layer .lottie.is-showing {
-        opacity: 1;
-      }
+    @keyframes tilePulse {
+      0%   { transform: scale(0.75); background:#e5e7eb; opacity: .45; }
+      55%  { transform: scale(1.0);  background:#2563eb; opacity: 1; }
+      100% { transform: scale(0.92); background:#e5e7eb; opacity: .9; }
+    }
+    @keyframes barGrow { to { transform: scaleX(1); } }
+    @keyframes boltDrop { to { transform: scaleY(1); } }
+    @keyframes fadeUpIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
-      /* Final calm state after animation */
-      .workspace-final .warning,
-      .workspace-final .duplicate,
-      .workspace-final .loading-indicator {
-        opacity: 0;
-        transition: opacity .25s ease-out;
-      }
-      .workspace-final .app-icon {
-        opacity: 1;
-        transform: scale(1);
-        transition: .25s ease-out;
-      }
+    .run [data-anim="tilePulse"] { animation: tilePulse 1s var(--ease) var(--d,0s) 1 forwards; }
+    .run [data-anim="barGrow"]  { animation: barGrow .9s var(--ease) var(--d,0s) 1 forwards; }
+    .run [data-anim="boltDrop"] { animation: boltDrop .9s var(--ease) var(--d,0s) 1 forwards; }
+    .run #flowSuccess { animation: fadeUpIn 450ms var(--ease) 1 forwards; }
 
-      .dimmed { opacity: 0.5; transition: opacity 0.3s ease; }
-      .highlighted {
-        border-color: #10B981;
-        box-shadow: 0 0 0 3px rgba(16,185,129,0.25);
-        transition: all 0.3s ease;
-      }
-      .processed {
-        background-color: #ECFDF5 !important;
-        border-color: #D1FAE5 !important;
-        color: #065F46 !important;
-        transition: all 0.3s ease;
-      }
-    </style>
-  </head>
+    .tile {
+      width: .4rem; height: .4rem;
+      border-radius: 2px;
+      background: #e5e7eb;
+      opacity: .9;
+      transform: scale(.75);
+    }
+    .bar {
+      height: .22rem;
+      border-radius: 2px;
+      transform-origin: left;
+      transform: scaleX(0);
+      background: linear-gradient(to right, #2563eb, #1d4ed8);
+    }
+    .bolt {
+      width: .22rem;
+      border-radius: 2px;
+      transform-origin: top;
+      transform: scaleY(0);
+      background: linear-gradient(to bottom, #111827, #2563eb);
+    }
 
-  <body class="min-h-screen antialiased bg-gray-50 text-gray-900 font-[Inter]">
-    <div id="app" class="min-h-screen"></div>
+    /* Route overlay */
+    #routeLayer {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 4;
+    }
+    #routePath {
+      fill: none;
+      stroke: rgba(37,99,235,.45);
+      stroke-width: 3.25;
+      stroke-linecap: round;
+      stroke-dasharray: 6 7;
+    }
+    #routeGlow {
+      fill: none;
+      stroke: rgba(37,99,235,.16);
+      stroke-width: 9;
+      stroke-linecap: round;
+    }
+    #routeTrace {
+      fill: none;
+      stroke: rgba(16,185,129,.9);
+      stroke-width: 3.25;
+      stroke-linecap: round;
+      stroke-dasharray: 1;
+      stroke-dashoffset: 0;
+      opacity: 0;
+    }
 
-    <script>
-      const STATE = {
-        activeTab: 'problems',
-        activeView: 'exec',
-        impact: { minutes: 9, pkgHours: 6, riskHrs: 22.5 },
-        defaults: { impact: { minutes: 9, pkgHours: 6, riskHrs: 22.5 } },
-        ctx: { device: 'Windows', network: 'Corporate', compliant: true },
-        packHrs: 8, configHrs: 2, currentHrs: 24,
-        roiInputs: { users: 5000, ticketsPerUserPerMonth: 0.035, avgHandleMins: 18 },
-        copied: false,
-        showLabels: false,
-        showSolutionCards: true,
-        openWhy: null,
-        openWhyModal: null,
-        openCards: { core: false, onboarding: false, trust: false },
-        visitedCards: [],
-        openBuckets: { one: false, zero: false, per: false, edit: false },
-        modalOpen: false,
-        editBuffers: { change: { intro: '', bullets: '', analyst: '' }, now: { intro: '', bullets: '', analyst: '' }, recast: { intro: '', bullets: '', analyst: '' } },
-        selectedBullets: {},
-        flowRunning: false,
+    /* Rider */
+    #rider {
+      position: absolute;
+      width: 78px;
+      height: 78px;
+      left: 0;
+      top: 0;
+      opacity: 0;
+      z-index: 6;
+      pointer-events: none;
+      filter: drop-shadow(0 10px 20px rgba(0,0,0,.18));
+      transform: translate(-9999px,-9999px);
+    }
+    #rider .bubble {
+      position: absolute;
+      right: -6px;
+      top: -10px;
+      background: rgba(255,255,255,.9);
+      border: 1px solid rgba(0,0,0,.08);
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-size: 11px;
+      color: #111827;
+      opacity: 0;
+      transform: translateY(3px);
+      transition: opacity 220ms var(--ease), transform 220ms var(--ease);
+      white-space: nowrap;
+    }
+    #rider.show-bubble .bubble { opacity: 1; transform: translateY(0); }
 
-        currentState: {
-          change: {
-            intro: "The app layer has become the biggest slowdown in IT. Teams are drowning in apps, constant updates, and one-off fixes, and every project ends up paying the price.",
-            bullets: [
-              'There are too many apps to manage by hand. Commercial, internal, and legacy software are spread across Intune, ConfigMgr, VDI, Windows, and macOS.',
-              'Headcount hasn’t grown, but the work has exploded. Most teams are already over capacity and spend most of their day reacting to app issues.',
-              'Big initiatives keep getting stuck. Cloud moves, Citrix or AVD projects, hardware refreshes, and AI efforts all run into the same wall — app readiness.',
-              'Technical debt keeps piling up. Different versions of the same app are everywhere, creating more risk, more tickets, and slower recovery when things break.'
-            ],
-            analyst: "When the application layer is a mess, transformation projects stall or fail. It’s not because the strategy is wrong, but because there’s no capacity left to execute."
-          },
-          now: {
-            intro: "IT teams are being asked to manage more apps and more change with the same people and the same tools. The gap between what’s expected and what’s possible keeps getting wider.",
-            bullets: [
-              'App updates and complexity keep increasing, but team size stays the same. You can’t scale people the way you scale software.',
-              'Internal and custom apps don’t update themselves, so every change adds more manual work, more dependencies, and more risk.',
-              'Leadership wants progress on AI, modernization, and new platforms, but the teams who could drive that progress are stuck keeping apps running.',
-              'The longer this goes on, the worse it gets. Version sprawl grows, security and compliance get harder, and cleanup costs rise fast.'
-            ],
-            analyst: "In the next few years, the organizations that succeed with AI and modernization will be the ones that fix app delivery first. Everyone else will hit a hard capacity wall."
-          },
-          recast: {
-            intro: "Recast’s Application Workspace solves the core problem. It gives IT one place to package, update, and manage every application so the app layer stops slowing everything down.",
-            bullets: [
-              'One workspace for every app, whether commercial, internal, or legacy. Installs, updates, and access all handled consistently across Intune, ConfigMgr, AVD, and other systems.',
-              'Automates what teams still do by hand — packaging, versioning, and pushing updates, especially for internal and custom apps.',
-              'Reduces technical debt and version sprawl, which means fewer variables when something breaks and far fewer app-related tickets.',
-              'Frees up IT capacity. What used to take hours now takes minutes, so migrations, pilots, patch cycles, and AI projects can finally move at business speed.'
-            ],
-            analyst: "Recast turns app management from a drag on every project into a stable foundation. Readiness stops being the blocker and becomes the default."
-          }
-        },
+    #riderLottie {
+      width: 78px;
+      height: 78px;
+    }
 
-        defaultsCurrentState() {
-          return JSON.parse(JSON.stringify(this.currentState));
-        },
+    /* End user state */
+    .highlighted {
+      border-color: rgba(16,185,129,.9) !important;
+      box-shadow: 0 0 0 3px rgba(16,185,129,.18);
+      transition: box-shadow 260ms var(--ease), border-color 260ms var(--ease);
+    }
+    .processed {
+      background: #ecfdf5 !important;
+      border-color: #d1fae5 !important;
+      color: #065f46 !important;
+      transition: background 260ms var(--ease), border-color 260ms var(--ease), color 260ms var(--ease);
+    }
 
-        progress: { apps: 0, time: 0, tickets: 0 }
-      };
+    @media (prefers-reduced-motion: reduce) {
+      .run [data-anim] { animation: none !important; }
+    }
+  </style>
+</head>
 
-      const TABS = [
-        { id: 'problems', label: 'Current State', icon: 'alert-triangle' },
-        { id: 'solution', label: 'Recast Approach', icon: 'workflow' },
-        { id: 'roi', label: 'Business Impact', icon: 'bar-chart-3' }
-      ];
+<body class="min-h-screen bg-gray-50 text-gray-900">
+  <div class="mx-auto max-w-6xl px-6 lg:px-12 py-8">
+    <header class="mb-5">
+      <h1 class="text-4xl md:text-5xl font-semibold leading-tight">
+        <span class="text-blue-600">Re</span>cast Application Workspace
+      </h1>
+      <p class="mt-2 max-w-3xl text-base leading-relaxed text-gray-700">
+        The motorcycle rider now *visibly delivers* from apps → control plane → end user. Confetti still lands after processing completes.
+      </p>
+    </header>
 
-      const NEW_CARDS = [
-        {
-          id: 'core',
-          icon: 'layers',
-          title: 'How Recast Does It.',
-          bullets: [
-            'One workspace to package, deploy, update, and retire apps across Intune, SCCM, Citrix, Omnissa, and Azure.',
-            '8,000+ pre-tested enterprise apps ready to deploy instantly.',
-            'Automated patching and validation keep apps secure and compliant.',
-            'Unified dashboard for visibility and governance across all environments.',
-            'Policy-driven automation reduces manual work by over 60%.',
-            'End users get the right app instantly — no tickets, no delays.'
-          ],
-          closer: 'Configured once — Delivered everywhere.',
-          timeline: false,
-          bgHeader: 'bg-gray-50',
-          bgContent: 'bg-gray-50'
-        },
-        {
-          id: 'onboarding',
-          icon: 'clock',
-          title: 'Onboard & Up to Speed Fast.',
-          bullets: [
-            'Standard rollout in 4–6 weeks (Kickoff — Implementation — UAT — Launch — Enablement).',
-            'No new infrastructure — integrates with your existing management tools.',
-            'Guided setup with dedicated Customer Success Manager.',
-            'Typical resource: 1–2 IT engineers part-time.',
-            'Enablement includes training, certification, and success planning.'
-          ],
-          closer: 'From first call to production in weeks, not months.',
-          timeline: true,
-          bgHeader: 'bg-gray-50',
-          bgContent: 'bg-gray-50'
-        },
-        {
-          id: 'trust',
-          icon: 'shield-check',
-          title: 'Trusted by Customers',
-          bullets: [
-            '60M+ endpoints across 130+ countries.',
-            '70k+ Customers & Trusted by global organizations| Citibank, McKinsey & Company, U.S. Air Force, FEMA, Hitachi, Johns Hopkins, Costco, Government of Canada.',
-            '87 CSAT Score | Most trusted in the industry',
-            'Proven scalability from small pilots to global deployments.',
-            'Backed by enterprise-grade support and compliance alignment (SOC 2, ISO 27001).'
-          ],
-          closer: 'Trusted by organizations that can’t afford downtime.',
-          timeline: false,
-          bgHeader: 'bg-gray-50',
-          bgContent: 'bg-gray-50'
-        }
-      ];
-
-      const onboardingMiniTimelineEnabled = true;
-
-      function cx(...a){ return a.filter(Boolean).join(' '); }
-      function round(n){ return Math.round(n*100)/100; }
-      function num(n){ return new Intl.NumberFormat().format(Math.round(n)); }
-
-      function routeRecommendation(ctx){
-        if(!ctx.compliant) return 'Web';
-        if(ctx.device==='Windows' && ctx.network!=='Home') return 'Local';
-        return 'VDI';
-      }
-
-      function cleanNum(v){ v = Number(String(v).replace(/[^0-9.\-]/g,'')); return isFinite(v) ? v : 0; }
-
-      function render(){
-        const root=document.getElementById('app');
-        root.innerHTML = `
-          <header class="relative">
-            <div class="relative mx-auto max-w-6xl px-6 lg:px-12 pt-8 pb-6">
-              <h1 class="text-4xl md:text-5xl font-semibold leading-tight"><span class="text-blue-600">Re</span><span class="text-gray-900">cast Application Workspace</span></h1>
-              <p class="mt-2 max-w-2xl text-base leading-relaxed text-gray-700">
-                ${STATE.activeTab==='problems'
-                  ? ''
-                  : 'Recast works across SCCM, Intune, Citrix, VMware Workspace ONE, and more—making the tools you already use faster, smarter, and easier to manage'}
-              </p>
-            </div>
-            <div class="relative mx-auto max-w-6xl px-6 lg:px-12">
-              <div role="tablist" aria-label="Demo sections" class="flex flex-nowrap overflow-x-auto gap-2 rounded bg-gray-50 p-1 ring-1 ring-gray-200">
-                ${TABS.map(t=>`
-                  <button type="button" class="${cx('flex-1 inline-flex items-center justify-center gap-2 px-3.5 py-1.5 text-sm focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 transition rounded-full', STATE.activeTab===t.id ? 'bg-blue-600 text-white hover:bg-blue-700' : 'text-gray-900 hover:bg-gray-100')}" data-action="switch-tab" data-tab="${t.id}" aria-controls="panel-${t.id}" aria-selected="${STATE.activeTab===t.id}">
-                    <i data-lucide="${t.icon}" class="w-4 h-4"></i><span>${t.label}</span>
-                  </button>
-                `).join('')}
-              </div>
-            </div>
-          </header>
-          <main class="mx-auto max-w-6xl px-6 lg:px-12 pb-8 gap-4">
-            <section class="mt-4">${renderActivePanel()}</section>
-          </main>
-          ${renderModal()}
-          ${renderWhyModal()}
-        `;
-        if (window.lucide?.createIcons) { try { window.lucide.createIcons(); } catch {} }
-        attachEvents();
-        if (STATE.activeTab === 'solution') { buildFlow(); }
-        if (STATE.activeTab === 'roi') { updateROIOutputs(); }
-        if (STATE.activeTab === 'solution') { attachAccordionKeyboard(); }
-      }
-
-      function chip(label,value,tone){
-        const tones={emerald:'from-emerald-400/80 to-teal-400/80',sky:'from-sky-400/80 to-indigo-400/80',yellow:'from-yellow-300/90 to-amber-400/90'};
-        return `
-          <div class="rounded-2xl bg-white shadow-md hover:shadow-lg hover:-translate-y-[2px] transition-shadow duration-300 transition-transform p-2">
-            <div class="text-[11px] text-gray-600">${label}</div>
-            <div class="mt-0.5 inline-flex items-center gap-1.5 rounded bg-gradient-to-r px-1.5 py-0.5 text-gray-900 ${tones[tone]}">
-              <i data-lucide="badge-check" class="w-3.5 h-3.5"></i><span class="text-[12px] font-semibold tabular-nums">${value}</span>
+    <section class="grid grid-cols-1 gap-4">
+      <div class="relative rounded-2xl bg-white shadow-md p-4">
+        <div class="flex items-center justify-between gap-2">
+          <div class="flex items-center gap-2">
+            <span class="h-7 w-7 rounded-lg grid place-items-center bg-blue-600">
+              <i data-lucide="layers" class="h-4 w-4 text-white"></i>
+            </span>
+            <div>
+              <div class="text-sm font-semibold">Application Delivery Flow</div>
+              <div class="text-[12px] text-gray-600">Motorcycle delivery + staged policy routing</div>
             </div>
           </div>
-        `;
-      }
 
-      function renderActivePanel(){
-        if (STATE.activeTab==='problems') return renderProblems();
-        if (STATE.activeTab==='solution') return renderSolution();
-        if (STATE.activeTab==='roi') return renderROI();
-        return '';
-      }
-
-      const pressures = [
-        { id: 'cost', title: 'CAPACITY & OPERATIONAL DRAG', bullets: ['Manual app management consumes skilled IT capacity.', 'Redundant installs create rework and escalation.', 'Teams can’t scale delivery as application demand increases.', 'Lack of standardization hides friction across the lifecycle.'] },
-        { id: 'risk', title: 'RISK, COMPLIANCE & SECURITY', bullets: ['Version sprawl and patch gaps increase organizational risk.', 'No unified view limits governance and response speed.', 'Manual processes increase human error and audit exposure.'] },
-        { id: 'capacity', title: 'CAPACITY & DELIVERY VELOCITY', bullets: ['Flat headcount limits the pace of change.', 'Repetitive tasks crowd out modernization efforts.', 'App readiness issues stall critical initiatives.'] },
-        { id: 'employee', title: 'EMPLOYEE EXPERIENCE & ENABLEMENT', bullets: ['App delays stall workflows and frustrate users.', 'Version mismatches break processes and erode IT trust.', 'Inconsistent delivery drives shadow IT and ticket volume.'] }
-      ];
-
-      function renderProblems(){
-        return `
-          <section id="panel-problems" class="space-y-3">
-            <h2 class="text-3xl font-semibold leading-tight">Where Application Delivery Creates Friction</h2>
-            <p class="text-xl text-gray-700 leading-relaxed">The application layer is the #1 bottleneck to operational change.</p>
-            <p class="text-base text-gray-700 leading-relaxed">Most IT teams aren’t failing — they’re constrained by a delivery model that doesn’t scale with the pace of change.</p>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-start">
-              ${pressures.map(p=>`
-                <div class="rounded-2xl bg-white shadow-md hover:shadow-lg hover:-translate-y-[2px] transition-shadow duration-300 transition-transform p-4 flex flex-col space-y-1 h-full">
-                  <h3 class="text-[14px] font-semibold mb-1">${p.title}</h3>
-                  <ul class="list-disc list-inside space-y-1 text-[12px] text-gray-700">
-                    ${p.bullets.map((b,i)=>{
-                      const selected = (STATE.selectedBullets[p.id] || []).includes(i);
-                      return `
-                        <li class="flex items-center gap-2 min-h-[1.25rem] ${selected ? 'bg-blue-50 rounded-md p-1 transition-colors' : ''} ${b ? '' : 'invisible' }">
-                          <label class="flex items-center gap-2 cursor-pointer select-none w-full">
-                            <input type="checkbox" class="sr-only" data-action="toggle-bullet" data-category="${p.id}" data-index="${i}" ${selected ? 'checked' : ''} aria-label="Select: ${b}">
-                            <div class="w-3.5 h-3.5 border-2 rounded-full flex items-center justify-center transition-all duration-200 ease-in-out shrink-0 ${selected ? 'bg-blue-600 border-blue-600' : 'border-gray-300 bg-white'}">
-                              ${selected ? '<i data-lucide="check" class="w-2.5 h-2.5 text-white stroke-[3]"></i>' : ''}
-                            </div>
-                            <span class="${selected ? 'text-blue-800 font-medium' : ''}">${b}</span>
-                          </label>
-                        </li>
-                      `;
-                    }).join('')}
-                  </ul>
-                </div>
-              `).join('')}
-            </div>
-            <div class="mt-6 flex justify-between items-center">
-              <button type="button" data-action="reset-bullets" class="bg-transparent text-gray-900 border-2 border-gray-900 rounded-full px-4 py-1.5 hover:text-blue-600 hover:border-blue-600 hover:scale-102 transition-all duration-200 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 text-sm">Reset</button>
-              <button type="button" data-action="next-tab" class="bg-blue-600 text-white rounded-full px-4 py-1.5 hover:bg-blue-700 hover:scale-102 transition-all duration-200 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 text-sm">Next</button>
-            </div>
-          </section>
-        `;
-      }
-
-      function renderWhyModal(){
-        if(!STATE.openWhyModal) return '';
-        const id = STATE.openWhyModal;
-        const iconMap = { change: 'alert-triangle', now: 'clock-4', recast: 'sparkles' };
-        const labelMap = { change: 'Why Change', now: 'Why Now', recast: 'Why Recast' };
-        const data = STATE.currentState[id];
-        const headerTone = 'bg-gray-50';
-        const cta = id === 'recast';
-        return `
-          <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 animate-overlayFade" role="dialog" aria-modal="true" aria-labelledby="why-modal-title-${id}">
-            <div class="w-full max-w-4xl mx-4 bg-white rounded-2xl shadow-2xl overflow-hidden animate-modalEnter" style="max-height: 95vh; overflow-y: auto;">
-              <div class="${headerTone} px-6 py-4 flex items-center justify-between border-b border-gray-200">
-                <div class="flex items-center gap-2">
-                  <i data-lucide="${iconMap[id]}" class="w-7 h-7 text-gray-900" aria-hidden="true"></i>
-                  <h2 id="why-modal-title-${id}" class="text-2xl font-bold tracking-tight text-gray-900">${labelMap[id]}</h2>
-                </div>
-                <button type="button" class="text-gray-500 hover:text-gray-700 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 p-1.5" data-action="close-why-modal" aria-label="Close">
-                  <i data-lucide="x" class="w-5 h-5"></i>
-                </button>
-              </div>
-              <div class="p-6 bg-gray-50">
-                <p class="text-[15px] leading-relaxed text-gray-700 mb-3">${data.intro}</p>
-                <div class="space-y-3">
-                  ${data.bullets.map(b=>`
-                    <div class="bg-white p-3 rounded-lg shadow-sm flex items-start gap-2 hover:shadow-md transition-shadow duration-300">
-                      <i data-lucide="check-circle" class="w-4.5 h-4.5 text-blue-600 flex-shrink-0 mt-0.5"></i>
-                      <p class="text-[15px] leading-relaxed text-gray-700">${b}</p>
-                    </div>
-                  `).join('')}
-                </div>
-                <div class="mt-5 bg-white p-3 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 flex items-start gap-2">
-                  <i data-lucide="lightbulb" class="w-4.5 h-4.5 text-yellow-400 flex-shrink-0 mt-0.5"></i>
-                  <p class="text-[15px] italic text-gray-700">${data.analyst}</p>
-                </div>
-                ${cta?`
-                  <div class="mt-6 flex justify-center">
-                    <button id="btnAdvanceToSolution" type="button" data-action="advance" data-next="solution" class="inline-flex bg-blue-600 text-white text-[15px] font-semibold px-5 py-2.5 items-center gap-2 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 shadow-md hover:shadow-lg hover:bg-blue-700 transition-shadow duration-300 rounded-full">
-                      <i data-lucide="arrow-right" class="w-4.5 h-4.5"></i>
-                      How Recast solves it
-                    </button>
-                  </div>
-                `:''}
-              </div>
-            </div>
-          </div>
-        `;
-      }
-
-      function popoutCard(card){
-        const expanded = STATE.openCards[card.id];
-        const contentId = `card-content-${card.id}`;
-        return `
-          <div class="h-full flex flex-col">
-            <button
-              type="button"
-              class="accordion-header w-full overflow-hidden ring-1 ring-gray-200 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 transition hover:ring-gray-300 shadow-sm rounded-2xl min-h-[44px]"
-              data-action="toggle-card"
-              data-card="${card.id}"
-              aria-expanded="${expanded}"
-              aria-controls="${contentId}"
-            >
-              <div class="${card.bgHeader || 'bg-gray-50'} px-4 py-3 flex flex-col border-b border-gray-200">
-                <div class="flex justify-between items-center">
-                  <div class="flex items-center gap-1.5">
-                    <i data-lucide="${card.icon}" class="w-5 h-5 text-gray-900" aria-hidden="true"></i>
-                    <span class="text-lg font-medium text-left tracking-normal text-gray-900">${card.title}</span>
-                  </div>
-                  <div class="flex items-center gap-1.5">
-                    <span class="text-[13px] text-gray-700">${expanded ? 'Collapse' : 'Expand'}</span>
-                    <i data-lucide="chevron-down" class="w-4.5 h-4.5 text-gray-600 transition-transform duration-150 ${expanded ? 'rotate-180' : ''}" aria-hidden="true"></i>
-                  </div>
-                </div>
-              </div>
+          <div class="flex items-center gap-2">
+            <button id="btnStart"
+              class="bg-blue-600 text-white px-3 py-1.5 text-[12px] font-semibold rounded-full hover:bg-blue-700 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2">
+              Start
             </button>
-            <div id="${contentId}" class="accordion-content overflow-hidden border-l-4 border-blue-600 ${card.bgContent} ${expanded ? 'max-h-[1200px] opacity-100 p-4' : 'max-h-0 opacity-0 p-0'} transition-[max-height] duration-150 ease-[cubic-bezier(0.2,0.8,0.2,1)] transition-opacity duration-150">
-              <ul class="list-disc pl-5 text-[15px] leading-relaxed space-y-2 text-gray-700 text-left">
-                ${card.bullets.map(b=>`<li>${b}</li>`).join('')}
-              </ul>
-              ${card.timeline && onboardingMiniTimelineEnabled && expanded ? renderMiniTimeline() : ''}
-              <p class="mt-3 italic text-[15px] text-gray-700">${card.closer}</p>
-            </div>
-          </div>
-        `;
-      }
-
-      function renderMiniTimeline(){
-        const phases = [
-          {icon: 'play-circle', label: 'Kickoff'},
-          {icon: 'hammer', label: 'Implementation'},
-          {icon: 'check-circle', label: 'UAT'},
-          {icon: 'flag', label: 'Launch'},
-          {icon: 'book-open', label: 'Enablement'}
-        ];
-        return `
-          <div class="flex items-center justify-between mt-3" aria-hidden="true">
-            ${phases.map((p, i) => `
-              ${i > 0 ? '<div class="flex-1 h-px bg-gray-200 mx-1.5"></div>' : ''}
-              <div class="flex flex-col items-center">
-                <i data-lucide="${p.icon}" class="w-4.5 h-4.5 text-blue-600"></i>
-                <span class="text-[11px] mt-0.5 text-gray-700">${p.label}</span>
-              </div>
-            `).join('')}
-          </div>
-        `;
-      }
-
-      function bucketAccordion(id, icon, label, contentFunc, headerTone='bg-gray-50'){
-        const expanded = STATE.openBuckets[id];
-        const contentId = `bucket-content-${id}`;
-        return `
-          <div class="flex flex-col">
-            <button
-              type="button"
-              class="w-full overflow-hidden ring-1 ring-gray-200 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 transition hover:ring-gray-300 shadow-sm rounded-2xl"
-              data-action="toggle-bucket"
-              data-bucket="${id}"
-              aria-expanded="${expanded}"
-              aria-controls="${contentId}"
-            >
-              <div class="flex items-center justify-between px-4 py-3 ${headerTone} border-b border-gray-200">
-                <div class="flex items-center gap-1.5">
-                  <i data-lucide="${icon}" class="w-4.5 h-4.5 text-gray-900" aria-hidden="true"></i>
-                  <span class="text-[15px] font-semibold tracking-normal text-gray-900">${label}</span>
-                </div>
-                <i data-lucide="${expanded?'chevron-up':'chevron-down'}" class="w-4.5 h-4.5 text-gray-600 transition-transform duration-150" aria-hidden="true"></i>
-              </div>
+            <button id="btnReset"
+              class="bg-transparent text-gray-900 border-2 border-gray-900 px-3 py-1.5 text-[12px] font-semibold rounded-full hover:text-blue-600 hover:border-blue-600 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2">
+              Reset
             </button>
-            <div id="${contentId}" class="accordion-content overflow-hidden ${expanded ? 'max-h-[1200px] opacity-100' : 'max-h-0 opacity-0'} transition-[max-height] duration-150 ease-[cubic-bezier(0.2,0.8,0.2,1)] transition-opacity duration-150">
-              ${expanded ? contentFunc() : ''}
-            </div>
           </div>
-        `;
-      }
+        </div>
 
-      function onePackageContent(){
-        const saved=Math.max(0, Number(STATE.packHrs)-Number(STATE.configHrs));
-        return `
-          <div class="p-3">
-            <div class="rounded-xl border border-gray-200 bg-gray-50 transition-shadow duration-300 p-2.5 text-[13px]">
-              <div class="flex items-center gap-1.5 font-medium"><i data-lucide="wand-sparkles" class="w-3.5 h-3.5"></i> Hours Saved from Packaging</div>
-              <label class="mt-1.5 flex items-center gap-1.5 text-[11px]">
-                <span class="text-gray-700">Hours/package</span>
-                <input class="w-14 rounded bg-gray-100 px-1.5 py-0.5 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2" value="${STATE.packHrs}" inputmode="decimal" data-action="set-pack-hrs" aria-label="Hours per package">
-                <span>→</span>
-                <input class="w-14 rounded bg-gray-100 px-1.5 py-0.5 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2" value="${STATE.configHrs}" inputmode="decimal" data-action="set-config-hrs" aria-label="Hours to configure">
-              </label>
-              <div class="mt-1.5 flex items-center justify-between rounded bg-gray-100 px-2 py-1"><span class="tabular-nums">${STATE.packHrs} → ${STATE.configHrs} hrs</span><strong class="tabular-nums">${saved} hrs saved</strong></div>
-              <button type="button" class="mt-1.5 bg-blue-600 text-white px-2.5 py-0.5 text-[11px] font-semibold w-full rounded hover:bg-blue-700 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2">Add to impact</button>
-            </div>
+        <div class="mt-3 flex items-center justify-center gap-3 text-[13px] font-medium">
+          <div class="flex items-center gap-1">
+            <i data-lucide="building" class="w-4 h-4 text-gray-600"></i>
+            <span>Existing App Managers</span>
           </div>
-        `;
-      }
-
-      function zeroDayContent(){
-        const reduced=Math.max(0, Number(STATE.currentHrs)-1.5);
-        return `
-          <div class="p-3">
-            <div class="rounded-xl border border-gray-200 bg-gray-50 transition-shadow duration-300 p-2.5 text-[13px]">
-              <div class="flex items-center gap-1.5 font-medium"><i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Hours Saved from Faster Patching</div>
-              <label class="mt-1.5 flex items-center gap-1.5 text-[11px]">
-                <span class="text-gray-700">Current hrs</span>
-                <input class="w-16 rounded bg-gray-100 px-1.5 py-0.5 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2" value="${STATE.currentHrs}" inputmode="decimal" data-action="set-current-hrs" aria-label="Current time to deploy (hours)">
-              </label>
-              <div class="mt-1.5 flex items-center justify-between rounded bg-gray-100 px-2 py-1"><span class="tabular-nums">${STATE.currentHrs} → 1.5 hrs</span><strong class="tabular-nums">${round(reduced)} hrs reduced</strong></div>
-              <button type="button" class="mt-1.5 bg-blue-600 text-white px-2.5 py-0.5 text-[11px] font-semibold w-full rounded hover:bg-blue-700 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2" data-action="add-impact" data-kind="riskHrs" data-value="${reduced}">Add to impact</button>
-            </div>
+          <i data-lucide="arrow-right" class="w-4 h-4 text-gray-400"></i>
+          <div class="flex items-center gap-1">
+            <i data-lucide="truck" class="w-4 h-4 text-blue-600"></i>
+            <span>Delivery Control Plane</span>
           </div>
-        `;
-      }
+          <i data-lucide="arrow-right" class="w-4 h-4 text-gray-400"></i>
+          <div class="flex items-center gap-1">
+            <i data-lucide="user" class="w-4 h-4 text-gray-600"></i>
+            <span>User</span>
+          </div>
+        </div>
 
-      function perUserContent(){
-        const totalMin = Math.max(0, Number(STATE.impact.minutes));
-        const route=routeRecommendation(STATE.ctx);
-        return `
-          <div class="p-3">
-            <div class="rounded-xl border border-gray-200 bg-gray-50 transition-shadow duration-300 p-2.5 text-[13px]">
-              <div class="flex items-center gap-1.5 font-medium"><i data-lucide="mouse-pointer" class="w-3.5 h-3.5"></i> Reactive Work Reduced</div>
-              <div class="mt-1.5 flex items-center justify-between rounded bg-gray-100 px-2 py-1">
-                <span class="tabular-nums">18 → ${totalMin} min</span>
-                <strong class="tabular-nums">${totalMin} min saved</strong>
+        <div class="mt-2 text-center bg-blue-50 p-2 rounded-lg text-[12px] text-gray-700">
+          Recast sits between your tools and your users, standardizing delivery without changing app sources.
+        </div>
+
+        <div id="flowCard" class="relative mt-3 rounded-xl border border-gray-200 bg-gradient-to-b from-white to-gray-50 shadow-inner p-3 overflow-hidden">
+
+          <!-- route overlay -->
+          <svg id="routeLayer" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+            <path id="routeGlow" d="" />
+            <path id="routePath" d="" />
+            <path id="routeTrace" d="" />
+          </svg>
+
+          <!-- rider -->
+          <div id="rider" aria-hidden="true">
+            <div class="bubble" id="riderBubble">Delivering…</div>
+            <div id="riderLottie"></div>
+          </div>
+
+          <!-- counters -->
+          <div id="counters" class="hidden mb-3 grid grid-cols-3 gap-2 text-[12px] text-center text-gray-700">
+            <div><span class="font-semibold tabular-nums" id="appsProcessed">0</span> apps processed</div>
+            <div><span class="font-semibold tabular-nums" id="timeSaved">0</span> hours saved</div>
+            <div><span class="font-semibold tabular-nums" id="ticketsAvoided">0</span> tickets avoided</div>
+          </div>
+
+          <!-- Source apps (left) -->
+          <div class="space-y-2">
+            <div class="grid grid-cols-[12ch_1fr] gap-2 items-center border-t border-gray-200 pt-2 first:border-t-0 first:pt-0">
+              <div class="text-[11px] uppercase text-gray-700 flex items-center gap-1.5">
+                <i data-lucide="folder" class="w-3 h-3"></i>CORE
               </div>
+              <div id="cat-core" class="flex flex-wrap gap-2"></div>
+            </div>
+
+            <div class="grid grid-cols-[12ch_1fr] gap-2 items-center border-t border-gray-200 pt-2">
+              <div class="text-[11px] uppercase text-gray-700 flex items-center gap-1.5">
+                <i data-lucide="folder" class="w-3 h-3"></i>SECURITY
+              </div>
+              <div id="cat-security" class="flex flex-wrap gap-2"></div>
+            </div>
+
+            <div class="grid grid-cols-[12ch_1fr] gap-2 items-center border-t border-gray-200 pt-2">
+              <div class="text-[11px] uppercase text-gray-700 flex items-center gap-1.5">
+                <i data-lucide="folder" class="w-3 h-3"></i>ENTERPRISE
+              </div>
+              <div id="cat-enterprise" class="flex flex-wrap gap-2"></div>
             </div>
           </div>
-        `;
-      }
 
-      function editContent(){
-        return `
-          <div class="p-4 bg-white rounded-xl shadow-inner">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <h4 class="text-[15px] font-medium mb-3">Assumptions</h4>
-                <div class="space-y-3">
-                  ${inputNum('set-roi', '# users', 'users', STATE.roiInputs.users)}
-                  ${inputNum('set-roi', 'Tickets per user / mo', 'ticketsPerUserPerMonth', STATE.roiInputs.ticketsPerUserPerMonth)}
-                  ${inputNum('set-roi', 'Avg handle (mins)', 'avgHandleMins', STATE.roiInputs.avgHandleMins)}
+          <!-- Processing buckets (middle) -->
+          <div class="mt-4 grid grid-cols-3 gap-2" aria-hidden="true" id="platformsSection">
+            ${["Existing Platforms","Staged Rings","Access & Policy"].map((title,i)=>`
+              <div class="rounded-xl border border-gray-200 bg-gray-50 p-2 relative">
+                <div class="text-[11px] text-gray-700">${title}</div>
+                <div class="mt-1 grid grid-cols-10 gap-1" id="flowConn${i}"></div>
+                <div class="mt-2 bar" data-anim="barGrow" style="--d:${3 + i*0.5}s"></div>
+              </div>
+            `).join("")}
+          </div>
+
+          <div class="mt-3 grid grid-cols-3 gap-2" aria-hidden="true" id="groupsSection">
+            ${["Business Unit","Subsidiary","Region"].map((title,i)=>`
+              <div class="rounded-xl border border-gray-200 bg-gray-50 p-2 relative">
+                <div class="text-[11px] text-gray-700">${title}</div>
+                <div class="mt-1 grid grid-cols-8 gap-1" id="flowGrp${i}"></div>
+                <div class="mx-auto mt-2 bolt h-12" data-anim="boltDrop" style="--d:${5 + i*0.5}s"></div>
+              </div>
+            `).join("")}
+          </div>
+
+          <div class="mt-3 grid grid-cols-3 gap-2" aria-hidden="true" id="devicesSection">
+            ${[
+              {icon:"monitor-smartphone", label:"Windows & macOS"},
+              {icon:"laptop", label:"VDI / Web"},
+              {icon:"smartphone", label:"Mobile"}
+            ].map((d,i)=>`
+              <div class="rounded-xl border border-gray-200 bg-gray-50 p-2 text-center relative">
+                <i data-lucide="${d.icon}" class="h-5 w-5 text-gray-600 inline-block"></i>
+                <div class="mt-1 grid grid-cols-6 gap-1" id="flowDev${i}"></div>
+                <div class="mt-1 text-[10px] text-gray-700">${d.label}</div>
+              </div>
+            `).join("")}
+          </div>
+
+          <!-- End user (right target) -->
+          <div class="mt-4">
+            <div id="endUserCard" class="rounded-xl border border-gray-200 bg-gray-50 p-3">
+              <div class="flex items-center gap-2">
+                <div id="endUserAvatar" class="h-8 w-8 grid place-items-center font-semibold rounded-full bg-red-600 text-white">U</div>
+                <div class="text-[13px]">
+                  <div class="font-medium">End user</div>
+                  <div id="endUserMessage" class="text-gray-700">Waiting on app readiness…</div>
                 </div>
               </div>
-              <div>
-                <h4 class="text-[15px] font-medium mb-3">Direct Impacts</h4>
-                <div class="space-y-3">
-                  ${inputNum('set-impact', 'Minutes saved per user / mo', 'minutes', STATE.impact.minutes)}
-                  ${inputNum('set-impact', 'Packaging hours avoided / mo', 'pkgHours', STATE.impact.pkgHours)}
-                  ${inputNum('set-impact', 'Patching hours avoided / mo', 'riskHrs', STATE.impact.riskHrs)}
+
+              <div class="mt-3 border border-gray-200 bg-white rounded-2xl p-3">
+                <i data-lucide="laptop" class="h-4.5 w-4.5 text-gray-600"></i>
+                <div class="mt-1 text-[10px] text-gray-600">
+                  Right app, right policy, right device — regardless of backend platform.
                 </div>
               </div>
             </div>
-            <div class="mt-6 space-y-6">
-              ${perUserContent()}
-              ${onePackageContent()}
-              ${zeroDayContent()}
+
+            <div id="flowSuccess" class="mt-2 hidden inline-flex items-center gap-2 text-[13px] text-emerald-600 opacity-0">
+              <i data-lucide="sparkles" class="h-4 w-4"></i>
+              <span class="font-medium">Configured once → delivered everywhere.</span>
             </div>
           </div>
-        `;
+
+        </div>
+      </div>
+    </section>
+  </div>
+
+<script>
+  const $ = (id) => document.getElementById(id);
+  const prefersReducedMotion = () =>
+    window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // Replace this with YOUR motorcycle-delivery JSON if you already have one.
+  // The animation should look like a rider moving/rolling in place (we move the container across the screen).
+  const RIDER_LOTTIE_URL = "https://assets2.lottiefiles.com/packages/lf20_touohxv0.json";
+
+  const CATALOG = {
+    core: [
+      { l:"W", c:"#185ABD" }, { l:"X", c:"#107C41" }, { l:"P", c:"#D24726" },
+      { l:"O", c:"#106EBE" }, { l:"T", c:"#5B53D6" }, { l:"G", c:"#1A73E8" }
+    ],
+    security: [
+      { l:"D", c:"#3CB371" }, { l:"O", c:"#007DC1" }, { l:"P", c:"#C0172C" },
+      { l:"A", c:"#00B5AD" }, { l:"M", c:"#0067B8" }, { l:"C", c:"#D61F26" }
+    ],
+    enterprise: [
+      { l:"S", c:"#00A1E0" }, { l:"W", c:"#1F5BFF" }, { l:"N", c:"#81B29A" },
+      { l:"S", c:"#0A6ED1" }, { l:"N", c:"#C74634" }
+    ]
+  };
+
+  function shade(hex, m) {
+    const c = hex.replace("#","");
+    const n = [0,1,2].map(i => parseInt(c.slice(i*2, i*2+2), 16));
+    const s = n.map(v => Math.max(0, Math.min(255, Math.round(v*m))));
+    return "#" + s.map(v => v.toString(16).padStart(2,"0")).join("");
+  }
+
+  function logo(letter, color, extraClass="") {
+    return `
+      <div class="app-node w-7 h-7 rounded-full grid place-items-center bg-white shadow-[inset_0_0_0_1px_rgba(0,0,0,0.1)] ${extraClass}"
+           title="${letter}" aria-label="${letter}" role="img">
+        <svg viewBox="0 0 48 48" width="22" height="22" aria-hidden="true">
+          <defs>
+            <linearGradient id="g${letter}" x1="0" x2="1">
+              <stop offset="0" stop-color="${shade(color,0.92)}" />
+              <stop offset="1" stop-color="${shade(color,1.08)}" />
+            </linearGradient>
+          </defs>
+          <rect x="3" y="3" width="42" height="42" rx="12" fill="url(#g${letter})" stroke="rgba(0,0,0,.12)"/>
+          <text x="50%" y="58%" text-anchor="middle" font-size="22" font-family="Inter,Segoe UI,Arial" font-weight="800" fill="#0a1c60">${letter}</text>
+        </svg>
+      </div>
+    `;
+  }
+
+  function buildCatalog() {
+    $("cat-core").innerHTML = CATALOG.core.map((x,i) => logo(x.l, x.c, i===0 ? "js-startAnchor" : "")).join("");
+    $("cat-security").innerHTML = CATALOG.security.map(x => logo(x.l, x.c)).join("");
+    $("cat-enterprise").innerHTML = CATALOG.enterprise.map(x => logo(x.l, x.c)).join("");
+  }
+
+  function buildTiles(mountId, count, baseDelaySeconds) {
+    const mount = $(mountId);
+    if (!mount) return;
+    mount.innerHTML = "";
+    for (let i = 0; i < count; i++) {
+      const d = document.createElement("div");
+      d.className = "tile";
+      d.dataset.anim = "tilePulse";
+      d.style.setProperty("--d", `${(baseDelaySeconds + i*0.10).toFixed(2)}s`);
+      mount.appendChild(d);
+    }
+  }
+
+  function buildFlow() {
+    buildCatalog();
+
+    buildTiles("flowConn0", 14, 2.7);
+    buildTiles("flowConn1", 14, 3.2);
+    buildTiles("flowConn2", 14, 3.7);
+
+    buildTiles("flowGrp0", 16, 5.0);
+    buildTiles("flowGrp1", 16, 5.4);
+    buildTiles("flowGrp2", 16, 5.8);
+
+    buildTiles("flowDev0", 10, 7.9);
+    buildTiles("flowDev1", 10, 8.3);
+    buildTiles("flowDev2", 10, 8.7);
+
+    resetUI();
+  }
+
+  // Rider animation + route drawing
+  let riderLottie = null;
+  let riderMoveAnim = null;
+  let routeTraceAnim = null;
+  let running = false;
+  let progressTimer = null;
+
+  function ensureRiderLottie() {
+    if (riderLottie || !window.lottie) return;
+    riderLottie = window.lottie.loadAnimation({
+      container: $("riderLottie"),
+      renderer: "svg",
+      loop: true,
+      autoplay: false,
+      path: RIDER_LOTTIE_URL,
+      rendererSettings: { preserveAspectRatio: "xMidYMid slice", progressiveLoad: true }
+    });
+  }
+
+  function centerPointWithin(containerEl, targetEl) {
+    const c = containerEl.getBoundingClientRect();
+    const t = targetEl.getBoundingClientRect();
+    return {
+      x: (t.left - c.left) + t.width / 2,
+      y: (t.top - c.top) + t.height / 2
+    };
+  }
+
+  function setRoutePathD(d) {
+    $("routePath").setAttribute("d", d);
+    $("routeGlow").setAttribute("d", d);
+    $("routeTrace").setAttribute("d", d);
+  }
+
+  function drawAndAnimateRoute(flowEl, p0, p1, p2, p3, durationMs) {
+    const w = flowEl.clientWidth;
+    const h = flowEl.clientHeight;
+
+    // normalize points into SVG viewBox units (0-100) to avoid resize weirdness
+    const toV = (p) => ({ x: (p.x / w) * 100, y: (p.y / h) * 100 });
+
+    const a = toV(p0), b = toV(p1), c = toV(p2), d = toV(p3);
+
+    const pathD = `M ${a.x} ${a.y} C ${b.x} ${b.y}, ${c.x} ${c.y}, ${d.x} ${d.y}`;
+    setRoutePathD(pathD);
+
+    const trace = $("routeTrace");
+    trace.style.opacity = "1";
+
+    // animate stroke-dashoffset “drawing”
+    const len = trace.getTotalLength();
+    trace.style.strokeDasharray = String(len);
+    trace.style.strokeDashoffset = String(len);
+
+    if (routeTraceAnim) routeTraceAnim.cancel();
+    routeTraceAnim = trace.animate(
+      [{ strokeDashoffset: len }, { strokeDashoffset: 0 }],
+      { duration: durationMs, easing: "linear", fill: "forwards" }
+    );
+  }
+
+  function moveRiderAlong(flowEl, start, mid1, mid2, end, durationMs) {
+    const rider = $("rider");
+    rider.style.opacity = "1";
+
+    // Put the rider so its center hits the points
+    const riderW = rider.offsetWidth || 78;
+    const riderH = rider.offsetHeight || 78;
+    const place = (p) => ({ x: p.x - riderW/2, y: p.y - riderH/2 });
+
+    const s = place(start), m1 = place(mid1), m2 = place(mid2), e = place(end);
+
+    if (riderMoveAnim) riderMoveAnim.cancel();
+
+    riderMoveAnim = rider.animate(
+      [
+        { transform: `translate(${s.x}px,${s.y}px) rotate(-4deg)` },
+        { transform: `translate(${m1.x}px,${m1.y}px) rotate(-2deg)`, offset: 0.42 },
+        { transform: `translate(${m2.x}px,${m2.y}px) rotate(2deg)`,  offset: 0.78 },
+        { transform: `translate(${e.x}px,${e.y}px) rotate(0deg)` }
+      ],
+      { duration: durationMs, easing: "cubic-bezier(0.2,0.8,0.2,1)", fill: "forwards" }
+    );
+  }
+
+  function runRiderTrip() {
+    const flowEl = $("flowCard");
+    const startEl = flowEl.querySelector(".js-startAnchor") || flowEl.querySelector(".app-node");
+    const endEl = $("endUserAvatar");
+    if (!flowEl || !startEl || !endEl) return;
+
+    ensureRiderLottie();
+    if (!prefersReducedMotion()) {
+      try { riderLottie.play(); } catch {}
+    }
+
+    const start = centerPointWithin(flowEl, startEl);
+    const end = centerPointWithin(flowEl, endEl);
+
+    // control plane-ish midpoints (gives a purposeful “go through the middle” arc)
+    const mid1 = { x: Math.max(start.x + 140, flowEl.clientWidth * 0.46), y: Math.max(70, start.y - 28) };
+    const mid2 = { x: Math.min(end.x - 140, flowEl.clientWidth * 0.70), y: Math.min(flowEl.clientHeight - 90, end.y - 34) };
+
+    const durationMs = 8200;
+
+    drawAndAnimateRoute(flowEl, start, mid1, mid2, end, durationMs);
+    moveRiderAlong(flowEl, start, mid1, mid2, end, durationMs);
+
+    const rider = $("rider");
+    rider.classList.add("show-bubble");
+    setTimeout(() => rider.classList.remove("show-bubble"), 1400);
+  }
+
+  // Progress + completion
+  const progress = { apps: 0, time: 0, tickets: 0 };
+
+  function setCounter(id, v) { const el = $(id); if (el) el.textContent = String(v); }
+  function updateProgress() {
+    if (progress.apps < 128) progress.apps += 4;
+    if (progress.time < 46) progress.time += 2;
+    if (progress.tickets < 73) progress.tickets += 3;
+    setCounter("appsProcessed", Math.min(progress.apps, 128));
+    setCounter("timeSaved", Math.min(progress.time, 46));
+    setCounter("ticketsAvoided", Math.min(progress.tickets, 73));
+  }
+
+  function fireConfetti() {
+    if (!window.confetti) return;
+    window.confetti({
+      disableForReducedMotion: true,
+      particleCount: 30,
+      spread: 62,
+      ticks: 150,
+      gravity: 0.95,
+      decay: 0.93,
+      startVelocity: 28,
+      scalar: 0.9,
+      colors: ["#2563EB", "#93C5FD", "#E5E7EB", "#FFFFFF"],
+      angle: 60,
+      origin: { x: 0.12, y: 0.75 }
+    });
+    window.confetti({
+      disableForReducedMotion: true,
+      particleCount: 30,
+      spread: 62,
+      ticks: 150,
+      gravity: 0.95,
+      decay: 0.93,
+      startVelocity: 28,
+      scalar: 0.9,
+      colors: ["#10B981", "#A7F3D0", "#E5E7EB", "#FFFFFF"],
+      angle: 120,
+      origin: { x: 0.88, y: 0.75 }
+    });
+  }
+
+  function resetUI() {
+    running = false;
+    progress.apps = progress.time = progress.tickets = 0;
+
+    $("btnStart").disabled = false;
+    $("btnStart").classList.remove("opacity-60", "cursor-not-allowed");
+
+    $("counters").classList.add("hidden");
+    $("flowSuccess").classList.add("hidden");
+
+    $("endUserCard").classList.remove("highlighted");
+    $("endUserAvatar").classList.remove("bg-green-500");
+    $("endUserAvatar").classList.add("bg-red-600");
+    $("endUserAvatar").textContent = "U";
+    $("endUserMessage").textContent = "Waiting on app readiness…";
+
+    // route + rider
+    $("routeTrace").style.opacity = "0";
+    setRoutePathD("");
+    const rider = $("rider");
+    rider.style.opacity = "0";
+    rider.style.transform = "translate(-9999px,-9999px)";
+    rider.classList.remove("show-bubble");
+
+    if (riderMoveAnim) { try { riderMoveAnim.cancel(); } catch {} riderMoveAnim = null; }
+    if (routeTraceAnim) { try { routeTraceAnim.cancel(); } catch {} routeTraceAnim = null; }
+
+    if (riderLottie) { try { riderLottie.stop(); } catch {} }
+
+    // remove processed states
+    document.querySelectorAll(".processed").forEach(el => el.classList.remove("processed"));
+
+    // clear animation class
+    const flow = $("flowCard");
+    flow.classList.remove("run");
+
+    setCounter("appsProcessed", 0);
+    setCounter("timeSaved", 0);
+    setCounter("ticketsAvoided", 0);
+
+    if (progressTimer) { clearInterval(progressTimer); progressTimer = null; }
+  }
+
+  function startFlow() {
+    if (running) return;
+    running = true;
+
+    $("btnStart").disabled = true;
+    $("btnStart").classList.add("opacity-60", "cursor-not-allowed");
+
+    $("counters").classList.remove("hidden");
+
+    // restart CSS animations
+    const flow = $("flowCard");
+    flow.classList.remove("run");
+    void flow.offsetWidth;
+    flow.classList.add("run");
+
+    // Rider trip is the hero: it *connects* the flow
+    runRiderTrip();
+
+    // bucket highlights (kept, but timed to feel “professional”)
+    const platforms = document.querySelectorAll("#platformsSection > div");
+    const groups = document.querySelectorAll("#groupsSection > div");
+    const devices = document.querySelectorAll("#devicesSection > div");
+
+    // start progress
+    progressTimer = setInterval(updateProgress, 110);
+
+    // staged "processed" marks
+    setTimeout(() => platforms[0]?.classList.add("processed"), 4200);
+    setTimeout(() => platforms[1]?.classList.add("processed"), 4700);
+    setTimeout(() => platforms[2]?.classList.add("processed"), 5200);
+
+    setTimeout(() => groups[0]?.classList.add("processed"), 6000);
+    setTimeout(() => groups[1]?.classList.add("processed"), 6500);
+    setTimeout(() => groups[2]?.classList.add("processed"), 7000);
+
+    setTimeout(() => devices[0]?.classList.add("processed"), 7700);
+    setTimeout(() => devices[1]?.classList.add("processed"), 8200);
+    setTimeout(() => devices[2]?.classList.add("processed"), 8700);
+
+    // Arrival + completion
+    setTimeout(() => {
+      $("endUserCard").classList.add("highlighted");
+      $("endUserAvatar").classList.remove("bg-red-600");
+      $("endUserAvatar").classList.add("bg-green-500");
+      $("endUserAvatar").textContent = "✓";
+      $("endUserMessage").textContent = "Delivered. User has the right app + policy immediately.";
+
+      $("flowSuccess").classList.remove("hidden");
+      fireConfetti();
+
+      if (progressTimer) { clearInterval(progressTimer); progressTimer = null; }
+    }, 9200);
+
+    // unlock after finishing
+    setTimeout(() => {
+      running = false;
+      $("btnStart").disabled = false;
+      $("btnStart").classList.remove("opacity-60", "cursor-not-allowed");
+    }, 9800);
+  }
+
+  function init() {
+    if (window.lucide?.createIcons) {
+      try { window.lucide.createIcons(); } catch {}
+    }
+    buildFlow();
+
+    $("btnStart").addEventListener("click", startFlow);
+    $("btnReset").addEventListener("click", resetUI);
+
+    // keep rider route correct on resize (only matters for the next run)
+    window.addEventListener("resize", () => {
+      if (!running) {
+        $("routeTrace").style.opacity = "0";
+        setRoutePathD("");
       }
-
-      function renderSolution(){
-        return `
-          <section id="panel-solution" class="space-y-2">
-            <div class="grid grid-cols-1 gap-2 lg:grid-cols-2">
-              ${renderFlow()}
-              <div class="flex flex-col gap-2 relative">
-                <div class="sticky top-0 z-10 bg-gray-50 py-1 shadow-md">
-                  <div class="flex justify-between items-center text-[13px]">
-                    <span class="font-semibold">Recast Approach</span>
-                    <span class="text-gray-700">${STATE.visitedCards.length} of 3 explored</span>
-                  </div>
-                </div>
-                <button type="button" class="md:hidden bg-transparent text-gray-900 border-2 border-gray-900 py-1.5 text-[13px] rounded-full hover:text-blue-600 hover:border-blue-600 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2" data-action="expand-all">Expand All</button>
-                ${NEW_CARDS.map(card => popoutCard(card)).join('')}
-                <div class="sticky bottom-0 bg-gray-50 py-2 shadow-lg mt-2"></div>
-              </div>
-            </div>
-          </section>
-        `;
-      }
-
-      function pill(label,active,action,value){
-        return `<button type="button" class="${cx('px-2.5 py-0.5 border text-[11px] transition rounded',active?'bg-blue-600 text-white border-transparent hover:bg-blue-700':'bg-transparent text-gray-900 border-gray-200 hover:border-blue-600')} focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2" data-action="${action}" data-value="${String(value)}">${label}</button>`;
-      }
-
-      function renderFlow(){
-        return `
-          <div class="relative rounded-2xl bg-white shadow-md hover:shadow-lg hover:-translate-y-[2px] transition-shadow duration-300 transition-transform p-3">
-            <!-- Animation Overlay for Recast Approach tab -->
-            <div id="recast-approach-animation-layer" aria-hidden="true">
-              <div id="chaos" class="lottie"></div>
-              <div id="breakdown" class="lottie"></div>
-              <div id="collapse" class="lottie"></div>
-              <div id="unify" class="lottie"></div>
-              <div id="endstate" class="lottie"></div>
-            </div>
-
-            <div class="flex items-center justify-between gap-2">
-              <div class="flex items-center gap-1.5">
-                <div class="h-5 w-5 rounded grid place-items-center bg-blue-600">
-                  <i data-lucide="layers" class="h-3 w-3 text-white"></i>
-                </div>
-                <div><h3 class="text-[14px] font-semibold">Recast</h3></div>
-              </div>
-              <div class="flex items-center gap-1.5 text-[11px]">
-                <button type="button" data-action="start-flow" id="workspaceStartButton" class="bg-blue-600 text-white px-2 py-1 text-[11px] font-semibold rounded-full hover:bg-blue-700 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2">Start</button>
-                <button type="button" data-action="reset-flow" class="bg-transparent text-gray-900 border-2 border-gray-900 px-2 py-1 rounded-full hover:text-blue-600 hover:border-blue-600 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2">Reset</button>
-              </div>
-            </div>
-
-            <div class="mt-1 flex items-center justify-center gap-3 text-[13px] font-medium">
-              <div class="flex items-center gap-1">
-                <i data-lucide="building" class="w-4.5 h-4.5 text-gray-700"></i>
-                <span>Existing App Managers (SCCM, Intune, etc.)</span>
-              </div>
-              <i data-lucide="arrow-right" class="w-4.5 h-4.5 text-gray-500"></i>
-              <div class="flex items-center gap-1">
-                <i data-lucide="truck" class="w-4.5 h-4.5 text-blue-600"></i>
-                <span>Application Delivery Control Plane</span>
-              </div>
-              <i data-lucide="arrow-right" class="w-4.5 h-4.5 text-gray-500"></i>
-              <div class="flex items-center gap-1">
-                <i data-lucide="user" class="w-4.5 h-4.5 text-gray-700"></i>
-                <span>User</span>
-              </div>
-            </div>
-
-            <div class="mt-1 text-center bg-blue-50 p-1.5 rounded-lg text-[12px]">
-              Recast sits between your existing tools and your users, standardizing how applications are delivered without changing where they come from.
-            </div>
-
-            <div id="flowCard" class="mt-2 rounded-xl border border-gray-200 bg-gradient-to-b from-white to-gray-50 shadow-inner ${STATE.showLabels ? 'show-labels' : ''}" role="region" aria-label="Animated flow">
-              <div id="flowLiveStatus" class="sr-only" aria-live="polite"></div>
-
-              <div id="progressCounters" class="hidden mb-2 grid grid-cols-3 gap-1.5 text-[13px] text-center">
-                <div><span class="font-semibold tabular-nums" id="appsProcessed">0</span> apps processed</div>
-                <div><span class="font-semibold tabular-nums" id="timeSaved">0</span> hours saved</div>
-                <div><span class="font-semibold tabular-nums" id="ticketsAvoided">0</span> tickets avoided</div>
-              </div>
-
-              <div class="space-y-1 relative">
-                ${CATALOG.map(s=>`
-                  <div class="grid grid-cols-[12ch_1fr] gap-0.5 items-center border-t border-gray-200 pt-0.5 transition-all duration-300 first:border-t-0 first:pt-0 show-labels:grid-cols-[12ch_1fr] show-labels:gap-3">
-                    <div class="text-[11px] uppercase text-gray-700 flex items-center gap-1.5"><i data-lucide="folder" class="w-2.5 h-2.5"></i>${s.title}</div>
-                    <div id="${s.id}" class="flex flex-wrap gap-1.5 show-labels:gap-3"></div>
-                  </div>
-                `).join('')}
-                <div id="overlayTag" class="opacity-0 transition-opacity duration-300 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white/90 p-3 rounded-2xl shadow-md z-10 show-labels:opacity-100 show-labels:delay-500 text-center text-[13px] text-gray-700">Every app mapped to stage, policy, region, and device.</div>
-              </div>
-
-              <div id="flowHubFlash" class="mt-1 hidden text-blue-600"><span class="inline-flex items-center gap-1 text-[11px]"><i data-lucide="bolt" class="h-3.5 w-3.5"></i><span>Update published</span></span></div>
-
-              <div class="mt-2 grid grid-cols-3 gap-1.5 relative" aria-hidden="true" id="platformsSection">
-                ${['A','B','C'].map((k,i)=>`
-                  <div class="rounded-xl border border-gray-200 bg-gray-50 transition-shadow duration-300 p-1.5 relative">
-                    <div class="text-[11px] text-gray-700">${['Existing Platforms','Staged Rings','Access & Policy'][i]}</div>
-                    <div id="flowConn${k}" class="mt-0.5 grid grid-cols-10 gap-1"></div>
-                    <div class="mt-0.5 h-[0.22rem] rounded-[2px] origin-left scale-x-0 bg-gradient-to-r from-blue-600 to-blue-700" style="--d:${3 + .5*i}s"></div>
-                    <i data-lucide="check-circle" class="opacity-0 absolute top-0.5 right-0.5 w-3.5 h-3.5 text-green-500 animate-fadeInOut" style="--d:${4 + .5*i}s"></i>
-                  </div>
-                `).join('')}
-                <div class="absolute top-[-0.5rem] left-0 w-full h-px opacity-50" style="background-image:linear-gradient(to right, transparent 50%, #e5e7eb 50%); background-size:4px 1px; background-repeat:repeat-x;"></div>
-              </div>
-
-              <div class="mt-2 grid grid-cols-3 gap-1.5 relative" aria-hidden="true" id="groupsSection">
-                ${['A','B','C'].map((k,i)=>`
-                  <div class="rounded-xl border border-gray-200 bg-gray-50 transition-shadow duration-300 p-1.5 relative">
-                    <div class="text-[11px] text-gray-700">${['Business Unit','Subsidiary','Region'][i]}</div>
-                    <div id="flowGrp${k}" class="mt-0.5 grid grid-cols-8 gap-1"></div>
-                    <div class="mx-auto mt-0.5 w-[0.22rem] h-12 rounded-[2px] origin-top scale-y-0 bg-gradient-to-b from-gray-900 to-blue-600" style="--d:${5 + .5*i}s"></div>
-                    <i data-lucide="shield-check" class="opacity-0 absolute top-0.5 right-0.5 w-3.5 h-3.5 text-green-500 animate-fadeInOut" style="--d:${6 + .5*i}s"></i>
-                  </div>
-                `).join('')}
-                <div class="absolute top-[-0.5rem] left-0 w-full h-px opacity-50" style="background-image:linear-gradient(to right, transparent 50%, #e5e7eb 50%); background-size:4px 1px; background-repeat:repeat-x;"></div>
-              </div>
-
-              <div class="mt-2 grid grid-cols-3 gap-1.5 relative" aria-hidden="true" id="devicesSection">
-                ${['A','B','C'].map((k,i)=>`
-                  <div class="rounded-xl border border-gray-200 bg-gray-50 transition-shadow duration-300 p-1.5 text-center relative">
-                    <i data-lucide="${['monitor-smartphone','laptop','smartphone'][i]}" class="h-4.5 w-4.5 text-gray-700"></i>
-                    <div id="flowDev${k}" class="mt-0.5 grid grid-cols-6 gap-1"></div>
-                    <div class="mt-0.5 text-[10px] text-gray-700">${['Windows & macOS','VDI / Web','Mobile'][i]}</div>
-                    <i data-lucide="check-circle" class="opacity-0 absolute top-0.5 right-0.5 w-3.5 h-3.5 text-green-500 animate-fadeInOut" style="--d:${8 + .5*i}s"></i>
-                  </div>
-                `).join('')}
-                <div class="absolute top-[-0.5rem] left-0 w-full h-px opacity-50" style="background-image:linear-gradient(to right, transparent 50%, #e5e7eb 50%); background-size:4px 1px; background-repeat:repeat-x;"></div>
-              </div>
-
-              <div class="mt-2">
-                <div id="endUserCard" class="rounded-xl border border-gray-200 bg-gray-50 transition-shadow duration-300 transition-all duration-500 p-2.5">
-                  <div class="flex items-center gap-2">
-                    <div id="endUserAvatar" class="h-8 w-8 grid place-items-center font-semibold rounded-full bg-red-600 text-white">U</div>
-                    <div class="text-[13px]">
-                      <div class="font-medium">End user</div>
-                      <div id="endUserMessage" class="text-gray-700">Apps on demand — without retraining users when IT changes.</div>
-                    </div>
-                  </div>
-                  <div class="mt-2 h-[0.38rem] rounded-[2px] origin-left scale-x-0 bg-gradient-to-r from-blue-600 to-blue-700" style="--d:10s"></div>
-                  <div class="relative mt-1 border border-gray-200 bg-gray-50 rounded-2xl p-3">
-                    <i data-lucide="laptop" class="h-4.5 w-4.5 text-gray-700"></i>
-                    <div id="endUserBadge" class="absolute right-1.5 top-1.5 w-[1rem] h-[1rem] rounded-full opacity-0 translate-y-[-6px] scale-90 grid place-items-center font-bold text-black bg-red-600" style="--d:11s">!</div>
-                    <div class="mt-0.5 text-[10px] text-gray-700">The workspace delivers the right app, every time, regardless of backend platform.</div>
-                  </div>
-                  <div id="miniWorkspace" class="mt-2 hidden grid grid-cols-4 gap-1.5">
-                    ${miniApps.map(app => `<div class="w-[1.8rem] h-[1.8rem] rounded-full grid place-items-center bg-white shadow-[inset_0_0_0_1px_rgba(0,0,0,0.1)] transition-all duration-300 hover:shadow-[0_0_8px_rgba(37,99,235,0.3)] hover:scale-105 cursor-pointer" data-action="launch-icon">${app.svg}</div>`).join('')}
-                  </div>
-                </div>
-                <div id="flowSuccess" class="mt-1 hidden inline-flex items-center gap-1 text-[13px] opacity-0 animate-fadeIn text-green-500"><i data-lucide="sparkles" class="h-3.5 w-3.5"></i><span>Configured once → delivered everywhere.</span></div>
-              </div>
-            </div>
-          </div>
-        `;
-      }
-
-      const miniApps = [
-        logo('Microsoft Word','W','#185ABD'),
-        logo('Microsoft Teams','T','#5B53D6'),
-        logo('SAP','SAP','#0A6ED1'),
-        logo('Zoom','Z','#0B5CFF')
-      ];
-
-      /* --- ROI tab (unchanged from your version except minor structure left intact) --- */
-      function renderROI(){ /* your existing renderROI remains; omitted here for brevity in this message */
-        return `<section id="panel-roi" class="space-y-4"><div class="bg-white p-6 rounded-2xl shadow-md">ROI section unchanged.</div></section>`;
-      }
-      function updateROIOutputs(){}
-
-      function setText(id, value){ const el=document.getElementById(id); if(el) el.textContent = String(value); }
-      function inputNum(action, label, key, value){
-        return `<label class="flex flex-col gap-0.5 text-[13px]"><span class="text-[11px] text-gray-700">${label}</span><input class="rounded border border-gray-200 bg-gray-50 px-2 py-1 text-[13px] focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2" inputmode="decimal" value="${value}" data-action="${action}" data-key="${key}"></label>`;
-      }
-
-      const CATALOG=[
-        {title:'CORE PRODUCTIVITY',id:'cat-core',items:[
-          logo('Microsoft Word','W','#185ABD'),
-          logo('Microsoft Excel','X','#107C41'),
-          logo('PowerPoint','P','#D24726'),
-          logo('Outlook','O','#106EBE'),
-          logo('Microsoft Teams','T','#5B53D6'),
-          logo('Google Docs','Dc','#1A73E8'),
-          logo('Google Sheets','Sh','#1E8E3E'),
-          logo('Google Slides','Sl','#F9AB00')
-        ]},
-        {title:'MESSAGING & MEETINGS',id:'cat-collab',items:[
-          multiLogo('Slack',['#36C5F0','#2EB67D','#E01E5A','#ECB22E']),
-          logo('Zoom','Z','#0B5CFF'),
-          logo('Gmail','G','#EA4335'),
-          logo('Google Meet','GM','#0F9D58')
-        ]},
-        {title:'WEB BROWSERS',id:'cat-browsers',items:[
-          triLogo('Google Chrome','#EA4335','#FBBC05','#34A853','#4285F4'),
-          ringLogo('Microsoft Edge','#0C8EC5','#0AA0A3'),
-          flameLogo('Mozilla Firefox','#FF7139','#FFCC00')
-        ]},
-        {title:'ENTERPRISE APPS',id:'cat-enterprise',items:[
-          logo('Salesforce','SF','#00A1E0'),
-          logo('Workday','WD','#1F5BFF'),
-          logo('ServiceNow','SN','#81B29A'),
-          logo('SAP','SAP','#0A6ED1'),
-          logo('Oracle NetSuite','NS','#C74634')
-        ]},
-        {title:'SECURITY & ACCESS',id:'cat-security',items:[
-          logo('Duo','D','#3CB371'),
-          logo('Okta','O','#007DC1'),
-          logo('Ping Identity','P','#C0172C'),
-          logo('Cisco AnyConnect','AC','#00B5AD'),
-          logo('Microsoft Defender','MD','#0067B8'),
-          logo('CrowdStrike Falcon','CS','#D61F26')
-        ]},
-        {title:'STORAGE & CREATIVE',id:'cat-storage',items:[
-          logo('Adobe Acrobat','A','#ED2224'),
-          logo('Dropbox','DB','#0061FF'),
-          logo('Box','BX','#0061D5'),
-          logo('OneDrive','OD','#0A5BD5'),
-          logo('ZoomIt / Sysinternals','ZI','#58595B')
-        ]}
-      ];
-
-      const appConfigs = [
-        {stage:'Prod', policy:'MFA + VPN', region:'AMER', device:'Windows'},
-        {stage:'QA', policy:'Compliant only', region:'APAC', device:'Any'},
-        {stage:'Dev', policy:'MFA required', region:'EMEA', device:'Mac'},
-        {stage:'Prod', policy:'VPN only', region:'Global', device:'Windows'},
-        {stage:'QA', policy:'MFA required', region:'AMER', device:'Any'},
-        {stage:'Dev', policy:'MFA required', region:'APAC', device:'Mac'},
-        {stage:'Prod', policy:'Compliant only', region:'EMEA', device:'Windows'},
-        {stage:'QA', policy:'VPN only', region:'Global', device:'Any'}
-      ];
-
-      let flatIndex = 0;
-      CATALOG.forEach(sec => sec.items.forEach(itm => { itm.config = appConfigs[flatIndex % appConfigs.length]; flatIndex++; }));
-
-      function logo(name,letter,color){ return { name, svg: mark(letter,color) }; }
-      function mark(letter,color){
-        return `
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="24" height="24" role="img" aria-label="${letter}">
-            <defs><linearGradient id="g${letter.replace(/\W/g,'')}" x1="0" x2="1"><stop offset="0" stop-color="${shade(color,.9)}"/><stop offset="1" stop-color="${shade(color,1.1)}"/></linearGradient></defs>
-            <rect x="1.5" y="1.5" width="45" height="45" rx="12" fill="url(#g${letter.replace(/\W/g,'')})" stroke="rgba(0,0,0,.15)"/>
-            <text x="50%" y="56%" text-anchor="middle" font-size="22" font-family="Inter,Segoe UI,Arial" font-weight="800" fill="#0A1C60">${letter}</text>
-          </svg>`;
-      }
-      function multiLogo(name,colors){
-        const slices=colors.map((c,i)=>`<rect x="${4+i*9}" y="8" width="7" height="32" rx="4" fill="${c}"></rect>`).join('');
-        return { name, svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="24" height="24" role="img" aria-label="${name}"><rect x="1.5" y="1.5" width="45" height="45" rx="12" fill="#F7F9FB" stroke="rgba(0,0,0,.15)"/>${slices}</svg>` };
-      }
-      function triLogo(name,r1,r2,r3,r4){
-        return { name, svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="24" height="24" aria-label="${name}"><rect x="1.5" y="1.5" width="45" height="45" rx="12" fill="#F7F9FB" stroke="rgba(0,0,0,.15)"/><circle cx="24" cy="24" r="12" fill="${r4}"/><path d="M24 12 A12 12 0 0 1 36 24 L24 24 Z" fill="${r1}"/><path d="M36 24 A12 12 0 0 1 24 36 L24 24 Z" fill="${r2}"/><path d="M24 36 A12 12 0 0 1 24 12 L24 24 Z" fill="${r3}"/></svg>` };
-      }
-      function ringLogo(name,c1,c2){
-        return { name, svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="24" height="24" aria-label="${name}"><rect x="1.5" y="1.5" width="45" height="45" rx="12" fill="#F7F9FB" stroke="rgba(0,0,0,.15)"/><circle cx="24" cy="24" r="11" fill="${c1}"/><circle cx="20" cy="20" r="8" fill="${c2}"/></svg>` };
-      }
-      function flameLogo(name,c1,c2){
-        return { name, svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="24" height="24" aria-label="${name}"><rect x="1.5" y="1.5" width="45" height="45" rx="12" fill="#F7F9FB" stroke="rgba(0,0,0,.15)"/><path d="M24 12c5 7-2 9 3 14 3 3 2 9-3 11-5-2-6-8-3-11 5-5-3-7 3-14z" fill="${c1}"/><circle cx="26" cy="28" r="4" fill="${c2}"/></svg>` };
-      }
-      function shade(hex,m){ const c=hex.replace('#',''); const n=[0,1,2].map(i=>parseInt(c.slice(i*2,i*2+2),16)); const s=n.map(v=>Math.max(0,Math.min(255,Math.round(v*m)))); return '#'+s.map(v=>v.toString(16).padStart(2,'0')).join(''); }
-
-      function renderModal(){ return STATE.modalOpen ? `<div class="fixed inset-0 z-50 bg-black/50"></div>` : ''; }
-
-      function attachEvents(){
-        const root=document.getElementById('app');
-
-        root.querySelectorAll('[data-action="switch-tab"]').forEach(b=>b.addEventListener('click',e=>{
-          STATE.activeTab=e.currentTarget.getAttribute('data-tab');
-          STATE.visitedCards = [];
-          // make sure overlay is off when leaving solution
-          if (STATE.activeTab !== 'solution') {
-            setApproachLayerActive(false);
-          }
-          render();
-        }));
-
-        root.querySelectorAll('[data-action="advance"]').forEach(b=>b.addEventListener('click',e=>{
-          STATE.activeTab=e.currentTarget.getAttribute('data-next');
-          STATE.openWhyModal = null;
-          render();
-        }));
-
-        root.querySelectorAll('[data-action="open-why-modal"]').forEach(b=>b.addEventListener('click',e=>{
-          const id=e.currentTarget.getAttribute('data-why');
-          STATE.openWhyModal = id;
-          render();
-        }));
-
-        root.querySelectorAll('[data-action="close-why-modal"]').forEach(b=>b.addEventListener('click',()=>{
-          STATE.openWhyModal = null;
-          render();
-        }));
-
-        root.querySelectorAll('[data-action="toggle-card"]').forEach(b=>b.addEventListener('click',e=>{
-          const id=e.currentTarget.getAttribute('data-card');
-          const wasOpen = STATE.openCards[id];
-          Object.keys(STATE.openCards).forEach(k => STATE.openCards[k] = false);
-          STATE.openCards[id] = !wasOpen;
-          if (STATE.openCards[id] && !STATE.visitedCards.includes(id)) STATE.visitedCards.push(id);
-          render();
-          if (STATE.openCards[id]) setTimeout(() => e.currentTarget.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 200);
-        }));
-
-        root.querySelectorAll('[data-action="expand-all"]').forEach(b=>b.addEventListener('click',()=>{
-          Object.keys(STATE.openCards).forEach(k => STATE.openCards[k] = true);
-          STATE.visitedCards = ['core', 'onboarding', 'trust'];
-          render();
-        }));
-
-        root.querySelectorAll('[data-action="toggle-bucket"]').forEach(b=>b.addEventListener('click',e=>{
-          const id=e.currentTarget.getAttribute('data-bucket');
-          STATE.openBuckets[id] = !STATE.openBuckets[id];
-          render();
-        }));
-
-        root.querySelectorAll('[data-action="toggle-bullet"]').forEach(inp=>inp.addEventListener('change',e=>{
-          const category = e.target.getAttribute('data-category');
-          const index = parseInt(e.target.getAttribute('data-index'));
-          if (!STATE.selectedBullets[category]) STATE.selectedBullets[category] = [];
-          const arr = STATE.selectedBullets[category];
-          if (arr.includes(index)) STATE.selectedBullets[category] = arr.filter(x => x !== index);
-          else arr.push(index);
-          render();
-        }));
-
-        root.querySelectorAll('[data-action="reset-bullets"]').forEach(b=>b.addEventListener('click',()=>{
-          STATE.selectedBullets = {};
-          render();
-        }));
-
-        root.querySelectorAll('[data-action="next-tab"]').forEach(b=>b.addEventListener('click',()=>{
-          STATE.activeTab = 'solution';
-          render();
-        }));
-
-        const startBtn=root.querySelector('[data-action="start-flow"]');
-        if(startBtn) startBtn.addEventListener('click', startFlow);
-
-        const resetBtn=root.querySelector('[data-action="reset-flow"]');
-        if(resetBtn) resetBtn.addEventListener('click', resetFlow);
-      }
-
-      function buildFlow(){
-        // ensure Lottie animations are initialized only when the solution tab is present
-        initApproachAnimations();
-
-        let base=0;
-        CATALOG.forEach(section=>{
-          const mount=document.getElementById(section.id); if(!mount) return;
-          mount.innerHTML='';
-          section.items.forEach((itm,idx)=>{
-            const wrap=document.createElement('div');
-            wrap.className='flex items-center gap-1 relative transition-all duration-300 show-labels:flex-col show-labels:items-start show-labels:gap-[0.2rem] show-labels:w-[calc(33.333%-0.666rem)] show-labels:mb-1';
-            wrap.style.setProperty('--d',(base+idx*0.2).toFixed(2)+'s');
-
-            const ring=document.createElement('div');
-            ring.className='w-[1.8rem] h-[1.8rem] rounded-full grid place-items-center bg-white shadow-[inset_0_0_0_1px_rgba(0,0,0,0.1)] transition-all duration-300 hover:shadow-[0_0_8px_rgba(37,99,235,0.3)] hover:scale-105 show-labels:w-[1.5rem] show-labels:h-[1.5rem]';
-            ring.innerHTML=itm.svg;
-            ring.title=itm.name;
-            ring.setAttribute('role','img');
-            ring.setAttribute('aria-label',itm.name);
-            wrap.appendChild(ring);
-
-            mount.appendChild(wrap);
-          });
-          base+=1.2;
-        });
-
-        buildTiles(document.getElementById('flowConnA'), 14, 3);
-        buildTiles(document.getElementById('flowConnB'), 14, 3.5);
-        buildTiles(document.getElementById('flowConnC'), 14, 4);
-        buildTiles(document.getElementById('flowGrpA'), 18, 5);
-        buildTiles(document.getElementById('flowGrpB'), 18, 5.5);
-        buildTiles(document.getElementById('flowGrpC'), 18, 6);
-        buildTiles(document.getElementById('flowDevA'), 10, 8);
-        buildTiles(document.getElementById('flowDevB'), 10, 8.5);
-        buildTiles(document.getElementById('flowDevC'), 10, 9);
-
-        // baseline UI state
-        document.body.classList.remove("workspace-final");
-        setApproachLayerActive(false);
-        STATE.progress = { apps: 0, time: 0, tickets: 0 };
-        updateProgress();
-
-        const success=document.getElementById('flowSuccess'); if(success) success.classList.add('hidden');
-      }
-
-      function buildTiles(container,count,baseDelay){
-        if(!container) return; container.innerHTML='';
-        for(let i=0;i<count;i++){
-          const d=document.createElement('div');
-          d.className='w-[0.4rem] h-[0.4rem] rounded-[2px] bg-gray-200 opacity-90 run:animate-tilePulse';
-          d.style.setProperty('--d',(baseDelay+i*0.1).toFixed(2)+'s');
-          container.appendChild(d);
-        }
-      }
-
-      function startFlow(){
-        if (STATE.flowRunning) return;
-
-        STATE.flowRunning = true;
-        const startButton = document.getElementById("workspaceStartButton");
-        if (startButton) {
-          startButton.disabled = true;
-          startButton.classList.add('opacity-60','cursor-not-allowed');
-        }
-
-        runWorkspaceAnimation();
-
-        const card=document.getElementById('flowCard'); if(!card) return;
-        card.classList.remove('run'); void card.offsetWidth; card.classList.add('run');
-
-        const live=document.getElementById('flowLiveStatus');
-        if (live) live.textContent = 'Animating application delivery…';
-
-        const flash=document.getElementById('flowHubFlash'); const success=document.getElementById('flowSuccess');
-        const avatar=document.getElementById('endUserAvatar'); const badge=document.getElementById('endUserBadge');
-        const message = document.getElementById('endUserMessage'); const mini = document.getElementById('miniWorkspace');
-        const counters = document.getElementById('progressCounters'); const endCard = document.getElementById('endUserCard');
-        const groups = document.getElementById('groupsSection');
-
-        if(flash){ flash.classList.remove('hidden'); setTimeout(()=>flash.classList.add('hidden'),2000); }
-        if(success) success.classList.add('hidden');
-        if(counters) counters.classList.remove('hidden');
-
-        let interval = setInterval(updateProgress, 100);
-
-        setTimeout(()=>{
-          if(groups) groups.classList.add('dimmed');
-          if(endCard) endCard.classList.add('highlighted');
-        }, 5000);
-
-        const platformBuckets = document.querySelectorAll('#platformsSection > div');
-        const groupBuckets = document.querySelectorAll('#groupsSection > div');
-        const deviceBuckets = document.querySelectorAll('#devicesSection > div');
-
-        setTimeout(() => { if (platformBuckets[0]) platformBuckets[0].classList.add('processed'); }, 4500);
-        setTimeout(() => { if (platformBuckets[1]) platformBuckets[1].classList.add('processed'); }, 5000);
-        setTimeout(() => { if (platformBuckets[2]) platformBuckets[2].classList.add('processed'); }, 5500);
-
-        setTimeout(() => { if (groupBuckets[0]) groupBuckets[0].classList.add('processed'); }, 6500);
-        setTimeout(() => { if (groupBuckets[1]) groupBuckets[1].classList.add('processed'); }, 7000);
-        setTimeout(() => { if (groupBuckets[2]) groupBuckets[2].classList.add('processed'); }, 7500);
-
-        setTimeout(() => { if (deviceBuckets[0]) deviceBuckets[0].classList.add('processed'); }, 8500);
-        setTimeout(() => { if (deviceBuckets[1]) deviceBuckets[1].classList.add('processed'); }, 9000);
-        setTimeout(() => { if (deviceBuckets[2]) deviceBuckets[2].classList.add('processed'); }, 9500);
-
-        setTimeout(()=>{
-          if(avatar){ avatar.classList.remove('bg-red-600'); avatar.classList.add('bg-green-500'); }
-          if(badge){
-            badge.textContent='✓';
-            badge.classList.remove('bg-red-600');
-            badge.classList.add('bg-green-500');
-            badge.style.opacity = '1';
-            badge.style.transform = 'translateY(0) scale(1)';
-            badge.style.transition = 'opacity 180ms ease, transform 180ms ease';
-          }
-          if(message) message.textContent = 'Apps on demand — without retraining users when IT changes.';
-          if(mini) mini.classList.remove('hidden');
-          if(endCard) endCard.classList.add('scale-105','bg-white','border-green-500');
-          if(success) success.classList.remove('hidden');
-
-          // ✅ Confetti happens at the real “success” moment, and stays tasteful.
-          fireSubtleConfetti();
-
-          if (live) live.textContent = 'Animation complete.';
-          clearInterval(interval);
-        }, 11000);
-
-        setTimeout(()=> card.classList.remove('run'), 12000);
-
-        setTimeout(()=>{
-          STATE.flowRunning = false;
-          if (startButton) {
-            startButton.disabled = false;
-            startButton.classList.remove('opacity-60','cursor-not-allowed');
-          }
-        }, 12250);
-      }
-
-      function updateProgress(){
-        if(STATE.progress.apps < 128) STATE.progress.apps += 4;
-        if(STATE.progress.time < 46) STATE.progress.time += 2;
-        if(STATE.progress.tickets < 73) STATE.progress.tickets += 3;
-        setText('appsProcessed', STATE.progress.apps > 128 ? 128 : STATE.progress.apps);
-        setText('timeSaved', STATE.progress.time > 46 ? 46 : STATE.progress.time);
-        setText('ticketsAvoided', STATE.progress.tickets > 73 ? 73 : STATE.progress.tickets);
-      }
-
-      function resetFlow(){
-        STATE.progress = { apps: 0, time: 0, tickets: 0 };
-        STATE.showLabels = false;
-        STATE.flowRunning = false;
-
-        document.body.classList.remove("workspace-final");
-        setApproachLayerActive(false);
-
-        buildFlow();
-        document.querySelectorAll('.processed').forEach(el => el.classList.remove('processed'));
-        document.querySelectorAll('.dimmed').forEach(el => el.classList.remove('dimmed'));
-        document.querySelectorAll('.highlighted').forEach(el => el.classList.remove('highlighted'));
-
-        const startButton = document.getElementById("workspaceStartButton");
-        if (startButton) {
-          startButton.disabled = false;
-          startButton.classList.remove('opacity-60','cursor-not-allowed');
-        }
-      }
-
-      function attachAccordionKeyboard(){
-        document.addEventListener('keydown', (e) => {
-          const target = e.target;
-          if (!target.classList.contains('accordion-header')) return;
-          const headers = Array.from(document.querySelectorAll('.accordion-header'));
-          const idx = headers.indexOf(target);
-          if (e.key === 'ArrowDown') {
-            headers[(idx + 1) % headers.length].focus(); e.preventDefault();
-          } else if (e.key === 'ArrowUp') {
-            headers[(idx - 1 + headers.length) % headers.length].focus(); e.preventDefault();
-          } else if (e.key === 'Home') {
-            headers[0].focus(); e.preventDefault();
-          } else if (e.key === 'End') {
-            headers[headers.length - 1].focus(); e.preventDefault();
-          } else if (e.key === 'Enter' || e.key === ' ') {
-            target.click(); e.preventDefault();
-          }
-        });
-      }
-
-      document.addEventListener('DOMContentLoaded', render);
-
-      /* ------------------------------
-         Professional animation module
-         - init only after Solution tab exists
-         - clean overlay transitions
-         - reduced-motion respected
-      ------------------------------ */
-
-      let approachAnimations = null;
-      let approachTimers = [];
-
-      function prefersReducedMotion(){
-        return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-      }
-
-      function setApproachLayerActive(active){
-        const layer = document.getElementById('recast-approach-animation-layer');
-        if(!layer) return;
-        layer.classList.toggle('is-active', !!active);
-        if(!active){
-          layer.querySelectorAll('.lottie').forEach(el=>{
-            el.classList.remove('is-showing');
-            el.style.display='none';
-          });
-        }
-      }
-
-      function initApproachAnimations(){
-        if (approachAnimations) return true;
-        if (!window.lottie) return false;
-
-        const ids = ['chaos','breakdown','collapse','unify','endstate'];
-        const missing = ids.some(id => !document.getElementById(id));
-        if (missing) return false;
-
-        const paths = {
-          chaos: 'https://assets4.lottiefiles.com/packages/lf20_yr6zz3wt.json',
-          breakdown: 'https://assets9.lottiefiles.com/packages/lf20_rovf9s.json',
-          collapse: 'https://assets3.lottiefiles.com/packages/lf20_k9qliiD3Bf.json',
-          unify: 'https://assets1.lottiefiles.com/packages/lf20_u4yrau.json',
-          endstate: 'https://assets8.lottiefiles.com/packages/lf20_jmejybvu.json'
-        };
-
-        approachAnimations = {};
-        ids.forEach(id=>{
-          approachAnimations[id] = window.lottie.loadAnimation({
-            container: document.getElementById(id),
-            renderer: 'svg',
-            autoplay: false,
-            loop: false,
-            path: paths[id],
-            rendererSettings: {
-              preserveAspectRatio: 'xMidYMid slice',
-              progressiveLoad: true
-            }
-          });
-        });
-
-        return true;
-      }
-
-      function clearApproachTimers(){
-        approachTimers.forEach(t => clearTimeout(t));
-        approachTimers = [];
-      }
-
-      function showStep(id){
-        const layer = document.getElementById('recast-approach-animation-layer');
-        const el = document.getElementById(id);
-        if (!layer || !el) return;
-
-        layer.querySelectorAll('.lottie').forEach(n=>{
-          n.classList.remove('is-showing');
-          n.style.display='none';
-        });
-
-        el.style.display = 'block';
-        requestAnimationFrame(()=> el.classList.add('is-showing'));
-
-        const anim = approachAnimations?.[id];
-        if (anim) {
-          try { anim.goToAndPlay(0, true); } catch {}
-        }
-      }
-
-      function runWorkspaceAnimation(){
-        clearApproachTimers();
-
-        // only runs when solution DOM exists; otherwise do nothing
-        const ok = initApproachAnimations();
-        if (!ok) return;
-
-        document.body.classList.remove("workspace-final");
-        setApproachLayerActive(true);
-
-        const live = document.getElementById('flowLiveStatus');
-        if (live) live.textContent = 'Animating application delivery…';
-
-        if (prefersReducedMotion()){
-          // keep it calm: no Lottie sequence
-          setApproachLayerActive(false);
-          document.body.classList.add("workspace-final");
-          return;
-        }
-
-        Object.values(approachAnimations).forEach(a => { try { a.stop(); } catch {} });
-
-        const seq = [
-          { id:'chaos', t:0 },
-          { id:'breakdown', t:950 },
-          { id:'collapse', t:1500 },
-          { id:'unify', t:2400 },
-          { id:'endstate', t:3300 }
-        ];
-
-        seq.forEach(s=>{
-          approachTimers.push(setTimeout(()=>showStep(s.id), s.t));
-        });
-
-        approachTimers.push(setTimeout(()=>{
-          // stabilize the UI right after the overlay sequence
-          document.body.classList.add("workspace-final");
-          setApproachLayerActive(false);
-        }, 4300));
-      }
-
-      function fireSubtleConfetti(){
-        if (!window.confetti) return;
-        window.confetti({
-          disableForReducedMotion: true,
-          particleCount: 28,
-          spread: 58,
-          ticks: 140,
-          gravity: 0.95,
-          decay: 0.93,
-          startVelocity: 26,
-          scalar: 0.9,
-          colors: ['#2563EB', '#93C5FD', '#E5E7EB', '#FFFFFF'],
-          angle: 60,
-          origin: { x: 0.12, y: 0.75 }
-        });
-        window.confetti({
-          disableForReducedMotion: true,
-          particleCount: 28,
-          spread: 58,
-          ticks: 140,
-          gravity: 0.95,
-          decay: 0.93,
-          startVelocity: 26,
-          scalar: 0.9,
-          colors: ['#2563EB', '#93C5FD', '#E5E7EB', '#FFFFFF'],
-          angle: 120,
-          origin: { x: 0.88, y: 0.75 }
-        });
-        window.confetti({
-          disableForReducedMotion: true,
-          particleCount: 18,
-          spread: 40,
-          ticks: 120,
-          gravity: 0.9,
-          decay: 0.92,
-          startVelocity: 22,
-          scalar: 0.85,
-          colors: ['#2563EB', '#93C5FD', '#E5E7EB', '#FFFFFF'],
-          angle: 90,
-          origin: { x: 0.5, y: 0.68 }
-        });
-      }
-    </script>
-  </body>
+    }, { passive: true });
+  }
+
+  document.addEventListener("DOMContentLoaded", init);
+</script>
+</body>
 </html>
