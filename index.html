@@ -330,10 +330,10 @@
         return '';
       }
       const pressures = [
-        { id: 'capacity_drag', title: 'Capacity & Operational Drag', subhead: 'Manual scale breaks before teams do', bullets: ['Application delivery relies on people, not systems.', 'Redundant installs, packaging, and fixes consume skilled time.', 'As app count grows, effort grows faster than headcount.', 'Standardization gaps hide friction across the lifecycle.'], result: 'Result: Teams stay busy, but capacity never comes back.' },
-        { id: 'risk', title: 'Risk, Compliance & Security', subhead: 'Risk increases when delivery isn’t centralized', bullets: ['Version sprawl creates patch gaps that compound over time.', 'Manual oversight slows audits and incident response.', 'Inconsistent delivery increases human error.', 'Visibility is fragmented across tools and teams.'], result: 'Result: Risk isn’t intentional — it’s structural.' },
-        { id: 'delivery_velocity', title: 'Capacity & Delivery Velocity', subhead: 'Change velocity stalls before transformation does', bullets: ['Flat headcount can’t match rising application demand.', 'Repetitive tasks crowd out modernization work.', 'App readiness stalls cloud, AI, and platform initiatives.', 'Every initiative waits on the same overloaded team.'], result: 'Result: Strategy slows down at execution.' },
-        { id: 'employee', title: 'Employee Experience & Enablement', subhead: 'End users absorb the cost of backend change', bullets: ['Application delays interrupt real work.', 'Version mismatches break workflows.', 'Inconsistent delivery drives shadow IT.', 'Every change requires retraining and support.'], result: 'Result: Users become the throttle on change.' }
+         { id: 'cost', title: 'CAPACITY & OPERATIONAL DRAG', bullets: ['Manual app management consumes skilled IT capacity.', 'Redundant installs create rework and escalation.', 'Teams can’t scale delivery as application demand increases.', 'Lack of standardization hides friction across the lifecycle.'] },
+        { id: 'risk', title: 'RISK, COMPLIANCE & SECURITY', bullets: ['Version sprawl and patch gaps increase organizational risk.', 'No unified view limits governance and response speed.', 'Manual processes increase human error and audit exposure.'] },
+        { id: 'capacity', title: 'CAPACITY & DELIVERY VELOCITY', bullets: ['Flat headcount limits the pace of change.', 'Repetitive tasks crowd out modernization efforts.', 'App readiness issues stall critical initiatives.'] },
+        { id: 'employee', title: 'EMPLOYEE EXPERIENCE & ENABLEMENT', bullets: ['App delays stall workflows and frustrate users.', 'Version mismatches break processes and erode IT trust.', 'Inconsistent delivery drives shadow IT and ticket volume.'] }
       ];
       function renderProblems(){
         return `
