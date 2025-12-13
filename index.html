@@ -345,7 +345,6 @@
               ${pressures.map(p=>`
                 <div class="rounded-2xl bg-white shadow-md hover:shadow-lg hover:-translate-y-[2px] transition-shadow duration-300 transition-transform p-4 flex flex-col space-y-1 h-full">
                   <h3 class="text-[14px] font-semibold mb-1">${p.title}</h3>
-                  <p class="text-[13px] font-medium text-gray-700">${p.subhead}</p>
                   <ul class="list-disc list-inside space-y-1 text-[12px] text-gray-700">
                     ${p.bullets.map((b,i)=>{
                       const selected = (STATE.selectedBullets[p.id] || []).includes(i);
@@ -362,11 +361,9 @@
                       `;
                     }).join('')}
                   </ul>
-                  <p class="mt-2 text-[12px] text-gray-500 italic">${p.result}</p>
                 </div>
               `).join('')}
             </div>
-            <p class="mt-6 text-base italic text-gray-700">The challenge isn’t effort, tools, or intent — it’s that application delivery was never designed to absorb continuous change.</p>
             <div class="mt-6 flex justify-between items-center">
               <button type="button" data-action="reset-bullets" class="bg-transparent text-gray-900 border-2 border-gray-900 rounded-full px-4 py-1.5 hover:text-blue-600 hover:border-blue-600 hover:scale-102 transition-all duration-200 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 text-sm">Reset</button>
               <button type="button" data-action="next-tab" class="bg-blue-600 text-white rounded-full px-4 py-1.5 hover:bg-blue-700 hover:scale-102 transition-all duration-200 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 text-sm">Next</button>
