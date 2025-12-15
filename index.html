@@ -351,6 +351,7 @@
           recast: { intro: "", bullets: "", analyst: "" },
         },
         selectedBullets: {},
+        selectedCardBullets: { core: [], onboarding: [], trust: [] },
         currentState: {
           change: {
             intro:
@@ -1040,8 +1041,27 @@
             <div id="${contentId}" class="accordion-content overflow-hidden border-l-4 border-blue-600 ${
           card.bgContent
         } ${expanded ? "max-h-[1200px] opacity-100 p-4" : "max-h-0 opacity-0 p-0"} transition-[max-height] duration-150 ease-[cubic-bezier(0.2,0.8,0.2,1)] transition-opacity duration-150">
-              <ul class="list-disc pl-5 text-[15px] leading-relaxed space-y-2 text-gray-700 text-left">
-                ${card.bullets.map((b) => `<li>${b}</li>`).join("")}
+              <ul class="space-y-2 text-[15px] leading-relaxed text-gray-700 text-left">
+                ${card.bullets
+                  .map((b, i) => {
+                    const selected = (STATE.selectedCardBullets[card.id] || []).includes(i);
+                    return `
+                    <li class="flex items-center gap-2 min-h-[1.25rem] ${
+                      selected ? "bg-blue-50 rounded-md p-1 transition-colors" : ""
+                    }">
+                      <label class="flex items-center gap-2 cursor-pointer select-none w-full">
+                        <input type="checkbox" class="sr-only" data-action="toggle-card-bullet" data-card="${card.id}" data-index="${i}" ${selected ? "checked" : ""} aria-label="Select: ${b}">
+                        <div class="w-4 h-4 border-2 rounded flex items-center justify-center transition-all duration-200 ease-in-out shrink-0 ${
+                          selected ? "bg-blue-600 border-blue-600" : "border-gray-300 bg-white"
+                        }">
+                          ${selected ? '<i data-lucide="check" class="w-3 h-3 text-white stroke-[3]"></i>' : ""}
+                        </div>
+                        <span class="${selected ? "text-blue-800 font-medium" : ""}">${b}</span>
+                      </label>
+                    </li>
+                  `;
+                  })
+                  .join("")}
               </ul>
               ${card.timeline && onboardingMiniTimelineEnabled && expanded ? renderMiniTimeline() : ""}
               <p class="mt-3 italic text-[15px] text-gray-700">${card.closer}</p>
@@ -1983,6 +2003,21 @@
         root.querySelectorAll('[data-action="next-tab"]').forEach((b) =>
           b.addEventListener("click", () => {
             STATE.activeTab = "solution";
+            render();
+          })
+        );
+        // Card bullet selections
+        root.querySelectorAll('[data-action="toggle-card-bullet"]').forEach((inp) =>
+          inp.addEventListener("change", (e) => {
+            const card = e.target.getAttribute("data-card");
+            const index = parseInt(e.target.getAttribute("data-index"), 10);
+            if (!STATE.selectedCardBullets[card]) STATE.selectedCardBullets[card] = [];
+            const arr = STATE.selectedCardBullets[card];
+            if (arr.includes(index)) {
+              STATE.selectedCardBullets[card] = arr.filter((x) => x !== index);
+            } else {
+              arr.push(index);
+            }
             render();
           })
         );
