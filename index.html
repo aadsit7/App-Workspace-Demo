@@ -120,29 +120,6 @@
           opacity: 1;
         }
       }
-      /* Motorcycle "character" micro-motion (vertical travel is driven by JS) */
-      @keyframes riderBob {
-        0% {
-          transform: translateY(0);
-        }
-        50% {
-          transform: translateY(-2px);
-        }
-        100% {
-          transform: translateY(0);
-        }
-      }
-      @keyframes riderTilt {
-        0% {
-          transform: rotate(-1deg);
-        }
-        50% {
-          transform: rotate(1.5deg);
-        }
-        100% {
-          transform: rotate(-1deg);
-        }
-      }
       /* ------------------------------
          Lightweight “framework” hooks:
          Toggle ONE class (.run) on a container
@@ -662,7 +639,6 @@
             if (fc) fc.classList.add("workspace-final");
           }, 3800)
         );
-      ;
       }
       /* =========================
          RENDER
@@ -709,11 +685,6 @@
         if (STATE.activeTab === "solution") {
           buildFlow();
           ensureApproachAnimations();
-          // ensure path is computed after DOM paint
-          setTimeout(() => {
-            computeMotorcyclePath();
-            setMotorcycleProgress(STATE.progress.apps);
-          }, 0);
         }
         if (STATE.activeTab === "roi") updateROIOutputs();
         if (STATE.activeTab === "solution") attachAccordionKeyboardOnce();
@@ -1114,6 +1085,8 @@
                   <i data-lucide="sparkles" class="h-3.5 w-3.5"></i><span>Configured once → delivered everywhere.</span>
                 </div>
               </div>
+            </div>
+          </div>
         `;
       }
       /* =========================
@@ -1980,6 +1953,8 @@
       /* =========================
          FLOW BUILD + ANIMATION
          ========================= */
+      let flowInterval = null;
+      let flowRunning = false;
       function buildFlow() {
         let base = 0;
         CATALOG.forEach((section) => {
@@ -2059,8 +2034,6 @@
         updateProgress();
         const success = document.getElementById("flowSuccess");
         if (success) success.classList.add("hidden");
-        hideMotorcycle();
-        }, 0);
       }
       function buildTiles(container, count, baseDelay) {
         if (!container) return;
@@ -2093,6 +2066,15 @@
         card.classList.remove("run");
         void card.offsetWidth;
         card.classList.add("run");
+        const flash = document.getElementById("flowHubFlash");
+        const success = document.getElementById("flowSuccess");
+        const avatar = document.getElementById("endUserAvatar");
+        const badge = document.getElementById("endUserBadge");
+        const message = document.getElementById("endUserMessage");
+        const mini = document.getElementById("miniWorkspace");
+        const counters = document.getElementById("progressCounters");
+        const endCard = document.getElementById("endUserCard");
+        const groups = document.getElementById("groupsSection");
         if (flash) {
           flash.classList.remove("hidden");
           setTimeout(() => flash.classList.add("hidden"), 2000);
@@ -2154,9 +2136,6 @@
         setText("appsProcessed", apps);
         setText("timeSaved", time);
         setText("ticketsAvoided", tickets);
-        // Keep the moto indicator text + position in sync with app processing.
-        setText("motoApps", apps);
-        setMotorcycleProgress(apps);
       }
       function setText(id, value) {
         const el = document.getElementById(id);
@@ -2178,7 +2157,6 @@
         document.querySelectorAll(".processed").forEach((el) => el.classList.remove("processed"));
         document.querySelectorAll(".dimmed").forEach((el) => el.classList.remove("dimmed"));
         document.querySelectorAll(".highlighted").forEach((el) => el.classList.remove("highlighted"));
-        hideMotorcycle();
       }
       /* =========================
          ACCESSIBLE ACCORDION KEYBOARD (only attach once)
@@ -2239,8 +2217,6 @@
           "resize",
           () => {
             if (STATE.activeTab !== "solution") return;
-            computeMotorcyclePath();
-            setMotorcycleProgress(STATE.progress.apps);
           },
           { passive: true }
         );
