@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -20,8 +19,7 @@
     <script src="https://unpkg.com/lottie-web@5.12.2/build/player/lottie.min.js"></script>
     <style>
       /* ------------------------------
-         Keyframes (defined in CSS so animations work
-         even if Tailwind JIT doesn't generate them)
+         Keyframes
          ------------------------------ */
       @keyframes tilePulse {
         0% {
@@ -121,8 +119,9 @@
           opacity: 1;
         }
       }
-      /* Delivery truck "character" micro-motion (vertical travel is driven by JS) */
-      @keyframes truckBob {
+
+      /* “Delivery truck” micro-motion (vertical travel is driven by JS) */
+      @keyframes courierBob {
         0% {
           transform: translateY(0);
         }
@@ -133,21 +132,33 @@
           transform: translateY(0);
         }
       }
-      @keyframes truckTilt {
+      @keyframes courierTilt {
         0% {
-          transform: rotate(-0.5deg);
+          transform: rotate(-0.8deg);
         }
         50% {
-          transform: rotate(0.75deg);
+          transform: rotate(1.1deg);
         }
         100% {
-          transform: rotate(-0.5deg);
+          transform: rotate(-0.8deg);
         }
       }
+      @keyframes cardPop {
+        0% {
+          opacity: 0;
+          transform: translateY(8px) scale(0.99);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+      .animate-cardPop {
+        animation: cardPop 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+      }
+
       /* ------------------------------
-         Lightweight “framework” hooks:
-         Toggle ONE class (.run) on a container
-         and everything tagged with [data-anim] runs.
+         Lightweight animation hooks
          ------------------------------ */
       .run [data-anim="tilePulse"] {
         animation: tilePulse 1s ease-in-out var(--d, 0s) 1 forwards;
@@ -164,6 +175,7 @@
       .run [data-anim="badgeDrop"] {
         animation: badgeDrop 0.8s ease-out var(--d, 0s) forwards;
       }
+
       /* ------------------------------
          Overlay sits on top of the Application Workspace card
          ------------------------------ */
@@ -182,6 +194,7 @@
         height: 100%;
         display: none;
       }
+
       /* Final calm state after animation (scoped to the flow card, not the whole page) */
       #flowCard.workspace-final .warning,
       #flowCard.workspace-final .duplicate,
@@ -194,6 +207,7 @@
         transform: scale(1);
         transition: 0.25s ease-out;
       }
+
       .dimmed {
         opacity: 0.5;
         transition: opacity 0.3s ease;
@@ -209,6 +223,7 @@
         color: #065f46 !important;
         transition: all 0.3s ease;
       }
+
       /* Modal animation helpers */
       .animate-modalEnter {
         animation: modalEnter 300ms cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -225,6 +240,7 @@
       .animate-iconLaunch {
         animation: iconLaunch 0.5s ease forwards;
       }
+
       /* ------------------------------
          Stage-ready confetti (canvas)
          ------------------------------ */
@@ -241,8 +257,9 @@
       #confettiCanvas.on {
         opacity: 1;
       }
+
       /* ------------------------------
-         Delivery truck visualization (top -> end user)
+         Delivery truck indicator (top -> end user)
          - Vertical travel is driven by JS via CSS var --y
          ------------------------------ */
       #deliveryTruck {
@@ -252,30 +269,19 @@
         z-index: 30;
         pointer-events: none;
         opacity: 0;
-        transform: translate(-50%, var(--y, -40px));
+        transform: translate(-50%, var(--y, -44px));
         will-change: transform, opacity;
         transition: opacity 220ms ease;
-        filter: drop-shadow(0 10px 14px rgba(0, 0, 0, 0.12));
+        filter: drop-shadow(0 12px 16px rgba(0, 0, 0, 0.12));
       }
       #deliveryTruck.show {
         opacity: 1;
       }
-      #deliveryTruck .trail {
-        position: absolute;
-        left: 50%;
-        top: -6px;
-        width: 10px;
-        height: calc(var(--y, 0px) + 34px);
-        transform: translateX(-50%);
-        border-radius: 999px;
-        background: transparent;
-        opacity: 0.85;
-      }
       #deliveryTruck .chip {
         display: inline-flex;
         align-items: center;
-        gap: 8px;
-        padding: 7px 10px;
+        gap: 10px;
+        padding: 9px 12px;
         border-radius: 999px;
         background: rgba(255, 255, 255, 0.92);
         border: 1px solid rgba(229, 231, 235, 0.9);
@@ -283,46 +289,59 @@
         -webkit-backdrop-filter: blur(10px);
       }
       #deliveryTruck .badge {
-        width: 24px;
-        height: 24px;
-        border-radius: 10px;
+        width: 30px;
+        height: 30px;
+        border-radius: 12px;
         display: grid;
         place-items: center;
-        background: linear-gradient(135deg, #2563eb, #1d4ed8);
-        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+        background: linear-gradient(135deg, #1d4ed8, #2563eb);
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
+        position: relative;
+        overflow: hidden;
       }
-      #deliveryTruck .badge i,
-      #deliveryTruck .badge svg {
-        color: white;
+      #deliveryTruck .badge:after {
+        content: "";
+        position: absolute;
+        inset: -30%;
+        background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0));
+        transform: rotate(18deg);
       }
       #deliveryTruck .label {
         font-size: 11px;
-        font-weight: 600;
-        color: #2563eb;
+        font-weight: 700;
+        color: #1d4ed8;
         letter-spacing: 0.1px;
         white-space: nowrap;
+        line-height: 1.1;
       }
       #deliveryTruck .sub {
         font-size: 10px;
         color: #475569;
-        margin-top: -1px;
+        margin-top: 1px;
         white-space: nowrap;
+        line-height: 1.1;
       }
       #deliveryTruck .motion {
         display: inline-flex;
         align-items: center;
-        gap: 8px;
-        animation: truckBob 0.9s ease-in-out infinite;
+        gap: 10px;
+        animation: courierBob 0.95s ease-in-out infinite;
       }
       #deliveryTruck .tilt {
         display: inline-flex;
-        animation: truckTilt 1.3s ease-in-out infinite;
+        animation: courierTilt 1.35s ease-in-out infinite;
+      }
+      #deliveryTruck .truckSvg {
+        position: relative;
+        z-index: 1;
       }
     </style>
   </head>
+
   <body class="min-h-screen antialiased bg-gray-50 text-gray-900 font-[Inter]">
     <canvas id="confettiCanvas" aria-hidden="true"></canvas>
     <div id="app" class="min-h-screen"></div>
+
     <script>
       /* =========================
          STATE + CONSTANTS
@@ -342,9 +361,14 @@
         showSolutionCards: true,
         openWhy: null,
         openWhyModal: null,
-        openCardId: null,
+
+        // (Old accordion state left in place to avoid unintended side effects elsewhere.)
         openCards: { core: false, onboarding: false, trust: false },
+
+        // New: wizard-style popout card navigation on the Recast Approach tab
+        solutionStep: 0,
         visitedCards: [],
+
         openBuckets: { one: false, zero: false, per: false, edit: false },
         modalOpen: false,
         editBuffers: {
@@ -436,11 +460,13 @@
         },
         progress: { apps: 0, time: 0, tickets: 0 },
       };
+
       const TABS = [
         { id: "problems", label: "Current State", icon: "alert-triangle" },
         { id: "solution", label: "Recast Approach", icon: "workflow" },
         { id: "roi", label: "Business Impact", icon: "bar-chart-3" },
       ];
+
       const NEW_CARDS = [
         {
           id: "core",
@@ -492,7 +518,9 @@
           bgContent: "bg-gray-50",
         },
       ];
+
       const onboardingMiniTimelineEnabled = true;
+
       function cx(...a) {
         return a.filter(Boolean).join(" ");
       }
@@ -511,18 +539,20 @@
         v = Number(String(v).replace(/[^0-9.\-]/g, ""));
         return isFinite(v) ? v : 0;
       }
+
       /* =========================
          CONFETTI (CANVAS, NO LIBS)
-         - Bursts on Start and on completion
          ========================= */
       const Confetti = (() => {
-        let canvas, ctx, dpr = 1;
+        let canvas,
+          ctx,
+          dpr = 1;
         let particles = [];
         let raf = null;
         let last = 0;
         let running = false;
-        // A stage-friendly palette (not neon, not muddy).
         const PALETTE = ["#2563EB", "#60A5FA", "#10B981", "#F59E0B", "#EF4444", "#111827"];
+
         function resize() {
           if (!canvas) return;
           const w = window.innerWidth;
@@ -539,9 +569,13 @@
           if (!canvas) return;
           ctx = canvas.getContext("2d", { alpha: true });
           resize();
-          window.addEventListener("resize", () => {
-            resize();
-          }, { passive: true });
+          window.addEventListener(
+            "resize",
+            () => {
+              resize();
+            },
+            { passive: true }
+          );
         }
         function rand(min, max) {
           return Math.random() * (max - min) + min;
@@ -557,10 +591,10 @@
             const v = rand(power * 0.55, power);
             const size = rand(6, 10);
             const shape = Math.random() < 0.12 ? "dot" : "rect";
-            const p = {
+            particles.push({
               x,
               y,
-              vx: Math.cos(a) * v * 60, // px/s
+              vx: Math.cos(a) * v * 60,
               vy: Math.sin(a) * v * 60,
               w: size,
               h: shape === "dot" ? size * 0.85 : size * rand(0.55, 1.2),
@@ -568,12 +602,11 @@
               vr: rand(-9, 9),
               color: PALETTE[(Math.random() * PALETTE.length) | 0],
               life: 0,
-              ttl: rand(0.95, 1.55), // seconds
+              ttl: rand(0.95, 1.55),
               gravity,
               drag,
               shape,
-            };
-            particles.push(p);
+            });
           }
           start();
         }
@@ -597,7 +630,6 @@
           const r = Math.min(3, Math.max(1, p.w * 0.2));
           const w = p.w;
           const h = p.h;
-          // rounded rect
           ctx.beginPath();
           ctx.moveTo(-w / 2 + r, -h / 2);
           ctx.arcTo(w / 2, -h / 2, w / 2, h / 2, r);
@@ -623,14 +655,13 @@
           particles = particles.filter((p) => {
             p.life += dt;
             const t = p.life / p.ttl;
-            // physics
             p.vx *= Math.pow(p.drag, dt * 60);
             p.vy *= Math.pow(p.drag, dt * 60);
             p.vy += p.gravity * dt;
             p.x += p.vx * dt;
             p.y += p.vy * dt;
             p.rot += p.vr * dt;
-            // fade out at tail
+
             const alpha = t < 0.7 ? 1 : Math.max(0, 1 - (t - 0.7) / 0.3);
             ctx.globalAlpha = alpha;
             if (p.shape === "dot") drawDot(p);
@@ -659,10 +690,9 @@
           },
         };
       })();
+
       /* =========================
          LOTTIE OVERLAY (FIXED)
-         - Initialize ONLY after the Solution tab is rendered.
-         - Destroy on re-render to avoid stale DOM references.
          ========================= */
       let approachAnimations = null;
       let approachTimeouts = [];
@@ -688,9 +718,9 @@
         approachAnimations = null;
       }
       function ensureApproachAnimations() {
-        if (!window.lottie) return; // lottie-web not loaded
+        if (!window.lottie) return;
         const layer = document.getElementById("recast-approach-animation-layer");
-        if (!layer) return; // not in DOM (not on Solution tab)
+        if (!layer) return;
         const ids = Object.keys(LOTTIE_PATHS);
         approachAnimations = approachAnimations || {};
         for (const id of ids) {
@@ -743,17 +773,19 @@
           }, 3800)
         );
       }
+
       /* =========================
          DELIVERY TRUCK PATH (TOP -> END USER)
-         - Moves with appsProcessed progress (truthful sync)
          ========================= */
       let flowInterval = null;
       let flowRunning = false;
+
       const TruckPath = {
         startY: -44,
         endY: 0,
         ready: false,
       };
+
       function computeTruckPath() {
         const card = document.getElementById("flowCard");
         const endCard = document.getElementById("endUserCard");
@@ -762,29 +794,27 @@
           TruckPath.ready = false;
           return;
         }
-        // Position target is visually centered on end-user card header area.
-        // Since #deliveryTruck is absolutely positioned inside #flowCard (relative),
-        // offsetTop is correct, stable, and avoids viewport scroll math.
         const endY =
-          endCard.offsetTop +
-          Math.min(34, Math.max(24, endCard.offsetHeight * 0.25)); // lands "above" the end-user avatar nicely
+          endCard.offsetTop + Math.min(34, Math.max(24, endCard.offsetHeight * 0.25));
         TruckPath.startY = -44;
         TruckPath.endY = Math.max(40, Math.min(card.scrollHeight - 60, endY));
         TruckPath.ready = true;
-        // keep trail height coherent even if progress is 0
         truck.style.setProperty("--y", TruckPath.startY + "px");
       }
+
       function setTruckProgress(appsProcessed) {
         const truck = document.getElementById("deliveryTruck");
         if (!truck) return;
         if (!TruckPath.ready) computeTruckPath();
         if (!TruckPath.ready) return;
+
         const total = 128;
         const t = Math.max(0, Math.min(1, (appsProcessed || 0) / total));
-        const eased = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; // smooth but still honest
+        const eased = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
         const y = TruckPath.startY + (TruckPath.endY - TruckPath.startY) * eased;
         truck.style.setProperty("--y", y.toFixed(1) + "px");
       }
+
       function showTruck() {
         const truck = document.getElementById("deliveryTruck");
         if (!truck) return;
@@ -792,12 +822,14 @@
         truck.classList.add("show");
         setTruckProgress(0);
       }
+
       function hideTruck() {
         const truck = document.getElementById("deliveryTruck");
         if (!truck) return;
         truck.classList.remove("show");
         truck.style.setProperty("--y", "-44px");
       }
+
       /* =========================
          RENDER
          ========================= */
@@ -807,7 +839,9 @@
         root.innerHTML = `
           <header class="relative">
             <div class="relative mx-auto max-w-6xl px-6 lg:px-12 pt-8 pb-6">
-              <h1 class="text-4xl md:text-5xl font-semibold leading-tight"><span class="text-blue-600">Re</span><span class="text-gray-900">cast Application Workspace</span></h1>
+              <h1 class="text-4xl md:text-5xl font-semibold leading-tight">
+                <span class="text-blue-600">Re</span><span class="text-gray-900">cast Application Workspace</span>
+              </h1>
             </div>
             <div class="relative mx-auto max-w-6xl px-6 lg:px-12">
               <div role="tablist" aria-label="Demo sections" class="flex flex-nowrap overflow-x-auto gap-2 rounded bg-gray-50 p-1 ring-1 ring-gray-200">
@@ -833,32 +867,35 @@
           </main>
           ${renderModal()}
           ${renderWhyModal()}
-          ${renderCardModal()}
         `;
+
         if (window.lucide?.createIcons) {
           try {
             window.lucide.createIcons();
           } catch {}
         }
+
         attachEvents();
+
         if (STATE.activeTab === "solution") {
           buildFlow();
           ensureApproachAnimations();
-          // ensure path is computed after DOM paint
           setTimeout(() => {
             computeTruckPath();
             setTruckProgress(STATE.progress.apps);
           }, 0);
         }
+
         if (STATE.activeTab === "roi") updateROIOutputs();
-        if (STATE.activeTab === "solution") attachAccordionKeyboardOnce();
       }
+
       function renderActivePanel() {
         if (STATE.activeTab === "problems") return renderProblems();
         if (STATE.activeTab === "solution") return renderSolution();
         if (STATE.activeTab === "roi") return renderROI();
         return "";
       }
+
       /* =========================
          CURRENT STATE (PROBLEMS TAB)
          ========================= */
@@ -901,6 +938,7 @@
           ],
         },
       ];
+
       function renderProblems() {
         return `
           <section id="panel-problems" class="space-y-3">
@@ -952,6 +990,7 @@
           </section>
         `;
       }
+
       /* =========================
          WHY MODAL
          ========================= */
@@ -1010,84 +1049,11 @@
           </div>
         `;
       }
+
       /* =========================
-         CARD MODAL (POP OUT)
+         SOLUTION TAB (UPDATED UX)
+         - Right-side accordion replaced with popout wizard cards + Back/Next
          ========================= */
-      function renderCardModal() {
-        if (!STATE.openCardId) return "";
-        const cardIds = ['core', 'onboarding', 'trust'];
-        const index = cardIds.indexOf(STATE.openCardId);
-        const card = NEW_CARDS.find(c => c.id === STATE.openCardId);
-        if (!card) return "";
-        const prevId = index > 0 ? cardIds[index - 1] : null;
-        const nextId = index < cardIds.length - 1 ? cardIds[index + 1] : null;
-        return `
-          <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 animate-overlayFade" role="dialog" aria-modal="true" aria-labelledby="card-modal-title-${card.id}">
-            <div class="w-full max-w-2xl mx-4 bg-white rounded-2xl shadow-2xl overflow-hidden animate-modalEnter" style="max-height: 95vh; overflow-y: auto;">
-              <div class="${card.bgHeader || 'bg-gray-50'} px-6 py-4 flex items-center justify-between border-b border-gray-200">
-                <div class="flex items-center gap-2">
-                  <i data-lucide="${card.icon}" class="w-7 h-7 text-gray-900" aria-hidden="true"></i>
-                  <h2 id="card-modal-title-${card.id}" class="text-2xl font-bold tracking-tight text-gray-900">${card.title}</h2>
-                </div>
-                <button type="button" class="text-gray-500 hover:text-gray-700 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 p-1.5" data-action="close-card-modal" aria-label="Close">
-                  <i data-lucide="x" class="w-5 h-5"></i>
-                </button>
-              </div>
-              <div class="p-6 bg-gray-50">
-                <ul class="space-y-2 text-[15px] leading-relaxed text-gray-700 text-left">
-                  ${card.bullets
-                    .map((b, i) => {
-                      const selected = (STATE.selectedCardBullets[card.id] || []).includes(i);
-                      return `
-                      <li class="flex items-center gap-2 min-h-[1.25rem] ${
-                        selected ? "bg-blue-50 rounded-md p-1 transition-colors" : ""
-                      }">
-                        <label class="flex items-center gap-2 cursor-pointer select-none w-full">
-                          <input type="checkbox" class="sr-only" data-action="toggle-card-bullet" data-card="${card.id}" data-index="${i}" ${selected ? "checked" : ""} aria-label="Select: ${b}">
-                          <div class="w-4 h-4 border-2 rounded flex items-center justify-center transition-all duration-200 ease-in-out shrink-0 ${
-                            selected ? "bg-blue-600 border-blue-600" : "border-gray-300 bg-white"
-                          }">
-                            ${selected ? '<i data-lucide="check" class="w-3 h-3 text-white stroke-[3]"></i>' : ""}
-                          </div>
-                          <span class="${selected ? "text-blue-800 font-medium" : ""}">${b}</span>
-                        </label>
-                      </li>
-                    `;
-                    })
-                    .join("")}
-                </ul>
-                ${card.timeline && onboardingMiniTimelineEnabled ? renderMiniTimeline() : ""}
-                <p class="mt-3 italic text-[15px] text-gray-700">${card.closer}</p>
-              </div>
-              <div class="px-6 py-4 bg-gray-50 flex justify-between border-t border-gray-200">
-                <button type="button" data-action="card-back" ${!prevId ? 'disabled' : ''} class="bg-transparent text-gray-900 border-2 border-gray-900 rounded-full px-4 py-1.5 hover:text-blue-600 hover:border-blue-600 transition-all duration-200 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 text-sm ${!prevId ? 'opacity-50 cursor-not-allowed' : ''}">Back</button>
-                <button type="button" data-action="card-next" ${!nextId ? 'disabled' : ''} class="bg-blue-600 text-white rounded-full px-4 py-1.5 hover:bg-blue-700 transition-all duration-200 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 text-sm ${!nextId ? 'opacity-50 cursor-not-allowed' : ''}">${nextId ? 'Next' : 'Close'}</button>
-              </div>
-            </div>
-          </div>
-        `;
-      }
-      /* =========================
-         SOLUTION TAB
-         ========================= */
-      function renderCardHeader(card) {
-        return `
-          <button
-            type="button"
-            class="w-full overflow-hidden ring-1 ring-gray-200 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 transition hover:ring-gray-300 shadow-sm rounded-2xl min-h-[44px]"
-            data-action="open-card-modal"
-            data-card="${card.id}"
-          >
-            <div class="${card.bgHeader || "bg-gray-50"} px-4 py-3 flex justify-between items-center border-b border-gray-200">
-              <div class="flex items-center gap-1.5">
-                <i data-lucide="${card.icon}" class="w-5 h-5 text-gray-900" aria-hidden="true"></i>
-                <span class="text-lg font-medium text-left tracking-normal text-gray-900">${card.title}</span>
-              </div>
-              <i data-lucide="chevron-right" class="w-4.5 h-4.5 text-gray-600" aria-hidden="true"></i>
-            </div>
-          </button>
-        `;
-      }
       function renderMiniTimeline() {
         const phases = [
           { icon: "play-circle", label: "Kickoff" },
@@ -1097,11 +1063,11 @@
           { icon: "book-open", label: "Enablement" },
         ];
         return `
-          <div class="flex items-center justify-between mt-3" aria-hidden="true">
+          <div class="flex items-center justify-between mt-4" aria-hidden="true">
             ${phases
               .map(
                 (p, i) => `
-              ${i > 0 ? '<div class="flex-1 h-px bg-gray-200 mx-1.5"></div>' : ""}
+              ${i > 0 ? '<div class="flex-1 h-px bg-gray-200 mx-2"></div>' : ""}
               <div class="flex flex-col items-center">
                 <i data-lucide="${p.icon}" class="w-4.5 h-4.5 text-blue-600"></i>
                 <span class="text-[11px] mt-0.5 text-gray-700">${p.label}</span>
@@ -1112,25 +1078,157 @@
           </div>
         `;
       }
+
+      function renderApproachWizard() {
+        const total = NEW_CARDS.length;
+        const idx = Math.max(0, Math.min(total - 1, Number(STATE.solutionStep || 0)));
+        const card = NEW_CARDS[idx];
+
+        const visitedCount = STATE.visitedCards.length;
+        const dots = NEW_CARDS.map((c, i) => {
+          const active = i === idx;
+          return `
+            <button
+              type="button"
+              class="${cx(
+                "w-2.5 h-2.5 rounded-full ring-1 transition",
+                active ? "bg-blue-600 ring-blue-600" : "bg-gray-200 ring-gray-300 hover:bg-gray-300"
+              )}"
+              data-action="solution-jump-card"
+              data-index="${i}"
+              aria-label="Go to: ${c.title}"
+              aria-current="${active}"
+            ></button>
+          `;
+        }).join("");
+
+        const canBack = idx > 0;
+        const canNext = idx < total - 1;
+
+        return `
+          <div class="flex flex-col gap-2 relative">
+            <div class="sticky top-0 z-10 bg-gray-50 py-1 shadow-md">
+              <div class="flex justify-between items-center text-[13px]">
+                <span class="font-semibold">Recast Approach</span>
+                <span class="text-gray-700">${visitedCount} of ${total} explored</span>
+              </div>
+            </div>
+
+            <div class="rounded-2xl bg-white shadow-md hover:shadow-lg transition-shadow duration-300 ring-1 ring-gray-200 overflow-hidden animate-cardPop">
+              <div class="${card.bgHeader || "bg-gray-50"} px-5 py-4 border-b border-gray-200 flex items-start justify-between gap-4">
+                <div class="flex items-center gap-3 min-w-0">
+                  <div class="h-10 w-10 rounded-2xl bg-blue-600 grid place-items-center shadow-sm">
+                    <i data-lucide="${card.icon}" class="w-5 h-5 text-white" aria-hidden="true"></i>
+                  </div>
+                  <div class="min-w-0">
+                    <div class="text-[12px] text-gray-600">Step ${idx + 1} of ${total}</div>
+                    <h3 class="text-xl font-semibold text-gray-900 truncate">${card.title}</h3>
+                  </div>
+                </div>
+                <div class="flex items-center gap-2 shrink-0" aria-label="Approach steps">
+                  ${dots}
+                </div>
+              </div>
+
+              <div class="p-5 ${card.bgContent || "bg-gray-50"}">
+                <ul class="space-y-2.5 text-[15px] leading-relaxed text-gray-700">
+                  ${card.bullets
+                    .map((b, i) => {
+                      const selected = (STATE.selectedCardBullets[card.id] || []).includes(i);
+                      return `
+                        <li class="${cx(
+                          "rounded-xl border px-3 py-2.5 transition-colors",
+                          selected ? "border-blue-200 bg-blue-50" : "border-gray-200 bg-white hover:bg-gray-50"
+                        )}">
+                          <label class="flex items-start gap-3 cursor-pointer select-none">
+                            <input
+                              type="checkbox"
+                              class="sr-only"
+                              data-action="toggle-card-bullet"
+                              data-card="${card.id}"
+                              data-index="${i}"
+                              ${selected ? "checked" : ""}
+                              aria-label="Select: ${b}"
+                            >
+                            <div class="${cx(
+                              "mt-0.5 w-4.5 h-4.5 rounded-md border-2 flex items-center justify-center shrink-0 transition-all",
+                              selected ? "bg-blue-600 border-blue-600" : "bg-white border-gray-300"
+                            )}">
+                              ${selected ? '<i data-lucide="check" class="w-3 h-3 text-white stroke-[3]"></i>' : ""}
+                            </div>
+                            <span class="${selected ? "text-blue-900 font-medium" : ""}">${b}</span>
+                          </label>
+                        </li>
+                      `;
+                    })
+                    .join("")}
+                </ul>
+
+                ${card.timeline && onboardingMiniTimelineEnabled ? renderMiniTimeline() : ""}
+
+                <div class="mt-4 rounded-xl bg-white border border-gray-200 p-3">
+                  <p class="text-[14px] text-gray-700 italic">${card.closer}</p>
+                </div>
+
+                <div class="mt-5 flex items-center justify-between gap-2">
+                  <button
+                    type="button"
+                    data-action="solution-prev-card"
+                    class="${cx(
+                      "inline-flex items-center gap-2 px-4 py-2 rounded-full border-2 text-[13px] font-semibold focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 transition",
+                      canBack
+                        ? "bg-transparent text-gray-900 border-gray-900 hover:text-blue-600 hover:border-blue-600"
+                        : "bg-transparent text-gray-400 border-gray-200 cursor-not-allowed"
+                    )}"
+                    ${canBack ? "" : "disabled"}
+                    aria-disabled="${!canBack}"
+                  >
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                    Back
+                  </button>
+
+                  ${
+                    canNext
+                      ? `
+                        <button
+                          type="button"
+                          data-action="solution-next-card"
+                          class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-600 text-white text-[13px] font-semibold hover:bg-blue-700 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 transition"
+                        >
+                          Next
+                          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </button>
+                      `
+                      : `
+                        <button
+                          type="button"
+                          data-action="go-tab"
+                          data-tab="roi"
+                          class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-600 text-white text-[13px] font-semibold hover:bg-blue-700 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 transition"
+                        >
+                          Business Impact
+                          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </button>
+                      `
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
       function renderSolution() {
         return `
           <section id="panel-solution" class="space-y-2">
             <div class="grid grid-cols-1 gap-2 lg:grid-cols-2">
               ${renderFlow()}
-              <div class="flex flex-col gap-2 relative">
-                <div class="sticky top-0 z-10 bg-gray-50 py-1 shadow-md">
-                  <div class="flex justify-between items-center text-[13px]">
-                    <span class="font-semibold">Recast Approach</span>
-                    <span class="text-gray-700">${STATE.visitedCards.length} of 3 explored</span>
-                  </div>
-                </div>
-                ${NEW_CARDS.map((card) => renderCardHeader(card)).join("")}
-                <div class="sticky bottom-0 bg-gray-50 py-2 shadow-lg mt-2"></div>
-              </div>
+              ${renderApproachWizard()}
             </div>
           </section>
         `;
       }
+
       function renderFlow() {
         return `
           <div class="relative rounded-2xl bg-white shadow-md hover:shadow-lg hover:-translate-y-[2px] transition-shadow duration-300 transition-transform p-3">
@@ -1142,6 +1240,7 @@
               <div id="unify" class="lottie"></div>
               <div id="endstate" class="lottie"></div>
             </div>
+
             <div class="flex items-center justify-between gap-2">
               <div class="flex items-center gap-1.5">
                 <div class="h-5 w-5 rounded grid place-items-center bg-blue-600">
@@ -1154,6 +1253,7 @@
                 <button type="button" data-action="reset-flow" class="bg-transparent text-gray-900 border-2 border-gray-900 px-2 py-1 rounded-full hover:text-blue-600 hover:border-blue-600 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2">Reset</button>
               </div>
             </div>
+
             <div class="mt-1 flex items-center justify-center gap-3 text-[13px] font-medium">
               <div class="flex items-center gap-1">
                 <i data-lucide="building" class="w-4.5 h-4.5 text-gray-700"></i>
@@ -1170,33 +1270,44 @@
                 <span>User</span>
               </div>
             </div>
+
             <div class="mt-1 text-center bg-blue-50 p-1.5 rounded-lg text-[12px]">
               Users get one consistent app experience—while IT standardizes delivery behind the scenes across every platform.
             </div>
+
             <div id="flowCard" class="mt-2 rounded-xl border border-gray-200 bg-gradient-to-b from-white to-gray-50 shadow-inner relative overflow-hidden ${
               STATE.showLabels ? "show-labels" : ""
             }" role="region" aria-label="Animated flow">
+
               <div id="progressCounters" class="hidden mb-2 grid grid-cols-3 gap-1.5 text-[13px] text-center">
                 <div><span class="font-semibold tabular-nums" id="appsProcessed">0</span> apps processed</div>
                 <div><span class="font-semibold tabular-nums" id="timeSaved">0</span> hours saved</div>
                 <div><span class="font-semibold tabular-nums" id="ticketsAvoided">0</span> tickets avoided</div>
               </div>
+
               <div class="space-y-1 relative">
                 ${CATALOG.map(
                   (s) => `
                   <div class="grid grid-cols-[12ch_1fr] gap-0.5 items-center border-t border-gray-200 pt-0.5 transition-all duration-300 first:border-t-0 first:pt-0 show-labels:grid-cols-[12ch_1fr] show-labels:gap-3">
-                    <div class="text-[11px] uppercase text-gray-700 flex items-center gap-1.5"><i data-lucide="folder" class="w-2.5 h-2.5"></i>${s.title}</div>
+                    <div class="text-[11px] uppercase text-gray-700 flex items-center gap-1.5">
+                      <i data-lucide="folder" class="w-2.5 h-2.5"></i>${s.title}
+                    </div>
                     <div id="${s.id}" class="flex flex-wrap gap-1.5 show-labels:gap-3"></div>
                   </div>
                 `
                 ).join("")}
+
                 <div id="overlayTag" class="opacity-0 transition-opacity duration-300 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white/90 p-3 rounded-2xl shadow-md z-10 show-labels:opacity-100 show-labels:delay-500 text-center text-[13px] text-gray-700">
                   Every app mapped to stage, policy, region, and device.
                 </div>
               </div>
+
               <div id="flowHubFlash" class="mt-1 hidden text-blue-600">
-                <span class="inline-flex items-center gap-1 text-[11px]"><i data-lucide="bolt" class="h-3.5 w-3.5"></i><span>Update published</span></span>
+                <span class="inline-flex items-center gap-1 text-[11px]">
+                  <i data-lucide="bolt" class="h-3.5 w-3.5"></i><span>Update published</span>
+                </span>
               </div>
+
               <div class="mt-2 grid grid-cols-3 gap-1.5 relative" aria-hidden="true" id="platformsSection">
                 ${["A", "B", "C"]
                   .map(
@@ -1204,18 +1315,15 @@
                   <div class="rounded-xl border border-gray-200 bg-gray-50 transition-shadow duration-300 p-1.5 relative">
                     <div class="text-[11px] text-gray-700">${["Existing Platforms", "Staged Rings", "Access & Policy"][i]}</div>
                     <div id="flowConn${k}" class="mt-0.5 grid grid-cols-10 gap-1"></div>
-                    <div data-anim="barGrow" class="mt-0.5 h-[0.22rem] rounded-[2px] origin-left scale-x-0 bg-gradient-to-r from-blue-600 to-blue-700" style="--d:${
-                      3 + 0.5 * i
-                    }s"></div>
-                    <i data-lucide="check-circle" class="opacity-0 absolute top-0.5 right-0.5 w-3.5 h-3.5 text-green-500 animate-fadeInOut" style="--d:${
-                      4 + 0.5 * i
-                    }s"></i>
+                    <div data-anim="barGrow" class="mt-0.5 h-[0.22rem] rounded-[2px] origin-left scale-x-0 bg-gradient-to-r from-blue-600 to-blue-700" style="--d:${3 + 0.5 * i}s"></div>
+                    <i data-lucide="check-circle" class="opacity-0 absolute top-0.5 right-0.5 w-3.5 h-3.5 text-green-500 animate-fadeInOut" style="--d:${4 + 0.5 * i}s"></i>
                   </div>
                 `
                   )
                   .join("")}
                 <div class="absolute top-[-0.5rem] left-0 w-full h-px opacity-50" style="background-image:linear-gradient(to right, transparent 50%, #e5e7eb 50%); background-size:4px 1px; background-repeat:repeat-x;"></div>
               </div>
+
               <div class="mt-2 grid grid-cols-3 gap-1.5 relative" aria-hidden="true" id="groupsSection">
                 ${["A", "B", "C"]
                   .map(
@@ -1223,18 +1331,15 @@
                   <div class="rounded-xl border border-gray-200 bg-gray-50 transition-shadow duration-300 p-1.5 relative">
                     <div class="text-[11px] text-gray-700">${["Business Unit", "Subsidiary", "Region"][i]}</div>
                     <div id="flowGrp${k}" class="mt-0.5 grid grid-cols-8 gap-1"></div>
-                    <div data-anim="boltDrop" class="mx-auto mt-0.5 w-[0.22rem] h-12 rounded-[2px] origin-top scale-y-0 bg-gradient-to-b from-gray-900 to-blue-600" style="--d:${
-                      5 + 0.5 * i
-                    }s"></div>
-                    <i data-lucide="shield-check" class="opacity-0 absolute top-0.5 right-0.5 w-3.5 h-3.5 text-green-500 animate-fadeInOut" style="--d:${
-                      6 + 0.5 * i
-                    }s"></i>
+                    <div data-anim="boltDrop" class="mx-auto mt-0.5 w-[0.22rem] h-12 rounded-[2px] origin-top scale-y-0 bg-gradient-to-b from-gray-900 to-blue-600" style="--d:${5 + 0.5 * i}s"></div>
+                    <i data-lucide="shield-check" class="opacity-0 absolute top-0.5 right-0.5 w-3.5 h-3.5 text-green-500 animate-fadeInOut" style="--d:${6 + 0.5 * i}s"></i>
                   </div>
                 `
                   )
                   .join("")}
                 <div class="absolute top-[-0.5rem] left-0 w-full h-px opacity-50" style="background-image:linear-gradient(to right, transparent 50%, #e5e7eb 50%); background-size:4px 1px; background-repeat:repeat-x;"></div>
               </div>
+
               <div class="mt-2 grid grid-cols-3 gap-1.5 relative" aria-hidden="true" id="devicesSection">
                 ${["A", "B", "C"]
                   .map(
@@ -1243,15 +1348,14 @@
                     <i data-lucide="${["monitor-smartphone", "laptop", "smartphone"][i]}" class="h-4.5 w-4.5 text-gray-700"></i>
                     <div id="flowDev${k}" class="mt-0.5 grid grid-cols-6 gap-1"></div>
                     <div class="mt-0.5 text-[10px] text-gray-700">${["Windows & macOS", "VDI / Web", "Mobile"][i]}</div>
-                    <i data-lucide="check-circle" class="opacity-0 absolute top-0.5 right-0.5 w-3.5 h-3.5 text-green-500 animate-fadeInOut" style="--d:${
-                      8 + 0.5 * i
-                    }s"></i>
+                    <i data-lucide="check-circle" class="opacity-0 absolute top-0.5 right-0.5 w-3.5 h-3.5 text-green-500 animate-fadeInOut" style="--d:${8 + 0.5 * i}s"></i>
                   </div>
                 `
                   )
                   .join("")}
                 <div class="absolute top-[-0.5rem] left-0 w-full h-px opacity-50" style="background-image:linear-gradient(to right, transparent 50%, #e5e7eb 50%); background-size:4px 1px; background-repeat:repeat-x;"></div>
               </div>
+
               <div class="mt-2">
                 <div id="endUserCard" class="rounded-xl border border-gray-200 bg-gray-50 transition-shadow duration-300 transition-all duration-500 p-2.5">
                   <div class="flex items-center gap-2">
@@ -1279,29 +1383,45 @@
                       .join("")}
                   </div>
                 </div>
+
                 <div id="flowSuccess" class="mt-1 hidden inline-flex items-center gap-1 text-[13px] opacity-0 animate-fadeIn text-green-500">
                   <i data-lucide="sparkles" class="h-3.5 w-3.5"></i><span>Configured once → delivered everywhere.</span>
                 </div>
               </div>
-              <!-- Delivery truck character that travels DOWN in sync with apps processed -->
-              <div id="deliveryTruck">
+
+              <!-- Delivery truck indicator that travels DOWN in sync with apps processed -->
+              <div id="deliveryTruck" aria-hidden="true">
                 <div class="motion">
                   <div class="tilt">
                     <div class="chip">
                       <div class="badge">
-                        <i data-lucide="truck" class="w-4 h-4"></i>
+                        <!-- Custom, cleaner “Recast delivery truck” glyph (not a scooter/bike). -->
+                        <svg class="truckSvg" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                          <path d="M3.8 8.6c0-1.2.98-2.2 2.2-2.2h8.2c1.2 0 2.2 1 2.2 2.2v7.1H3.8V8.6Z" fill="rgba(255,255,255,0.95)"/>
+                          <path d="M16.4 10.2h2.9c.6 0 1.1.3 1.4.8l1.2 2c.1.2.2.4.2.6v2.1h-5.7v-5.5Z" fill="rgba(255,255,255,0.85)"/>
+                          <path d="M7.3 17.9a1.7 1.7 0 1 0 0-3.4 1.7 1.7 0 0 0 0 3.4Z" fill="#0B1220" opacity="0.9"/>
+                          <path d="M18.7 17.9a1.7 1.7 0 1 0 0-3.4 1.7 1.7 0 0 0 0 3.4Z" fill="#0B1220" opacity="0.9"/>
+                          <path d="M6 6.4h8.2c1.2 0 2.2 1 2.2 2.2v7.1H3.8V8.6c0-1.2.98-2.2 2.2-2.2Z" stroke="rgba(255,255,255,0.45)" stroke-width="1.2" />
+                          <path d="M16.4 10.2h2.9c.6 0 1.1.3 1.4.8l1.2 2c.1.2.2.4.2.6v2.1h-5.7" stroke="rgba(255,255,255,0.45)" stroke-width="1.2" stroke-linejoin="round"/>
+                          <path d="M3.8 15.7h18.3" stroke="rgba(255,255,255,0.35)" stroke-width="1.2" stroke-linecap="round"/>
+                          <path d="M7.3 14.2h6.2" stroke="rgba(29,78,216,0.65)" stroke-width="1.6" stroke-linecap="round"/>
+                        </svg>
                       </div>
+
                       <div class="flex flex-col leading-tight">
-                        <div class="label">recast</div>
+                        <div class="label">Recast Delivery</div>
+                        <div class="sub"><span id="truckApps" class="tabular-nums">0</span> apps delivered</div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
+
             </div>
           </div>
         `;
       }
+
       /* =========================
          ROI TAB (UNCHANGED LOGIC)
          ========================= */
@@ -1468,6 +1588,7 @@
           </div>
         `;
       }
+
       function renderExecView(r) {
         return `
           <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -1604,9 +1725,9 @@
         };
       }
       function updateROIOutputs() {}
+
       /* =========================
-         APP ICONS + CATALOG (UPGRADED VISUALS)
-         - Still “illustrative” (not exact trademarks), but stage-ready.
+         APP ICONS + CATALOG (UNCHANGED)
          ========================= */
       function shade(hex, m) {
         const c = hex.replace("#", "");
@@ -1697,12 +1818,14 @@
         `;
         return { name, svg: appIconShell(inner, { bgA: "#FFFFFF", bgB: "#FEF3C7" }) };
       }
+
       const miniApps = [
         logo("Microsoft Word", "W", "#185ABD"),
         logo("Microsoft Teams", "T", "#5B53D6"),
         logo("SAP", "SAP", "#0A6ED1"),
         logo("Zoom", "Z", "#0B5CFF"),
       ];
+
       const CATALOG = [
         {
           title: "CORE PRODUCTIVITY",
@@ -1772,6 +1895,7 @@
           ],
         },
       ];
+
       const appConfigs = [
         { stage: "Prod", policy: "MFA + VPN", region: "AMER", device: "Windows" },
         { stage: "QA", policy: "Compliant only", region: "APAC", device: "Any" },
@@ -1789,6 +1913,7 @@
           flatIndex++;
         })
       );
+
       /* =========================
          PER-USER CURRENT STATE STORAGE (UNCHANGED)
          ========================= */
@@ -1887,8 +2012,9 @@
           });
         }
       }
+
       /* =========================
-         CURRENT STATE EDITOR MODAL (UNCHANGED MARKUP, FIXED LISTENERS)
+         CURRENT STATE EDITOR MODAL (UNCHANGED)
          ========================= */
       function renderModal() {
         if (!STATE.modalOpen) return "";
@@ -1962,21 +2088,45 @@
           </div>
         `;
       }
+
       /* =========================
          EVENTS
          ========================= */
       function attachEvents() {
         const root = document.getElementById("app");
+
         // Tabs
         root.querySelectorAll('[data-action="switch-tab"]').forEach((b) =>
           b.addEventListener("click", (e) => {
-            STATE.activeTab = e.currentTarget.getAttribute("data-tab");
-            STATE.visitedCards = [];
+            const next = e.currentTarget.getAttribute("data-tab");
+            STATE.activeTab = next;
+
             // stop any running flow visuals when leaving the tab
+            stopFlowTimers();
+
+            // Reset wizard when entering Solution for a clean narrative
+            if (next === "solution") {
+              STATE.solutionStep = 0;
+              STATE.visitedCards = [NEW_CARDS[0].id];
+            } else {
+              STATE.visitedCards = [];
+            }
+
+            render();
+          })
+        );
+
+        // Generic tab jump (used by wizard final CTA)
+        root.querySelectorAll('[data-action="go-tab"]').forEach((b) =>
+          b.addEventListener("click", (e) => {
+            const tab = e.currentTarget.getAttribute("data-tab");
+            if (!tab) return;
+            STATE.activeTab = tab;
             stopFlowTimers();
             render();
           })
         );
+
         // Why modal
         root.querySelectorAll('[data-action="open-why-modal"]').forEach((b) =>
           b.addEventListener("click", (e) => {
@@ -1997,6 +2147,7 @@
             render();
           })
         );
+
         // Problems selections
         root.querySelectorAll('[data-action="toggle-bullet"]').forEach((inp) =>
           inp.addEventListener("change", (e) => {
@@ -2021,46 +2172,41 @@
         root.querySelectorAll('[data-action="next-tab"]').forEach((b) =>
           b.addEventListener("click", () => {
             STATE.activeTab = "solution";
+            STATE.solutionStep = 0;
+            STATE.visitedCards = [NEW_CARDS[0].id];
             render();
           })
         );
-        // Card modal open
-        root.querySelectorAll('[data-action="open-card-modal"]').forEach((b) =>
+
+        // Solution wizard navigation
+        root.querySelectorAll('[data-action="solution-prev-card"]').forEach((b) =>
+          b.addEventListener("click", () => {
+            STATE.solutionStep = Math.max(0, STATE.solutionStep - 1);
+            const id = NEW_CARDS[STATE.solutionStep]?.id;
+            if (id && !STATE.visitedCards.includes(id)) STATE.visitedCards.push(id);
+            render();
+          })
+        );
+        root.querySelectorAll('[data-action="solution-next-card"]').forEach((b) =>
+          b.addEventListener("click", () => {
+            STATE.solutionStep = Math.min(NEW_CARDS.length - 1, STATE.solutionStep + 1);
+            const id = NEW_CARDS[STATE.solutionStep]?.id;
+            if (id && !STATE.visitedCards.includes(id)) STATE.visitedCards.push(id);
+            render();
+          })
+        );
+        root.querySelectorAll('[data-action="solution-jump-card"]').forEach((b) =>
           b.addEventListener("click", (e) => {
-            const id = e.currentTarget.getAttribute("data-card");
-            STATE.openCardId = id;
-            if (!STATE.visitedCards.includes(id)) STATE.visitedCards.push(id);
+            const idx = Number(e.currentTarget.getAttribute("data-index"));
+            if (!Number.isFinite(idx)) return;
+            STATE.solutionStep = Math.max(0, Math.min(NEW_CARDS.length - 1, idx));
+            const id = NEW_CARDS[STATE.solutionStep]?.id;
+            if (id && !STATE.visitedCards.includes(id)) STATE.visitedCards.push(id);
             render();
           })
         );
-        // Card modal navigation
-        root.querySelectorAll('[data-action="close-card-modal"]').forEach((b) =>
-          b.addEventListener("click", () => {
-            STATE.openCardId = null;
-            render();
-          })
-        );
-        root.querySelectorAll('[data-action="card-back"]').forEach((b) =>
-          b.addEventListener("click", () => {
-            const cardIds = ['core', 'onboarding', 'trust'];
-            const index = cardIds.indexOf(STATE.openCardId);
-            const prevId = index > 0 ? cardIds[index - 1] : null;
-            STATE.openCardId = prevId;
-            if (prevId && !STATE.visitedCards.includes(prevId)) STATE.visitedCards.push(prevId);
-            render();
-          })
-        );
-        root.querySelectorAll('[data-action="card-next"]').forEach((b) =>
-          b.addEventListener("click", () => {
-            const cardIds = ['core', 'onboarding', 'trust'];
-            const index = cardIds.indexOf(STATE.openCardId);
-            const nextId = index < cardIds.length - 1 ? cardIds[index + 1] : null;
-            STATE.openCardId = nextId;
-            if (nextId && !STATE.visitedCards.includes(nextId)) STATE.visitedCards.push(nextId);
-            render();
-          })
-        );
-        // Card bullet selections
+
+        // Card bullet selections (still used inside wizard)
         root.querySelectorAll('[data-action="toggle-card-bullet"]').forEach((inp) =>
           inp.addEventListener("change", (e) => {
             const card = e.target.getAttribute("data-card");
@@ -2075,6 +2221,7 @@
             render();
           })
         );
+
         // Buckets
         root.querySelectorAll('[data-action="toggle-bucket"]').forEach((b) =>
           b.addEventListener("click", (e) => {
@@ -2083,6 +2230,7 @@
             render();
           })
         );
+
         // ROI inputs
         root.querySelectorAll('[data-action="set-device"]').forEach((b) =>
           b.addEventListener("click", (e) => {
@@ -2102,6 +2250,7 @@
             render();
           })
         );
+
         const pack = root.querySelector('[data-action="set-pack-hrs"]');
         if (pack)
           pack.addEventListener("input", (e) => {
@@ -2120,6 +2269,7 @@
             STATE.currentHrs = cleanNum(e.target.value);
             render();
           });
+
         root.querySelectorAll('[data-action="add-impact"]').forEach((b) =>
           b.addEventListener("click", (e) => {
             const kind = e.currentTarget.getAttribute("data-kind");
@@ -2130,6 +2280,7 @@
             render();
           })
         );
+
         root.querySelectorAll('[data-action="set-roi"]').forEach((inp) =>
           inp.addEventListener("input", (e) => {
             const key = e.currentTarget.getAttribute("data-key");
@@ -2146,12 +2297,14 @@
             render();
           })
         );
+
         root.querySelectorAll('[data-action="set-view"]').forEach((b) =>
           b.addEventListener("click", (e) => {
             STATE.activeView = e.currentTarget.getAttribute("data-view");
             render();
           })
         );
+
         const resetCalc = root.querySelector('[data-action="reset-calculator"]');
         if (resetCalc)
           resetCalc.addEventListener("click", () => {
@@ -2160,11 +2313,13 @@
             STATE.copied = false;
             render();
           });
+
         // Flow controls
         const startBtn = root.querySelector('[data-action="start-flow"]');
         if (startBtn) startBtn.addEventListener("click", startFlow);
         const resetBtn = root.querySelector('[data-action="reset-flow"]');
         if (resetBtn) resetBtn.addEventListener("click", resetFlow);
+
         // App launch animation
         root.querySelectorAll('[data-action="launch-icon"]').forEach((icon) =>
           icon.addEventListener("click", () => {
@@ -2172,6 +2327,7 @@
             setTimeout(() => icon.classList.remove("animate-iconLaunch"), 500);
           })
         );
+
         // Modal controls
         root.querySelectorAll('[data-action="close-modal"]').forEach((b) =>
           b.addEventListener("click", () => {
@@ -2179,6 +2335,7 @@
             render();
           })
         );
+
         // Buffer inputs
         root.querySelectorAll('[data-action="edit-buffer"]').forEach((el) =>
           el.addEventListener("input", (evt) => {
@@ -2189,6 +2346,7 @@
           })
         );
       }
+
       /* =========================
          FLOW BUILD + ANIMATION
          ========================= */
@@ -2203,7 +2361,7 @@
             wrap.className =
               "flex items-center gap-1 relative transition-all duration-300 show-labels:flex-col show-labels:items-start show-labels:gap-[0.2rem] show-labels:w-[calc(33.333%-0.666rem)] show-labels:mb-1";
             wrap.style.setProperty("--d", (base + idx * 0.2).toFixed(2) + "s");
-            // Modern icon tile: squircle, subtle border, clean shadow.
+
             const ring = document.createElement("div");
             ring.className =
               "w-[1.95rem] h-[1.95rem] rounded-[0.85rem] grid place-items-center bg-white shadow-[0_8px_18px_rgba(15,23,42,0.06)] ring-1 ring-[rgba(15,23,42,0.08)] transition-all duration-300 hover:shadow-[0_10px_24px_rgba(37,99,235,0.14)] hover:ring-[rgba(37,99,235,0.22)] hover:scale-[1.03] show-labels:w-[1.7rem] show-labels:h-[1.7rem] show-labels:rounded-[0.75rem]";
@@ -2212,22 +2370,26 @@
             ring.setAttribute("role", "img");
             ring.setAttribute("aria-label", itm.name);
             wrap.appendChild(ring);
+
             if (STATE.showLabels) {
               const label = document.createElement("span");
               label.className =
                 "text-[0.6rem] text-gray-500 opacity-0 -translate-x-[10px] transition-all duration-300 show-labels:opacity-100 show-labels:translate-x-0 whitespace-normal text-left";
               label.textContent = itm.name;
               wrap.appendChild(label);
+
               const meta = document.createElement("div");
               meta.className =
                 "text-[0.5rem] text-gray-500 opacity-0 translate-y-[5px] transition-all duration-300 relative top-auto left-auto z-[5] whitespace-nowrap flex flex-col gap-[0.1rem] items-start w-full justify-start show-labels:opacity-100 show-labels:translate-y-0";
               meta.innerHTML = `<span>Stage: ${itm.config.stage}</span><span>Policy: ${itm.config.policy}</span><span>Region: ${itm.config.region}</span><span>Device: ${itm.config.device}</span>`;
               wrap.appendChild(meta);
             }
+
             mount.appendChild(wrap);
           });
           base += 1.2;
         });
+
         buildTiles(document.getElementById("flowConnA"), 14, 3);
         buildTiles(document.getElementById("flowConnB"), 14, 3.5);
         buildTiles(document.getElementById("flowConnC"), 14, 4);
@@ -2237,6 +2399,7 @@
         buildTiles(document.getElementById("flowDevA"), 10, 8);
         buildTiles(document.getElementById("flowDevB"), 10, 8.5);
         buildTiles(document.getElementById("flowDevC"), 10, 9);
+
         const avatar = document.getElementById("endUserAvatar");
         const badge = document.getElementById("endUserBadge");
         if (avatar) {
@@ -2251,32 +2414,40 @@
           badge.style.opacity = "0";
           badge.style.transform = "translateY(-6px) scale(0.9)";
         }
+
         const message = document.getElementById("endUserMessage");
         if (message) message.textContent = "Apps on demand — without retraining users when IT changes.";
         const mini = document.getElementById("miniWorkspace");
         if (mini) mini.classList.add("hidden");
         const counters = document.getElementById("progressCounters");
         if (counters) counters.classList.add("hidden");
+
         const card = document.getElementById("flowCard");
         if (card) {
           card.classList.remove("run");
           card.classList.remove("workspace-final");
         }
+
         const endCard = document.getElementById("endUserCard");
         if (endCard) endCard.classList.remove("scale-105", "bg-white", "border-green-500");
+
         document.querySelectorAll(".processed").forEach((el) => el.classList.remove("processed"));
         document.querySelectorAll(".dimmed").forEach((el) => el.classList.remove("dimmed"));
         document.querySelectorAll(".highlighted").forEach((el) => el.classList.remove("highlighted"));
+
         STATE.progress = { apps: 0, time: 0, tickets: 0 };
         updateProgress();
+
         const success = document.getElementById("flowSuccess");
         if (success) success.classList.add("hidden");
+
         hideTruck();
         setTimeout(() => {
           computeTruckPath();
           setTruckProgress(STATE.progress.apps);
         }, 0);
       }
+
       function buildTiles(container, count, baseDelay) {
         if (!container) return;
         container.innerHTML = "";
@@ -2288,28 +2459,31 @@
           container.appendChild(d);
         }
       }
+
       function stopFlowTimers() {
         flowRunning = false;
         if (flowInterval) clearInterval(flowInterval);
         flowInterval = null;
       }
+
       function startFlow() {
-        // Ensure only one run at a time.
         stopFlowTimers();
         Confetti.clear();
-        // 1) Lottie overlay sequence (scoped)
+
         runWorkspaceAnimation();
-        // 2) Confetti burst ON click (from the Start button location)
+
         const startBtn = document.getElementById("workspaceStartButton");
         Confetti.burstAtElement(startBtn, { count: 90, spread: 85, power: 12 });
-        // 3) Replay CSS-driven animations
+
         const card = document.getElementById("flowCard");
         if (!card) return;
         card.classList.remove("run");
         void card.offsetWidth;
         card.classList.add("run");
-        // 4) Delivery truck character starts at the top and moves DOWN in sync with apps processed
+
+        // Truck indicator starts at the top and moves DOWN in sync with apps processed
         showTruck();
+
         const flash = document.getElementById("flowHubFlash");
         const success = document.getElementById("flowSuccess");
         const avatar = document.getElementById("endUserAvatar");
@@ -2319,31 +2493,38 @@
         const counters = document.getElementById("progressCounters");
         const endCard = document.getElementById("endUserCard");
         const groups = document.getElementById("groupsSection");
+
         if (flash) {
           flash.classList.remove("hidden");
           setTimeout(() => flash.classList.add("hidden"), 2000);
         }
         if (success) success.classList.add("hidden");
         if (counters) counters.classList.remove("hidden");
+
         flowRunning = true;
-        // Progress ticks (truthfully drive truck position here)
         flowInterval = setInterval(updateProgress, 100);
+
         setTimeout(() => {
           if (groups) groups.classList.add("dimmed");
           if (endCard) endCard.classList.add("highlighted");
         }, 5000);
+
         const platformBuckets = document.querySelectorAll("#platformsSection > div");
         const groupBuckets = document.querySelectorAll("#groupsSection > div");
         const deviceBuckets = document.querySelectorAll("#devicesSection > div");
+
         setTimeout(() => platformBuckets[0] && platformBuckets[0].classList.add("processed"), 4500);
         setTimeout(() => platformBuckets[1] && platformBuckets[1].classList.add("processed"), 5000);
         setTimeout(() => platformBuckets[2] && platformBuckets[2].classList.add("processed"), 5500);
+
         setTimeout(() => groupBuckets[0] && groupBuckets[0].classList.add("processed"), 6500);
         setTimeout(() => groupBuckets[1] && groupBuckets[1].classList.add("processed"), 7000);
         setTimeout(() => groupBuckets[2] && groupBuckets[2].classList.add("processed"), 7500);
+
         setTimeout(() => deviceBuckets[0] && deviceBuckets[0].classList.add("processed"), 8500);
         setTimeout(() => deviceBuckets[1] && deviceBuckets[1].classList.add("processed"), 9000);
         setTimeout(() => deviceBuckets[2] && deviceBuckets[2].classList.add("processed"), 9500);
+
         // Completion state
         setTimeout(() => {
           if (avatar) {
@@ -2364,81 +2545,61 @@
             endCard.classList.remove("highlighted");
           }
           if (success) success.classList.remove("hidden");
-          // Confetti burst at the end-user card to punctuate the landing.
+
           Confetti.burstAtElement(endCard, { count: 70, spread: 70, power: 10 });
+
           stopFlowTimers();
         }, 11000);
+
         setTimeout(() => card.classList.remove("run"), 12000);
       }
+
       function updateProgress() {
         if (STATE.progress.apps < 128) STATE.progress.apps += 4;
         if (STATE.progress.time < 46) STATE.progress.time += 2;
         if (STATE.progress.tickets < 73) STATE.progress.tickets += 3;
+
         const apps = STATE.progress.apps > 128 ? 128 : STATE.progress.apps;
         const time = STATE.progress.time > 46 ? 46 : STATE.progress.time;
         const tickets = STATE.progress.tickets > 73 ? 73 : STATE.progress.tickets;
+
         setText("appsProcessed", apps);
         setText("timeSaved", time);
         setText("ticketsAvoided", tickets);
-        // Keep the truck indicator text + position in sync with app processing.
-        setText("motoApps", apps);
+
+        // Keep the truck position + label in sync with app processing
+        setText("truckApps", apps);
         setTruckProgress(apps);
       }
+
       function setText(id, value) {
         const el = document.getElementById(id);
         if (el) el.textContent = String(value);
       }
+
       function resetFlow() {
         stopFlowTimers();
         clearApproachTimeouts();
         hideApproachLayers();
         Confetti.clear();
+
         STATE.progress = { apps: 0, time: 0, tickets: 0 };
         STATE.showLabels = false;
         buildFlow();
+
         const card = document.getElementById("flowCard");
         if (card) {
           card.classList.remove("run");
           card.classList.remove("workspace-final");
         }
+
         document.querySelectorAll(".processed").forEach((el) => el.classList.remove("processed"));
         document.querySelectorAll(".dimmed").forEach((el) => el.classList.remove("dimmed"));
         document.querySelectorAll(".highlighted").forEach((el) => el.classList.remove("highlighted"));
+
         hideTruck();
       }
-      /* =========================
-         ACCESSIBLE ACCORDION KEYBOARD (only attach once)
-         ========================= */
-      let accordionKeyboardWired = false;
-      function attachAccordionKeyboardOnce() {
-        if (accordionKeyboardWired) return;
-        accordionKeyboardWired = true;
-        document.addEventListener("keydown", (e) => {
-          const target = e.target;
-          if (!target || !target.classList || !target.classList.contains("accordion-header")) return;
-          const headers = Array.from(document.querySelectorAll(".accordion-header"));
-          const idx = headers.indexOf(target);
-          if (idx < 0) return;
-          if (e.key === "ArrowDown") {
-            const nextIdx = (idx + 1) % headers.length;
-            headers[nextIdx].focus();
-            e.preventDefault();
-          } else if (e.key === "ArrowUp") {
-            const prevIdx = (idx - 1 + headers.length) % headers.length;
-            headers[prevIdx].focus();
-            e.preventDefault();
-          } else if (e.key === "Home") {
-            headers[0].focus();
-            e.preventDefault();
-          } else if (e.key === "End") {
-            headers[headers.length - 1].focus();
-            e.preventDefault();
-          } else if (e.key === "Enter" || e.key === " ") {
-            target.click();
-            e.preventDefault();
-          }
-        });
-      }
+
       /* =========================
          ESC HANDLING (safe, attach once)
          ========================= */
@@ -2447,21 +2608,22 @@
         if (escapeWired) return;
         escapeWired = true;
         document.addEventListener("keydown", (e) => {
-          if (e.key === "Escape" && (STATE.modalOpen || STATE.openWhyModal || STATE.openCardId)) {
+          if (e.key === "Escape" && (STATE.modalOpen || STATE.openWhyModal)) {
             STATE.modalOpen = false;
             STATE.openWhyModal = null;
-            STATE.openCardId = null;
             render();
           }
         });
       }
+
       /* =========================
          BOOT
          ========================= */
       document.addEventListener("DOMContentLoaded", () => {
         Confetti.init();
         wireEscapeOnce();
-        // Keep delivery truck path accurate on resize (only matters on solution tab)
+
+        // Keep truck path accurate on resize (only matters on solution tab)
         window.addEventListener(
           "resize",
           () => {
@@ -2471,9 +2633,12 @@
           },
           { passive: true }
         );
+
+        // Ensure wizard has a starting “explored” state
+        STATE.visitedCards = [NEW_CARDS[0].id];
+
         render();
       });
     </script>
   </body>
 </html>
-```
