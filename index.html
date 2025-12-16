@@ -327,6 +327,18 @@
         position: relative;
         z-index: 1;
       }
+      /* New styles for 2x2 grid on Current State tab */
+      .display-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        justify-content: center;
+      }
+      @media (max-width: 768px) {
+        .display-grid {
+          grid-template-columns: 1fr;
+        }
+      }
     </style>
   </head>
   <body class="min-h-screen antialiased bg-gray-50 text-gray-900 font-[Inter]">
@@ -914,7 +926,7 @@
           <section id="panel-problems" class="space-y-3 relative">
             <h2 class="text-3xl font-semibold leading-tight">The application layer is the #1 bottleneck to operational change</h2>
             <p class="text-base text-gray-700 leading-relaxed">Most IT teams aren’t failing — they’re constrained by a delivery model that doesn’t scale with the pace of change.</p>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-start">
+            <div class="display-grid">
               ${pressures
                 .map(
                   (p) => `
