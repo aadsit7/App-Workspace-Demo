@@ -955,7 +955,6 @@
             </div>
             <div class="mt-6 flex justify-between items-center">
               <div class="flex items-center gap-2">
-                <button type="button" data-action="reset-bullets" class="bg-transparent text-gray-900 border-2 border-gray-900 rounded-full px-4 py-1.5 hover:text-blue-600 hover:border-blue-600 hover:scale-102 transition-all duration-200 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 text-sm">Reset</button>
                 <button type="button" data-action="open-image-manager" class="p-1 text-gray-600 hover:text-blue-600 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2" aria-label="Manage images">
                   <i data-lucide="pencil" class="w-5 h-5"></i>
                 </button>
@@ -983,7 +982,7 @@
         const canNext = STATE.currentImageIndex < images.length - 1;
         return `
           <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 animate-overlayFade" role="dialog" aria-modal="true" aria-labelledby="image-viewer-title">
-            <div class="w-full max-w-6xl mx-4 bg-white rounded-2xl shadow-2xl overflow-hidden animate-modalEnter" style="max-height: 95vh; overflow-y: auto;">
+            <div class="w-full max-w-4xl mx-4 bg-white rounded-2xl shadow-2xl overflow-hidden animate-modalEnter" style="max-height: 95vh; overflow-y: auto;">
               <div class="bg-gray-50 px-6 py-4 flex items-center justify-between border-b border-gray-200">
                 <h2 id="image-viewer-title" class="text-2xl font-bold tracking-tight text-gray-900">Recast</h2>
                 <button type="button" class="text-gray-500 hover:text-gray-700 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 p-1.5" data-action="close-image-viewer" aria-label="Close">
@@ -991,11 +990,11 @@
                 </button>
               </div>
               <div class="p-6 bg-gray-50 flex flex-col items-center">
-                <img src="${current}" alt="Uploaded image ${STATE.currentImageIndex + 1}" class="max-w-full max-h-[80vh] object-contain rounded-lg shadow-md">
+                <img src="${current}" alt="Uploaded image ${STATE.currentImageIndex + 1}" class="max-w-full max-h-[60vh] object-contain rounded-lg shadow-md">
                 <div class="mt-4 flex items-center gap-4">
                   <button type="button" data-action="prev-image" class="${cx('px-4 py-2 rounded bg-blue-600 text-white', !canPrev ? 'opacity-50 cursor-not-allowed' : '')}" ${!canPrev ? 'disabled' : ''}>Back</button>
                   <span class="text-gray-700">${STATE.currentImageIndex + 1} / ${images.length}</span>
-                  <button type="button" data-action="next-image" class="px-4 py-2 rounded bg-blue-600 text-white">${canNext ? 'Next' : 'Finish'}</button>
+                  <button type="button" data-action="next-image" class="${cx('px-4 py-2 rounded bg-blue-600 text-white', !canNext ? 'opacity-50 cursor-not-allowed' : '')}" ${!canNext ? 'disabled' : ''}>Next</button>
                 </div>
               </div>
             </div>
@@ -1038,6 +1037,7 @@
                     </li>
                   `).join('')}
                 </ul>
+                <button type="button" data-action="save-images" class="w-full px-4 py-2 rounded bg-green-600 text-white mt-4">Save Changes</button>
               </div>
             </div>
           </div>
@@ -1936,6 +1936,7 @@
       const USER_ID = String(window.APP_USER_ID || "guest");
       const PAGE_SCOPE = location.origin + location.pathname + location.search;
       const STORAGE_KEY = `currentState:${USER_ID}:${PAGE_SCOPE}`;
+      const IMAGES_KEY = `uploadedImages:${USER_ID}:${PAGE_SCOPE}`;
       let DEFAULT_CURRENT_STATE = null;
       const $ = (sel, ctx = document) => ctx.querySelector(sel);
       const fields = {
@@ -2003,6 +2004,21 @@
         try {
           localStorage.removeItem(STORAGE_KEY);
         } catch {}
+      }
+      function loadImages() {
+        try {
+          const raw = localStorage.getItem(IMAGES_KEY);
+          return raw ? JSON.parse(raw) : [];
+        } catch {
+          return [];
+        }
+      }
+      function saveImages() {
+        try {
+          localStorage.setItem(IMAGES_KEY, JSON.stringify(STATE.uploadedImages));
+        } catch (e) {
+          console.warn("Images save failed:", e);
+        }
       }
       function initCurrentStateModal() {
         captureDefaultsOnce();
@@ -2398,6 +2414,13 @@
             render();
           })
         );
+        root.querySelectorAll('[data-action="save-images"]').forEach((b) =>
+          b.addEventListener("click", () => {
+            saveImages();
+            STATE.imageManagerOpen = false;
+            render();
+          })
+        );
         root.querySelectorAll('[data-action="open-image-viewer"]').forEach((b) =>
           b.addEventListener("click", () => {
             STATE.imageViewerOpen = true;
@@ -2423,10 +2446,8 @@
           b.addEventListener("click", () => {
             if (STATE.currentImageIndex < STATE.uploadedImages.length - 1) {
               STATE.currentImageIndex++;
-            } else {
-              STATE.imageViewerOpen = false;
+              render();
             }
-            render();
           })
         );
       }
@@ -2673,6 +2694,8 @@
           },
           { passive: true }
         );
+        // Load cached images
+        STATE.uploadedImages = loadImages();
         // Ensure wizard has a starting “explored” state
         STATE.visitedCards = [NEW_CARDS[0].id];
         render();
