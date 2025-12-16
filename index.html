@@ -1001,7 +1001,7 @@
                   <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
               </div>
-              <div class="p-6 bg-gray-50 flex flex-col items-center">
+              <div id="item-viewer-content" class="p-6 bg-gray-50 flex flex-col items-center">
                 ${current.type === "image" ? `
                   <img src="${current.src}" alt="Item ${STATE.currentItemIndex + 1}" class="max-w-full max-h-[60vh] object-contain rounded-lg shadow-md">
                 ` : `
@@ -1012,6 +1012,9 @@
                   <span class="text-gray-700">Item ${STATE.currentItemIndex + 1} / ${items.length}</span>
                   <button type="button" data-action="next-item" class="${cx('px-4 py-2 rounded bg-blue-600 text-white', !canNext ? 'opacity-50 cursor-not-allowed' : '')}" ${!canNext ? 'disabled' : ''}>Next</button>
                   <button type="button" data-action="delete-item" data-index="${STATE.currentItemIndex}" class="px-4 py-2 rounded bg-red-600 text-white">Delete</button>
+                  <button type="button" data-action="toggle-fullscreen" class="p-2 text-gray-600 hover:text-blue-600">
+                    <i data-lucide="maximize" class="w-5 h-5" id="fullscreen-icon"></i>
+                  </button>
                 </div>
               </div>
             </div>
@@ -2536,6 +2539,29 @@
             render();
           })
         );
+        root.querySelectorAll('[data-action="toggle-fullscreen"]').forEach((b) =>
+          b.addEventListener("click", toggleFullscreen)
+        );
+        document.addEventListener('fullscreenchange', updateFullscreenIcon);
+      }
+      function toggleFullscreen() {
+        const viewer = document.getElementById('item-viewer-content');
+        if (!document.fullscreenElement) {
+          viewer.requestFullscreen().catch(err => {
+            console.error(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+          });
+        } else {
+          document.exitFullscreen();
+        }
+      }
+      function updateFullscreenIcon() {
+        const icon = document.getElementById('fullscreen-icon');
+        if (document.fullscreenElement) {
+          icon.setAttribute('data-lucide', 'minimize');
+        } else {
+          icon.setAttribute('data-lucide', 'maximize');
+        }
+        lucide.createIcons({ attrs: { id: 'fullscreen-icon' } });
       }
       /* =========================
          FLOW BUILD + ANIMATION
