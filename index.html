@@ -462,6 +462,7 @@
         itemViewerOpen: false, // Flag for item viewer modal
         currentItemIndex: 0, // Current index in item carousel
         itemManagerOpen: false, // Flag for item manager modal
+        theaterMode: false // New: theater mode toggle for embeds in viewer
       };
       const TABS = [
         { id: "problems", label: "Current State", icon: "alert-triangle" },
@@ -884,7 +885,7 @@
          ========================= */
       const pressures = [
         {
-          id: "cost",
+         id: "cost",
           title: "APP DELIVERY IS CONSUMING EUC CAPACITY",
           bullets: [
             "Application packaging and maintenance now dominate endpoint team workloads",
@@ -995,29 +996,30 @@
         const current = items[STATE.currentItemIndex] || {type: 'image', src: ''};
         const canPrev = STATE.currentItemIndex > 0;
         const canNext = STATE.currentItemIndex < items.length - 1;
+        const isEmbed = current.type === "embed";
         return `
-          <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 animate-overlayFade" role="dialog" aria-modal="true" aria-labelledby="item-viewer-title">
-            <div class="w-full max-w-4xl mx-4 bg-white rounded-2xl shadow-2xl overflow-hidden animate-modalEnter" style="max-height: 95vh; overflow-y: auto;">
+          <div class="fixed inset-0 z-50 flex ${STATE.theaterMode ? 'items-start pt-10' : 'items-center justify-center'} bg-black/50 animate-overlayFade" role="dialog" aria-modal="true" aria-labelledby="item-viewer-title">
+            <div class="${STATE.theaterMode ? 'w-full max-w-none mx-0' : 'w-full max-w-4xl mx-4'} bg-white rounded-2xl shadow-2xl overflow-hidden animate-modalEnter" style="max-height: 95vh; overflow-y: auto;">
               <div class="bg-gray-50 px-6 py-4 flex items-center justify-between border-b border-gray-200">
                 <h2 id="item-viewer-title" class="text-2xl font-bold tracking-tight text-gray-900">Recast</h2>
                 <button type="button" class="text-gray-500 hover:text-gray-700 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 p-1.5" data-action="close-item-viewer" aria-label="Close">
                   <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
               </div>
-              <div id="item-viewer-content" class="p-6 bg-gray-50 flex flex-col items-center">
+              <div class="p-6 bg-gray-50 flex flex-col items-center">
                 ${current.type === "image" ? `
                   <img src="${current.src}" alt="Item ${STATE.currentItemIndex + 1}" class="max-w-full max-h-[60vh] object-contain rounded-lg shadow-md">
                 ` : `
-                  <iframe src="${current.src}" class="w-full h-[60vh] rounded-lg shadow-md" frameborder="0" allowfullscreen sandbox="allow-scripts allow-same-origin allow-popups"></iframe>
+                  <iframe src="${current.src}" class="${STATE.theaterMode ? 'w-full h-[80vh]' : 'w-full h-[60vh]'} rounded-lg shadow-md" frameborder="0" allowfullscreen sandbox="allow-scripts allow-same-origin allow-popups"></iframe>
                 `}
                 <div class="mt-4 flex items-center gap-4">
                   <button type="button" data-action="prev-item" class="${cx('px-4 py-2 rounded bg-blue-600 text-white', !canPrev ? 'opacity-50 cursor-not-allowed' : '')}" ${!canPrev ? 'disabled' : ''}>Back</button>
                   <span class="text-gray-700">Item ${STATE.currentItemIndex + 1} / ${items.length}</span>
                   <button type="button" data-action="next-item" class="${cx('px-4 py-2 rounded bg-blue-600 text-white', !canNext ? 'opacity-50 cursor-not-allowed' : '')}" ${!canNext ? 'disabled' : ''}>Next</button>
                   <button type="button" data-action="delete-item" data-index="${STATE.currentItemIndex}" class="px-4 py-2 rounded bg-red-600 text-white">Delete</button>
-                  <button type="button" data-action="toggle-fullscreen" class="p-2 text-gray-600 hover:text-blue-600">
-                    <i data-lucide="maximize" class="w-5 h-5" id="fullscreen-icon"></i>
-                  </button>
+                  ${isEmbed ? `
+                    <button type="button" data-action="toggle-theater" class="px-4 py-2 rounded bg-gray-600 text-white">${STATE.theaterMode ? 'Normal Mode' : 'Theater Mode'}</button>
+                  ` : ''}
                 </div>
               </div>
             </div>
@@ -2507,12 +2509,14 @@
           b.addEventListener("click", () => {
             STATE.itemViewerOpen = true;
             STATE.currentItemIndex = 0;
+            STATE.theaterMode = false; // Reset theater mode on open
             render();
           })
         );
         root.querySelectorAll('[data-action="close-item-viewer"]').forEach((b) =>
           b.addEventListener("click", () => {
             STATE.itemViewerOpen = false;
+            STATE.theaterMode = false;
             render();
           })
         );
@@ -2542,29 +2546,12 @@
             render();
           })
         );
-        root.querySelectorAll('[data-action="toggle-fullscreen"]').forEach((b) =>
-          b.addEventListener("click", toggleFullscreen)
+        root.querySelectorAll('[data-action="toggle-theater"]').forEach((b) =>
+          b.addEventListener("click", () => {
+            STATE.theaterMode = !STATE.theaterMode;
+            render();
+          })
         );
-        document.addEventListener('fullscreenchange', updateFullscreenIcon);
-      }
-      function toggleFullscreen() {
-        const viewer = document.getElementById('item-viewer-content');
-        if (!document.fullscreenElement) {
-          viewer.requestFullscreen().catch(err => {
-            console.error(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
-          });
-        } else {
-          document.exitFullscreen();
-        }
-      }
-      function updateFullscreenIcon() {
-        const icon = document.getElementById('fullscreen-icon');
-        if (document.fullscreenElement) {
-          icon.setAttribute('data-lucide', 'minimize');
-        } else {
-          icon.setAttribute('data-lucide', 'maximize');
-        }
-        lucide.createIcons({ attrs: { id: 'fullscreen-icon' } });
       }
       /* =========================
          FLOW BUILD + ANIMATION
@@ -2789,6 +2776,7 @@
             STATE.openWhyModal = null;
             STATE.itemViewerOpen = false;
             STATE.itemManagerOpen = false;
+            STATE.theaterMode = false;
             render();
           }
         });
