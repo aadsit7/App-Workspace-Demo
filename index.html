@@ -350,6 +350,14 @@
          ========================= */
       const STATE = {
         activeTab: "problems",
+        activeImpactTab: "executive",
+        editAssumptions: false,
+        impactInputs: {
+          employees: 1100,
+          ticketsPerUserPerMonth: 0.035,
+          avgTimePerTicketMin: 18,
+          appUpdatesPerMonth: 22,
+        },
         activeView: "exec",
         impact: { minutes: 9, pkgHours: 6, riskHrs: 22.5 },
         defaults: { impact: { minutes: 9, pkgHours: 6, riskHrs: 22.5 } },
@@ -877,7 +885,7 @@
       function renderActivePanel() {
         if (STATE.activeTab === "problems") return renderProblems();
         if (STATE.activeTab === "solution") return renderSolution();
-        if (STATE.activeTab === "roi") return renderROI();
+        if (STATE.activeTab === "roi") return renderBusinessImpact();
         return "";
       }
       /* =========================
@@ -1511,305 +1519,233 @@
         `;
       }
       /* =========================
-         ROI TAB (UNCHANGED LOGIC)
+         BUSINESS IMPACT TAB
          ========================= */
-      function pill(label, active, action, value) {
-        return `<button type="button" class="${cx(
-          "px-2.5 py-0.5 border text-[11px] transition rounded",
-          active
-            ? "bg-blue-600 text-white border-transparent hover:bg-blue-700"
-            : "bg-transparent text-gray-900 border-gray-200 hover:border-blue-600"
-        )} focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2" data-action="${action}" data-value="${String(
-          value
-        )}">${label}</button>`;
+      function calcAssumptions() {
+        const {employees, ticketsPerUserPerMonth, avgTimePerTicketMin, appUpdatesPerMonth} = STATE.impactInputs;
+        const totalTicketHours = employees * ticketsPerUserPerMonth * (avgTimePerTicketMin / 60);
+        const savedPerUpdate = (avgTimePerTicketMin / 18) * 8.293;
+        const savedUpdateHours = appUpdatesPerMonth * savedPerUpdate;
+        const timeReclaimedMo = Math.round(totalTicketHours + savedUpdateHours);
+        const timeReclaimedYear = timeReclaimedMo * 12;
+        const equivalentFte = Math.round(timeReclaimedYear / 2300);
+        return {timeReclaimedMo, timeReclaimedYear, equivalentFte};
       }
-      function inputNum(action, label, key, value) {
-        return `<label class="flex flex-col gap-0.5 text-[13px]"><span class="text-[11px] text-gray-700">${label}</span><input class="rounded border border-gray-200 bg-gray-50 px-2 py-1 text-[13px] focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2" inputmode="decimal" value="${value}" data-action="${action}" data-key="${key}"></label>`;
-      }
-      function renderROI() {
-        const r = calcROI();
+      function renderBusinessImpact() {
         return `
-          <section id="panel-roi" class="space-y-4">
-            <div class="flex justify-center gap-2 mb-4">
-              <button type="button" data-action="set-view" data-view="exec" class="${
-                STATE.activeView === "exec" ? "bg-blue-600 text-white" : "bg-white border border-blue-600 text-blue-600"
-              } px-4 py-2 rounded-full transition">Executive View</button>
-              <button type="button" data-action="set-view" data-view="operator" class="${
-                STATE.activeView === "operator"
-                  ? "bg-blue-600 text-white"
-                  : "bg-white border border-blue-600 text-blue-600"
-              } px-4 py-2 rounded-full transition">Operator View</button>
+          <div class="space-y-6">
+            <div>
+              <h2 class="text-3xl font-semibold leading-tight">Business Impact</h2>
+              <p class="text-base text-gray-700 leading-relaxed">A simple way to understand why this matters — for leadership and for IT.</p>
             </div>
-            ${STATE.activeView === "exec" ? renderExecView(r) : renderOperatorView(r)}
-            <div class="mt-6">
-              ${bucketAccordion("edit", "edit-3", "Edit Assumptions & Impacts", editContent)}
+            <div class="flex justify-center gap-4 flex-wrap">
+              <button type="button" data-action="set-impact-tab" data-tab="executive" class="${cx(
+                "rounded-full px-6 py-2 shadow-sm transition",
+                STATE.activeImpactTab === "executive" ? "bg-blue-600 text-white hover:bg-blue-700" : "bg-white text-gray-900 hover:bg-gray-100"
+              )}">Executive</button>
+              <button type="button" data-action="set-impact-tab" data-tab="it" class="${cx(
+                "rounded-full px-6 py-2 shadow-sm transition",
+                STATE.activeImpactTab === "it" ? "bg-blue-600 text-white hover:bg-blue-700" : "bg-white text-gray-900 hover:bg-gray-100"
+              )}">IT</button>
+              <button type="button" data-action="set-impact-tab" data-tab="assumptions" class="${cx(
+                "rounded-full px-6 py-2 shadow-sm transition",
+                STATE.activeImpactTab === "assumptions" ? "bg-blue-600 text-white hover:bg-blue-700" : "bg-white text-gray-900 hover:bg-gray-100"
+              )}">Assumptions & Math</button>
             </div>
-            <div class="mt-6 flex flex-wrap gap-3 justify-end">
-              <button type="button" data-action="reset-calculator" class="inline-flex items-center gap-1.5 bg-transparent text-gray-600 border-2 border-gray-300 px-4 py-2 text-[15px] font-semibold focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 rounded-full hover:text-blue-600 hover:border-blue-600">Reset</button>
-              <button type="button" data-action="copy-onepager" class="inline-flex items-center gap-1.5 bg-blue-600 text-white px-4 py-2 text-[15px] font-semibold focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 rounded-full hover:bg-blue-700">
-                <i data-lucide="clipboard" class="w-4.5 h-4.5"></i> ${STATE.copied ? "Copied!" : "Copy"}
-              </button>
+            <div class="bg-white rounded-2xl shadow-md p-6 hover:shadow-lg transition-shadow duration-300">
+              ${STATE.activeImpactTab === "executive" ? renderExecutive() : ""}
+              ${STATE.activeImpactTab === "it" ? renderIT() : ""}
+              ${STATE.activeImpactTab === "assumptions" ? renderAssumptions() : ""}
             </div>
-            <div class="mt-4 text-center text-sm text-gray-500"></div>
-          </section>
+          </div>
         `;
       }
-      function bucketAccordion(id, icon, label, contentFunc, headerTone = "bg-gray-50") {
-        const expanded = STATE.openBuckets[id];
-        const contentId = `bucket-content-${id}`;
+      function renderExecutive() {
         return `
-          <div class="flex flex-col">
-            <button
-              type="button"
-              class="w-full overflow-hidden ring-1 ring-gray-200 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 transition hover:ring-gray-300 shadow-sm rounded-2xl"
-              data-action="toggle-bucket"
-              data-bucket="${id}"
-              aria-expanded="${expanded}"
-              aria-controls="${contentId}"
-            >
-              <div class="flex items-center justify-between px-4 py-3 ${headerTone} border-b border-gray-200">
-                <div class="flex items-center gap-1.5">
-                  <i data-lucide="${icon}" class="w-4.5 h-4.5 text-gray-900" aria-hidden="true"></i>
-                  <span class="text-[15px] font-semibold tracking-normal text-gray-900">${label}</span>
-                </div>
-                <i data-lucide="${expanded ? "chevron-up" : "chevron-down"}" class="w-4.5 h-4.5 text-gray-600 transition-transform duration-150" aria-hidden="true"></i>
+          <div>
+            <div class="mb-6">
+              <h3 class="text-xl font-medium">What changes for the business</h3>
+              <p class="text-base text-gray-700 leading-relaxed">This removes application chaos so IT can move faster without disrupting employees.</p>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-gray-200">
+                <thead>
+                  <tr>
+                    <th class="px-6 py-3 text-left text-sm font-medium text-gray-900">Concern</th>
+                    <th class="px-6 py-3 text-left text-sm font-medium text-gray-900">Today</th>
+                    <th class="px-6 py-3 text-left text-sm font-medium text-gray-900">With this</th>
+                    <th class="px-6 py-3 text-left text-sm font-medium text-gray-900">Why it matters</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                  <tr>
+                    <td class="px-6 py-4 text-sm text-gray-700">IT capacity</td>
+                    <td class="px-6 py-4 text-sm text-gray-700">Teams are overloaded</td>
+                    <td class="px-6 py-4 text-sm text-gray-700">Capacity is reclaimed without hiring</td>
+                    <td class="px-6 py-4 text-sm text-gray-700">Projects stop stalling</td>
+                  </tr>
+                  <tr>
+                    <td class="px-6 py-4 text-sm text-gray-700">Operational risk</td>
+                    <td class="px-6 py-4 text-sm text-gray-700">Too many app versions</td>
+                    <td class="px-6 py-4 text-sm text-gray-700">Fewer versions, fewer failures</td>
+                    <td class="px-6 py-4 text-sm text-gray-700">Lower outage and audit risk</td>
+                  </tr>
+                  <tr>
+                    <td class="px-6 py-4 text-sm text-gray-700">Change speed</td>
+                    <td class="px-6 py-4 text-sm text-gray-700">IT changes disrupt users</td>
+                    <td class="px-6 py-4 text-sm text-gray-700">Backend changes are invisible</td>
+                    <td class="px-6 py-4 text-sm text-gray-700">The business stays productive</td>
+                  </tr>
+                  <tr>
+                    <td class="px-6 py-4 text-sm text-gray-700">Hiring pressure</td>
+                    <td class="px-6 py-4 text-sm text-gray-700">Open IT roles everywhere</td>
+                    <td class="px-6 py-4 text-sm text-gray-700">Less urgent hiring</td>
+                    <td class="px-6 py-4 text-sm text-gray-700">Lower people risk</td>
+                  </tr>
+                  <tr>
+                    <td class="px-6 py-4 text-sm text-gray-700">Talent retention</td>
+                    <td class="px-6 py-4 text-sm text-gray-700">Burnout and churn</td>
+                    <td class="px-6 py-4 text-sm text-gray-700">More meaningful work</td>
+                    <td class="px-6 py-4 text-sm text-gray-700">Knowledge stays inside</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="mt-6 text-center text-lg font-medium text-gray-900">This is not a cost-cutting decision. <br> It is a capacity and risk decision.</p>
+          </div>
+        `;
+      }
+      function renderIT() {
+        return `
+          <div>
+            <div class="mb-6">
+              <h3 class="text-xl font-medium">What changes for IT</h3>
+              <p class="text-base text-gray-700 leading-relaxed">This reduces rework, escalations, and guesswork without taking control away.</p>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-gray-200">
+                <thead>
+                  <tr>
+                    <th class="px-6 py-3 text-left text-sm font-medium text-gray-900">Problem</th>
+                    <th class="px-6 py-3 text-left text-sm font-medium text-gray-900">Today</th>
+                    <th class="px-6 py-3 text-left text-sm font-medium text-gray-900">With this</th>
+                    <th class="px-6 py-3 text-left text-sm font-medium text-gray-900">Impact</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                  <tr>
+                    <td class="px-6 py-4 text-sm text-gray-700">App delivery inconsistency</td>
+                    <td class="px-6 py-4 text-sm text-gray-700">Same app, many methods</td>
+                    <td class="px-6 py-4 text-sm text-gray-700">One standard delivery path</td>
+                    <td class="px-6 py-4 text-sm text-gray-700">Less troubleshooting</td>
+                  </tr>
+                  <tr>
+                    <td class="px-6 py-4 text-sm text-gray-700">Ticket escalation churn</td>
+                    <td class="px-6 py-4 text-sm text-gray-700">L1 → L2 → L3</td>
+                    <td class="px-6 py-4 text-sm text-gray-700">More first-touch fixes</td>
+                    <td class="px-6 py-4 text-sm text-gray-700">Fewer interruptions</td>
+                  </tr>
+                  <tr>
+                    <td class="px-6 py-4 text-sm text-gray-700">Patch cycles</td>
+                    <td class="px-6 py-4 text-sm text-gray-700">Manual prep every time</td>
+                    <td class="px-6 py-4 text-sm text-gray-700">Repeatable updates</td>
+                    <td class="px-6 py-4 text-sm text-gray-700">Faster, calmer patching</td>
+                  </tr>
+                  <tr>
+                    <td class="px-6 py-4 text-sm text-gray-700">Migrations</td>
+                    <td class="px-6 py-4 text-sm text-gray-700">Users feel every change</td>
+                    <td class="px-6 py-4 text-sm text-gray-700">Users see no change</td>
+                    <td class="px-6 py-4 text-sm text-gray-700">Modernize safely</td>
+                  </tr>
+                  <tr>
+                    <td class="px-6 py-4 text-sm text-gray-700">Burnout</td>
+                    <td class="px-6 py-4 text-sm text-gray-700">Same fixes forever</td>
+                    <td class="px-6 py-4 text-sm text-gray-700">Time for real work</td>
+                    <td class="px-6 py-4 text-sm text-gray-700">Better morale</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="mt-6 text-center text-lg font-medium text-gray-900">Automation removes repetition — not understanding.</p>
+          </div>
+        `;
+      }
+      function renderAssumptions() {
+        const {employees, ticketsPerUserPerMonth, avgTimePerTicketMin, appUpdatesPerMonth} = STATE.impactInputs;
+        const {timeReclaimedMo, timeReclaimedYear, equivalentFte} = calcAssumptions();
+        if (STATE.editAssumptions) {
+          return `
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Number of employees</label>
+                <input id="employeesInput" value="${employees}" type="number" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-600 focus:ring-blue-600 sm:text-sm" />
               </div>
-            </button>
-            <div id="${contentId}" class="accordion-content overflow-hidden ${expanded ? "max-h-[1200px] opacity-100" : "max-h-0 opacity-0"} transition-[max-height] duration-150 ease-[cubic-bezier(0.2,0.8,0.2,1)] transition-opacity duration-150">
-              ${expanded ? contentFunc() : ""}
-            </div>
-          </div>
-        `;
-      }
-      function perUserContent() {
-        const totalMin = Math.max(0, Number(STATE.impact.minutes));
-        const route = routeRecommendation(STATE.ctx);
-        return `
-          <div class="p-3">
-            <div class="rounded-xl border border-gray-200 bg-gray-50 transition-shadow duration-300 p-2.5 text-[13px]">
-              <div class="flex items-center gap-1.5 font-medium"><i data-lucide="mouse-pointer" class="w-3.5 h-3.5"></i> Reactive Work Reduced</div>
-              <div class="mt-1.5 flex items-center justify-between rounded bg-gray-100 px-2 py-1">
-                <span class="tabular-nums">18 → ${totalMin} min</span>
-                <strong class="tabular-nums">${totalMin} min saved</strong>
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Tickets per user per month</label>
+                <input id="ticketsInput" value="${ticketsPerUserPerMonth}" type="number" step="0.001" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-600 focus:ring-blue-600 sm:text-sm" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Average time per ticket (minutes)</label>
+                <input id="avgTimeInput" value="${avgTimePerTicketMin}" type="number" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-600 focus:ring-blue-600 sm:text-sm" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700">App updates per month</label>
+                <input id="appUpdatesInput" value="${appUpdatesPerMonth}" type="number" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-600 focus:ring-blue-600 sm:text-sm" />
+              </div>
+              <div class="flex gap-4">
+                <button type="button" data-action="save-assumptions" class="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-6 py-2 shadow-sm">Save</button>
+                <button type="button" data-action="cancel-assumptions" class="bg-gray-200 hover:bg-gray-300 text-gray-900 rounded-full px-6 py-2 shadow-sm">Cancel</button>
               </div>
             </div>
-            <div class="mt-1.5 grid grid-cols-3 gap-1.5 text-[11px]">
-              ${["Windows", "Mac"].map((d) => pill(d, STATE.ctx.device === d, "set-device", d)).join("")}
-              ${["Corporate", "VPN"].map((n) => pill(n, STATE.ctx.network === n, "set-network", n)).join("")}
-              ${pill(STATE.ctx.compliant ? "Compliant" : "Non-compliant", STATE.ctx.compliant, "toggle-compliance", "")}
+          `;
+        } else {
+          return `
+            <div class="mb-6">
+              <h3 class="text-xl font-medium">Assumptions & math</h3>
+              <p class="text-base text-gray-700 leading-relaxed">These numbers are adjustable. Nothing is hidden.</p>
             </div>
-            <div class="mt-2">
-              <button type="button" class="bg-transparent text-gray-900 border-2 border-gray-900 px-2.5 py-0.5 text-[11px] w-full rounded hover:text-blue-600 hover:border-blue-600 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2" data-action="add-impact" data-kind="minutes" data-value="2">
-                Add to impact (+2 min saved per user)
-              </button>
-            </div>
-          </div>
-        `;
-      }
-      function onePackageContent() {
-        const saved = Math.max(0, Number(STATE.packHrs) - Number(STATE.configHrs));
-        return `
-          <div class="p-3">
-            <div class="rounded-xl border border-gray-200 bg-gray-50 transition-shadow duration-300 p-2.5 text-[13px]">
-              <div class="flex items-center gap-1.5 font-medium"><i data-lucide="wand-sparkles" class="w-3.5 h-3.5"></i> Hours Saved from Packaging</div>
-              <label class="mt-1.5 flex items-center gap-1.5 text-[11px]">
-                <span class="text-gray-700">Hours/package</span>
-                <input class="w-14 rounded bg-gray-100 px-1.5 py-0.5 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2" value="${STATE.packHrs}" inputmode="decimal" data-action="set-pack-hrs" aria-label="Hours per package">
-                <span>→</span>
-                <input class="w-14 rounded bg-gray-100 px-1.5 py-0.5 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2" value="${STATE.configHrs}" inputmode="decimal" data-action="set-config-hrs" aria-label="Hours to configure">
-              </label>
-              <div class="mt-1.5 flex items-center justify-between rounded bg-gray-100 px-2 py-1"><span class="tabular-nums">${STATE.packHrs} → ${STATE.configHrs} hrs</span><strong class="tabular-nums">${saved} hrs saved</strong></div>
-              <div class="mt-1.5 text-[11px] flex flex-wrap gap-1.5">
-                <span class="rounded px-1.5 py-0.5 bg-gray-100">☁️ Cloud</span>
-                <span class="rounded px-1.5 py-0.5 bg-gray-100">🖥️ On-Prem</span>
-                <span class="rounded px-1.5 py-0.5 bg-gray-100">🔀 Hybrid</span>
-              </div>
-              <button type="button" class="mt-1.5 bg-blue-600 text-white px-2.5 py-0.5 text-[11px] font-semibold w-full rounded hover:bg-blue-700 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2">Add to impact</button>
-            </div>
-          </div>
-        `;
-      }
-      function zeroDayContent() {
-        const reduced = Math.max(0, Number(STATE.currentHrs) - 1.5);
-        return `
-          <div class="p-3">
-            <div class="rounded-xl border border-gray-200 bg-gray-50 transition-shadow duration-300 p-2.5 text-[13px]">
-              <div class="flex items-center gap-1.5 font-medium"><i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Hours Saved from Faster Patching</div>
-              <label class="mt-1.5 flex items-center gap-1.5 text-[11px]">
-                <span class="text-gray-700">Current hrs</span>
-                <input class="w-16 rounded bg-gray-100 px-1.5 py-0.5 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2" value="${STATE.currentHrs}" inputmode="decimal" data-action="set-current-hrs" aria-label="Current time to deploy (hours)">
-              </label>
-              <div class="mt-1.5 flex items-center justify-between rounded bg-gray-100 px-2 py-1"><span class="tabular-nums">${STATE.currentHrs} → 1.5 hrs</span><strong class="tabular-nums">${round(
-                reduced
-              )} hrs reduced</strong></div>
-              <button type="button" class="mt-1.5 bg-blue-600 text-white px-2.5 py-0.5 text-[11px] font-semibold w-full rounded hover:bg-blue-700 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2" data-action="add-impact" data-kind="riskHrs" data-value="${reduced}">Add to impact</button>
-            </div>
-          </div>
-        `;
-      }
-      function editContent() {
-        return `
-          <div class="p-4 bg-white rounded-xl shadow-inner">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <h4 class="text-[15px] font-medium mb-3">Assumptions</h4>
-                <div class="space-y-3">
-                  ${inputNum("set-roi", "# users", "users", STATE.roiInputs.users)}
-                  ${inputNum("set-roi", "Tickets per user / mo", "ticketsPerUserPerMonth", STATE.roiInputs.ticketsPerUserPerMonth)}
-                  ${inputNum("set-roi", "Avg handle (mins)", "avgHandleMins", STATE.roiInputs.avgHandleMins)}
+                <div class="space-y-2 text-base text-gray-700">
+                  <div class="flex justify-between">
+                    <span>Number of employees</span>
+                    <span>${employees}</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span>Tickets per user per month</span>
+                    <span>${ticketsPerUserPerMonth}</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span>Average time per ticket</span>
+                    <span>${avgTimePerTicketMin} minutes</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span>App updates per month</span>
+                    <span>${appUpdatesPerMonth}</span>
+                  </div>
                 </div>
+                <button type="button" data-action="edit-assumptions" class="mt-6 bg-blue-600 hover:bg-blue-700 text-white rounded-full px-6 py-2 shadow-sm">Edit assumptions</button>
               </div>
               <div>
-                <h4 class="text-[15px] font-medium mb-3">Direct Impacts</h4>
-                <div class="space-y-3">
-                  ${inputNum("set-impact", "Minutes saved per user / mo", "minutes", STATE.impact.minutes)}
-                  ${inputNum("set-impact", "Packaging hours avoided / mo", "pkgHours", STATE.impact.pkgHours)}
-                  ${inputNum("set-impact", "Patching hours avoided / mo", "riskHrs", STATE.impact.riskHrs)}
+                <div class="space-y-2 text-base text-gray-700">
+                  <div class="flex justify-between">
+                    <span>Time reclaimed per month</span>
+                    <span>~${timeReclaimedMo} hours</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span>Time reclaimed per year</span>
+                    <span>~${timeReclaimedYear} hours</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span>Equivalent capacity</span>
+                    <span>~${equivalentFte} FTE</span>
+                  </div>
                 </div>
+                <p class="mt-6 text-base text-gray-700">Capacity reclaimed does not mean headcount removed.</p>
               </div>
             </div>
-            <div class="mt-6 space-y-6">
-              ${perUserContent()}
-              ${onePackageContent()}
-              ${zeroDayContent()}
-            </div>
-          </div>
-        `;
-      }
-      function renderExecView(r) {
-        return `
-          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div class="rounded-2xl bg-white shadow-md p-4">
-              <h3 class="text-lg font-semibold mb-2">Operational Model</h3>
-              <p class="text-gray-700">One standard way applications are delivered</p>
-            </div>
-            <div class="rounded-2xl bg-white shadow-md p-4">
-              <h3 class="text-lg font-semibold mb-2">End-User Experience</h3>
-              <p class="text-gray-700">Consistent workspace, even as IT modernizes</p>
-            </div>
-            <div class="rounded-2xl bg-white shadow-md p-4">
-              <h3 class="text-lg font-semibold mb-2">Risk Profile</h3>
-              <p class="text-gray-700">Fewer patch gaps and version sprawl</p>
-            </div>
-            <div class="rounded-2xl bg-white shadow-md p-4">
-              <h3 class="text-lg font-semibold mb-2">IT Focus</h3>
-              <p class="text-gray-700">Less reactive work, more planned change</p>
-            </div>
-          </div>
-          <div class="text-center py-8 bg-white rounded-2xl shadow-md mt-4">
-            <h2 class="text-4xl font-bold text-blue-700">${num(r.totalHoursMonth)} hours per month returned</h2>
-            <p class="text-gray-500 mt-1">Based on environment assumptions</p>
-            <p class="mt-2 text-gray-700">Equivalent to avoiding additional operational hires or accelerating strategic initiatives.</p>
-          </div>
-          <div class="mt-4">
-            <h2 class="text-xl font-semibold mb-2">Where Capacity Comes From</h2>
-            <ul class="list-disc ml-5 text-gray-700 space-y-1">
-              <li>App-related support avoided</li>
-              <li>Faster patch cycles</li>
-              <li>Packaging automation</li>
-            </ul>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-            <div class="bg-white rounded-xl p-4 border shadow-sm">
-              <h3 class="font-semibold text-[15px] mb-1">Technical Debt Reduced</h3>
-              <ul class="list-disc ml-4 space-y-0.5 text-gray-700 text-[14px]">
-                <li>Fewer active app versions</li>
-                <li>Shorter patch times</li>
-                <li>Reduced tickets</li>
-              </ul>
-            </div>
-            <div class="bg-white rounded-xl p-4 border shadow-sm">
-              <h3 class="font-semibold text-[15px] mb-1">Risk & Governance</h3>
-              <ul class="list-disc ml-4 space-y-0.5 text-gray-700 text-[14px]">
-                <li>Improved compliance</li>
-                <li>Faster response to issues</li>
-                <li>Lower error rates</li>
-              </ul>
-            </div>
-            <div class="bg-white rounded-xl p-4 border shadow-sm">
-              <h3 class="font-semibold text-[15px] mb-1">Project Velocity Gained</h3>
-              <ul class="list-disc ml-4 space-y-0.5 text-gray-700 text-[14px]">
-                <li>Faster migrations and pilots</li>
-                <li>Fewer blockers to modernization</li>
-                <li>Capacity for strategic work</li>
-              </ul>
-            </div>
-          </div>
-        `;
-      }
-      function renderOperatorView(r) {
-        return `
-          <div class="mt-4">
-            <h2 class="text-xl font-semibold mb-2">Metric Breakdown</h2>
-            <ul class="list-disc ml-5 text-gray-700 space-y-1">
-              <li>Minutes saved per user per month: ${STATE.impact.minutes}</li>
-              <li>Hours saved from packaging: ${round(STATE.impact.pkgHours)}</li>
-              <li>Hours saved from faster patching: ${round(STATE.impact.riskHrs)}</li>
-              <li>Tickets avoided per month: ${num(r.ticketsAvoided)}</li>
-              <li>Patch time reduction: ${STATE.currentHrs} → 1.5 hrs (${r.patchReductionPct}%)</li>
-            </ul>
-          </div>
-          <div class="mt-4">
-            <h2 class="text-xl font-semibold mb-2">Capacity Source Breakdown</h2>
-            <div class="space-y-2">
-              <div class="flex justify-between">
-                <span>App-related support avoided</span>
-                <strong>${num(r.reactiveHoursMonth)} hrs/mo</strong>
-              </div>
-              <div class="flex justify-between">
-                <span>Faster patch cycles</span>
-                <strong>${num(r.patchHoursMonth)} hrs/mo</strong>
-              </div>
-              <div class="flex justify-between">
-                <span>Packaging automation</span>
-                <strong>${num(r.packagingHoursMonth)} hrs/mo</strong>
-              </div>
-              <div class="flex justify-between font-bold">
-                <span>Total</span>
-                <span>${num(r.totalHoursMonth)} hrs/mo</span>
-              </div>
-            </div>
-          </div>
-          <div class="mt-4">
-            <h2 class="text-xl font-semibold mb-2">Technical Debt & Ops Detail</h2>
-            <ul class="list-disc ml-5 text-gray-700 space-y-1">
-              <li>30–50% fewer active app versions</li>
-              <li>Patch time cut from ${STATE.currentHrs} to 1.5 hrs</li>
-              <li>~${num(r.ticketsAvoided)} tickets avoided / month</li>
-            </ul>
-          </div>
-          <div class="mt-4">
-            <h2 class="text-xl font-semibold mb-2">What This Enables</h2>
-            <ul class="list-disc ml-5 text-gray-700 space-y-1">
-              <li>Accelerated app readiness for migrations and AI pilots</li>
-              <li>Reduced variables in troubleshooting</li>
-              <li>Shift from reactive to proactive IT operations</li>
-            </ul>
-          </div>
-        `;
-      }
-      function calcROI() {
-        const i = STATE.roiInputs;
-        const ticketsMonth = i.users * i.ticketsPerUserPerMonth;
-        const reactiveHoursMonth = (STATE.impact.minutes * i.users) / 60;
-        const packagingHoursMonth = STATE.impact.pkgHours;
-        const patchHoursMonth = STATE.impact.riskHrs;
-        const totalHoursMonth = reactiveHoursMonth + packagingHoursMonth + patchHoursMonth;
-        const totalHoursYear = totalHoursMonth * 12;
-        const ticketsAvoided = (STATE.impact.minutes * i.users) / i.avgHandleMins;
-        const patchReductionPct =
-          STATE.currentHrs > 0 ? Math.round(((STATE.currentHrs - 1.5) / STATE.currentHrs) * 100) : 94;
-        return {
-          i,
-          ticketsMonth: round(ticketsMonth),
-          reactiveHoursMonth: round(reactiveHoursMonth),
-          packagingHoursMonth: round(packagingHoursMonth),
-          patchHoursMonth: round(patchHoursMonth),
-          totalHoursMonth,
-          totalHoursYear,
-          ticketsAvoided,
-          patchReductionPct,
-        };
+          `;
+        }
       }
       function updateROIOutputs() {}
       /* =========================
@@ -2547,6 +2483,35 @@
         root.querySelectorAll('[data-action="toggle-theater"]').forEach((b) =>
           b.addEventListener("click", () => {
             STATE.theaterMode = !STATE.theaterMode;
+            render();
+          })
+        );
+        // Business Impact specific events
+        root.querySelectorAll('[data-action="set-impact-tab"]').forEach((b) =>
+          b.addEventListener("click", (e) => {
+            STATE.activeImpactTab = e.currentTarget.getAttribute("data-tab");
+            render();
+          })
+        );
+        root.querySelectorAll('[data-action="edit-assumptions"]').forEach((b) =>
+          b.addEventListener("click", () => {
+            STATE.editAssumptions = true;
+            render();
+          })
+        );
+        root.querySelectorAll('[data-action="cancel-assumptions"]').forEach((b) =>
+          b.addEventListener("click", () => {
+            STATE.editAssumptions = false;
+            render();
+          })
+        );
+        root.querySelectorAll('[data-action="save-assumptions"]').forEach((b) =>
+          b.addEventListener("click", () => {
+            STATE.impactInputs.employees = cleanNum($('#employeesInput').value) || 1100;
+            STATE.impactInputs.ticketsPerUserPerMonth = cleanNum($('#ticketsInput').value) || 0.035;
+            STATE.impactInputs.avgTimePerTicketMin = cleanNum($('#avgTimeInput').value) || 18;
+            STATE.impactInputs.appUpdatesPerMonth = cleanNum($('#appUpdatesInput').value) || 22;
+            STATE.editAssumptions = false;
             render();
           })
         );
