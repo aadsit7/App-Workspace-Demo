@@ -339,6 +339,90 @@
           grid-template-columns: 1fr;
         }
       }
+      /* New animation keyframes for updated behavior */
+      @keyframes fadeOutUp {
+        to {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+      }
+      @keyframes fadeInDown {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes focalGlow {
+        0% {
+          box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
+        }
+        50% {
+          box-shadow: 0 0 8px 4px rgba(37, 99, 235, 0.2);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
+        }
+      }
+      @keyframes appSnap {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.1);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+      @keyframes emphasisPulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+      @keyframes converge {
+        from {
+          opacity: 0;
+          transform: translate(var(--from-x, 0), var(--from-y, 0)) scale(0.8);
+        }
+        to {
+          opacity: 1;
+          transform: translate(0, 0) scale(1);
+        }
+      }
+      /* Classes for animation effects */
+      .gravity-source {
+        box-shadow: 0 0 12px rgba(37, 99, 235, 0.3);
+      }
+      .attached {
+        transform: translateY(5px);
+        box-shadow: 0 4px 8px rgba(37, 99, 235, 0.2);
+        transition: transform 0.5s, box-shadow 0.5s;
+      }
+      .focal {
+        animation: focalGlow 2s ease-in-out infinite;
+      }
+      .animate-fadeOutUp {
+        animation: fadeOutUp 1s ease-out forwards;
+      }
+      .animate-converge {
+        animation: converge 0.6s ease-out forwards;
+      }
+      .animate-appSnap {
+        animation: appSnap 0.3s ease-out;
+      }
+      .animate-emphasisPulse {
+        animation: emphasisPulse 0.5s ease-out;
+      }
     </style>
   </head>
   <body class="min-h-screen antialiased bg-gray-50 text-gray-900 font-[Inter]">
@@ -474,6 +558,7 @@
         theaterMode: false, // New: theater mode toggle for embeds in viewer
         openSolutionModal: null, // New: 'core' | 'onboarding' | 'trust' | null
         solutionOpenerId: null // New: id of opener button for focus return
+        , cycleInterval: null // For device cycle loop
       };
       const TABS = [
         { id: "problems", label: "Current State", icon: "alert-triangle" },
@@ -493,7 +578,7 @@
             "Policy-driven automation reduces manual work by over 60%.",
             "End users access the right apps through a consistent experience — without retraining or new workflows as IT changes behind the scenes",
           ],
-          closer: "Configured once — Delivered everywhere.",
+          closer: "Applications follow the USER not the device - Delivered everywhere.",
           timeline: false,
           bgHeader: "bg-gray-50",
           bgContent: "bg-gray-50",
@@ -928,7 +1013,7 @@
                   <i data-lucide="x" class="w-6 h-6"></i>
                 </button>
               </div>
-              <div class="p-6 overflow-y-auto" style="max-height: calc(min(720px, 88vh) - 8rem);">
+              <div class="p-6 overflow-y-auto" style="max-height: calc(min(720px, 88vh) - 8rem);;">
                 <p class="text-base text-gray-700 mb-6 leading-relaxed">${value}</p>
                 <ul class="space-y-4">
                   ${bulletsHtml}
@@ -2515,11 +2600,11 @@
           section.items.forEach((itm, idx) => {
             const wrap = document.createElement("div");
             wrap.className =
-              "flex items-center gap-1 relative transition-all duration-300 show-labels:flex-col show-labels:items-start show-labels:gap-[0.2rem] show-labels:w-[calc(33.333%-0.666rem)] show-labels:mb-1";
+              "app-wrapper flex items-center gap-1 relative transition-all duration-300 show-labels:flex-col show-labels:items-start show-labels:gap-[0.2rem] show-labels:w-[calc(33.333%-0.666rem)] show-labels:mb-1";
             wrap.style.setProperty("--d", (base + idx * 0.2).toFixed(2) + "s");
             const ring = document.createElement("div");
             ring.className =
-              "w-[1.95rem] h-[1.95rem] rounded-[0.85rem] grid place-items-center bg-white shadow-[0_8px_18px_rgba(15,23,42,0.06)] ring-1 ring-[rgba(15,23,42,0.08)] transition-all duration-300 hover:shadow-[0_10px_24px_rgba(37,99,235,0.14)] hover:ring-[rgba(37,99,235,0.22)] hover:scale-[1.03] show-labels:w-[1.7rem] show-labels:h-[1.7rem] show-labels:rounded-[0.75rem]";
+              "app-icon w-[1.95rem] h-[1.95rem] rounded-[0.85rem] grid place-items-center bg-white shadow-[0_8px_18px_rgba(15,23,42,0.06)] ring-1 ring-[rgba(15,23,42,0.08)] transition-all duration-300 hover:shadow-[0_10px_24px_rgba(37,99,235,0.14)] hover:ring-[rgba(37,99,235,0.22)] hover:scale-[1.03] show-labels:w-[1.7rem] show-labels:h-[1.7rem] show-labels:rounded-[0.75rem]";
             ring.innerHTML = itm.svg;
             ring.title = itm.name;
             ring.setAttribute("role", "img");
@@ -2605,6 +2690,8 @@
         flowRunning = false;
         if (flowInterval) clearInterval(flowInterval);
         flowInterval = null;
+        if (STATE.cycleInterval) clearInterval(STATE.cycleInterval);
+        STATE.cycleInterval = null;
       }
       function startFlow() {
         stopFlowTimers();
@@ -2633,7 +2720,7 @@
           setTimeout(() => flash.classList.add("hidden"), 2000);
         }
         if (success) success.classList.add("hidden");
-        if (counters) counters.classList.remove("hidden");
+        if (counters) counters.classList.add("hidden"); // Delayed show
         flowRunning = true;
         flowInterval = setInterval(updateProgress, 100);
         setTimeout(() => {
@@ -2652,6 +2739,43 @@
         setTimeout(() => deviceBuckets[0] && deviceBuckets[0].classList.add("processed"), 8500);
         setTimeout(() => deviceBuckets[1] && deviceBuckets[1].classList.add("processed"), 9000);
         setTimeout(() => deviceBuckets[2] && deviceBuckets[2].classList.add("processed"), 9500);
+        // New animation updates start here
+        // User focal point
+        if (avatar) avatar.classList.add('focal');
+        // Before state: device-centric
+        document.querySelectorAll('#devicesSection > div').forEach(el => el.classList.add('gravity-source'));
+        document.querySelectorAll('.app-wrapper').forEach((el, i) => {
+          el.style.transitionDelay = (i * 0.02) + 's';
+          el.classList.add('attached');
+        });
+        // Transition: detach
+        setTimeout(() => {
+          document.querySelectorAll('#devicesSection > div').forEach(el => el.classList.remove('gravity-source'));
+          document.querySelectorAll('.app-wrapper').forEach((el, i) => {
+            el.style.transitionDelay = (i * 0.02) + 's';
+            el.classList.remove('attached');
+            el.classList.add('animate-fadeOutUp');
+          });
+        }, 2200);
+        // Transition: reattach/converge to user
+        setTimeout(() => {
+          if (mini) {
+            mini.classList.remove('hidden');
+            mini.querySelectorAll('div').forEach((el, i) => {
+              el.style.setProperty('--from-x', ((i % 2 === 0 ? -1 : 1) * (20 + Math.random() * 20)) + 'px');
+              el.style.setProperty('--from-y', ((i < 2 ? -1 : 1) * (20 + Math.random() * 20)) + 'px');
+              el.classList.add('animate-converge');
+              el.style.animationDelay = (i * 0.1) + 's';
+            });
+          }
+        }, 3000);
+        // Clean up detach animation
+        setTimeout(() => {
+          document.querySelectorAll('.app-wrapper').forEach(el => {
+            el.classList.remove('animate-fadeOutUp');
+            el.style.opacity = 0;
+          });
+        }, 3200);
         // Completion state
         setTimeout(() => {
           if (avatar) {
@@ -2672,8 +2796,29 @@
             endCard.classList.remove("highlighted");
           }
           if (success) success.classList.remove("hidden");
-          Confetti.burstAtElement(endCard, { count: 70, spread: 70, power: 10 });
+          // Subtle celebration: remove large confetti
+          // Confetti.burstAtElement(endCard, { count: 30, spread: 50, power: 6 }); // Reduced
+          // Instead, pulse endCard
+          if (endCard) endCard.classList.add('animate-emphasisPulse');
+          // Show metrics as confirmation
+          if (counters) counters.classList.remove('hidden');
+          // Hide truck subtly
+          hideTruck();
           stopFlowTimers();
+          // After state: cycle device emphasis
+          const deviceBuckets = document.querySelectorAll("#devicesSection > div");
+          let deviceIndex = 0;
+          STATE.cycleInterval = setInterval(() => {
+            deviceBuckets.forEach(el => el.classList.remove('animate-emphasisPulse'));
+            if (deviceBuckets[deviceIndex]) deviceBuckets[deviceIndex].classList.add('animate-emphasisPulse');
+            document.querySelectorAll('#miniWorkspace > div').forEach((el, i) => {
+              setTimeout(() => {
+                el.classList.add('animate-appSnap');
+                setTimeout(() => el.classList.remove('animate-appSnap'), 300);
+              }, i * 50);
+            });
+            deviceIndex = (deviceIndex + 1) % deviceBuckets.length;
+          }, 2000);
         }, 11000);
         setTimeout(() => card.classList.remove("run"), 12000);
       }
@@ -2711,6 +2856,13 @@
         document.querySelectorAll(".processed").forEach((el) => el.classList.remove("processed"));
         document.querySelectorAll(".dimmed").forEach((el) => el.classList.remove("dimmed"));
         document.querySelectorAll(".highlighted").forEach((el) => el.classList.remove("highlighted"));
+        document.querySelectorAll(".gravity-source").forEach((el) => el.classList.remove("gravity-source"));
+        document.querySelectorAll(".attached").forEach((el) => el.classList.remove("attached"));
+        document.querySelectorAll(".focal").forEach((el) => el.classList.remove("focal"));
+        document.querySelectorAll(".animate-fadeOutUp").forEach((el) => el.classList.remove("animate-fadeOutUp"));
+        document.querySelectorAll(".animate-converge").forEach((el) => el.classList.remove("animate-converge"));
+        document.querySelectorAll(".animate-emphasisPulse").forEach((el) => el.classList.remove("animate-emphasisPulse"));
+        document.querySelectorAll(".app-wrapper").forEach(el => el.style.opacity = 1);
         hideTruck();
       }
       /* =========================
