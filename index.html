@@ -1517,19 +1517,27 @@
               <h2 class="text-3xl font-semibold leading-tight">Operational Outcomes</h2>
               <p class="text-base text-gray-700 leading-relaxed">What problems this removes for IT.</p>
             </div>
-            <div class="flex justify-center gap-4 flex-wrap">
-              <button type="button" data-action="set-impact-tab" data-tab="executive" class="${cx(
-                "rounded-full px-6 py-2 shadow-sm transition",
-                STATE.activeImpactTab === "executive" ? "bg-blue-600 text-white hover:bg-blue-700" : "bg-white text-gray-900 hover:bg-gray-100"
-              )}">Executive</button>
-              <button type="button" data-action="set-impact-tab" data-tab="it" class="${cx(
-                "rounded-full px-6 py-2 shadow-sm transition",
-                STATE.activeImpactTab === "it" ? "bg-blue-600 text-white hover:bg-blue-700" : "bg-white text-gray-900 hover:bg-gray-100"
-              )}">IT</button>
-              <button type="button" data-action="set-impact-tab" data-tab="assumptions" class="${cx(
-                "rounded-full px-6 py-2 shadow-sm transition",
-                STATE.activeImpactTab === "assumptions" ? "bg-blue-600 text-white hover:bg-blue-700" : "bg-white text-gray-900 hover:bg-gray-100"
-              )}">Assumptions & Math</button>
+            <div class="flex justify-center">
+              <div role="tablist" aria-label="Impact sections" class="inline-flex flex-nowrap overflow-x-auto gap-2 rounded bg-gray-50 p-1 ring-1 ring-gray-200">
+                <button type="button" data-action="set-impact-tab" data-tab="executive" class="${cx(
+                  "flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 text-sm focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 transition rounded-full min-w-[120px]",
+                  STATE.activeImpactTab === "executive"
+                    ? "bg-blue-600 text-white hover:bg-blue-700"
+                    : "text-gray-900 hover:bg-gray-100"
+                )}">Executive</button>
+                <button type="button" data-action="set-impact-tab" data-tab="it" class="${cx(
+                  "flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 text-sm focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 transition rounded-full min-w-[120px]",
+                  STATE.activeImpactTab === "it"
+                    ? "bg-blue-600 text-white hover:bg-blue-700"
+                    : "text-gray-900 hover:bg-gray-100"
+                )}">IT</button>
+                <button type="button" data-action="set-impact-tab" data-tab="assumptions" class="${cx(
+                  "flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 text-sm focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 transition rounded-full min-w-[120px]",
+                  STATE.activeImpactTab === "assumptions"
+                    ? "bg-blue-600 text-white hover:bg-blue-700"
+                    : "text-gray-900 hover:bg-gray-100"
+                )}">Assumptions</button>
+              </div>
             </div>
             <div class="bg-white rounded-2xl shadow-md p-6 hover:shadow-lg transition-shadow duration-300">
               ${STATE.activeImpactTab === "executive" ? renderExecutive() : ""}
