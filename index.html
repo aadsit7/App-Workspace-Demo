@@ -14,12 +14,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://unpkg.com" />
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- IMPORTANT: lottie-player web component does NOT guarantee a global `lottie` object.
-         If you call lottie.loadAnimation(...) you must load lottie-web. -->
-    <script src="https://unpkg.com/lottie-web@5.12.2/build/player/lottie.min.js"></script>
     <style>
       /* ------------------------------
-         Keyframes
+         Keyframes (V1 only - removed V2 extras)
          ------------------------------ */
       @keyframes tilePulse {
         0% {
@@ -119,38 +116,18 @@
           opacity: 1;
         }
       }
-      /* “Delivery truck” micro-motion (vertical travel is driven by JS) */
-      @keyframes courierBob {
-        0% {
-          transform: translateY(0);
-        }
-        50% {
-          transform: translateY(-2px);
-        }
-        100% {
-          transform: translateY(0);
-        }
+      /* New keyframes for token movement */
+      @keyframes tokenMove {
+        0% { left: 0%; }
+        33% { left: 33%; }
+        66% { left: 66%; }
+        100% { left: 100%; }
       }
-      @keyframes courierTilt {
-        0% {
-          transform: rotate(-0.8deg);
-        }
-        50% {
-          transform: rotate(1.1deg);
-        }
-        100% {
-          transform: rotate(-0.8deg);
-        }
-      }
-      @keyframes cardPop {
-        0% {
-          opacity: 0;
-          transform: translateY(8px) scale(0.99);
-        }
-        100% {
-          opacity: 1;
-          transform: translateY(0) scale(1);
-        }
+      /* New keyframe for pulse */
+      @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); }
       }
       .animate-cardPop {
         animation: cardPop 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -173,52 +150,6 @@
       .run [data-anim="badgeDrop"] {
         animation: badgeDrop 0.8s ease-out var(--d, 0s) forwards;
       }
-      /* ------------------------------
-         Overlay sits on top of the Application Workspace card
-         ------------------------------ */
-      #recast-approach-animation-layer {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-        z-index: 999;
-      }
-      #recast-approach-animation-layer .lottie {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        display: none;
-      }
-      /* Final calm state after animation (scoped to the flow card, not the whole page) */
-      #flowCard.workspace-final .warning,
-      #flowCard.workspace-final .duplicate,
-      #flowCard.workspace-final .loading-indicator {
-        opacity: 0;
-        transition: opacity 0.25s ease-out;
-      }
-      #flowCard.workspace-final .app-icon {
-        opacity: 1;
-        transform: scale(1);
-        transition: 0.25s ease-out;
-      }
-      .dimmed {
-        opacity: 0.5;
-        transition: opacity 0.3s ease;
-      }
-      .highlighted {
-        border-color: #10b981;
-        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3);
-        transition: all 0.3s ease;
-      }
-      .processed {
-        background-color: #ecfdf5 !important;
-        border-color: #d1fae5 !important;
-        color: #065f46 !important;
-        transition: all 0.3s ease;
-      }
-      /* Modal animation helpers */
       .animate-modalEnter {
         animation: modalEnter 300ms cubic-bezier(0.2, 0.8, 0.2, 1);
       }
@@ -234,98 +165,67 @@
       .animate-iconLaunch {
         animation: iconLaunch 0.5s ease forwards;
       }
-      /* ------------------------------
-         Stage-ready confetti (canvas)
-         ------------------------------ */
-      #confettiCanvas {
-        position: fixed;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-        z-index: 2000;
-        opacity: 0;
-        transition: opacity 160ms ease;
+      /* V1 end-user expand (added) */
+      .end-user-expand {
+        transition: all 0.5s ease;
+        transform: scale(1.05);
+        background: #ffffff;
+        border-color: #10b981;
       }
-      #confettiCanvas.on {
-        opacity: 1;
+      /* New styles for top flow token */
+      .flow-header {
+        position: relative;
       }
-      /* ------------------------------
-         Delivery truck indicator (top -> end user)
-         - Vertical travel is driven by JS via CSS var --y
-         ------------------------------ */
-      #deliveryTruck {
+      .flow-token {
         position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 12px;
+        height: 12px;
+        background-color: #2563eb;
+        border-radius: 50%;
+        transition: left 3s linear;
+        z-index: 10;
+      }
+      .flow-token.animating {
+        animation: tokenMove 3s linear 3;
+      }
+      /* New styles for hub */
+      .recast-hub {
+        position: relative;
+        display: inline-block;
+      }
+      .recast-hub::before {
+        content: '';
+        position: absolute;
+        top: 50%;
         left: 50%;
-        top: 0;
-        z-index: 30;
-        pointer-events: none;
-        opacity: 0;
-        transform: translate(-50%, var(--y, -44px));
-        will-change: transform, opacity;
-        transition: opacity 220ms ease;
-        filter: drop-shadow(0 12px 16px rgba(0, 0, 0, 0.12));
+        transform: translate(-50%, -50%);
+        width: 24px;
+        height: 24px;
+        background-color: rgba(37, 99, 235, 0.1);
+        border-radius: 50%;
       }
-      #deliveryTruck.show {
-        opacity: 1;
+      .recast-hub.pulsing::before {
+        animation: pulse 0.5s ease-in-out;
       }
-      #deliveryTruck .chip {
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        padding: 9px 12px;
-        border-radius: 999px;
-        background: rgba(255, 255, 255, 0.92);
-        border: 1px solid rgba(229, 231, 235, 0.9);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
+      /* New styles for cascade active */
+      .active {
+        border-color: #2563eb;
+        box-shadow: 0 0 8px rgba(37, 99, 235, 0.3);
+        transition: all 0.3s ease;
       }
-      #deliveryTruck .badge {
-        width: 30px;
-        height: 30px;
-        border-radius: 12px;
-        display: grid;
-        place-items: center;
-        background: linear-gradient(135deg, #1d4ed8, #2563eb);
-        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
-        position: relative;
-        overflow: hidden;
-      }
-      #deliveryTruck .badge:after {
-        content: "";
+      /* New styles for delivered app in devices */
+      .delivered-app {
         position: absolute;
-        inset: -30%;
-        background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0));
-        transform: rotate(18deg);
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        opacity: 0;
+        transition: opacity 0.3s ease;
       }
-      #deliveryTruck .label {
-        font-size: 11px;
-        font-weight: 700;
-        color: #1d4ed8;
-        letter-spacing: 0.1px;
-        white-space: nowrap;
-        line-height: 1.1;
-      }
-      #deliveryTruck .sub {
-        font-size: 10px;
-        color: #475569;
-        margin-top: 1px;
-        white-space: nowrap;
-        line-height: 1.1;
-      }
-      #deliveryTruck .motion {
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        animation: courierBob 0.95s ease-in-out infinite;
-      }
-      #deliveryTruck .tilt {
-        display: inline-flex;
-        animation: courierTilt 1.35s ease-in-out infinite;
-      }
-      #deliveryTruck .truckSvg {
-        position: relative;
-        z-index: 1;
+      .delivered-app.visible {
+        opacity: 1;
       }
       /* New styles for 2x2 grid on Current State tab */
       .display-grid {
@@ -339,94 +239,9 @@
           grid-template-columns: 1fr;
         }
       }
-      /* New animation keyframes for updated behavior */
-      @keyframes fadeOutUp {
-        to {
-          opacity: 0;
-          transform: translateY(-20px);
-        }
-      }
-      @keyframes fadeInDown {
-        from {
-          opacity: 0;
-          transform: translateY(-20px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-      @keyframes focalGlow {
-        0% {
-          box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
-        }
-        50% {
-          box-shadow: 0 0 8px 4px rgba(37, 99, 235, 0.2);
-        }
-        100% {
-          box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
-        }
-      }
-      @keyframes appSnap {
-        0% {
-          transform: scale(1);
-        }
-        50% {
-          transform: scale(1.1);
-        }
-        100% {
-          transform: scale(1);
-        }
-      }
-      @keyframes emphasisPulse {
-        0% {
-          transform: scale(1);
-        }
-        50% {
-          transform: scale(1.05);
-        }
-        100% {
-          transform: scale(1);
-        }
-      }
-      @keyframes converge {
-        from {
-          opacity: 0;
-          transform: translate(var(--from-x, 0), var(--from-y, 0)) scale(0.8);
-        }
-        to {
-          opacity: 1;
-          transform: translate(0, 0) scale(1);
-        }
-      }
-      /* Classes for animation effects */
-      .gravity-source {
-        box-shadow: 0 0 12px rgba(37, 99, 235, 0.3);
-      }
-      .attached {
-        transform: translateY(5px);
-        box-shadow: 0 4px 8px rgba(37, 99, 235, 0.2);
-        transition: transform 0.5s, box-shadow 0.5s;
-      }
-      .focal {
-        animation: focalGlow 2s ease-in-out infinite;
-      }
-      .animate-fadeOutUp {
-        animation: fadeOutUp 1s ease-out forwards;
-      }
-      .animate-converge {
-        animation: converge 0.6s ease-out forwards;
-      }
-      .animate-appSnap {
-        animation: appSnap 0.3s ease-out;
-      }
-      .animate-emphasisPulse {
-        animation: emphasisPulse 0.5s ease-out;
-      }
     </style>
   </head>
   <body class="min-h-screen antialiased bg-gray-50 text-gray-900 font-[Inter]">
-    <canvas id="confettiCanvas" aria-hidden="true"></canvas>
     <div id="app" class="min-h-screen"></div>
     <div id="solution-portal"></div>
     <script>
@@ -558,7 +373,6 @@
         theaterMode: false, // New: theater mode toggle for embeds in viewer
         openSolutionModal: null, // New: 'core' | 'onboarding' | 'trust' | null
         solutionOpenerId: null // New: id of opener button for focus return
-        , cycleInterval: null // For device cycle loop
       };
       const TABS = [
         { id: "problems", label: "Current State", icon: "alert-triangle" },
@@ -636,289 +450,9 @@
         return isFinite(v) ? v : 0;
       }
       /* =========================
-         CONFETTI (CANVAS, NO LIBS)
-         ========================= */
-      const Confetti = (() => {
-        let canvas,
-          ctx,
-          dpr = 1;
-        let particles = [];
-        let raf = null;
-        let last = 0;
-        let running = false;
-        const PALETTE = ["#2563EB", "#60A5FA", "#10B981", "#F59E0B", "#EF4444", "#111827"];
-        function resize() {
-          if (!canvas) return;
-          const w = window.innerWidth;
-          const h = window.innerHeight;
-          dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
-          canvas.width = Math.floor(w * dpr);
-          canvas.height = Math.floor(h * dpr);
-          canvas.style.width = w + "px";
-          canvas.style.height = h + "px";
-          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        }
-        function init() {
-          canvas = document.getElementById("confettiCanvas");
-          if (!canvas) return;
-          ctx = canvas.getContext("2d", { alpha: true });
-          resize();
-          window.addEventListener(
-            "resize",
-            () => {
-              resize();
-            },
-            { passive: true }
-          );
-        }
-        function rand(min, max) {
-          return Math.random() * (max - min) + min;
-        }
-        function burst({ x, y, count = 80, spread = 70, power = 10, gravity = 1200, drag = 0.985 }) {
-          if (!canvas || !ctx) init();
-          if (!canvas || !ctx) return;
-          canvas.classList.add("on");
-          const angleMin = (-90 - spread / 2) * (Math.PI / 180);
-          const angleMax = (-90 + spread / 2) * (Math.PI / 180);
-          for (let i = 0; i < count; i++) {
-            const a = rand(angleMin, angleMax);
-            const v = rand(power * 0.55, power);
-            const size = rand(6, 10);
-            const shape = Math.random() < 0.12 ? "dot" : "rect";
-            particles.push({
-              x,
-              y,
-              vx: Math.cos(a) * v * 60,
-              vy: Math.sin(a) * v * 60,
-              w: size,
-              h: shape === "dot" ? size * 0.85 : size * rand(0.55, 1.2),
-              rot: rand(0, Math.PI * 2),
-              vr: rand(-9, 9),
-              color: PALETTE[(Math.random() * PALETTE.length) | 0],
-              life: 0,
-              ttl: rand(0.95, 1.55),
-              gravity,
-              drag,
-              shape,
-            });
-          }
-          start();
-        }
-        function start() {
-          if (running) return;
-          running = true;
-          last = performance.now();
-          raf = requestAnimationFrame(tick);
-        }
-        function stop() {
-          running = false;
-          if (raf) cancelAnimationFrame(raf);
-          raf = null;
-          if (canvas) canvas.classList.remove("on");
-        }
-        function drawRect(p) {
-          ctx.save();
-          ctx.translate(p.x, p.y);
-          ctx.rotate(p.rot);
-          ctx.fillStyle = p.color;
-          const r = Math.min(3, Math.max(1, p.w * 0.2));
-          const w = p.w;
-          const h = p.h;
-          ctx.beginPath();
-          ctx.moveTo(-w / 2 + r, -h / 2);
-          ctx.arcTo(w / 2, -h / 2, w / 2, h / 2, r);
-          ctx.arcTo(w / 2, h / 2, -w / 2, h / 2, r);
-          ctx.arcTo(-w / 2, h / 2, -w / 2, -h / 2, r);
-          ctx.arcTo(-w / 2, -h / 2, w / 2, -h / 2, r);
-          ctx.closePath();
-          ctx.fill();
-          ctx.restore();
-        }
-        function drawDot(p) {
-          ctx.save();
-          ctx.fillStyle = p.color;
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.w * 0.32, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.restore();
-        }
-        function tick(now) {
-          const dt = Math.min(0.032, Math.max(0.001, (now - last) / 1000));
-          last = now;
-          ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
-          particles = particles.filter((p) => {
-            p.life += dt;
-            const t = p.life / p.ttl;
-            p.vx *= Math.pow(p.drag, dt * 60);
-            p.vy *= Math.pow(p.drag, dt * 60);
-            p.vy += p.gravity * dt;
-            p.x += p.vx * dt;
-            p.y += p.vy * dt;
-            p.rot += p.vr * dt;
-            const alpha = t < 0.7 ? 1 : Math.max(0, 1 - (t - 0.7) / 0.3);
-            ctx.globalAlpha = alpha;
-            if (p.shape === "dot") drawDot(p);
-            else drawRect(p);
-            return p.life < p.ttl && p.y < window.innerHeight + 80;
-          });
-          ctx.globalAlpha = 1;
-          if (particles.length === 0) {
-            stop();
-            return;
-          }
-          raf = requestAnimationFrame(tick);
-        }
-        return {
-          init,
-          burstAtElement(el, opts = {}) {
-            if (!el) return;
-            const r = el.getBoundingClientRect();
-            burst({ x: r.left + r.width / 2, y: r.top + r.height / 2, ...opts });
-          },
-          burst,
-          clear() {
-            particles = [];
-            if (ctx) ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
-            stop();
-          },
-        };
-      })();
-      /* =========================
-         LOTTIE OVERLAY (FIXED)
-         ========================= */
-      let approachAnimations = null;
-      let approachTimeouts = [];
-      const LOTTIE_PATHS = {
-        chaos: "https://assets4.lottiefiles.com/packages/lf20_yr6zz3wt.json",
-        breakdown: "https://assets9.lottiefiles.com/packages/lf20_rovf9s.json",
-        collapse: "https://assets3.lottiefiles.com/packages/lf20_k9qliiD3Bf.json",
-        unify: "https://assets1.lottiefiles.com/packages/lf20_u4yrau.json",
-        endstate: "https://assets8.lottiefiles.com/packages/lf20_jmejybvu.json",
-      };
-      function clearApproachTimeouts() {
-        approachTimeouts.forEach((t) => clearTimeout(t));
-        approachTimeouts = [];
-      }
-      function destroyApproachAnimations() {
-        clearApproachTimeouts();
-        if (!approachAnimations) return;
-        Object.values(approachAnimations).forEach((anim) => {
-          try {
-            anim.destroy();
-          } catch {}
-        });
-        approachAnimations = null;
-      }
-      function ensureApproachAnimations() {
-        if (!window.lottie) return;
-        const layer = document.getElementById("recast-approach-animation-layer");
-        if (!layer) return;
-        const ids = Object.keys(LOTTIE_PATHS);
-        approachAnimations = approachAnimations || {};
-        for (const id of ids) {
-          const el = document.getElementById(id);
-          if (!el) return;
-          if (approachAnimations[id]) continue;
-          approachAnimations[id] = window.lottie.loadAnimation({
-            container: el,
-            renderer: "svg",
-            autoplay: false,
-            loop: false,
-            path: LOTTIE_PATHS[id],
-          });
-        }
-      }
-      function hideApproachLayers() {
-        ["chaos", "breakdown", "collapse", "unify", "endstate"].forEach((id) => {
-          const el = document.getElementById(id);
-          if (el) el.style.display = "none";
-        });
-      }
-      function playStep(name, delay) {
-        approachTimeouts.push(
-          setTimeout(() => {
-            if (!approachAnimations || !approachAnimations[name]) return;
-            const layer = document.getElementById(name);
-            if (!layer) return;
-            layer.style.display = "block";
-            try {
-              approachAnimations[name].goToAndPlay(0, true);
-            } catch {}
-          }, delay)
-        );
-      }
-      function runWorkspaceAnimation() {
-        ensureApproachAnimations();
-        hideApproachLayers();
-        clearApproachTimeouts();
-        const flowCard = document.getElementById("flowCard");
-        if (flowCard) flowCard.classList.remove("workspace-final");
-        playStep("chaos", 0);
-        playStep("breakdown", 800);
-        playStep("collapse", 1400);
-        playStep("unify", 2200);
-        playStep("endstate", 3000);
-        approachTimeouts.push(
-          setTimeout(() => {
-            const fc = document.getElementById("flowCard");
-            if (fc) fc.classList.add("workspace-final");
-          }, 3800)
-        );
-      }
-      /* =========================
-         DELIVERY TRUCK PATH (TOP -> END USER)
-         ========================= */
-      let flowInterval = null;
-      let flowRunning = false;
-      const TruckPath = {
-        startY: -44,
-        endY: 0,
-        ready: false,
-      };
-      function computeTruckPath() {
-        const card = document.getElementById("flowCard");
-        const endCard = document.getElementById("endUserCard");
-        const truck = document.getElementById("deliveryTruck");
-        if (!card || !endCard || !truck) {
-          TruckPath.ready = false;
-          return;
-        }
-        const endY =
-          endCard.offsetTop + Math.min(34, Math.max(24, endCard.offsetHeight * 0.25));
-        TruckPath.startY = -44;
-        TruckPath.endY = Math.max(40, Math.min(card.scrollHeight - 60, endY));
-        TruckPath.ready = true;
-        truck.style.setProperty("--y", TruckPath.startY + "px");
-      }
-      function setTruckProgress(appsProcessed) {
-        const truck = document.getElementById("deliveryTruck");
-        if (!truck) return;
-        if (!TruckPath.ready) computeTruckPath();
-        if (!TruckPath.ready) return;
-        const total = 128;
-        const t = Math.max(0, Math.min(1, (appsProcessed || 0) / total));
-        const eased = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-        const y = TruckPath.startY + (TruckPath.endY - TruckPath.startY) * eased;
-        truck.style.setProperty("--y", y.toFixed(1) + "px");
-      }
-      function showTruck() {
-        const truck = document.getElementById("deliveryTruck");
-        if (!truck) return;
-        computeTruckPath();
-        truck.classList.add("show");
-        setTruckProgress(0);
-      }
-      function hideTruck() {
-        const truck = document.getElementById("deliveryTruck");
-        if (!truck) return;
-        truck.classList.remove("show");
-        truck.style.setProperty("--y", "-44px");
-      }
-      /* =========================
          RENDER
          ========================= */
       function render() {
-        destroyApproachAnimations();
         const root = document.getElementById("app");
         root.innerHTML = `
           <header class="relative">
@@ -962,11 +496,6 @@
         attachEvents();
         if (STATE.activeTab === "solution") {
           buildFlow();
-          ensureApproachAnimations();
-          setTimeout(() => {
-            computeTruckPath();
-            setTruckProgress(STATE.progress.apps);
-          }, 0);
         }
         if (STATE.activeTab === "roi") updateROIOutputs();
         renderSolutionPortal();
@@ -1406,16 +935,9 @@
         `;
       }
       function renderFlow() {
+        const sampleAppSvg = logo("Sample App", "S", "#2563eb").svg; // Use a sample app icon for fan-out
         return `
           <div class="relative rounded-2xl bg-white shadow-md hover:shadow-lg hover:-translate-y-[2px] transition-shadow duration-300 transition-transform p-6 mx-auto max-w-4xl">
-            <!-- Animation Overlay for Recast Approach tab -->
-            <div id="recast-approach-animation-layer">
-              <div id="chaos" class="lottie"></div>
-              <div id="breakdown" class="lottie"></div>
-              <div id="collapse" class="lottie"></div>
-              <div id="unify" class="lottie"></div>
-              <div id="endstate" class="lottie"></div>
-            </div>
             <div class="flex items-center justify-between gap-2">
               <div class="flex items-center gap-1.5">
                 <div class="h-5 w-5 rounded grid place-items-center bg-blue-600">
@@ -1428,21 +950,22 @@
                 <button type="button" data-action="reset-flow" class="bg-transparent text-gray-900 border-2 border-gray-900 px-2 py-1 rounded-full hover:text-blue-600 hover:border-blue-600 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2">Reset</button>
               </div>
             </div>
-            <div class="mt-1 flex items-center justify-center gap-3 text-[13px] font-medium">
-              <div class="flex items-center gap-1">
+            <div class="mt-1 flex items-center justify-center gap-3 text-[13px] font-medium flow-header">
+              <div class="flex items-center gap-1" id="label-managers">
                 <i data-lucide="building" class="w-4.5 h-4.5 text-gray-700"></i>
                 <span>Existing App Managers (SCCM, Intune, etc.)</span>
               </div>
               <i data-lucide="arrow-right" class="w-4.5 h-4.5 text-gray-500"></i>
-              <div class="flex items-center gap-1">
+              <div class="flex items-center gap-1 recast-hub" id="label-recast">
                 <i data-lucide="truck" class="w-4.5 h-4.5 text-blue-600"></i>
                 <span>Application Delivery (Recast)</span>
               </div>
               <i data-lucide="arrow-right" class="w-4.5 h-4.5 text-gray-500"></i>
-              <div class="flex items-center gap-1">
+              <div class="flex items-center gap-1" id="label-user">
                 <i data-lucide="user" class="w-4.5 h-4.5 text-gray-700"></i>
                 <span>User</span>
               </div>
+              <div class="flow-token"></div>
             </div>
             <div class="mt-1 text-center bg-blue-50 p-1.5 rounded-lg text-[12px]">
               Users get one consistent app experience—while IT standardizes delivery behind the scenes across every platform.
@@ -1514,6 +1037,7 @@
                     <div id="flowDev${k}" class="mt-0.5 grid grid-cols-6 gap-1"></div>
                     <div class="mt-0.5 text-[10px] text-gray-700">${["Windows & macOS", "VDI / Web", "Mobile"][i]}</div>
                     <i data-lucide="check-circle" class="opacity-0 absolute top-0.5 right-0.5 w-3.5 h-3.5 text-green-500 animate-fadeInOut" style="--d:${8 + 0.5 * i}s"></i>
+                    <div class="delivered-app hidden">${sampleAppSvg}</div>
                   </div>
                 `
                   )
@@ -1526,7 +1050,7 @@
                     <div id="endUserAvatar" class="h-8 w-8 grid place-items-center font-semibold rounded-full bg-red-600 text-white">U</div>
                     <div class="text-[13px]">
                       <div class="font-medium">End user</div>
-                      <div id="endUserMessage" class="text-gray-700">Apps on demand — without retraining users when IT changes.</div>
+                      <div id="endUserMessage" class="text-gray-700">Same workspace for the user — even as IT changes platforms behind the scenes.</div>
                     </div>
                   </div>
                   <div data-anim="barGrow" class="mt-2 h-[0.38rem] rounded-[2px] origin-left scale-x-0 bg-gradient-to-r from-blue-600 to-blue-700" style="--d:10s"></div>
@@ -1549,32 +1073,6 @@
                 </div>
                 <div id="flowSuccess" class="mt-1 hidden inline-flex items-center gap-1 text-[13px] opacity-0 animate-fadeIn text-green-500">
                   <i data-lucide="sparkles" class="h-3.5 w-3.5"></i><span>Configured once → delivered everywhere.</span>
-                </div>
-              </div>
-              <!-- Delivery truck indicator that travels DOWN in sync with apps processed -->
-              <div id="deliveryTruck" aria-hidden="true">
-                <div class="motion">
-                  <div class="tilt">
-                    <div class="chip">
-                      <div class="badge">
-                        <!-- Custom, cleaner “Recast delivery truck” glyph (not a scooter/bike). -->
-                        <svg class="truckSvg" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                          <path d="M3.8 8.6c0-1.2.98-2.2 2.2-2.2h8.2c1.2 0 2.2 1 2.2 2.2v7.1H3.8V8.6Z" fill="rgba(255,255,255,0.95)"/>
-                          <path d="M16.4 10.2h2.9c.6 0 1.1.3 1.4.8l1.2 2c.1.2.2.4.2.6v2.1h-5.7v-5.5Z" fill="rgba(255,255,255,0.85)"/>
-                          <path d="M7.3 17.9a1.7 1.7 0 1 0 0-3.4 1.7 1.7 0 0 0 0 3.4Z" fill="#0B1220" opacity="0.9"/>
-                          <path d="M18.7 17.9a1.7 1.7 0 1 0 0-3.4 1.7 1.7 0 0 0 0 3.4Z" fill="#0B1220" opacity="0.9"/>
-                          <path d="M6 6.4h8.2c1.2 0 2.2 1 2.2 2.2v7.1H3.8V8.6c0-1.2.98-2.2 2.2-2.2Z" stroke="rgba(255,255,255,0.45)" stroke-width="1.2" />
-                          <path d="M16.4 10.2h2.9c.6 0 1.1.3 1.4.8l1.2 2c.1.2.2.4.2.6v2.1h-5.7" stroke="rgba(255,255,255,0.45)" stroke-width="1.2" stroke-linejoin="round"/>
-                          <path d="M3.8 15.7h18.3" stroke="rgba(255,255,255,0.35)" stroke-width="1.2" stroke-linecap="round"/>
-                          <path d="M7.3 14.2h6.2" stroke="rgba(29,78,216,0.65)" stroke-width="1.6" stroke-linecap="round"/>
-                        </svg>
-                      </div>
-                      <div class="flex flex-col leading-tight">
-                        <div class="label">Recast Delivery</div>
-                        <div class="sub"><span id="truckApps" class="tabular-nums">0</span> apps delivered</div>
-                      </div>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
@@ -2195,7 +1693,6 @@
             const next = e.currentTarget.getAttribute("data-tab");
             STATE.activeTab = next;
             // stop any running flow visuals when leaving the tab
-            stopFlowTimers();
             // Reset wizard when entering Solution for a clean narrative
             if (next === "solution") {
               STATE.solutionStep = 0;
@@ -2212,7 +1709,6 @@
             const tab = e.currentTarget.getAttribute("data-tab");
             if (!tab) return;
             STATE.activeTab = tab;
-            stopFlowTimers();
             render();
           })
         );
@@ -2589,8 +2085,9 @@
         );
       }
       /* =========================
-         FLOW BUILD + ANIMATION
+         FLOW BUILD + ANIMATION (V1 VERSION)
          ========================= */
+      let flowTimeouts = [];
       function buildFlow() {
         let base = 0;
         CATALOG.forEach((section) => {
@@ -2600,11 +2097,11 @@
           section.items.forEach((itm, idx) => {
             const wrap = document.createElement("div");
             wrap.className =
-              "app-wrapper flex items-center gap-1 relative transition-all duration-300 show-labels:flex-col show-labels:items-start show-labels:gap-[0.2rem] show-labels:w-[calc(33.333%-0.666rem)] show-labels:mb-1";
+              "flex items-center gap-1 relative transition-all duration-300 show-labels:flex-col show-labels:items-start show-labels:gap-[0.2rem] show-labels:w-[calc(33.333%-0.666rem)] show-labels:mb-1";
             wrap.style.setProperty("--d", (base + idx * 0.2).toFixed(2) + "s");
             const ring = document.createElement("div");
             ring.className =
-              "app-icon w-[1.95rem] h-[1.95rem] rounded-[0.85rem] grid place-items-center bg-white shadow-[0_8px_18px_rgba(15,23,42,0.06)] ring-1 ring-[rgba(15,23,42,0.08)] transition-all duration-300 hover:shadow-[0_10px_24px_rgba(37,99,235,0.14)] hover:ring-[rgba(37,99,235,0.22)] hover:scale-[1.03] show-labels:w-[1.7rem] show-labels:h-[1.7rem] show-labels:rounded-[0.75rem]";
+              "w-[1.95rem] h-[1.95rem] rounded-[0.85rem] grid place-items-center bg-white shadow-[0_8px_18px_rgba(15,23,42,0.06)] ring-1 ring-[rgba(15,23,42,0.08)] transition-all duration-300 hover:shadow-[0_10px_24px_rgba(37,99,235,0.14)] hover:ring-[rgba(37,99,235,0.22)] hover:scale-[1.03] show-labels:w-[1.7rem] show-labels:h-[1.7rem] show-labels:rounded-[0.75rem]";
             ring.innerHTML = itm.svg;
             ring.title = itm.name;
             ring.setAttribute("role", "img");
@@ -2650,7 +2147,7 @@
           badge.style.transform = "translateY(-6px) scale(0.9)";
         }
         const message = document.getElementById("endUserMessage");
-        if (message) message.textContent = "Apps on demand — without retraining users when IT changes.";
+        if (message) message.textContent = "Same workspace for the user — even as IT changes platforms behind the scenes.";
         const mini = document.getElementById("miniWorkspace");
         if (mini) mini.classList.add("hidden");
         const counters = document.getElementById("progressCounters");
@@ -2658,22 +2155,19 @@
         const card = document.getElementById("flowCard");
         if (card) {
           card.classList.remove("run");
-          card.classList.remove("workspace-final");
         }
         const endCard = document.getElementById("endUserCard");
-        if (endCard) endCard.classList.remove("scale-105", "bg-white", "border-green-500");
-        document.querySelectorAll(".processed").forEach((el) => el.classList.remove("processed"));
-        document.querySelectorAll(".dimmed").forEach((el) => el.classList.remove("dimmed"));
-        document.querySelectorAll(".highlighted").forEach((el) => el.classList.remove("highlighted"));
+        if (endCard) endCard.classList.remove("end-user-expand");
+        const token = document.querySelector(".flow-token");
+        if (token) token.classList.remove("animating");
+        document.querySelectorAll(".active").forEach(el => el.classList.remove("active"));
+        document.querySelectorAll(".delivered-app").forEach(el => el.classList.remove("visible"));
+        const hub = document.querySelector(".recast-hub");
+        if (hub) hub.classList.remove("pulsing");
         STATE.progress = { apps: 0, time: 0, tickets: 0 };
         updateProgress();
         const success = document.getElementById("flowSuccess");
         if (success) success.classList.add("hidden");
-        hideTruck();
-        setTimeout(() => {
-          computeTruckPath();
-          setTruckProgress(STATE.progress.apps);
-        }, 0);
       }
       function buildTiles(container, count, baseDelay) {
         if (!container) return;
@@ -2686,26 +2180,14 @@
           container.appendChild(d);
         }
       }
-      function stopFlowTimers() {
-        flowRunning = false;
-        if (flowInterval) clearInterval(flowInterval);
-        flowInterval = null;
-        if (STATE.cycleInterval) clearInterval(STATE.cycleInterval);
-        STATE.cycleInterval = null;
-      }
       function startFlow() {
-        stopFlowTimers();
-        Confetti.clear();
-        runWorkspaceAnimation();
-        const startBtn = document.getElementById("workspaceStartButton");
-        Confetti.burstAtElement(startBtn, { count: 90, spread: 85, power: 12 });
+        flowTimeouts.forEach(clearTimeout);
+        flowTimeouts = [];
         const card = document.getElementById("flowCard");
         if (!card) return;
         card.classList.remove("run");
         void card.offsetWidth;
         card.classList.add("run");
-        // Truck indicator starts at the top and moves DOWN in sync with apps processed
-        showTruck();
         const flash = document.getElementById("flowHubFlash");
         const success = document.getElementById("flowSuccess");
         const avatar = document.getElementById("endUserAvatar");
@@ -2714,111 +2196,68 @@
         const mini = document.getElementById("miniWorkspace");
         const counters = document.getElementById("progressCounters");
         const endCard = document.getElementById("endUserCard");
-        const groups = document.getElementById("groupsSection");
         if (flash) {
           flash.classList.remove("hidden");
-          setTimeout(() => flash.classList.add("hidden"), 2000);
+          flowTimeouts.push(setTimeout(() => flash.classList.add("hidden"), 2000));
         }
         if (success) success.classList.add("hidden");
-        if (counters) counters.classList.add("hidden"); // Delayed show
-        flowRunning = true;
-        flowInterval = setInterval(updateProgress, 100);
-        setTimeout(() => {
-          if (groups) groups.classList.add("dimmed");
-          if (endCard) endCard.classList.add("highlighted");
-        }, 5000);
-        const platformBuckets = document.querySelectorAll("#platformsSection > div");
-        const groupBuckets = document.querySelectorAll("#groupsSection > div");
-        const deviceBuckets = document.querySelectorAll("#devicesSection > div");
-        setTimeout(() => platformBuckets[0] && platformBuckets[0].classList.add("processed"), 4500);
-        setTimeout(() => platformBuckets[1] && platformBuckets[1].classList.add("processed"), 5000);
-        setTimeout(() => platformBuckets[2] && platformBuckets[2].classList.add("processed"), 5500);
-        setTimeout(() => groupBuckets[0] && groupBuckets[0].classList.add("processed"), 6500);
-        setTimeout(() => groupBuckets[1] && groupBuckets[1].classList.add("processed"), 7000);
-        setTimeout(() => groupBuckets[2] && groupBuckets[2].classList.add("processed"), 7500);
-        setTimeout(() => deviceBuckets[0] && deviceBuckets[0].classList.add("processed"), 8500);
-        setTimeout(() => deviceBuckets[1] && deviceBuckets[1].classList.add("processed"), 9000);
-        setTimeout(() => deviceBuckets[2] && deviceBuckets[2].classList.add("processed"), 9500);
-        // New animation updates start here
-        // User focal point
-        if (avatar) avatar.classList.add('focal');
-        // Before state: device-centric
-        document.querySelectorAll('#devicesSection > div').forEach(el => el.classList.add('gravity-source'));
-        document.querySelectorAll('.app-wrapper').forEach((el, i) => {
-          el.style.transitionDelay = (i * 0.02) + 's';
-          el.classList.add('attached');
+        if (counters) counters.classList.remove("hidden");
+        let interval = setInterval(updateProgress, 100);
+        flowTimeouts.push(setTimeout(() => clearInterval(interval), 11000));
+        // New: Top flow token animation
+        const token = document.querySelector(".flow-token");
+        if (token) {
+          token.classList.add("animating");
+          // Highlight labels as token passes
+          flowTimeouts.push(setTimeout(() => {
+            document.getElementById("label-managers").classList.add("highlight");
+            setTimeout(() => document.getElementById("label-managers").classList.remove("highlight"), 300);
+          }, 1000)); // At 33%
+          flowTimeouts.push(setTimeout(() => {
+            document.getElementById("label-recast").classList.add("highlight");
+            setTimeout(() => document.getElementById("label-recast").classList.remove("highlight"), 300);
+            // Pulse hub
+            const hub = document.querySelector(".recast-hub");
+            if (hub) hub.classList.add("pulsing");
+          }, 2000)); // At 66%
+          flowTimeouts.push(setTimeout(() => {
+            document.getElementById("label-user").classList.add("highlight");
+            setTimeout(() => document.getElementById("label-user").classList.remove("highlight"), 300);
+          }, 3000)); // At 100%
+          // Repeat logic if needed, but since animation-iteration-count=3, highlights can be timed accordingly
+        }
+        // New: Backend cascade
+        const cascadeSections = [
+          ...document.querySelectorAll("#platformsSection > div"),
+          ...document.querySelectorAll("#groupsSection > div"),
+          ...document.querySelectorAll("#devicesSection > div")
+        ];
+        cascadeSections.forEach((section, i) => {
+          flowTimeouts.push(setTimeout(() => {
+            section.classList.add("active");
+            flowTimeouts.push(setTimeout(() => section.classList.remove("active"), 400));
+          }, 4000 + i * 400)); // Start after ~4s, 400ms per
         });
-        // Transition: detach
-        setTimeout(() => {
-          document.querySelectorAll('#devicesSection > div').forEach(el => el.classList.remove('gravity-source'));
-          document.querySelectorAll('.app-wrapper').forEach((el, i) => {
-            el.style.transitionDelay = (i * 0.02) + 's';
-            el.classList.remove('attached');
-            el.classList.add('animate-fadeOutUp');
-          });
-        }, 2200);
-        // Transition: reattach/converge to user
-        setTimeout(() => {
-          if (mini) {
-            mini.classList.remove('hidden');
-            mini.querySelectorAll('div').forEach((el, i) => {
-              el.style.setProperty('--from-x', ((i % 2 === 0 ? -1 : 1) * (20 + Math.random() * 20)) + 'px');
-              el.style.setProperty('--from-y', ((i < 2 ? -1 : 1) * (20 + Math.random() * 20)) + 'px');
-              el.classList.add('animate-converge');
-              el.style.animationDelay = (i * 0.1) + 's';
-            });
-          }
-        }, 3000);
-        // Clean up detach animation
-        setTimeout(() => {
-          document.querySelectorAll('.app-wrapper').forEach(el => {
-            el.classList.remove('animate-fadeOutUp');
-            el.style.opacity = 0;
-          });
-        }, 3200);
-        // Completion state
+        // New: Fan-out to devices after cascade (approx 4s + 4*400ms = 5.6s)
+        const deviceBoxes = document.querySelectorAll("#devicesSection > div");
+        deviceBoxes.forEach((box, i) => {
+          flowTimeouts.push(setTimeout(() => {
+            const app = box.querySelector(".delivered-app");
+            if (app) app.classList.add("visible");
+          }, 6000 + i * 300));
+        });
         setTimeout(() => {
           if (avatar) {
-            avatar.classList.remove("bg-red-600");
-            avatar.classList.add("bg-green-500");
+            avatar.style.background = 'var(--re-green)';
           }
           if (badge) {
-            badge.textContent = "✓";
-            badge.classList.remove("bg-red-600");
-            badge.classList.add("bg-green-500");
-            badge.style.opacity = "1";
-            badge.style.transform = "translateY(0) scale(1)";
+            badge.textContent = '✓';
+            badge.style.background = 'var(--re-green)';
           }
-          if (message) message.textContent = "Apps on demand — without retraining users when IT changes.";
+          if (message) message.textContent = 'Apps on demand — no waiting, no tickets. Workspace launches the correct app instantly.';
           if (mini) mini.classList.remove("hidden");
-          if (endCard) {
-            endCard.classList.add("scale-105", "bg-white", "border-green-500");
-            endCard.classList.remove("highlighted");
-          }
+          if (endCard) endCard.classList.add("end-user-expand");
           if (success) success.classList.remove("hidden");
-          // Subtle celebration: remove large confetti
-          // Confetti.burstAtElement(endCard, { count: 30, spread: 50, power: 6 }); // Reduced
-          // Instead, pulse endCard
-          if (endCard) endCard.classList.add('animate-emphasisPulse');
-          // Show metrics as confirmation
-          if (counters) counters.classList.remove('hidden');
-          // Hide truck subtly
-          hideTruck();
-          stopFlowTimers();
-          // After state: cycle device emphasis
-          const deviceBuckets = document.querySelectorAll("#devicesSection > div");
-          let deviceIndex = 0;
-          STATE.cycleInterval = setInterval(() => {
-            deviceBuckets.forEach(el => el.classList.remove('animate-emphasisPulse'));
-            if (deviceBuckets[deviceIndex]) deviceBuckets[deviceIndex].classList.add('animate-emphasisPulse');
-            document.querySelectorAll('#miniWorkspace > div').forEach((el, i) => {
-              setTimeout(() => {
-                el.classList.add('animate-appSnap');
-                setTimeout(() => el.classList.remove('animate-appSnap'), 300);
-              }, i * 50);
-            });
-            deviceIndex = (deviceIndex + 1) % deviceBuckets.length;
-          }, 2000);
         }, 11000);
         setTimeout(() => card.classList.remove("run"), 12000);
       }
@@ -2832,38 +2271,17 @@
         setText("appsProcessed", apps);
         setText("timeSaved", time);
         setText("ticketsAvoided", tickets);
-        // Keep the truck position + label in sync with app processing
-        setText("truckApps", apps);
-        setTruckProgress(apps);
       }
       function setText(id, value) {
         const el = document.getElementById(id);
         if (el) el.textContent = String(value);
       }
       function resetFlow() {
-        stopFlowTimers();
-        clearApproachTimeouts();
-        hideApproachLayers();
-        Confetti.clear();
+        flowTimeouts.forEach(clearTimeout);
+        flowTimeouts = [];
         STATE.progress = { apps: 0, time: 0, tickets: 0 };
         STATE.showLabels = false;
         buildFlow();
-        const card = document.getElementById("flowCard");
-        if (card) {
-          card.classList.remove("run");
-          card.classList.remove("workspace-final");
-        }
-        document.querySelectorAll(".processed").forEach((el) => el.classList.remove("processed"));
-        document.querySelectorAll(".dimmed").forEach((el) => el.classList.remove("dimmed"));
-        document.querySelectorAll(".highlighted").forEach((el) => el.classList.remove("highlighted"));
-        document.querySelectorAll(".gravity-source").forEach((el) => el.classList.remove("gravity-source"));
-        document.querySelectorAll(".attached").forEach((el) => el.classList.remove("attached"));
-        document.querySelectorAll(".focal").forEach((el) => el.classList.remove("focal"));
-        document.querySelectorAll(".animate-fadeOutUp").forEach((el) => el.classList.remove("animate-fadeOutUp"));
-        document.querySelectorAll(".animate-converge").forEach((el) => el.classList.remove("animate-converge"));
-        document.querySelectorAll(".animate-emphasisPulse").forEach((el) => el.classList.remove("animate-emphasisPulse"));
-        document.querySelectorAll(".app-wrapper").forEach(el => el.style.opacity = 1);
-        hideTruck();
       }
       /* =========================
          ESC HANDLING (safe, attach once)
@@ -2891,18 +2309,7 @@
          BOOT
          ========================= */
       document.addEventListener("DOMContentLoaded", () => {
-        Confetti.init();
         wireEscapeOnce();
-        // Keep truck path accurate on resize (only matters on solution tab)
-        window.addEventListener(
-          "resize",
-          () => {
-            if (STATE.activeTab !== "solution") return;
-            computeTruckPath();
-            setTruckProgress(STATE.progress.apps);
-          },
-          { passive: true }
-        );
         // Load cached items
         STATE.items = loadItems();
         // Ensure wizard has a starting “explored” state
