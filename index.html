@@ -1571,7 +1571,7 @@
           </div>
           <div class="flex justify-between gap-4 items-center">
             <label for="in-tickets-per-user" class="text-gray-700">Tickets per user per month</label>
-            <input type="number" id="in-tickets-per-user" value="0.035" min="0" step="0.001" class="border rounded px-2 py-1 w-40 text-right">
+            <input type="number" id="in-tickets-per-user" value="0.5" min="0" step="0.001" class="border rounded px-2 py-1 w-40 text-right">
           </div>
           <div class="flex justify-between gap-4 items-center">
             <label for="in-avg-minutes-per-ticket" class="text-gray-700">Average time per ticket</label>
@@ -2557,18 +2557,17 @@
       const state = {
         companyName: "",
         employees: 1100,
-        ticketsPerUserPerMonth: 0.035,
+        ticketsPerUserPerMonth: 0.5,
         avgMinutesPerTicket: 18,
         appUpdatesPerMonth: 22,
       };
-      const MINUTES_SAVED_PER_USER_PER_MONTH = 9;
       const PACKAGING_HOURS_AVOIDED_PER_MONTH = 6;
       const PATCHING_HOURS_AVOIDED_PER_MONTH = 22.5;
       const FTE_HOURS_PER_YEAR = 2328;
       function computeImpact(s) {
         const N = Number(s.employees) || 0;
         const U = Number(s.appUpdatesPerMonth) || 0;
-        const appSupportHoursPerMonth = (N * MINUTES_SAVED_PER_USER_PER_MONTH) / 60;
+        const appSupportHoursPerMonth = (N * Number(s.ticketsPerUserPerMonth) * Number(s.avgMinutesPerTicket)) / 60;
         const packagingHoursPerMonth = PACKAGING_HOURS_AVOIDED_PER_MONTH;
         const patchingHoursPerMonth = (U / 22) * PATCHING_HOURS_AVOIDED_PER_MONTH;
         const hoursPerMonth = appSupportHoursPerMonth + packagingHoursPerMonth + patchingHoursPerMonth;
@@ -2596,15 +2595,9 @@
         const employeesStr = (Number(state.employees) || 0).toLocaleString();
         const hoursYearStr = formatApproxInt(hoursPerYear).replace("~", "");
         const fteText = formatFTE(fte);
-        const customerSummary =
-`Business Justification – ${companyCustomer}
-Based on ${employeesStr} employees, Application Workspace can reclaim approximately ${hoursYearStr} hours of IT capacity annually for ${companyCustomer} (about ${fteText}). This reclaimed capacity can be redeployed to modernization, security improvements, and reduced application-related support burden—without requiring headcount reduction.
-Application Workspace also supports a consistent end-user application experience while IT evolves the underlying tools and platforms (for example, SCCM, Intune, and other delivery ecosystems).`;
+        const customerSummary = `Business Justification – ${companyCustomer}. Based on ${employeesStr} employees, Application Workspace can reclaim approximately ${hoursYearStr} hours of IT capacity annually for ${companyCustomer} (about ${fteText}). This reclaimed capacity can be redeployed to modernization, security improvements, and reduced application-related support burden—without requiring headcount reduction. Application Workspace also supports a consistent end-user application experience while IT evolves the underlying tools and platforms (for example, SCCM, Intune, and other delivery ecosystems).`;
         document.getElementById("customer-summary-text").textContent = customerSummary;
-        const partnerSummary =
-`Partner Value Summary – Application Workspace
-Application Workspace enables partners to standardize application delivery and management across customers while reducing custom packaging and troubleshooting effort. This supports faster implementations, improved SLA performance, and scalable managed application services without linear headcount growth.
-Using the current assumptions for ${companyPartner} (${employeesStr} employees), the model estimates ~${hoursYearStr} hours/year of IT capacity reclaimed (about ${fteText}), which partners can align to modernization roadmaps and ongoing optimization services.`;
+        const partnerSummary = `Partner Value Summary – Application Workspace. Application Workspace enables partners to standardize application delivery and management across customers while reducing custom packaging and troubleshooting effort. This supports faster implementations, improved SLA performance, and scalable managed application services without linear headcount growth. Using the current assumptions for ${companyPartner} (${employeesStr} employees), the model estimates ~${hoursYearStr} hours/year of IT capacity reclaimed (about ${fteText}), which partners can align to modernization roadmaps and ongoing optimization services.`;
         document.getElementById("partner-summary-text").textContent = partnerSummary;
       }
       async function copyTextWithFeedback(buttonEl, text) {
