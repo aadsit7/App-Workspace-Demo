@@ -491,6 +491,10 @@
         if (STATE.activeTab === "roi") initImpactToggles();
         renderSolutionPortal();
         attachSolutionModalEvents();
+        if (STATE.activeTab === "roi") {
+          wireImpactListeners();
+          updateUI();
+        }
       }
       function renderSolutionPortal() {
         const portal = document.getElementById("solution-portal");
@@ -1379,6 +1383,14 @@
         Use customer-specific data where available (for example, the UK university case study).
       </p>
     </div>
+    <!-- Copy-ready summary for customer -->
+    <div class="rounded-2xl bg-white p-6 shadow-md hover:shadow-lg transition-shadow duration-300">
+      <div class="flex justify-between items-center">
+        <h3 class="text-xl font-medium text-gray-900">Copy-ready Business Justification Summary</h3>
+        <button id="btn-copy-customer" class="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-6 py-2 shadow-sm">Copy business justification</button>
+      </div>
+      <div id="customer-summary-text" class="mt-4 text-base text-gray-700 bg-gray-50 p-4 rounded-lg whitespace-pre-wrap overflow-auto max-h-96"></div>
+    </div>
   </section>
   <!-- ============ PARTNER VIEW ============ -->
   <section
@@ -1525,6 +1537,14 @@
         </div>
       </div>
     </div>
+    <!-- Copy-ready summary for partner -->
+    <div class="rounded-2xl bg-white p-6 shadow-md hover:shadow-lg transition-shadow duration-300">
+      <div class="flex justify-between items-center">
+        <h3 class="text-xl font-medium text-gray-900">Copy-ready Business Justification Summary</h3>
+        <button id="btn-copy-partner" class="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-6 py-2 shadow-sm">Copy business justification</button>
+      </div>
+      <div id="partner-summary-text" class="mt-4 text-base text-gray-700 bg-gray-50 p-4 rounded-lg whitespace-pre-wrap overflow-auto max-h-96"></div>
+    </div>
   </section>
   <!-- ============ ASSUMPTIONS & MATH VIEW ============ -->
   <section
@@ -1541,35 +1561,39 @@
       </p>
       <div class="mt-4 grid gap-6 md:grid-cols-2 text-sm">
         <dl class="space-y-2">
-          <div class="flex justify-between gap-4">
-            <dt class="text-gray-700">Number of employees</dt>
-            <dd class="font-medium text-gray-900">1,100</dd>
+          <div class="flex justify-between gap-4 items-center">
+            <label for="in-company-name" class="text-gray-700">Company name</label>
+            <input type="text" id="in-company-name" placeholder="e.g., Kimley-Horn" value="" class="border rounded px-2 py-1 w-40 text-right">
           </div>
-          <div class="flex justify-between gap-4">
-            <dt class="text-gray-700">Tickets per user per month</dt>
-            <dd class="font-medium text-gray-900">0.035</dd>
+          <div class="flex justify-between gap-4 items-center">
+            <label for="in-employees" class="text-gray-700">Number of employees</label>
+            <input type="number" id="in-employees" value="1100" min="0" class="border rounded px-2 py-1 w-40 text-right">
           </div>
-          <div class="flex justify-between gap-4">
-            <dt class="text-gray-700">Average time per ticket</dt>
-            <dd class="font-medium text-gray-900">18 minutes</dd>
+          <div class="flex justify-between gap-4 items-center">
+            <label for="in-tickets-per-user" class="text-gray-700">Tickets per user per month</label>
+            <input type="number" id="in-tickets-per-user" value="0.035" min="0" step="0.001" class="border rounded px-2 py-1 w-40 text-right">
           </div>
-          <div class="flex justify-between gap-4">
-            <dt class="text-gray-700">App updates per month</dt>
-            <dd class="font-medium text-gray-900">22</dd>
+          <div class="flex justify-between gap-4 items-center">
+            <label for="in-avg-minutes-per-ticket" class="text-gray-700">Average time per ticket</label>
+            <input type="number" id="in-avg-minutes-per-ticket" value="18" min="0" class="border rounded px-2 py-1 w-40 text-right">
+          </div>
+          <div class="flex justify-between gap-4 items-center">
+            <label for="in-app-updates-per-month" class="text-gray-700">App updates per month</label>
+            <input type="number" id="in-app-updates-per-month" value="22" min="0" class="border rounded px-2 py-1 w-40 text-right">
           </div>
         </dl>
         <dl class="space-y-2">
           <div class="flex justify-between gap-4">
             <dt class="text-gray-700">Time reclaimed per month</dt>
-            <dd class="font-medium text-gray-900">~194 hours</dd>
+            <dd id="out-hours-month" class="font-medium text-gray-900">~194 hours</dd>
           </div>
           <div class="flex justify-between gap-4">
             <dt class="text-gray-700">Time reclaimed per year</dt>
-            <dd class="font-medium text-gray-900">~2,328 hours</dd>
+            <dd id="out-hours-year" class="font-medium text-gray-900">~2,328 hours</dd>
           </div>
           <div class="flex justify-between gap-4">
             <dt class="text-gray-700">Equivalent capacity</dt>
-            <dd class="font-medium text-gray-900">~1 FTE</dd>
+            <dd id="out-fte" class="font-medium text-gray-900">~1 FTE</dd>
           </div>
         </dl>
       </div>
@@ -2525,7 +2549,116 @@
         // Ensure wizard has a starting “explored” state
         STATE.visitedCards = [NEW_CARDS[0].id];
         render();
+        updateUI();
       });
+      /* =========================
+         BUSINESS IMPACT ADDITIONS
+         ========================= */
+      const state = {
+        companyName: "",
+        employees: 1100,
+        ticketsPerUserPerMonth: 0.035,
+        avgMinutesPerTicket: 18,
+        appUpdatesPerMonth: 22,
+      };
+      const MINUTES_SAVED_PER_USER_PER_MONTH = 9;
+      const PACKAGING_HOURS_AVOIDED_PER_MONTH = 6;
+      const PATCHING_HOURS_AVOIDED_PER_MONTH = 22.5;
+      const FTE_HOURS_PER_YEAR = 2328;
+      function computeImpact(s) {
+        const N = Number(s.employees) || 0;
+        const U = Number(s.appUpdatesPerMonth) || 0;
+        const appSupportHoursPerMonth = (N * MINUTES_SAVED_PER_USER_PER_MONTH) / 60;
+        const packagingHoursPerMonth = PACKAGING_HOURS_AVOIDED_PER_MONTH;
+        const patchingHoursPerMonth = (U / 22) * PATCHING_HOURS_AVOIDED_PER_MONTH;
+        const hoursPerMonth = appSupportHoursPerMonth + packagingHoursPerMonth + patchingHoursPerMonth;
+        const hoursPerYear = hoursPerMonth * 12;
+        const fte = hoursPerYear / FTE_HOURS_PER_YEAR;
+        return { hoursPerMonth, hoursPerYear, fte };
+      }
+      function formatApproxInt(x) {
+        if (!isFinite(x)) return "~0";
+        return `~${Math.round(x).toLocaleString()}`;
+      }
+      function formatFTE(fte) {
+        if (!isFinite(fte) || fte <= 0) return "~0 FTE";
+        if (fte >= 0.85 && fte <= 1.15) return "~1 FTE";
+        return `~${(Math.round(fte * 10) / 10).toFixed(1)} FTE`;
+      }
+      function updateUI() {
+        const { hoursPerMonth, hoursPerYear, fte } = computeImpact(state);
+        document.getElementById("out-hours-month").textContent = formatApproxInt(hoursPerMonth) + " hours";
+        document.getElementById("out-hours-year").textContent = formatApproxInt(hoursPerYear) + " hours";
+        document.getElementById("out-fte").textContent = formatFTE(fte);
+        const company = (state.companyName || "").trim() || null;
+        const companyCustomer = company ?? "your organization";
+        const companyPartner = company ?? "the customer";
+        const employeesStr = (Number(state.employees) || 0).toLocaleString();
+        const hoursYearStr = formatApproxInt(hoursPerYear).replace("~", "");
+        const fteText = formatFTE(fte);
+        const customerSummary =
+`Business Justification – ${companyCustomer}
+Based on ${employeesStr} employees, Application Workspace can reclaim approximately ${hoursYearStr} hours of IT capacity annually for ${companyCustomer} (about ${fteText}). This reclaimed capacity can be redeployed to modernization, security improvements, and reduced application-related support burden—without requiring headcount reduction.
+Application Workspace also supports a consistent end-user application experience while IT evolves the underlying tools and platforms (for example, SCCM, Intune, and other delivery ecosystems).`;
+        document.getElementById("customer-summary-text").textContent = customerSummary;
+        const partnerSummary =
+`Partner Value Summary – Application Workspace
+Application Workspace enables partners to standardize application delivery and management across customers while reducing custom packaging and troubleshooting effort. This supports faster implementations, improved SLA performance, and scalable managed application services without linear headcount growth.
+Using the current assumptions for ${companyPartner} (${employeesStr} employees), the model estimates ~${hoursYearStr} hours/year of IT capacity reclaimed (about ${fteText}), which partners can align to modernization roadmaps and ongoing optimization services.`;
+        document.getElementById("partner-summary-text").textContent = partnerSummary;
+      }
+      async function copyTextWithFeedback(buttonEl, text) {
+        try {
+          await navigator.clipboard.writeText(text);
+        } catch (err) {
+          const ta = document.createElement("textarea");
+          ta.value = text;
+          ta.setAttribute("readonly", "");
+          ta.style.position = "absolute";
+          ta.style.left = "-9999px";
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand("copy");
+          document.body.removeChild(ta);
+        }
+        const original = buttonEl.textContent;
+        buttonEl.textContent = "Copied!";
+        buttonEl.disabled = true;
+        setTimeout(() => {
+          buttonEl.textContent = original;
+          buttonEl.disabled = false;
+        }, 1500);
+      }
+      function wireImpactListeners() {
+        document.getElementById("in-company-name").addEventListener("input", (e) => {
+          state.companyName = e.target.value;
+          updateUI();
+        });
+        document.getElementById("in-employees").addEventListener("input", (e) => {
+          state.employees = e.target.value;
+          updateUI();
+        });
+        document.getElementById("in-tickets-per-user").addEventListener("input", (e) => {
+          state.ticketsPerUserPerMonth = e.target.value;
+          updateUI();
+        });
+        document.getElementById("in-avg-minutes-per-ticket").addEventListener("input", (e) => {
+          state.avgMinutesPerTicket = e.target.value;
+          updateUI();
+        });
+        document.getElementById("in-app-updates-per-month").addEventListener("input", (e) => {
+          state.appUpdatesPerMonth = e.target.value;
+          updateUI();
+        });
+        document.getElementById("btn-copy-customer").addEventListener("click", () => {
+          const text = document.getElementById("customer-summary-text").textContent;
+          copyTextWithFeedback(document.getElementById("btn-copy-customer"), text);
+        });
+        document.getElementById("btn-copy-partner").addEventListener("click", () => {
+          const text = document.getElementById("partner-summary-text").textContent;
+          copyTextWithFeedback(document.getElementById("btn-copy-partner"), text);
+        });
+      }
     </script>
   </body>
 </html>
