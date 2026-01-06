@@ -14,9 +14,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://unpkg.com" />
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
     <style>
       /* ------------------------------
          Keyframes (V1 only - removed V2 extras)
@@ -242,6 +239,97 @@
           grid-template-columns: 1fr;
         }
       }
+      /* New CSS for Business Impact tab as per guide */
+      .tab-nav {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+      }
+      .tab-link {
+        padding: 8px 16px;
+        background: #f0f0f0;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background 0.3s;
+      }
+      .tab-link.active {
+        background: #235b91;
+        color: white;
+      }
+      .tab-content {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        padding: 20px;
+        background: #fff;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+      .value-list {
+        flex: 1 1 40%;
+        list-style: none;
+        padding: 0;
+      }
+      .value-list li {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 10px;
+      }
+      .value-list img {
+        width: 16px;
+        height: 16px;
+        vertical-align: middle;
+      }
+      .metrics-table, .comparison-table {
+        flex: 1 1 55%;
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .metrics-table thead th, .comparison-table thead th {
+        background: #235b91;
+        color: #fff;
+        text-align: left;
+        padding: 8px;
+      }
+      .metrics-table tbody td, .comparison-table tbody td {
+        padding: 8px;
+        border-bottom: 1px solid #e0e0e0;
+      }
+      .section-title {
+        display: block;
+        background: #235b91;
+        color: #fff;
+        padding: 10px 15px;
+        border-radius: 4px 4px 0 0;
+        text-transform: uppercase;
+        font-size: 1.1em;
+        letter-spacing: 0.5px;
+        margin: 30px 0 10px;
+      }
+      .edit-btn {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        padding: 6px 12px;
+        background: #eee;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      .content-container {
+        position: relative;
+      }
+      @media (max-width: 768px) {
+        .tab-content {
+          flex-direction: column;
+        }
+        .value-list, .metrics-table, .comparison-table {
+          flex: 1 1 100%;
+        }
+      }
     </style>
   </head>
   <body class="min-h-screen antialiased bg-gray-50 text-gray-900 font-[Inter]">
@@ -253,13 +341,22 @@
          ========================= */
       const STATE = {
         activeTab: "problems",
+        activeImpactTab: "executive",
         editAssumptions: false,
+        impactInputs: {
+          employees: 1100,
+          ticketsPerUserPerMonth: 0.035,
+          avgTimePerTicketMin: 18,
+          appUpdatesPerMonth: 22,
+        },
         activeView: "exec",
+        impact: { minutes: 9, pkgHours: 6, riskHrs: 22.5 },
         defaults: { impact: { minutes: 9, pkgHours: 6, riskHrs: 22.5 } },
         ctx: { device: "Windows", network: "Corporate", compliant: true },
         packHrs: 8,
         configHrs: 2,
         currentHrs: 24,
+        roiInputs: { users: 5000, ticketsPerUserPerMonth: 0.035, avgHandleMins: 18 },
         copied: false,
         showLabels: false,
         showSolutionCards: true,
@@ -367,7 +464,6 @@
         theaterMode: false, // New: theater mode toggle for embeds in viewer
         openSolutionModal: null, // New: 'core' | 'onboarding' | 'trust' | null
         solutionOpenerId: null // New: id of opener button for focus return
-        , impactContent: {}, editImpactPanel: null, impactEditMode: 'edit'
       };
       const TABS = [
         { id: "problems", label: "Current State", icon: "alert-triangle" },
@@ -482,7 +578,6 @@
           ${renderWhyModal()}
           ${renderItemViewerModal()}
           ${renderItemManagerModal()}
-          ${renderImpactEditorModal()}
         `;
         if (window.lucide?.createIcons) {
           try {
@@ -493,14 +588,9 @@
         if (STATE.activeTab === "solution") {
           buildFlow();
         }
-        if (STATE.activeTab === "roi") initImpactToggles();
+        if (STATE.activeTab === "roi") updateROIOutputs();
         renderSolutionPortal();
         attachSolutionModalEvents();
-        if (STATE.activeTab === "roi") {
-          wireImpactListeners();
-          updateUI();
-        }
-        if (STATE.editImpactPanel) initQuill();
       }
       function renderSolutionPortal() {
         const portal = document.getElementById("solution-portal");
@@ -1081,625 +1171,93 @@
         `;
       }
       /* =========================
-         BUSINESS IMPACT TAB
+         BUSINESS IMPACT TAB (UPDATED PER GUIDE)
          ========================= */
+      function calcAssumptions() {
+        const {employees, ticketsPerUserPerMonth, avgTimePerTicketMin, appUpdatesPerMonth} = STATE.impactInputs;
+        const totalTicketHours = employees * ticketsPerUserPerMonth * (avgTimePerTicketMin / 60);
+        const savedPerUpdate = (avgTimePerTicketMin / 18) * 8.293;
+        const savedUpdateHours = appUpdatesPerMonth * savedPerUpdate;
+        const timeReclaimedMo = Math.round(totalTicketHours + savedUpdateHours);
+        const timeReclaimedYear = timeReclaimedMo * 12;
+        const equivalentFte = Math.round(timeReclaimedYear / 2300);
+        return {timeReclaimedMo, timeReclaimedYear, equivalentFte};
+      }
       function renderBusinessImpact() {
-        const impactHeader = `
-<header class="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-    <div>
-      <h2 class="text-3xl font-semibold leading-tight text-gray-900">Business Impact</h2>
-      <p class="mt-2 text-base text-gray-700 leading-relaxed max-w-2xl">
-        Switch between <span class="font-medium">Customer</span> and <span class="font-medium">Partner</span> views to show
-        the business justification from both sides. Every statement is tied to measurable outcomes and real customer results.
-      </p>
-    </div>
-    <!-- Secondary view toggles -->
-    <div class="inline-flex items-center rounded-full bg-gray-100 p-1 text-sm font-medium">
-      <button
-        type="button"
-        class="impact-toggle inline-flex items-center gap-1 rounded-full bg-white px-4 py-1.5 shadow-sm text-blue-600 transition-all duration-300"
-        data-impact-view="customer"
-        aria-pressed="true"
-      >
-        <span>Customer value</span>
-      </button>
-      <button
-        type="button"
-        class="impact-toggle inline-flex items-center gap-1 rounded-full px-4 py-1.5 text-gray-700 transition-all duration-300"
-        data-impact-view="partner"
-        aria-pressed="false"
-      >
-        <span>Partner value</span>
-      </button>
-      <button
-        type="button"
-        class="impact-toggle inline-flex items-center gap-1 rounded-full px-4 py-1.5 text-gray-700 transition-all duration-300"
-        data-impact-view="assumptions"
-        aria-pressed="false"
-      >
-        <span>Assumptions &amp; math</span>
-      </button>
-    </div>
-  </header>
-        `;
-        const customerContent = STATE.impactContent.customer || renderDefaultCustomer();
-        const partnerContent = STATE.impactContent.partner || renderDefaultPartner();
-        const assumptionsContent = STATE.impactContent.assumptions || renderDefaultAssumptions();
         return `
-<section id="panel-roi" class="mt-6 space-y-6" aria-label="Business Impact">
-  ${impactHeader}
-  <!-- ============ CUSTOMER VIEW ============ -->
-  <section
-    id="impact-customer"
-    class="impact-panel space-y-6"
-    data-impact-panel="customer"
-  >
-    ${customerContent}
-  </section>
-  <!-- ============ PARTNER VIEW ============ -->
-  <section
-    id="impact-partner"
-    class="impact-panel hidden space-y-6"
-    data-impact-panel="partner"
-    aria-hidden="true"
-  >
-    ${partnerContent}
-  </section>
-  <!-- ============ ASSUMPTIONS & MATH VIEW ============ -->
-  <section
-    id="impact-assumptions"
-    class="impact-panel hidden"
-    data-impact-panel="assumptions"
-    aria-hidden="true"
-  >
-    ${assumptionsContent}
-  </section>
-</section>
+          <div class="space-y-6">
+            <div>
+              <h2 class="text-3xl font-semibold leading-tight">Business Impact</h2>
+              <p class="text-base text-gray-700 leading-relaxed">Toggle between Customer and Partner views. Edit mode allows customization, saved locally.</p>
+            </div>
+            <nav class="tab-nav" role="tablist">
+              <button class="tab-link active" id="tabCustomer" role="tab" aria-controls="panelCustomer" onclick="openTab('Customer')">Customer Value</button>
+              <button class="tab-link" id="tabPartner" role="tab" aria-controls="panelPartner" onclick="openTab('Partner')">Partner Value</button>
+            </nav>
+            <div id="panelCustomer" class="tab-content content-container" role="tabpanel" aria-labelledby="tabCustomer">
+              <h2 class="section-title">Customer Business Value</h2>
+              <ul class="value-list">
+                <li id="cust-value1" class="editable"><img src="icon-speed.png" alt="" aria-hidden="true"> <strong>Deployment Efficiency:</strong> Apps deployed in minutes, not days.</li>
+                <li id="cust-value2" class="editable"><img src="icon-support.png" alt="" aria-hidden="true"> <strong>Lower Support Load:</strong> Self-service cuts routine tickets.</li>
+                <li id="cust-value3" class="editable"><img src="icon-cost.png" alt="" aria-hidden="true"> <strong>Lower Tooling Spend:</strong> Consolidation into one workspace reduces costs.</li>
+              </ul>
+              <h2 class="section-title">Direct Customer Value — Quantifiable Metrics</h2>
+              <table class="metrics-table">
+                <thead>
+                  <tr><th>Metric</th><th>How to Measure It</th><th>Impact Type</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td id="cust-metric1" class="editable">Deployment time reduction</td><td id="cust-metric2" class="editable">Change window hours saved</td><td id="cust-metric3" class="editable">Major speedup / more capacity</td></tr>
+                  <tr><td id="cust-metric4" class="editable">Reduction in support tickets</td><td id="cust-metric5" class="editable">Helpdesk labor hours saved</td><td id="cust-metric6" class="editable">Operational cost reduction</td></tr>
+                  <tr><td id="cust-metric7" class="editable">Tool consolidation savings</td><td id="cust-metric8" class="editable">Licenses eliminated, engineering hours reclaimed</td><td id="cust-metric9" class="editable">Cost savings & capacity gain</td></tr>
+                </tbody>
+              </table>
+              <h2 class="section-title">Comparison: Traditional vs. New Solution</h2>
+              <table class="comparison-table">
+                <thead>
+                  <tr><th></th><th>Traditional</th><th>Application Workspace</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td id="cust-comp1" class="editable">App deployment time</td><td id="cust-comp2" class="editable">Days (manual)</td><td id="cust-comp3" class="editable">Minutes (automated)</td></tr>
+                  <tr><td id="cust-comp4" class="editable">Support tickets/month</td><td id="cust-comp5" class="editable">High (reactive)</td><td id="cust-comp6" class="editable">Lower (self-service)</td></tr>
+                  <tr><td id="cust-comp7" class="editable">Tooling TCO</td><td id="cust-comp8" class="editable">Multiple tools, high TCO</td><td id="cust-comp9" class="editable">Unified platform, ~50% lower TCO</td></tr>
+                </tbody>
+              </table>
+              <button id="editBtnCustomer" class="edit-btn">Edit</button>
+            </div>
+            <div id="panelPartner" class="tab-content content-container" role="tabpanel" aria-labelledby="tabPartner" style="display:none;">
+              <h2 class="section-title">Partner Value Summary</h2>
+              <ul class="value-list">
+                <li id="part-value1" class="editable"><img src="icon-standardize.png" alt="" aria-hidden="true"> <strong>Standardized Delivery:</strong> Reduce custom app packaging efforts.</li>
+                <li id="part-value2" class="editable"><img src="icon-sla.png" alt="" aria-hidden="true"> <strong>Improved SLAs:</strong> Faster deployments lead to better SLA compliance.</li>
+                <li id="part-value3" class="editable"><img src="icon-scale.png" alt="" aria-hidden="true"> <strong>Scalable Services:</strong> Automated processes free up ~2,300 hours/year (capacity for ~1 FTE).</li>
+              </ul>
+              <h2 class="section-title">Direct Partner Value — Quantifiable Metrics</h2>
+              <table class="metrics-table">
+                <thead>
+                  <tr><th>Metric</th><th>How to Measure It</th><th>Impact Type</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td id="part-metric1" class="editable">Packaging time reduction</td><td id="part-metric2" class="editable">Hours saved per custom app</td><td id="part-metric3" class="editable">Efficiency gain</td></tr>
+                  <tr><td id="part-metric4" class="editable">SLA compliance improvement</td><td id="part-metric5" class="editable">Deployment success rate</td><td id="part-metric6" class="editable">Reliability boost</td></tr>
+                  <tr><td id="part-metric7" class="editable">Scalability savings</td><td id="part-metric8" class="editable">FTE equivalents reclaimed</td><td id="part-metric9" class="editable">Capacity expansion</td></tr>
+                </tbody>
+              </table>
+              <h2 class="section-title">Comparison: Traditional vs. New Solution</h2>
+              <table class="comparison-table">
+                <thead>
+                  <tr><th></th><th>Traditional</th><th>Application Workspace</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td id="part-comp1" class="editable">Packaging effort</td><td id="part-comp2" class="editable">High (manual)</td><td id="part-comp3" class="editable">Low (automated)</td></tr>
+                  <tr><td id="part-comp4" class="editable">SLA achievement</td><td id="part-comp5" class="editable">Variable</td><td id="part-comp6" class="editable">Consistent</td></tr>
+                  <tr><td id="part-comp7" class="editable">Service scalability</td><td id="part-comp8" class="editable">Limited by headcount</td><td id="part-comp9" class="editable">Automated growth</td></tr>
+                </tbody>
+              </table>
+              <button id="editBtnPartner" class="edit-btn">Edit</button>
+            </div>
+          </div>
         `;
-      }
-      function renderDefaultCustomer() {
-        return `
-    <!-- Estimated Impact -->
-    <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-md hover:shadow-lg transition-shadow duration-300">
-      <h3 class="text-xl font-medium text-gray-900">Estimated Impact</h3>
-      <dl class="mt-4 grid gap-4 md:grid-cols-3 text-sm">
-        <div class="rounded-xl bg-blue-50 px-4 py-3">
-          <dt class="text-xs font-semibold uppercase tracking-wide text-blue-900">Time reclaimed per month</dt>
-          <dd id="customer-hours-month" class="mt-1 font-medium text-blue-950">~194 hours</dd>
-        </div>
-        <div class="rounded-xl bg-blue-50 px-4 py-3">
-          <dt class="text-xs font-semibold uppercase tracking-wide text-blue-900">Time reclaimed per year</dt>
-          <dd id="customer-hours-year" class="mt-1 font-medium text-blue-950">~2,328 hours</dd>
-        </div>
-        <div class="rounded-xl bg-blue-50 px-4 py-3">
-          <dt class="text-xs font-semibold uppercase tracking-wide text-blue-900">Equivalent capacity</dt>
-          <dd id="customer-fte" class="mt-1 font-medium text-blue-950">~1 FTE</dd>
-        </div>
-      </dl>
-    </div>
-    <!-- Executive summary for end customer -->
-    <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-md hover:shadow-lg transition-shadow duration-300">
-      <div class="flex justify-between items-center">
-        <h3 class="text-xl font-medium text-gray-900">Customer business value</h3>
-        <button type="button" data-action="edit-impact-panel" data-panel="customer" class="text-blue-600 hover:text-blue-700 font-medium text-sm focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2">Edit</button>
-      </div>
-      <p class="mt-2 text-base text-gray-700 leading-relaxed max-w-3xl">
-        Application Workspace turns app delivery into a measurable business lever:
-        faster app availability, fewer support tickets, lower tooling costs, and a
-        better experience for employees – all without adding IT headcount.
-      </p>
-      <dl class="mt-4 grid gap-4 md:grid-cols-3">
-        <div class="rounded-xl bg-blue-50 px-4 py-3">
-          <dt class="text-xs font-semibold uppercase tracking-wide text-blue-900">
-            Deployment efficiency
-          </dt>
-          <dd class="mt-1 text-sm text-blue-950">
-            Apps land in <span class="font-semibold">minutes, not days</span> by reusing
-            pre-validated packages and automated delivery paths.
-          </dd>
-        </div>
-        <div class="rounded-xl bg-blue-50 px-4 py-3">
-          <dt class="text-xs font-semibold uppercase tracking-wide text-blue-900">
-            Support load
-          </dt>
-          <dd class="mt-1 text-sm text-blue-950">
-            Self-service installs cut app-related helpdesk tickets and the labor cost of
-            repetitive application requests.
-          </dd>
-        </div>
-        <div class="rounded-xl bg-blue-50 px-4 py-3">
-          <dt class="text-xs font-semibold uppercase tracking-wide text-blue-900">
-            Cost &amp; risk
-          </dt>
-          <dd class="mt-1 text-sm text-blue-950">
-            Customers consolidate tooling, reduce Total Cost of Ownership, and gain a
-            full audit trail for compliance reporting.
-          </dd>
-        </div>
-      </dl>
-    </div>
-    <!-- Direct customer value: hard metrics -->
-    <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-md hover:shadow-lg transition-shadow duration-300">
-      <div class="flex flex-col gap-2 md:flex-row md:items-baseline md:justify-between">
-        <div>
-          <h3 class="text-xl font-medium text-gray-900">
-            Direct customer value — quantifiable metrics
-          </h3>
-          <p class="mt-1 text-base text-gray-700 leading-relaxed max-w-3xl">
-            Use this section to anchor the conversation in hard numbers. Each row gives you
-            <span class="font-medium">what changes</span> and <span class="font-medium">how to measure it</span>.
-          </p>
-        </div>
-      </div>
-      <div class="mt-4 overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200 text-sm">
-          <thead class="bg-gray-50">
-            <tr>
-              <th class="px-4 py-2 text-left font-medium text-gray-900 w-40">Outcome</th>
-              <th class="px-4 py-2 text-left font-medium text-gray-900">What changes</th>
-              <th class="px-4 py-2 text-left font-medium text-gray-900 w-64">How to measure</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-gray-100">
-            <!-- 1. Faster Application Delivery & Deployment -->
-            <tr>
-              <td class="px-4 py-3 font-medium text-gray-900">
-                Faster delivery
-              </td>
-              <td class="px-4 py-3 text-gray-700">
-                Apps land in <span class="font-semibold">minutes, not days</span>, using
-                standardized, automated delivery instead of ad-hoc scripts.
-              </td>
-              <td class="px-4 py-3 text-gray-700">
-                <ul class="list-disc list-inside space-y-1">
-                  <li>Deployment time reduction (days → minutes).</li>
-                  <li>Change window hours saved per rollout.</li>
-                </ul>
-              </td>
-            </tr>
-            <!-- 2. Fewer Helpdesk Tickets / Lower Support Load -->
-            <tr>
-              <td class="px-4 py-3 font-medium text-gray-900">
-                Lower support load
-              </td>
-              <td class="px-4 py-3 text-gray-700">
-                A self-service portal for approved applications cuts routine “please install
-                this app” tickets.
-              </td>
-              <td class="px-4 py-3 text-gray-700">
-                <ul class="list-disc list-inside space-y-1">
-                  <li>% reduction in app-related helpdesk tickets.</li>
-                  <li>Helpdesk labor cost saved from fewer tickets.</li>
-                </ul>
-              </td>
-            </tr>
-            <!-- 3. Lower Spend on Application Management Tools -->
-            <tr>
-              <td class="px-4 py-3 font-medium text-gray-900">
-                Lower tooling spend
-              </td>
-              <td class="px-4 py-3 text-gray-700">
-                Consolidation of application management into <span class="font-semibold">one
-                workspace</span> reduces overlapping tools and manual engineering work.
-              </td>
-              <td class="px-4 py-3 text-gray-700">
-                <ul class="list-disc list-inside space-y-1">
-                  <li>License savings from retired tools.</li>
-                  <li>Engineering hours reclaimed from legacy scripting and packaging.</li>
-                </ul>
-              </td>
-            </tr>
-            <!-- 4. Proven Customer Outcomes (Case Studies) -->
-            <tr>
-              <td class="px-4 py-3 font-medium text-gray-900">
-                Proven results
-              </td>
-              <td class="px-4 py-3 text-gray-700">
-                A UK university used Application Workspace to cut Total Cost of Ownership
-                by <span class="font-semibold">50&nbsp;%</span> and reduce configuration and update time by
-                <span class="font-semibold">90&nbsp;%</span>, while enabling self-service access to 100+ applications for
-                30,000 students within 48 hours.
-              </td>
-              <td class="px-4 py-3 text-gray-700">
-                <ul class="list-disc list-inside space-y-1">
-                  <li>50&nbsp;% TCO reduction (where validated).</li>
-                  <li>90&nbsp;% reduction in configuration &amp; update time.</li>
-                  <li>Time to provide self-service catalog (~48 hours in the case study).</li>
-                </ul>
-              </td>
-            </tr>
-            <!-- 5. Self-Service Access for End Users -->
-            <tr>
-              <td class="px-4 py-3 font-medium text-gray-900">
-                Self-service installs
-              </td>
-              <td class="px-4 py-3 text-gray-700">
-                End users install approved apps themselves, without waiting for IT – using
-                the same experience across devices and locations.
-              </td>
-              <td class="px-4 py-3 text-gray-700">
-                <ul class="list-disc list-inside space-y-1">
-                  <li>% of installs completed via self-service.</li>
-                  <li>Average time-to-install for end users.</li>
-                </ul>
-              </td>
-            </tr>
-            <!-- 6. Unified Audit Trail / Compliance Reporting -->
-            <tr>
-              <td class="px-4 py-3 font-medium text-gray-900">
-                Audit &amp; compliance
-              </td>
-              <td class="px-4 py-3 text-gray-700">
-                A unified audit trail logs every deployment, update, and rollback and
-                centralizes compliance reporting.
-              </td>
-              <td class="px-4 py-3 text-gray-700">
-                <ul class="list-disc list-inside space-y-1">
-                  <li>Time to prepare for audits.</li>
-                  <li>Time spent on recurring compliance reports.</li>
-                </ul>
-              </td>
-            </tr>
-            <!-- 7. Extended Coverage & Integration -->
-            <tr>
-              <td class="px-4 py-3 font-medium text-gray-900">
-                Coverage &amp; integration
-              </td>
-              <td class="px-4 py-3 text-gray-700">
-                Support for Microsoft Teams access, identity-based app delivery, and
-                integrations with Intune, ConfigMgr, and other ecosystems.
-              </td>
-              <td class="px-4 py-3 text-gray-700">
-                <ul class="list-disc list-inside space-y-1">
-                  <li>% of key ecosystems covered (Intune, ConfigMgr, VDI, Teams, etc.).</li>
-                  <li>Number of tools consolidated or avoided.</li>
-                </ul>
-              </td>
-            </tr>
-            <!-- 8. Massive App Catalog & Automation -->
-            <tr>
-              <td class="px-4 py-3 font-medium text-gray-900">
-                Catalog &amp; automation
-              </td>
-              <td class="px-4 py-3 text-gray-700">
-                Access to thousands of pre-validated applications in the Setup Store,
-                plus automation that handles packaging, patching, and validation.
-              </td>
-              <td class="px-4 py-3 text-gray-700">
-                <ul class="list-disc list-inside space-y-1">
-                  <li>Catalog size available to the organization.</li>
-                  <li>Time saved searching, packaging, and testing installers.</li>
-                  <li>Lower packaging cost and reduced risk of deployment errors.</li>
-                </ul>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-    <!-- Competitive benchmarks vs legacy -->
-    <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-md hover:shadow-lg transition-shadow duration-300">
-      <h3 class="text-xl font-medium text-gray-900">
-        How this compares to traditional / legacy approaches
-      </h3>
-      <p class="mt-1 text-base text-gray-700 leading-relaxed max-w-3xl">
-        Use this table to quickly explain why Application Workspace is different from
-        “business as usual”. It is phrased in outcome language so it stands up under scrutiny.
-      </p>
-      <div class="mt-4 overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200 text-sm">
-          <thead class="bg-gray-50">
-            <tr>
-              <th class="px-4 py-2 text-left font-medium text-gray-900">Outcome</th>
-              <th class="px-4 py-2 text-left font-medium text-gray-900 w-40">Traditional / legacy</th>
-              <th class="px-4 py-2 text-left font-medium text-gray-900 w-52">Application Workspace</th>
-              <th class="px-4 py-2 text-left font-medium text-gray-900 w-40">Impact type</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-gray-100">
-            <tr>
-              <td class="px-4 py-3 font-medium text-gray-900">App deployment time</td>
-              <td class="px-4 py-3 text-gray-700">Days, manual scripting, narrow change windows.</td>
-              <td class="px-4 py-3 text-gray-700">Minutes with standardized, automated delivery.</td>
-              <td class="px-4 py-3 text-gray-700">Major speed-up, more change capacity.</td>
-            </tr>
-            <tr>
-              <td class="px-4 py-3 font-medium text-gray-900">Helpdesk tickets</td>
-              <td class="px-4 py-3 text-gray-700">High volume of install / update requests.</td>
-              <td class="px-4 py-3 text-gray-700">
-                Reduced via self-service catalog.
-              </td>
-              <td class="px-4 py-3 text-gray-700">Operational cost reduction.</td>
-            </tr>
-            <tr>
-              <td class="px-4 py-3 font-medium text-gray-900">Total Cost of Ownership</td>
-              <td class="px-4 py-3 text-gray-700">Multiple tools, duplicated work.</td>
-              <td class="px-4 py-3 text-gray-700">
-                Lower TCO where customers consolidate to one workspace and automation.
-              </td>
-              <td class="px-4 py-3 text-gray-700">Cost savings &amp; capacity reclaimed.</td>
-            </tr>
-            <tr>
-              <td class="px-4 py-3 font-medium text-gray-900">App catalog</td>
-              <td class="px-4 py-3 text-gray-700">Manual app packaging and testing.</td>
-              <td class="px-4 py-3 text-gray-700">
-                Thousands of pre-validated apps with automated packaging and updates.
-              </td>
-              <td class="px-4 py-3 text-gray-700">Time &amp; risk reduction.</td>
-            </tr>
-            <tr>
-              <td class="px-4 py-3 font-medium text-gray-900">Compliance reporting</td>
-              <td class="px-4 py-3 text-gray-700">Manual, fragmented logs.</td>
-              <td class="px-4 py-3 text-gray-700">
-                Unified audit trail across deployments, updates, and rollbacks.
-              </td>
-              <td class="px-4 py-3 text-gray-700">Efficiency gain &amp; audit readiness.</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-    <!-- Copy-ready summary for customer -->
-    <div class="rounded-2xl bg-white p-6 shadow-md hover:shadow-lg transition-shadow duration-300">
-      <div class="flex justify-between items-center">
-        <h3 class="text-xl font-medium text-gray-900">Copy-ready Business Justification Summary</h3>
-        <button id="btn-copy-customer" class="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-6 py-2 shadow-sm">Copy business justification</button>
-      </div>
-      <div id="customer-summary-text" class="mt-4 text-base text-gray-700 bg-gray-50 p-4 rounded-lg whitespace-pre-wrap overflow-auto max-h-96"></div>
-    </div>
-        `;
-      }
-      function renderDefaultPartner() {
-        return `
-    <!-- Estimated Impact -->
-    <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-md hover:shadow-lg transition-shadow duration-300">
-      <h3 class="text-xl font-medium text-gray-900">Estimated Impact</h3>
-      <dl class="mt-4 grid gap-4 md:grid-cols-3 text-sm">
-        <div class="rounded-xl bg-indigo-50 px-4 py-3">
-          <dt class="text-xs font-semibold uppercase tracking-wide text-indigo-900">Time reclaimed per month</dt>
-          <dd id="partner-hours-month" class="mt-1 font-medium text-indigo-950">~194 hours</dd>
-        </div>
-        <div class="rounded-xl bg-indigo-50 px-4 py-3">
-          <dt class="text-xs font-semibold uppercase tracking-wide text-indigo-900">Time reclaimed per year</dt>
-          <dd id="partner-hours-year" class="mt-1 font-medium text-indigo-950">~2,328 hours</dd>
-        </div>
-        <div class="rounded-xl bg-indigo-50 px-4 py-3">
-          <dt class="text-xs font-semibold uppercase tracking-wide text-indigo-900">Equivalent capacity</dt>
-          <dd id="partner-fte" class="mt-1 font-medium text-indigo-950">~1 FTE</dd>
-        </div>
-      </dl>
-    </div>
-    <!-- Partner executive summary -->
-    <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-md hover:shadow-lg transition-shadow duration-300">
-      <div class="flex justify-between items-center">
-        <h3 class="text-xl font-medium text-gray-900">Partner business value</h3>
-        <button type="button" data-action="edit-impact-panel" data-panel="partner" class="text-blue-600 hover:text-blue-700 font-medium text-sm focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2">Edit</button>
-      </div>
-      <p class="mt-2 text-base text-gray-700 leading-relaxed max-w-3xl">
-        For partners, Application Workspace is a way to deliver outcomes faster,
-        win more deals, and grow higher-margin services while reducing delivery and
-        support burden.
-      </p>
-      <dl class="mt-4 grid gap-4 md:grid-cols-3">
-        <div class="rounded-xl bg-indigo-50 px-4 py-3">
-          <dt class="text-xs font-semibold uppercase tracking-wide text-indigo-900">
-            Faster implementation
-          </dt>
-          <dd class="mt-1 text-sm text-indigo-950">
-            Pre-built packages and automation shrink project timelines and make
-            “weeks, not months” a realistic promise.
-          </dd>
-        </div>
-        <div class="rounded-xl bg-indigo-50 px-4 py-3">
-          <dt class="text-xs font-semibold uppercase tracking-wide text-indigo-900">
-            Scalable delivery
-          </dt>
-          <dd class="mt-1 text-sm text-indigo-950">
-            One framework scales across many customers and tenants without reinventing
-            the delivery model each time.
-          </dd>
-        </div>
-        <div class="rounded-xl bg-indigo-50 px-4 py-3">
-          <dt class="text-xs font-semibold uppercase tracking-wide text-indigo-900">
-            Profitable services
-          </dt>
-          <dd class="mt-1 text-sm text-indigo-950">
-            Upgrades, reporting, and ongoing optimization become repeatable service
-            offerings with clear value.
-          </dd>
-        </div>
-      </dl>
-    </div>
-    <!-- Partner value & metrics -->
-    <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-md hover:shadow-lg transition-shadow duration-300">
-      <h3 class="text-xl font-medium text-gray-900">
-        Partner / solution delivery value — measurable levers
-      </h3>
-      <p class="mt-1 text-base text-gray-700 leading-relaxed max-w-3xl">
-        Use these points to show why partnering on Application Workspace makes
-        your services more competitive and profitable. Each lever includes example
-        KPIs you can track.
-      </p>
-      <div class="mt-4 grid gap-4 md:grid-cols-2">
-        <!-- 9. Reduced Delivery Time for Client Deployments -->
-        <article class="rounded-xl border border-gray-100 bg-gray-50 p-4">
-          <h4 class="text-sm font-semibold text-gray-900">
-            1. Reduced delivery time for client deployments
-          </h4>
-          <p class="mt-1 text-sm text-gray-700">
-            Pre-built packages and stacking automation compress the time from
-            statement of work to production rollout.
-          </p>
-          <ul class="mt-2 list-disc list-inside text-xs text-gray-700 space-y-1">
-            <li>Implementation cycle time per client (from design to go-live).</li>
-            <li>Weeks saved on packaging and rollout compared to past projects.</li>
-          </ul>
-        </article>
-        <!-- 10. Scalability & Multi-Tenant Deployments -->
-        <article class="rounded-xl border border-gray-100 bg-gray-50 p-4">
-          <h4 class="text-sm font-semibold text-gray-900">
-            2. Scalability &amp; multi-tenant deployments
-          </h4>
-          <p class="mt-1 text-sm text-gray-700">
-            One platform serves enterprises with large and diverse endpoints, allowing
-            partners to onboard more departments and customers with the same playbook.
-          </p>
-          <ul class="mt-2 list-disc list-inside text-xs text-gray-700 space-y-1">
-            <li>Number of seats or departments onboarded per quarter.</li>
-            <li>Reusable deployment frameworks created per practice area.</li>
-          </ul>
-        </article>
-        <!-- 11. Service Revenue with Upgrades & Ongoing Support -->
-        <article class="rounded-xl border border-gray-100 bg-gray-50 p-4">
-          <h4 class="text-sm font-semibold text-gray-900">
-            3. Service revenue from upgrades &amp; ongoing support
-          </h4>
-          <p class="mt-1 text-sm text-gray-700">
-            New releases (for example, reporting and admin enhancements) create
-            structured upgrade projects and ongoing support engagements.
-          </p>
-          <ul class="mt-2 list-disc list-inside text-xs text-gray-700 space-y-1">
-            <li>Revenue from upgrade and optimization contracts.</li>
-            <li>Retention rate for recurring support customers.</li>
-          </ul>
-        </article>
-        <!-- 12. Reduced Support Burden & SLA Improvement for MSPs -->
-        <article class="rounded-xl border border-gray-100 bg-gray-50 p-4">
-          <h4 class="text-sm font-semibold text-gray-900">
-            4. Reduced support burden &amp; stronger SLAs
-          </h4>
-          <p class="mt-1 text-sm text-gray-700">
-            Self-service and centralized logging simplify troubleshooting for managed
-            service providers, improving SLA compliance without adding staff.
-          </p>
-          <ul class="mt-2 list-disc list-inside text-xs text-gray-700 space-y-1">
-            <li>SLA compliance rate (e.g., % of tickets resolved within target).</li>
-            <li>Reduction in recurring service incidents per tenant.</li>
-          </ul>
-        </article>
-      </div>
-    </div>
-    <!-- Partner-facing summary metrics -->
-    <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-md hover:shadow-lg transition-shadow duration-300">
-      <h3 class="text-xl font-medium text-gray-900">Summary of partner metric categories</h3>
-      <p class="mt-1 text-base text-gray-700 leading-relaxed max-w-3xl">
-        When partners present this jointly with you, they can tie Application Workspace
-        into their own business model using these metric categories.
-      </p>
-      <div class="mt-4 grid gap-4 md:grid-cols-3 text-sm">
-        <div class="rounded-xl bg-gray-50 p-4">
-          <p class="font-semibold text-gray-900">Delivery efficiency</p>
-          <p class="mt-1 text-gray-700 text-sm">
-            Time to onboard a new customer or business unit; number of concurrent
-            implementations supported by the team.
-          </p>
-        </div>
-        <div class="rounded-xl bg-gray-50 p-4">
-          <p class="font-semibold text-gray-900">Service margin &amp; revenue</p>
-          <p class="mt-1 text-gray-700 text-sm">
-            Project margin on implementation, upgrade, and optimization work;
-            recurring revenue from managed app services.
-          </p>
-        </div>
-        <div class="rounded-xl bg-gray-50 p-4">
-          <p class="font-semibold text-gray-900">Support &amp; SLA performance</p>
-          <p class="mt-1 text-gray-700 text-sm">
-            SLA adherence across customers; reduction in low-value tickets and
-            escalations that consume senior engineers.
-          </p>
-        </div>
-      </div>
-    </div>
-    <!-- Copy-ready summary for partner -->
-    <div class="rounded-2xl bg-white p-6 shadow-md hover:shadow-lg transition-shadow duration-300">
-      <div class="flex justify-between items-center">
-        <h3 class="text-xl font-medium text-gray-900">Copy-ready Business Justification Summary</h3>
-        <button id="btn-copy-partner" class="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-6 py-2 shadow-sm">Copy business justification</button>
-      </div>
-      <div id="partner-summary-text" class="mt-4 text-base text-gray-700 bg-gray-50 p-4 rounded-lg whitespace-pre-wrap overflow-auto max-h-96"></div>
-    </div>
-        `;
-      }
-      function renderDefaultAssumptions() {
-        return `
-    <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-md hover:shadow-lg transition-shadow duration-300">
-      <div class="flex justify-between items-center">
-        <h3 class="text-xl font-medium text-gray-900">Assumptions &amp; math</h3>
-        <button type="button" data-action="edit-impact-panel" data-panel="assumptions" class="text-blue-600 hover:text-blue-700 font-medium text-sm focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2">Edit</button>
-      </div>
-      <p class="mt-1 text-base text-gray-700 leading-relaxed max-w-3xl">
-        These are example assumptions you can adjust with the customer or partner.
-        They make the business case transparent and easy to pressure-test.
-      </p>
-      <div class="mt-4 grid gap-6 md:grid-cols-2 text-sm">
-        <dl class="space-y-2">
-          <div class="flex justify-between gap-4 items-center">
-            <label for="in-company-name" class="text-gray-700">Company name</label>
-            <input type="text" id="in-company-name" placeholder="e.g., Kimley-Horn" value="" class="border rounded px-2 py-1 w-40 text-right">
-          </div>
-          <div class="flex justify-between gap-4 items-center">
-            <label for="in-employees" class="text-gray-700">Number of employees</label>
-            <input type="number" id="in-employees" value="1100" min="0" class="border rounded px-2 py-1 w-40 text-right">
-          </div>
-          <div class="flex justify-between gap-4 items-center">
-            <label for="in-tickets-per-user" class="text-gray-700">Tickets per user per month</label>
-            <input type="number" id="in-tickets-per-user" value="0.5" min="0" step="0.001" class="border rounded px-2 py-1 w-40 text-right">
-          </div>
-          <div class="flex justify-between gap-4 items-center">
-            <label for="in-avg-minutes-per-ticket" class="text-gray-700">Average time per ticket</label>
-            <input type="number" id="in-avg-minutes-per-ticket" value="18" min="0" class="border rounded px-2 py-1 w-40 text-right">
-          </div>
-          <div class="flex justify-between gap-4 items-center">
-            <label for="in-app-updates-per-month" class="text-gray-700">App updates per month</label>
-            <input type="number" id="in-app-updates-per-month" value="22" min="0" class="border rounded px-2 py-1 w-40 text-right">
-          </div>
-        </dl>
-        <dl class="space-y-2">
-          <div class="flex justify-between gap-4">
-            <dt class="text-gray-700">Time reclaimed per month</dt>
-            <dd id="out-hours-month" class="font-medium text-gray-900">~194 hours</dd>
-          </div>
-          <div class="flex justify-between gap-4">
-            <dt class="text-gray-700">Time reclaimed per year</dt>
-            <dd id="out-hours-year" class="font-medium text-gray-900">~2,328 hours</dd>
-          </div>
-          <div class="flex justify-between gap-4">
-            <dt class="text-gray-700">Equivalent capacity</dt>
-            <dd id="out-fte" class="font-medium text-gray-900">~1 FTE</dd>
-          </div>
-        </dl>
-      </div>
-      <p class="mt-4 text-xs text-gray-500">
-        Capacity reclaimed does <span class="font-semibold">not</span> automatically mean headcount removed.
-        It can be redeployed to higher-value work such as modernization projects,
-        security improvements, or partner-led services.
-      </p>
-    </div>
-        `;
-      }
-      function initImpactToggles() {
-        const buttons = Array.from(document.querySelectorAll(".impact-toggle"));
-        const panels = Array.from(document.querySelectorAll(".impact-panel"));
-        function setImpactView(view) {
-          buttons.forEach((btn) => {
-            const active = btn.dataset.impactView === view;
-            btn.setAttribute("aria-pressed", active ? "true" : "false");
-            btn.classList.toggle("bg-white", active);
-            btn.classList.toggle("text-blue-600", active);
-            btn.classList.toggle("shadow-sm", active);
-            btn.classList.toggle("text-gray-700", !active);
-          });
-          panels.forEach((panel) => {
-            const isActive = panel.dataset.impactPanel === view;
-            panel.classList.toggle("hidden", !isActive);
-            panel.setAttribute("aria-hidden", isActive ? "false" : "true");
-          });
-        }
-        buttons.forEach((btn) => {
-          btn.addEventListener("click", () => setImpactView(btn.dataset.impactView));
-        });
-        // Default to customer view on load
-        setImpactView("customer");
       }
       /* =========================
          APP ICONS + CATALOG (UNCHANGED)
@@ -1892,7 +1450,6 @@
       const PAGE_SCOPE = location.origin + location.pathname + location.search;
       const STORAGE_KEY = `currentState:${USER_ID}:${PAGE_SCOPE}`;
       const ITEMS_KEY = `items:${USER_ID}:${PAGE_SCOPE}`;
-      const IMPACT_KEY = `impactContent:${USER_ID}:${PAGE_SCOPE}`;
       let DEFAULT_CURRENT_STATE = null;
       const $ = (sel, ctx = document) => ctx.querySelector(sel);
       const fields = {
@@ -1974,21 +1531,6 @@
           localStorage.setItem(ITEMS_KEY, JSON.stringify(STATE.items));
         } catch (e) {
           console.warn("Items save failed:", e);
-        }
-      }
-      function loadImpactContent() {
-        try {
-          const raw = localStorage.getItem(IMPACT_KEY);
-          return raw ? JSON.parse(raw) : {};
-        } catch {
-          return {};
-        }
-      }
-      function saveImpactContent() {
-        try {
-          localStorage.setItem(IMPACT_KEY, JSON.stringify(STATE.impactContent));
-        } catch (e) {
-          console.warn("Impact save failed:", e);
         }
       }
       function initCurrentStateModal() {
@@ -2089,72 +1631,6 @@
             </label>
           </div>
         `;
-      }
-      /* =========================
-         IMPACT EDITOR MODAL
-         ========================= */
-      function renderImpactEditorModal() {
-        if (!STATE.editImpactPanel) return '';
-        const panelNames = {customer: 'Customer Value', partner: 'Partner Value', assumptions: 'Assumptions & Math'};
-        const name = panelNames[STATE.editImpactPanel] || STATE.editImpactPanel;
-        const editActive = STATE.impactEditMode === 'edit' ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-gray-200 text-gray-900 hover:bg-gray-300';
-        const previewActive = STATE.impactEditMode === 'preview' ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-gray-200 text-gray-900 hover:bg-gray-300';
-        const editDisplay = STATE.impactEditMode === 'edit' ? 'block' : 'hidden';
-        const previewDisplay = STATE.impactEditMode === 'preview' ? 'block' : 'hidden';
-        return `
-          <div class="fixed inset-0 z-[1000] bg-black/50 flex items-center justify-center animate-overlayFade" data-action="close-impact-edit-outside">
-            <div class="bg-white rounded-2xl w-[95vw] h-[95vh] flex flex-col overflow-hidden shadow-xl animate-modalEnter">
-              <header class="p-6 border-b border-gray-200 flex items-center justify-between">
-                <h2 class="text-xl font-medium text-gray-900">Edit ${name}</h2>
-                <div class="flex gap-3">
-                  <button type="button" data-action="switch-impact-mode" data-mode="edit" class="rounded-full px-6 py-2 shadow-sm focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 ${editActive}">Edit</button>
-                  <button type="button" data-action="switch-impact-mode" data-mode="preview" class="rounded-full px-6 py-2 shadow-sm focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 ${previewActive}">Preview</button>
-                  <button type="button" data-action="save-impact-edit" class="bg-blue-600 text-white rounded-full px-6 py-2 shadow-sm hover:bg-blue-700 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2">Save</button>
-                  <button type="button" data-action="close-impact-edit" class="bg-gray-200 text-gray-900 rounded-full px-6 py-2 shadow-sm hover:bg-gray-300 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2">Close</button>
-                </div>
-              </header>
-              <div class="flex-1 overflow-hidden relative">
-                <div id="editor-view" class="${editDisplay} h-full"></div>
-                <div id="preview-view" class="${previewDisplay} h-full overflow-y-auto p-6 bg-gray-50"></div>
-              </div>
-            </div>
-          </div>
-        `;
-      }
-      let quill = null;
-      function initQuill() {
-        const container = document.getElementById('editor-view');
-        if (!container || quill) return;
-        quill = new Quill(container, {
-          theme: 'snow',
-          modules: {
-            toolbar: [
-              [{ header: [1, 2, 3, false] }],
-              ['bold', 'italic', 'underline'],
-              ['link', 'image'],
-              [{ list: 'ordered' }, { list: 'bullet' }],
-              [{ color: [] }, { background: [] }],
-              ['clean']
-            ]
-          }
-        });
-        const initial = STATE.impactContent[STATE.editImpactPanel] || getDefaultContent(STATE.editImpactPanel);
-        quill.clipboard.dangerouslyPasteHTML(initial);
-      }
-      function updatePreview() {
-        const preview = document.getElementById('preview-view');
-        if (preview && quill && STATE.impactEditMode === 'preview') {
-          const html = quill.root.innerHTML;
-          preview.innerHTML = DOMPurify.sanitize(html);
-        }
-      }
-      function getDefaultContent(panel) {
-        switch (panel) {
-          case 'customer': return renderDefaultCustomer();
-          case 'partner': return renderDefaultPartner();
-          case 'assumptions': return renderDefaultAssumptions();
-          default: return '';
-        }
       }
       /* =========================
          EVENTS
@@ -2285,6 +1761,25 @@
             render();
           })
         );
+        // ROI inputs
+        root.querySelectorAll('[data-action="set-device"]').forEach((b) =>
+          b.addEventListener("click", (e) => {
+            STATE.ctx.device = e.currentTarget.getAttribute("data-value");
+            render();
+          })
+        );
+        root.querySelectorAll('[data-action="set-network"]').forEach((b) =>
+          b.addEventListener("click", (e) => {
+            STATE.ctx.network = e.currentTarget.getAttribute("data-value");
+            render();
+          })
+        );
+        root.querySelectorAll('[data-action="toggle-compliance"]').forEach((b) =>
+          b.addEventListener("click", () => {
+            STATE.ctx.compliant = !STATE.ctx.compliant;
+            render();
+          })
+        );
         const pack = root.querySelector('[data-action="set-pack-hrs"]');
         if (pack)
           pack.addEventListener("input", (e) => {
@@ -2301,6 +1796,46 @@
         if (cur)
           cur.addEventListener("input", (e) => {
             STATE.currentHrs = cleanNum(e.target.value);
+            render();
+          });
+        root.querySelectorAll('[data-action="add-impact"]').forEach((b) =>
+          b.addEventListener("click", (e) => {
+            const kind = e.currentTarget.getAttribute("data-kind");
+            const val = Number(e.currentTarget.getAttribute("data-value")) || 0;
+            if (kind === "minutes") STATE.impact.minutes += val;
+            if (kind === "pkgHours") STATE.impact.pkgHours += val;
+            if (kind === "riskHrs") STATE.impact.riskHrs += val;
+            render();
+          })
+        );
+        root.querySelectorAll('[data-action="set-roi"]').forEach((inp) =>
+          inp.addEventListener("input", (e) => {
+            const key = e.currentTarget.getAttribute("data-key");
+            const v = Number(String(e.target.value).replace(/[^0-9.\-]/g, ""));
+            STATE.roiInputs[key] = isFinite(v) ? v : 0;
+            render();
+          })
+        );
+        root.querySelectorAll('[data-action="set-impact"]').forEach((inp) =>
+          inp.addEventListener("input", (e) => {
+            const key = e.currentTarget.getAttribute("data-key");
+            const v = Number(String(e.target.value).replace(/[^0-9.\-]/g, ""));
+            STATE.impact[key] = isFinite(v) ? v : 0;
+            render();
+          })
+        );
+        root.querySelectorAll('[data-action="set-view"]').forEach((b) =>
+          b.addEventListener("click", (e) => {
+            STATE.activeView = e.currentTarget.getAttribute("data-view");
+            render();
+          })
+        );
+        const resetCalc = root.querySelector('[data-action="reset-calculator"]');
+        if (resetCalc)
+          resetCalc.addEventListener("click", () => {
+            STATE.roiInputs = { users: 5000, ticketsPerUserPerMonth: 0.035, avgHandleMins: 18 };
+            STATE.impact = { ...STATE.defaults.impact };
+            STATE.copied = false;
             render();
           });
         // Flow controls
@@ -2460,6 +1995,35 @@
             render();
           })
         );
+        // Business Impact specific events
+        root.querySelectorAll('[data-action="set-impact-tab"]').forEach((b) =>
+          b.addEventListener("click", (e) => {
+            STATE.activeImpactTab = e.currentTarget.getAttribute("data-tab");
+            render();
+          })
+        );
+        root.querySelectorAll('[data-action="edit-assumptions"]').forEach((b) =>
+          b.addEventListener("click", () => {
+            STATE.editAssumptions = true;
+            render();
+          })
+        );
+        root.querySelectorAll('[data-action="cancel-assumptions"]').forEach((b) =>
+          b.addEventListener("click", () => {
+            STATE.editAssumptions = false;
+            render();
+          })
+        );
+        root.querySelectorAll('[data-action="save-assumptions"]').forEach((b) =>
+          b.addEventListener("click", () => {
+            STATE.impactInputs.employees = cleanNum($('#employeesInput').value) || 1100;
+            STATE.impactInputs.ticketsPerUserPerMonth = cleanNum($('#ticketsInput').value) || 0.035;
+            STATE.impactInputs.avgTimePerTicketMin = cleanNum($('#avgTimeInput').value) || 18;
+            STATE.impactInputs.appUpdatesPerMonth = cleanNum($('#appUpdatesInput').value) || 22;
+            STATE.editAssumptions = false;
+            render();
+          })
+        );
         // New: Solution modal openers
         root.querySelectorAll('[data-action="open-solution-modal"]').forEach((b) =>
           b.addEventListener("click", (e) => {
@@ -2469,52 +2033,51 @@
             render();
           })
         );
-        // New: Impact editor events
-        root.querySelectorAll('[data-action="edit-impact-panel"]').forEach((b) =>
-          b.addEventListener("click", (e) => {
-            STATE.editImpactPanel = e.currentTarget.dataset.panel;
-            STATE.impactEditMode = 'edit';
-            quill = null;
-            render();
-          })
-        );
-        root.querySelectorAll('[data-action="close-impact-edit"]').forEach((b) =>
-          b.addEventListener("click", () => {
-            STATE.editImpactPanel = null;
-            quill = null;
-            render();
-          })
-        );
-        root.querySelectorAll('[data-action="save-impact-edit"]').forEach((b) =>
-          b.addEventListener("click", () => {
-            if (quill) {
-              const html = quill.root.innerHTML;
-              const sanitized = DOMPurify.sanitize(html);
-              STATE.impactContent[STATE.editImpactPanel] = sanitized;
-              saveImpactContent();
-            }
-            STATE.editImpactPanel = null;
-            quill = null;
-            render();
-          })
-        );
-        root.querySelectorAll('[data-action="switch-impact-mode"]').forEach((b) =>
-          b.addEventListener("click", (e) => {
-            STATE.impactEditMode = e.currentTarget.dataset.mode;
-            render();
-            if (STATE.impactEditMode === 'preview') updatePreview();
-          })
-        );
-        const impactModal = root.querySelector('[data-action="close-impact-edit-outside"]');
-        if (impactModal) {
-          impactModal.addEventListener('click', (e) => {
-            if (!e.target.closest('.rounded-2xl')) {
-              STATE.editImpactPanel = null;
-              quill = null;
-              render();
-            }
-          });
+        // New: Business Impact JS attachment (after render)
+        if (STATE.activeTab === "roi") {
+          attachImpactEvents();
         }
+      }
+      /* =========================
+         NEW: BUSINESS IMPACT JS (PER GUIDE)
+         ========================= */
+      function openTab(name) {
+        document.querySelectorAll('.tab-content').forEach(panel => {
+          panel.style.display = 'none';
+        });
+        document.querySelectorAll('.tab-link').forEach(tab => {
+          tab.classList.remove('active');
+          tab.setAttribute('aria-selected', 'false');
+        });
+        document.getElementById('panel' + name).style.display = 'block';
+        const btn = document.getElementById('tab' + name);
+        btn.classList.add('active');
+        btn.setAttribute('aria-selected', 'true');
+      }
+      function attachImpactEvents() {
+        const editBtns = document.querySelectorAll('.edit-btn');
+        editBtns.forEach(btn => {
+          btn.addEventListener('click', () => {
+            const panel = btn.closest('.tab-content');
+            const isEditing = btn.textContent === 'Save';
+            btn.textContent = isEditing ? 'Edit' : 'Save';
+            btn.setAttribute('aria-pressed', isEditing ? 'false' : 'true');
+            panel.querySelectorAll('.editable').forEach(el => {
+              el.contentEditable = isEditing ? 'false' : 'true';
+              if (isEditing && el.id) {
+                localStorage.setItem(el.id, el.innerHTML);
+              }
+            });
+          });
+        });
+        // Load saved content on DOMContentLoaded (but since in render, call here)
+        document.querySelectorAll('.editable').forEach(el => {
+          if (el.id && localStorage.getItem(el.id)) {
+            el.innerHTML = localStorage.getItem(el.id);
+          }
+        });
+        // Default to Customer tab
+        openTab('Customer');
       }
       /* =========================
          FLOW BUILD + ANIMATION (V1 VERSION)
@@ -2723,13 +2286,9 @@
         if (escapeWired) return;
         escapeWired = true;
         document.addEventListener("keydown", (e) => {
-          if (e.key === "Escape" && (STATE.modalOpen || STATE.openWhyModal || STATE.itemViewerOpen || STATE.itemManagerOpen || STATE.openSolutionModal || STATE.editImpactPanel)) {
+          if (e.key === "Escape" && (STATE.modalOpen || STATE.openWhyModal || STATE.itemViewerOpen || STATE.itemManagerOpen || STATE.openSolutionModal)) {
             if (STATE.openSolutionModal) {
               closeSolutionModal();
-            } else if (STATE.editImpactPanel) {
-              STATE.editImpactPanel = null;
-              quill = null;
-              render();
             } else {
               STATE.modalOpen = false;
               STATE.openWhyModal = null;
@@ -2748,120 +2307,10 @@
         wireEscapeOnce();
         // Load cached items
         STATE.items = loadItems();
-        STATE.impactContent = loadImpactContent();
         // Ensure wizard has a starting “explored” state
         STATE.visitedCards = [NEW_CARDS[0].id];
         render();
-        updateUI();
       });
-      /* =========================
-         BUSINESS IMPACT ADDITIONS
-         ========================= */
-      const impactState = {
-        companyName: "",
-        employees: 1100,
-        ticketsPerUserPerMonth: 0.5,
-        avgMinutesPerTicket: 18,
-        appUpdatesPerMonth: 22,
-      };
-      const PACKAGING_HOURS_AVOIDED_PER_MONTH = 6;
-      const PATCHING_HOURS_AVOIDED_PER_MONTH = 22.5;
-      const FTE_HOURS_PER_YEAR = 2328;
-      function computeImpact(s) {
-        const N = Number(s.employees) || 0;
-        const U = Number(s.appUpdatesPerMonth) || 0;
-        const appSupportHoursPerMonth = (N * Number(s.ticketsPerUserPerMonth) * Number(s.avgMinutesPerTicket)) / 60;
-        const packagingHoursPerMonth = PACKAGING_HOURS_AVOIDED_PER_MONTH;
-        const patchingHoursPerMonth = (U / 22) * PATCHING_HOURS_AVOIDED_PER_MONTH;
-        const hoursPerMonth = appSupportHoursPerMonth + packagingHoursPerMonth + patchingHoursPerMonth;
-        const hoursPerYear = hoursPerMonth * 12;
-        const fte = hoursPerYear / FTE_HOURS_PER_YEAR;
-        return { hoursPerMonth, hoursPerYear, fte };
-      }
-      function formatApproxInt(x) {
-        if (!isFinite(x)) return "~0";
-        return `~${Math.round(x).toLocaleString()}`;
-      }
-      function formatFTE(fte) {
-        if (!isFinite(fte) || fte <= 0) return "~0 FTE";
-        if (fte >= 0.85 && fte <= 1.15) return "~1 FTE";
-        return `~${(Math.round(fte * 10) / 10).toFixed(1)} FTE`;
-      }
-      function updateUI() {
-        const { hoursPerMonth, hoursPerYear, fte } = computeImpact(impactState);
-        const hoursMonthStr = formatApproxInt(hoursPerMonth) + " hours";
-        const hoursYearStr = formatApproxInt(hoursPerYear) + " hours";
-        const fteStr = formatFTE(fte);
-        const updateId = (id, value) => {
-          const el = document.getElementById(id);
-          if (el) el.textContent = value;
-        };
-        updateId("out-hours-month", hoursMonthStr);
-        updateId("out-hours-year", hoursYearStr);
-        updateId("out-fte", fteStr);
-        updateId("customer-hours-month", hoursMonthStr);
-        updateId("customer-hours-year", hoursYearStr);
-        updateId("customer-fte", fteStr);
-        updateId("partner-hours-month", hoursMonthStr);
-        updateId("partner-hours-year", hoursYearStr);
-        updateId("partner-fte", fteStr);
-        const company = (impactState.companyName || "").trim() || null;
-        const companyCustomer = company ?? "your organization";
-        const companyPartner = company ?? "the customer";
-        const employeesStr = (Number(impactState.employees) || 0).toLocaleString();
-        const hoursYearNum = formatApproxInt(hoursPerYear).replace("~", "");
-        const fteText = formatFTE(fte);
-        const customerSummary = `Business Justification – ${companyCustomer}. Based on ${employeesStr} employees, Application Workspace can reclaim approximately ${hoursYearNum} hours of IT capacity annually for ${companyCustomer} (about ${fteText}). This reclaimed capacity can be redeployed to modernization, security improvements, and reduced application-related support burden—without requiring headcount reduction. Application Workspace also supports a consistent end-user application experience while IT evolves the underlying tools and platforms (for example, SCCM, Intune, and other delivery ecosystems).`;
-        const customerTextEl = document.getElementById("customer-summary-text");
-        if (customerTextEl) customerTextEl.textContent = customerSummary;
-        const partnerSummary = `Partner Value Summary – Application Workspace. Application Workspace enables partners to standardize application delivery and management across customers while reducing custom packaging and troubleshooting effort. This supports faster implementations, improved SLA performance, and scalable managed application services without linear headcount growth. Using the current assumptions for ${companyPartner} (${employeesStr} employees), the model estimates ~${hoursYearNum} hours/year of IT capacity reclaimed (about ${fteText}), which partners can align to modernization roadmaps and ongoing optimization services.`;
-        const partnerTextEl = document.getElementById("partner-summary-text");
-        if (partnerTextEl) partnerTextEl.textContent = partnerSummary;
-      }
-      async function copyTextWithFeedback(buttonEl, text) {
-        try {
-          await navigator.clipboard.writeText(text);
-        } catch (err) {
-          const ta = document.createElement("textarea");
-          ta.value = text;
-          ta.setAttribute("readonly", "");
-          ta.style.position = "absolute";
-          ta.style.left = "-9999px";
-          document.body.appendChild(ta);
-          ta.select();
-          document.execCommand("copy");
-          document.body.removeChild(ta);
-        }
-        const original = buttonEl.textContent;
-        buttonEl.textContent = "Copied!";
-        buttonEl.disabled = true;
-        setTimeout(() => {
-          buttonEl.textContent = original;
-          buttonEl.disabled = false;
-        }, 1500);
-      }
-      function wireImpactListeners() {
-        const companyInput = document.getElementById("in-company-name");
-        if (companyInput) companyInput.addEventListener("input", (e) => { impactState.companyName = e.target.value; updateUI(); });
-        const employeesInput = document.getElementById("in-employees");
-        if (employeesInput) employeesInput.addEventListener("input", (e) => { impactState.employees = e.target.value; updateUI(); });
-        const ticketsInput = document.getElementById("in-tickets-per-user");
-        if (ticketsInput) ticketsInput.addEventListener("input", (e) => { impactState.ticketsPerUserPerMonth = e.target.value; updateUI(); });
-        const minutesInput = document.getElementById("in-avg-minutes-per-ticket");
-        if (minutesInput) minutesInput.addEventListener("input", (e) => { impactState.avgMinutesPerTicket = e.target.value; updateUI(); });
-        const updatesInput = document.getElementById("in-app-updates-per-month");
-        if (updatesInput) updatesInput.addEventListener("input", (e) => { impactState.appUpdatesPerMonth = e.target.value; updateUI(); });
-        const copyCustomer = document.getElementById("btn-copy-customer");
-        if (copyCustomer) copyCustomer.addEventListener("click", () => {
-          const text = document.getElementById("customer-summary-text")?.textContent || '';
-          copyTextWithFeedback(copyCustomer, text);
-        });
-        const copyPartner = document.getElementById("btn-copy-partner");
-        if (copyPartner) copyPartner.addEventListener("click", () => {
-          const text = document.getElementById("partner-summary-text")?.textContent || '';
-          copyTextWithFeedback(copyPartner, text);
-        });
-      }
     </script>
   </body>
 </html>
