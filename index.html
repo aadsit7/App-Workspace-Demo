@@ -309,15 +309,20 @@
         letter-spacing: 0.5px;
         margin: 30px 0 10px;
       }
-      .edit-btn {
+      .edit-btn, .reset-btn {
         position: absolute;
         bottom: 20px;
-        right: 20px;
         padding: 6px 12px;
         background: #eee;
         border: none;
         border-radius: 4px;
         cursor: pointer;
+      }
+      .edit-btn {
+        right: 100px;
+      }
+      .reset-btn {
+        right: 20px;
       }
       .content-container {
         position: relative;
@@ -1224,6 +1229,7 @@
                 </tbody>
               </table>
               <button id="editBtnCustomer" class="edit-btn">Edit</button>
+              <button id="resetBtnCustomer" class="reset-btn">Reset</button>
             </div>
             <div id="panelPartner" class="tab-content content-container" role="tabpanel" aria-labelledby="tabPartner" style="display:none;">
               <h2 class="section-title">Partner Value Summary</h2>
@@ -1255,6 +1261,7 @@
                 </tbody>
               </table>
               <button id="editBtnPartner" class="edit-btn">Edit</button>
+              <button id="resetBtnPartner" class="reset-btn">Reset</button>
             </div>
           </div>
         `;
@@ -2054,6 +2061,54 @@
         btn.classList.add('active');
         btn.setAttribute('aria-selected', 'true');
       }
+      const defaults = {
+        customer: {
+          'cust-value1': '<img src="icon-speed.png" alt="" aria-hidden="true"> <strong>Deployment Efficiency:</strong> Apps deployed in minutes, not days.',
+          'cust-value2': '<img src="icon-support.png" alt="" aria-hidden="true"> <strong>Lower Support Load:</strong> Self-service cuts routine tickets.',
+          'cust-value3': '<img src="icon-cost.png" alt="" aria-hidden="true"> <strong>Lower Tooling Spend:</strong> Consolidation into one workspace reduces costs.',
+          'cust-metric1': 'Deployment time reduction',
+          'cust-metric2': 'Change window hours saved',
+          'cust-metric3': 'Major speedup / more capacity',
+          'cust-metric4': 'Reduction in support tickets',
+          'cust-metric5': 'Helpdesk labor hours saved',
+          'cust-metric6': 'Operational cost reduction',
+          'cust-metric7': 'Tool consolidation savings',
+          'cust-metric8': 'Licenses eliminated, engineering hours reclaimed',
+          'cust-metric9': 'Cost savings & capacity gain',
+          'cust-comp1': 'App deployment time',
+          'cust-comp2': 'Days (manual)',
+          'cust-comp3': 'Minutes (automated)',
+          'cust-comp4': 'Support tickets/month',
+          'cust-comp5': 'High (reactive)',
+          'cust-comp6': 'Lower (self-service)',
+          'cust-comp7': 'Tooling TCO',
+          'cust-comp8': 'Multiple tools, high TCO',
+          'cust-comp9': 'Unified platform, ~50% lower TCO',
+        },
+        partner: {
+          'part-value1': '<img src="icon-standardize.png" alt="" aria-hidden="true"> <strong>Standardized Delivery:</strong> Reduce custom app packaging efforts.',
+          'part-value2': '<img src="icon-sla.png" alt="" aria-hidden="true"> <strong>Improved SLAs:</strong> Faster deployments lead to better SLA compliance.',
+          'part-value3': '<img src="icon-scale.png" alt="" aria-hidden="true"> <strong>Scalable Services:</strong> Automated processes free up ~2,300 hours/year (capacity for ~1 FTE).',
+          'part-metric1': 'Packaging time reduction',
+          'part-metric2': 'Hours saved per custom app',
+          'part-metric3': 'Efficiency gain',
+          'part-metric4': 'SLA compliance improvement',
+          'part-metric5': 'Deployment success rate',
+          'part-metric6': 'Reliability boost',
+          'part-metric7': 'Scalability savings',
+          'part-metric8': 'FTE equivalents reclaimed',
+          'part-metric9': 'Capacity expansion',
+          'part-comp1': 'Packaging effort',
+          'part-comp2': 'High (manual)',
+          'part-comp3': 'Low (automated)',
+          'part-comp4': 'SLA achievement',
+          'part-comp5': 'Variable',
+          'part-comp6': 'Consistent',
+          'part-comp7': 'Service scalability',
+          'part-comp8': 'Limited by headcount',
+          'part-comp9': 'Automated growth',
+        }
+      };
       function attachImpactEvents() {
         const editBtns = document.querySelectorAll('.edit-btn');
         editBtns.forEach(btn => {
@@ -2068,6 +2123,25 @@
                 localStorage.setItem(el.id, el.innerHTML);
               }
             });
+          });
+        });
+        const resetBtns = document.querySelectorAll('.reset-btn');
+        resetBtns.forEach(btn => {
+          btn.addEventListener('click', () => {
+            const panelId = btn.id === 'resetBtnCustomer' ? 'customer' : 'partner';
+            const panel = btn.closest('.tab-content');
+            panel.querySelectorAll('.editable').forEach(el => {
+              if (el.id && defaults[panelId][el.id]) {
+                el.innerHTML = defaults[panelId][el.id];
+                localStorage.removeItem(el.id);
+              }
+              el.contentEditable = 'false';
+            });
+            const editBtn = panel.querySelector('.edit-btn');
+            if (editBtn) {
+              editBtn.textContent = 'Edit';
+              editBtn.setAttribute('aria-pressed', 'false');
+            }
           });
         });
         // Load saved content on DOMContentLoaded (but since in render, call here)
