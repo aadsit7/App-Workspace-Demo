@@ -201,74 +201,74 @@
               "Add a new platform and every app has to be repackaged for it.",
               "More platforms means a faster-growing backlog."
             ],
-            short: "Add a platform. Repackage every app.",
+            short: "Each new platform multiplies the packaging workload.",
             state: 'off'
           },
           {
             id: "constant_updates",
-            label: "Updates Never Stop",
-            subtext: "Patches and fixes land every week",
+            label: "Nonstop Update Cycles",
+            subtext: "Vendor updates arrive faster than ever",
             markerYear: 2026.2,
             bullets: [
               "App updates used to be occasional. Now they arrive every week.",
-              "Every update has to be tested and deployed across every platform.",
-              "The queue never fully clears. Teams are always working from behind."
+              "Every update needs testing and deployment across every platform.",
+              "The queue rarely clears — teams stay busy just keeping current."
             ],
-            short: "Constant updates. Manual process can't keep up.",
+            short: "Update volume keeps growing. Manual processes can't scale with it.",
             state: 'off'
           },
           {
             id: "too_many_tools",
-            label: "Too Many Environments",
-            subtext: "Same app, rebuilt for each platform",
+            label: "Multi-Platform Complexity",
+            subtext: "Same app, packaged for each environment",
             markerYear: 2026.8,
             bullets: [
-              "Most teams manage on-prem, cloud, VDI, and SaaS at the same time.",
-              "The same app has to be packaged differently for each one.",
-              "Every environment added means more duplication and more ways things can break."
+              "Most teams manage on-prem, cloud, VDI, and SaaS environments simultaneously.",
+              "The same app needs to be packaged differently for each one.",
+              "Every new environment adds duplication and increases the surface area for issues."
             ],
-            short: "Same app. Rebuilt for every platform, every time.",
+            short: "Same app — repackaged for every platform, every time.",
             state: 'off'
           },
           {
             id: "manual_rework",
-            label: "Engineers on the Wrong Work",
-            subtext: "Best people stuck on the most repetitive tasks",
+            label: "Talent Tied to Routine",
+            subtext: "Skilled engineers deserve higher-value work",
             markerYear: 2027.3,
             bullets: [
               "About 40% of IT engineering time goes to packaging, patching, and troubleshooting.",
-              "When something breaks, senior engineers get pulled in to fix basic problems.",
-              "The AI and cloud projects leadership wants need the same people buried in the backlog."
+              "When something breaks, senior engineers step in — pulling focus from strategic projects.",
+              "AI and cloud initiatives compete for the same people already handling day-to-day delivery."
             ],
-            short: "40% of engineering time is routine work.",
+            short: "40% of engineering time goes to routine tasks.",
             state: 'off'
           },
           {
             id: "security_compliance",
-            label: "Patches Are Too Slow",
-            subtext: "Security expects days. Delivery takes weeks.",
+            label: "Patching Under Pressure",
+            subtext: "Timelines are tightening across the board",
             markerYear: 2027.7,
             bullets: [
-              "Security teams expect patches out within days. Manual processes rarely hit that.",
-              "When infrastructure changes, apps break for users — and engineers spend days on fixes.",
-              "Tracking compliance across multiple environments manually is slow and easy to get wrong."
+              "Security teams need patches out in days. Manual workflows make that timeline hard to hit.",
+              "Infrastructure changes can ripple into user-facing app issues that take time to resolve.",
+              "Tracking compliance across multiple environments manually takes effort away from other priorities."
             ],
-            short: "Security expects days. Manual delivery takes weeks.",
+            short: "Patch timelines are tightening faster than processes can keep up.",
             state: 'off'
           }
         ],
 
         tippingPointYear: 2027.5,
         tippingPoint: {
-          title: "The Breaking Point",
+          title: "The Tipping Point",
           bullets: [
-            "Every change takes longer than it should",
-            "Security patches are falling behind",
-            "Engineers are stuck doing repetitive work",
-            "AI and cloud projects keep getting pushed back",
-            "More work, same team, flat budget"
+            "Each change takes longer than it used to",
+            "Patch timelines are harder to meet consistently",
+            "Skilled engineers spend most of their time on routine tasks",
+            "Strategic projects compete with day-to-day delivery",
+            "Workload is growing — budgets and headcount aren't"
           ],
-          closing: "This isn't a people problem. It's a model problem."
+          closing: "This isn't about the team. It's about the delivery model — and it's fixable."
         },
 
         // ─── CHANGE 2: chartConfig — labels and tipping updated ───
@@ -277,7 +277,7 @@
           xAxis: "Time",
           center: "Team Capacity",
           footer: "",
-          tipping: "The point where IT becomes the bottleneck on everything"
+          tipping: "Where demand outpaces what any team can deliver manually"
         },
 
         currentDemandExponent: 1.6,
@@ -289,25 +289,25 @@
         // ─── CHANGE 5: STATE.currentState — all three sections replaced ───
         currentState: {
           change: {
-            intro: "App delivery still works the way it did a decade ago.",
+            intro: "App delivery was designed for a simpler time. The environment has changed — the process hasn't.",
             bullets: [
-              "Add a platform and every app has to be repackaged for it.",
-              "Patches run on weekly tool cycles. Security problems don't wait.",
-              "Back-end changes break things users see. Engineers spend days fixing it.",
-              "SaaS moved the workload. It didn't remove it.",
-              "40% of engineering time goes to routine maintenance."
+              "Each new platform means every app has to be repackaged for it.",
+              "Patch cycles are on a fixed schedule. Security timelines aren't.",
+              "Infrastructure changes can ripple into user-facing issues that take time to resolve.",
+              "SaaS shifted where work happens. It didn't reduce the volume.",
+              "Roughly 40% of engineering time goes to routine delivery tasks."
             ],
-            analyst: "Teams winning on AI and cloud fixed app delivery first."
+            analyst: "The teams that are moving fastest on AI and cloud modernized app delivery first."
           },
           now: {
-            intro: "There's no slack left.",
+            intro: "The margin for absorbing new work has narrowed.",
             bullets: [
-              "Every new platform adds work across every app you already manage.",
-              "Patching windows have shrunk from weeks to days.",
-              "Leadership wants AI tools deployed. The team is buried in the backlog.",
-              "Platform count grows every year. Team size doesn't."
+              "Every new platform adds work across every app already in the portfolio.",
+              "Patching windows have compressed from weeks to days.",
+              "AI and cloud initiatives need attention from teams already running at capacity.",
+              "Platform count grows each year. Headcount and budgets stay flat."
             ],
-            analyst: "Fix it now or spend years catching up."
+            analyst: "Acting now is easier than catching up later."
           },
           recast: {
             intro: "Package an app once. It goes everywhere — automatically.",
@@ -325,25 +325,25 @@
         defaultsCurrentState() {
           return JSON.parse(JSON.stringify({
             change: {
-              intro: "App delivery still works the way it did a decade ago.",
+              intro: "App delivery was designed for a simpler time. The environment has changed — the process hasn't.",
               bullets: [
-                "Add a platform and every app has to be repackaged for it.",
-                "Patches run on weekly tool cycles. Security problems don't wait.",
-                "Back-end changes break things users see. Engineers spend days fixing it.",
-                "SaaS moved the workload. It didn't remove it.",
-                "40% of engineering time goes to routine maintenance."
+                "Each new platform means every app has to be repackaged for it.",
+                "Patch cycles are on a fixed schedule. Security timelines aren't.",
+                "Infrastructure changes can ripple into user-facing issues that take time to resolve.",
+                "SaaS shifted where work happens. It didn't reduce the volume.",
+                "Roughly 40% of engineering time goes to routine delivery tasks."
               ],
-              analyst: "Teams winning on AI and cloud fixed app delivery first."
+              analyst: "The teams that are moving fastest on AI and cloud modernized app delivery first."
             },
             now: {
-              intro: "There's no slack left.",
+              intro: "The margin for absorbing new work has narrowed.",
               bullets: [
-                "Every new platform adds work across every app you already manage.",
-                "Patching windows have shrunk from weeks to days.",
-                "Leadership wants AI tools deployed. The team is buried in the backlog.",
-                "Platform count grows every year. Team size doesn't."
+                "Every new platform adds work across every app already in the portfolio.",
+                "Patching windows have compressed from weeks to days.",
+                "AI and cloud initiatives need attention from teams already running at capacity.",
+                "Platform count grows each year. Headcount and budgets stay flat."
               ],
-              analyst: "Fix it now or spend years catching up."
+              analyst: "Acting now is easier than catching up later."
             },
             recast: {
               intro: "Package an app once. It goes everywhere — automatically.",
@@ -528,10 +528,10 @@
               <h1 class="text-[40px] md:text-[56px] font-semibold leading-tight"><span style="color:#0070F3">Re</span><span style="color:#0A1C60">cast</span> Software</h1>
               <p class="mt-2 max-w-2xl text-[16px] leading-[1.5] text-[#4A5568]">
                 ${STATE.activeTab==='problems'
-                  ? 'IT teams are managing more platforms, more applications, and faster update cycles — with the same teams and flat budgets. The application layer is where every strategic initiative goes to slow down.'
+                  ? 'IT teams are managing more platforms, more apps, and faster update cycles — with the same headcount and flat budgets. This isn\'t a team performance issue. It\'s a delivery model that hasn\'t evolved with the environment.'
                   : STATE.activeTab==='solution'
-                  ? 'Application Workspace changes the fundamental model — from building once per platform to defining once and delivering everywhere. Every other IT layer has already made this shift. Application delivery is the last one.'
-                  : 'Most application work is not hard — it is just repeated once for every platform. Enter your environment numbers to see exactly how much of that disappears.'}
+                  ? 'Application Workspace changes the fundamental model — from packaging once per platform to defining once and delivering everywhere. Every other IT layer has already made this shift. Application delivery is the next one.'
+                  : 'Most application work isn\'t complex — it\'s just repeated once for every platform. Enter your numbers below to see how much time your team can get back.'}
               </p>
             </div>
 
@@ -606,48 +606,48 @@
           id: 'speed',
           icon: 'zap',
           title: 'Speed',
-          tagline: 'The business moves fast. App delivery doesn\'t.',
+          tagline: 'Business timelines are accelerating. Delivery processes haven\'t kept pace.',
           color: '#0070F3',
           colorLight: 'rgba(0,112,243,0.07)',
           colorBorder: 'rgba(0,112,243,0.25)',
           bullets: [
             'New hires wait days for apps they need on day one.',
-            'Security patches take weeks when they need to go out in days.',
-            'Leadership asks for AI tools. The team is already behind.'
+            'Patch timelines have tightened from weeks to days.',
+            'AI and cloud initiatives need attention from teams already at capacity.'
           ],
-          closing: 'The team isn\'t slow. The process is.',
+          closing: 'The teams are capable. The delivery model needs to catch up.',
           drivers: ['constant_updates', 'security_compliance']
         },
         {
           id: 'scale',
           icon: 'layers',
           title: 'Scale',
-          tagline: 'More platforms. Same team size.',
+          tagline: 'Platform count keeps growing. Headcount stays flat.',
           color: '#7c3aed',
           colorLight: 'rgba(124,58,237,0.07)',
           colorBorder: 'rgba(124,58,237,0.25)',
           bullets: [
             'Most teams now manage Windows, Mac, VDI, cloud, and mobile together.',
-            'Add one platform and every app has to be repackaged for it.',
-            'The work multiplies. The team doesn\'t.'
+            'Each new platform means every app needs to be repackaged for it.',
+            'The workload compounds — but team size and budgets don\'t.'
           ],
-          closing: 'Engineers spend most of their time on upkeep, not on progress.',
+          closing: 'Skilled engineers deserve to spend more time on what moves the business forward.',
           drivers: ['more_apps', 'too_many_tools']
         },
         {
           id: 'risk',
           icon: 'shield-alert',
           title: 'Risk',
-          tagline: 'Too much depends on too few people.',
+          tagline: 'Institutional knowledge is concentrated in a small group.',
           color: '#dc2626',
           colorLight: 'rgba(220,38,38,0.07)',
           colorBorder: 'rgba(220,38,38,0.25)',
           bullets: [
-            'App delivery runs on manual steps that only a few people know.',
-            'One person out. Delivery slows down or stops.',
-            'Patches fall behind. Compliance gaps build up quietly.'
+            'App delivery depends on manual steps that live with a handful of people.',
+            'When someone is out, delivery slows — not because the team is weak, but because the process is fragile.',
+            'Compliance tracking across environments adds manual overhead that\'s hard to sustain.'
           ],
-          closing: 'You can\'t hire your way out of this. The model has to change.',
+          closing: 'This is a process resilience challenge — and a solvable one.',
           drivers: ['manual_rework', 'security_compliance']
         }
       ];
@@ -1258,25 +1258,86 @@
       }
 
       function renderSolution(){
+        const totalCards = NEW_CARDS.length;
+        const visitedCount = STATE.visitedCards.length;
+        const progressPct = Math.round((visitedCount / totalCards) * 100);
+
         return `
-          <section id="panel-solution" class="space-y-3">
-            <div class="grid grid-cols-1 gap-3 lg:grid-cols-2">
-              ${renderFlow()}
-              <div class="flex flex-col gap-3 relative">
-                <!-- ─── CHANGE 2.5: sticky header label updated ─── -->
-                <div class="sticky top-0 z-10 bg-white/60 backdrop-blur-lg py-2 shadow-sm rounded-xl px-2">
-                  <div class="flex justify-between items-center text-sm">
-                    <span class="font-semibold">Application Workspace — How It Works</span>
-                    <span class="text-[#4A5568]">${STATE.visitedCards.length} of 3 explored</span>
-                  </div>
+          <section id="panel-solution" class="space-y-4">
+            <!-- Story cards: full width above the flow -->
+            <div class="section-card p-5">
+              <div class="flex items-center justify-between mb-4">
+                <div>
+                  <h3 class="text-lg font-semibold text-[#0A1C60]">How Application Workspace Works</h3>
+                  <p class="text-sm text-[#4A5568] mt-0.5">Explore each section to see the full picture</p>
                 </div>
-                <button type="button" class="md:hidden bg-transparent text-[#0A1C60] border-2 border-[#0A1C60] py-2 text-sm rounded hover:text-[#0070F3] hover:border-[#0070F3]" data-action="expand-all">Expand All</button>
-                ${NEW_CARDS.map(card => popoutCard(card)).join('')}
-                <div class="sticky bottom-0 bg-white/70 backdrop-blur-lg py-3 shadow-lg mt-3 rounded-xl px-2 border border-slate-200">
-                  <!-- ─── CHANGE 2.6: CTA button text updated ─── -->
-                  <button type="button" class="bg-[#0070F3] text-white px-4 py-2 text-sm font-semibold rounded hover:bg-[#005AD0]" data-action="advance" data-next="roi">Calculate Your Time Savings</button>
+                <div class="flex items-center gap-3">
+                  <div class="flex items-center gap-2">
+                    <div class="w-24 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                      <div class="h-full bg-[#0070F3] rounded-full transition-all duration-500" style="width:${progressPct}%"></div>
+                    </div>
+                    <span class="text-xs text-[#4A5568] font-medium tabular-nums">${visitedCount}/${totalCards}</span>
+                  </div>
+                  <button type="button" class="text-xs text-[#0070F3] hover:underline font-medium" data-action="expand-all">Expand all</button>
                 </div>
               </div>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                ${NEW_CARDS.map((card, idx) => {
+                  const expanded = STATE.openCards[card.id];
+                  const visited = STATE.visitedCards.includes(card.id);
+                  const stepNum = idx + 1;
+                  return `
+                    <div class="flex flex-col rounded-xl border ${expanded ? 'border-[#0070F3] ring-1 ring-[#0070F3]/20 shadow-md' : visited ? 'border-green-200 bg-green-50/30' : 'border-slate-200'} transition-all duration-200">
+                      <button type="button" class="w-full text-left p-4 focus-ring rounded-xl" data-action="toggle-card" data-card="${card.id}" aria-expanded="${expanded}">
+                        <div class="flex items-start gap-3">
+                          <div class="h-8 w-8 rounded-lg grid place-items-center flex-shrink-0 ${expanded ? 'bg-[#0070F3] text-white' : visited ? 'bg-green-100 text-green-600' : 'bg-slate-100 text-[#4A5568]'}">
+                            ${visited && !expanded ? '<i data-lucide="check" class="w-4 h-4"></i>' : `<span class="text-sm font-bold">${stepNum}</span>`}
+                          </div>
+                          <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2">
+                              <i data-lucide="${card.icon}" class="w-4 h-4 ${expanded ? 'text-[#0070F3]' : 'text-[#0A1C60]'}" aria-hidden="true"></i>
+                              <span class="text-sm font-semibold text-[#0A1C60]">${card.title}</span>
+                            </div>
+                            <p class="text-xs text-[#4A5568] mt-1 leading-relaxed">${card.closer}</p>
+                          </div>
+                          <i data-lucide="chevron-down" class="w-4 h-4 text-[#4A5568] transition-transform duration-150 flex-shrink-0 mt-1 ${expanded ? 'rotate-180' : ''}" aria-hidden="true"></i>
+                        </div>
+                      </button>
+                      <div class="overflow-hidden transition-all duration-200" style="max-height:${expanded ? '600px' : '0'}; opacity:${expanded ? '1' : '0'}">
+                        <div class="px-4 pb-4 border-t border-slate-100">
+                          <ul class="mt-3 space-y-2.5">
+                            ${card.bullets.map(b => `
+                              <li class="flex items-start gap-2 text-[13px] text-[#4A5568] leading-relaxed">
+                                <i data-lucide="check-circle" class="w-4 h-4 text-[#0070F3] flex-shrink-0 mt-0.5"></i>
+                                <span>${b}</span>
+                              </li>
+                            `).join('')}
+                          </ul>
+                          ${card.timeline && onboardingMiniTimelineEnabled && expanded ? renderMiniTimeline() : ''}
+                        </div>
+                      </div>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+
+            <!-- Interactive flow visualization -->
+            <div class="grid grid-cols-1 gap-3">
+              ${renderFlow()}
+            </div>
+
+            <!-- CTA -->
+            <div class="flex items-center justify-between section-card p-4">
+              <div class="text-sm text-[#4A5568]">
+                ${visitedCount >= totalCards
+                  ? '<span class="text-green-600 font-medium">All sections explored</span> — ready to see your numbers?'
+                  : `Explore all ${totalCards} sections, then see how much time your team gets back.`}
+              </div>
+              <button type="button" class="bg-[#0070F3] text-white px-5 py-2.5 text-sm font-semibold rounded-full hover:bg-[#005AD0] focus-ring inline-flex items-center gap-2 ${visitedCount >= totalCards ? 'animate-pulse' : ''}" data-action="advance" data-next="roi">
+                Calculate Your Time Savings
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+              </button>
             </div>
           </section>
         `;
