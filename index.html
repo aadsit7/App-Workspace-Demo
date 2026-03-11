@@ -105,20 +105,20 @@
       .interactive-node { transition: opacity 0.3s, transform 0.3s; }
       .interactive-node:hover { opacity: 0.9; transform: scale(1.05); }
 
-      .chart-container { width: 100%; height: auto; aspect-ratio: 800 / 400; }
-      #capacity-gap-chart { width: 100%; height: 100%; }
-      .chart-text { font-size: 16px; font-weight: 500; fill: #0f172a; letter-spacing: 0.02em; }
-      .chart-axis { stroke: #e5e7eb; stroke-width: 1.5; }
-      .chart-axis-label { font-size: 18px; font-weight: bold; fill: #0A1C60; }
-      .chart-year-label { font-size: 14px; fill: #111827; }
-      @media (max-width: 640px) { .chart-year-label { font-size: 12px; transform: rotate(-45deg) translate(-10px, 10px); } }
-      .chart-annotation { font-size: 20px; font-weight: 500; fill: #6b7280; text-shadow: 0 1px 2px rgba(0,0,0,0.1); }
-      .demand-line { stroke-width: 3; filter: drop-shadow(0 0 4px rgba(239,68,68,0.3)); }
-      .capacity-line { stroke-width: 3; }
+      .chart-container { width: 100%; height: auto; aspect-ratio: 900 / 500; }
+      #capacity-gap-chart { width: 100%; height: 100%; overflow: visible; }
+      .chart-text { font-size: 13px; font-weight: 500; fill: #0f172a; letter-spacing: 0.01em; }
+      .chart-axis { stroke: #e2e8f0; stroke-width: 1; }
+      .chart-axis-label { font-size: 14px; font-weight: 600; fill: #0A1C60; }
+      .chart-year-label { font-size: 12px; fill: #64748b; font-weight: 500; }
+      @media (max-width: 640px) { .chart-year-label { font-size: 11px; } }
+      .chart-annotation { font-size: 15px; font-weight: 600; fill: #94a3b8; letter-spacing: 0.05em; text-transform: uppercase; }
+      .demand-line { stroke-width: 2.5; filter: drop-shadow(0 0 3px rgba(239,68,68,0.2)); }
+      .capacity-line { stroke-width: 2.5; filter: drop-shadow(0 0 3px rgba(59,130,246,0.2)); }
       .gap-fill { }
-      .marker-group:hover { transform: scale(1.1); transition: transform 0.2s ease; }
-      .marker-group:hover circle { animation: pulse 1.5s infinite; }
-      @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+      .chart-grid-line { stroke: #f1f5f9; stroke-width: 1; stroke-dasharray: 4 4; }
+      .marker-group { cursor: pointer; }
+      .marker-group:hover circle:last-of-type { r: 8; transition: r 0.2s ease; }
       .chart-element { opacity: 0; animation: fadeIn 0.5s forwards; }
       @keyframes fadeIn { to { opacity: 1; } }
       .axis-element { animation-delay: 0s; }
@@ -126,6 +126,8 @@
       .gap-element { animation-delay: 0.6s; }
       .marker-element { animation-delay: 0.9s; }
       .label-element { animation-delay: 1.2s; }
+      .chart-legend { font-size: 12px; font-weight: 500; fill: #475569; }
+      .chart-tooltip { pointer-events: none; font-size: 12px; font-weight: 500; fill: #1e293b; }
 
       :root{
         --bg-main:
@@ -719,7 +721,7 @@
               ` : ''}
               <div class="grid grid-cols-1 lg:grid-cols-[1fr_260px] gap-6 items-start">
                 <div class="chart-container relative">
-                  <svg id="capacity-gap-chart" viewBox="0 0 800 400"></svg>
+                  <svg id="capacity-gap-chart" viewBox="0 0 900 500"></svg>
                 </div>
                 <div class="w-full bg-white/70 backdrop-blur-lg rounded-2xl shadow-md p-5 border border-slate-200">
                   <h3 class="text-sm font-semibold text-[#0A1C60] mb-4">Dig deeper</h3>
@@ -741,9 +743,9 @@
         if (!svg) return;
 
         svg.innerHTML = '';
-        svg.setAttribute('viewBox', '0 0 800 400');
+        svg.setAttribute('viewBox', '0 0 900 500');
 
-        const width = 700, height = 300, margin = {left: 50, bottom: 50, top: 50, right: 50};
+        const width = 680, height = 340, margin = {left: 80, bottom: 70, top: 40, right: 100};
         const xScale = t => margin.left + t * width;
         const yScale = v => margin.top + height - v * height;
 
@@ -758,33 +760,52 @@
             <stop offset="100%" stop-color="#2563eb"/>
           </linearGradient>
           <linearGradient id="gapGradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="rgba(239,68,68,0.10)"/>
-            <stop offset="100%" stop-color="rgba(59,130,246,0.10)"/>
+            <stop offset="0%" stop-color="rgba(239,68,68,0.08)"/>
+            <stop offset="100%" stop-color="rgba(59,130,246,0.08)"/>
           </linearGradient>
+          <filter id="markerGlow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="3" result="blur"/>
+            <feFlood flood-color="#2563eb" flood-opacity="0.3"/>
+            <feComposite in2="blur" operator="in"/>
+            <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
         `;
         svg.appendChild(defs);
 
+        // Grid lines
+        const gridG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        gridG.classList.add('axis-element', 'chart-element');
+        let gridHTML = '';
+        for (let i = 0; i <= 4; i++) {
+          const y = yScale(i / 4);
+          gridHTML += `<line x1="${margin.left}" y1="${y}" x2="${margin.left + width}" y2="${y}" class="chart-grid-line"/>`;
+        }
+        gridG.innerHTML = gridHTML;
+        svg.appendChild(gridG);
+
+        // X axis
         const xAxis = document.createElementNS('http://www.w3.org/2000/svg', 'g');
         xAxis.classList.add('axis-element', 'chart-element');
         xAxis.innerHTML = `
           <line x1="${margin.left}" y1="${margin.top + height}" x2="${margin.left + width}" y2="${margin.top + height}" class="chart-axis"/>
-          <text x="${margin.left + width / 2}" y="${margin.top + height + 40}" text-anchor="middle" class="chart-axis-label">${STATE.chartConfig.xAxis}</text>
+          <text x="${margin.left + width / 2}" y="${margin.top + height + 50}" text-anchor="middle" class="chart-axis-label">${STATE.chartConfig.xAxis}</text>
           ${STATE.years.map((year, i) => {
             const x = xScale(i / 3);
             return `
-              <line x1="${x}" y1="${margin.top + height}" x2="${x}" y2="${margin.top + height + 10}" class="chart-axis"/>
-              <text x="${x}" y="${margin.top + height + 25}" text-anchor="middle" class="chart-year-label chart-text label-element chart-element">${year}</text>
+              <line x1="${x}" y1="${margin.top + height}" x2="${x}" y2="${margin.top + height + 6}" stroke="#cbd5e1" stroke-width="1"/>
+              <text x="${x}" y="${margin.top + height + 24}" text-anchor="middle" class="chart-year-label label-element chart-element">${year}</text>
             `;
           }).join('')}
-          <text x="${margin.left + width / 2}" y="${margin.top + height + 60}" text-anchor="middle" font-size="14" fill="#6b7280" font-family="Inter" class="label-element chart-element">${STATE.chartConfig.footer}</text>
+          ${STATE.chartConfig.footer ? `<text x="${margin.left + width / 2}" y="${margin.top + height + 65}" text-anchor="middle" font-size="11" fill="#94a3b8" font-family="Inter" class="label-element chart-element">${STATE.chartConfig.footer}</text>` : ''}
         `;
         svg.appendChild(xAxis);
 
+        // Y axis
         const yAxis = document.createElementNS('http://www.w3.org/2000/svg', 'g');
         yAxis.classList.add('axis-element', 'chart-element');
         yAxis.innerHTML = `
           <line x1="${margin.left}" y1="${margin.top}" x2="${margin.left}" y2="${margin.top + height}" class="chart-axis"/>
-          <text x="${margin.left - 10}" y="${margin.top + height / 2}" text-anchor="middle" class="chart-axis-label" transform="rotate(-90, ${margin.left - 10}, ${margin.top + height / 2})">${STATE.chartConfig.yAxis}</text>
+          <text x="${margin.left - 45}" y="${margin.top + height / 2}" text-anchor="middle" class="chart-axis-label" transform="rotate(-90, ${margin.left - 45}, ${margin.top + height / 2})">${STATE.chartConfig.yAxis}</text>
         `;
         svg.appendChild(yAxis);
 
@@ -809,20 +830,7 @@
           capacityPoints.push({x: xScale(t), y: yScale(cap)});
         }
 
-        const demandLine = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        demandLine.setAttribute('d', demandPath);
-        demandLine.setAttribute('stroke', 'url(#demandGradient)');
-        demandLine.setAttribute('fill', 'none');
-        demandLine.classList.add('demand-line', 'line-element', 'chart-element');
-        svg.appendChild(demandLine);
-
-        const capacityLine = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        capacityLine.setAttribute('d', capacityPath);
-        capacityLine.setAttribute('stroke', 'url(#capacityGradient)');
-        capacityLine.setAttribute('fill', 'none');
-        capacityLine.classList.add('capacity-line', 'line-element', 'chart-element');
-        svg.appendChild(capacityLine);
-
+        // Gap fill
         const gapPath = demandPoints.map(p => `L ${p.x} ${p.y}`).join(' ') +
           capacityPoints.slice().reverse().map(p => `L ${p.x} ${p.y}`).join(' ') + 'Z';
 
@@ -832,43 +840,115 @@
         gap.classList.add('gap-fill', 'gap-element', 'chart-element');
         svg.appendChild(gap);
 
+        // Demand line
+        const demandLine = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        demandLine.setAttribute('d', demandPath);
+        demandLine.setAttribute('stroke', 'url(#demandGradient)');
+        demandLine.setAttribute('fill', 'none');
+        demandLine.classList.add('demand-line', 'line-element', 'chart-element');
+        svg.appendChild(demandLine);
+
+        // Capacity line
+        const capacityLine = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        capacityLine.setAttribute('d', capacityPath);
+        capacityLine.setAttribute('stroke', 'url(#capacityGradient)');
+        capacityLine.setAttribute('fill', 'none');
+        capacityLine.classList.add('capacity-line', 'line-element', 'chart-element');
+        svg.appendChild(capacityLine);
+
+        // Gap label in center
         const gapLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        gapLabel.setAttribute('x', xScale(0.5));
-        gapLabel.setAttribute('y', yScale(0.5));
+        gapLabel.setAttribute('x', xScale(0.55));
+        gapLabel.setAttribute('y', yScale(0.45));
         gapLabel.setAttribute('text-anchor', 'middle');
         gapLabel.classList.add('chart-annotation', 'label-element', 'chart-element');
         gapLabel.textContent = STATE.chartConfig.center;
         svg.appendChild(gapLabel);
 
+        // Inline line labels (right end of each line)
+        const demandEndY = yScale(Math.pow(1, exp));
+        const capacityEndY = yScale(0.3 + slope);
+        const lineLabelsG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        lineLabelsG.classList.add('label-element', 'chart-element');
+        lineLabelsG.innerHTML = `
+          <rect x="${xScale(1) + 6}" y="${demandEndY - 11}" width="70" height="18" rx="4" fill="rgba(239,68,68,0.08)" stroke="rgba(239,68,68,0.2)" stroke-width="0.5"/>
+          <text x="${xScale(1) + 10}" y="${demandEndY + 2}" font-size="11" font-weight="600" fill="#dc2626" font-family="Inter">Demand</text>
+          <rect x="${xScale(1) + 6}" y="${capacityEndY - 11}" width="70" height="18" rx="4" fill="rgba(59,130,246,0.08)" stroke="rgba(59,130,246,0.2)" stroke-width="0.5"/>
+          <text x="${xScale(1) + 10}" y="${capacityEndY + 2}" font-size="11" font-weight="600" fill="#2563eb" font-family="Inter">Capacity</text>
+        `;
+        svg.appendChild(lineLabelsG);
+
+        // Driver markers — smart label positioning
+        const markerData = [];
         STATE.drivers.forEach(d => {
           if (d.markerYear && (d.state === 'normal' || d.state === 'accelerating')) {
             const t = (d.markerYear - 2025) / 3;
             const dem = Math.pow(t, exp);
             const x = xScale(t);
             const y = yScale(dem);
-
-            const isHot = d.id && STATE.highlightDriverId === d.id;
-            const emphasis = isHot ? 10 : (d.state === 'accelerating' ? 8 : 6);
-            const dotColor = d.state === 'accelerating' ? '#ef4444' : '#2563eb';
-            const dotFilter = isHot ? 'filter: drop-shadow(0 10px 18px rgba(37,99,235,0.35));' : '';
-
-            const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-            g.classList.add('marker-group', 'marker-element', 'chart-element');
-            g.setAttribute('role', 'button');
-            g.setAttribute('tabindex', '0');
-            g.setAttribute('aria-label', `Learn more about ${d.label}`);
-            g.innerHTML = `
-              <title>${d.short}</title>
-              <circle cx="${x}" cy="${y}" r="20" fill="transparent" stroke="none"/>
-              <circle cx="${x}" cy="${y}" r="${emphasis}" fill="${dotColor}" stroke="white" stroke-width="2" style="${dotFilter}"/>
-              <text x="${x + 10}" y="${y + 4}" class="chart-text label-element chart-element">${d.label}</text>
-            `;
-            g.addEventListener('click', () => openInsight(d));
-            g.addEventListener('keydown', e => { if (e.key === 'Enter') openInsight(d); });
-            svg.appendChild(g);
+            markerData.push({driver: d, t, x, y});
           }
         });
 
+        // Sort by y position and stagger labels to avoid overlap
+        markerData.sort((a, b) => a.y - b.y);
+        const labelPositions = [];
+
+        markerData.forEach(({driver: d, x, y}) => {
+          const isHot = d.id && STATE.highlightDriverId === d.id;
+          const emphasis = isHot ? 9 : (d.state === 'accelerating' ? 7 : 5);
+          const dotColor = d.state === 'accelerating' ? '#ef4444' : '#2563eb';
+          const filterAttr = isHot ? 'filter="url(#markerGlow)"' : '';
+
+          // Truncate label to fit
+          const maxLabelLen = 22;
+          const label = d.label.length > maxLabelLen ? d.label.substring(0, maxLabelLen - 1) + '…' : d.label;
+
+          // Smart label placement: alternate above/below, avoid overlaps
+          let labelX = x + 14;
+          let labelY = y + 4;
+          let anchor = 'start';
+
+          // If marker is in the right third, place label to the left
+          if (x > margin.left + width * 0.7) {
+            labelX = x - 14;
+            anchor = 'end';
+          }
+
+          // Avoid vertical overlap with previous labels
+          for (const prev of labelPositions) {
+            if (Math.abs(labelY - prev.y) < 18 && Math.abs(labelX - prev.x) < 120) {
+              labelY = prev.y + 20;
+            }
+          }
+          labelPositions.push({x: labelX, y: labelY});
+
+          const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+          g.classList.add('marker-group', 'marker-element', 'chart-element');
+          g.setAttribute('role', 'button');
+          g.setAttribute('tabindex', '0');
+          g.setAttribute('aria-label', `Learn more about ${d.label}`);
+
+          // Connector line from dot to label if label was shifted
+          let connector = '';
+          if (Math.abs(labelY - y) > 10) {
+            connector = `<line x1="${x}" y1="${y}" x2="${labelX}" y2="${labelY - 4}" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="2 2"/>`;
+          }
+
+          g.innerHTML = `
+            <title>${d.short}</title>
+            <circle cx="${x}" cy="${y}" r="18" fill="transparent" stroke="none"/>
+            <circle cx="${x}" cy="${y}" r="${emphasis}" fill="${dotColor}" stroke="white" stroke-width="2" ${filterAttr}/>
+            ${connector}
+            <rect x="${anchor === 'end' ? labelX - label.length * 7 - 8 : labelX - 4}" y="${labelY - 12}" width="${label.length * 7 + 12}" height="18" rx="4" fill="white" fill-opacity="0.85" stroke="${dotColor}" stroke-width="0.5" stroke-opacity="0.3"/>
+            <text x="${labelX}" y="${labelY}" text-anchor="${anchor}" font-size="11" font-weight="500" fill="#334155" font-family="Inter" class="chart-tooltip">${label}</text>
+          `;
+          g.addEventListener('click', () => openInsight(d));
+          g.addEventListener('keydown', e => { if (e.key === 'Enter') openInsight(d); });
+          svg.appendChild(g);
+        });
+
+        // Tipping point
         if (STATE.showTippingPoint) {
           const t = (STATE.tippingPointYear - 2025) / 3;
           const x = xScale(t);
@@ -879,34 +959,60 @@
           line.setAttribute('x2', x);
           line.setAttribute('y2', yScale(1));
           line.setAttribute('stroke', '#ef4444');
-          line.setAttribute('stroke-width', '2');
-          line.setAttribute('stroke-dasharray', '5 5');
+          line.setAttribute('stroke-width', '1.5');
+          line.setAttribute('stroke-dasharray', '6 4');
+          line.setAttribute('stroke-opacity', '0.7');
           line.classList.add('line-element', 'chart-element');
           svg.appendChild(line);
 
-          const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-          label.setAttribute('x', x + 10);
-          label.setAttribute('y', yScale(1) - 10);
-          label.classList.add('chart-text', 'label-element', 'chart-element');
-          label.textContent = 'IT Inflection Point';
-          svg.appendChild(label);
+          // Tipping point badge
+          const badgeG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+          badgeG.classList.add('label-element', 'chart-element');
+          const tippingLabel = 'Inflection Point';
+          badgeG.innerHTML = `
+            <rect x="${x - 55}" y="${yScale(1) - 28}" width="110" height="22" rx="11" fill="#fef2f2" stroke="#fecaca" stroke-width="1"/>
+            <text x="${x}" y="${yScale(1) - 13}" text-anchor="middle" font-size="10" font-weight="600" fill="#dc2626" font-family="Inter" letter-spacing="0.03em">${tippingLabel}</text>
+          `;
+          svg.appendChild(badgeG);
 
           if (STATE.chartConfig.tipping) {
-            const ann = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-            ann.setAttribute('x', x + 10);
-            ann.setAttribute('y', yScale(0.8) + 5);
-            ann.setAttribute('fill', '#ef4444');
-            ann.setAttribute('font-size', '13');
-            ann.classList.add('chart-text', 'label-element', 'chart-element');
-            ann.textContent = STATE.chartConfig.tipping;
-            svg.appendChild(ann);
+            // Wrap long tipping text into multiple lines
+            const tippingText = STATE.chartConfig.tipping;
+            const words = tippingText.split(' ');
+            const lines = [];
+            let currentLine = '';
+            const maxLineWidth = 20; // chars per line
+
+            words.forEach(word => {
+              if ((currentLine + ' ' + word).trim().length > maxLineWidth) {
+                lines.push(currentLine.trim());
+                currentLine = word;
+              } else {
+                currentLine = (currentLine + ' ' + word).trim();
+              }
+            });
+            if (currentLine.trim()) lines.push(currentLine.trim());
+
+            const annG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            annG.classList.add('label-element', 'chart-element');
+            const lineHeight = 14;
+            const boxH = lines.length * lineHeight + 12;
+            const boxY = yScale(0.85);
+            const boxX = x > margin.left + width / 2 ? x - 145 : x + 10;
+
+            let annHTML = `<rect x="${boxX}" y="${boxY}" width="135" height="${boxH}" rx="6" fill="white" fill-opacity="0.9" stroke="#fecaca" stroke-width="1"/>`;
+            lines.forEach((ln, i) => {
+              annHTML += `<text x="${boxX + 10}" y="${boxY + 16 + i * lineHeight}" font-size="11" fill="#b91c1c" font-family="Inter" font-weight="500">${ln}</text>`;
+            });
+            annG.innerHTML = annHTML;
+            svg.appendChild(annG);
           }
 
           const hit = document.createElementNS('http://www.w3.org/2000/svg', 'g');
           hit.setAttribute('role', 'button');
           hit.setAttribute('tabindex', '0');
           hit.setAttribute('aria-label', 'Learn more about Projected Tipping Point');
-          hit.innerHTML = `<rect x="${x - 10}" y="${yScale(1) - 20}" width="20" height="${height}" fill="transparent"/>`;
+          hit.innerHTML = `<rect x="${x - 15}" y="${yScale(1) - 30}" width="30" height="${height + 40}" fill="transparent"/>`;
           hit.addEventListener('click', () => openInsight(STATE.tippingPoint));
           hit.addEventListener('keydown', e => { if (e.key === 'Enter') openInsight(STATE.tippingPoint); });
           svg.appendChild(hit);
