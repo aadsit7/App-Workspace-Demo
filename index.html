@@ -732,53 +732,6 @@
               </div>
             </div>
 
-            <!-- ROW 4: The bottleneck -->
-            <div class="rounded-2xl overflow-hidden" style="background:linear-gradient(135deg,#0A1C60 0%,#0070F3 100%)">
-              <div class="px-6 py-6 md:px-8 md:py-7">
-                <div class="flex items-start gap-4">
-                  <div class="flex-shrink-0 h-10 w-10 rounded-xl bg-white/15 grid place-items-center mt-0.5">
-                    <i data-lucide="alert-octagon" class="w-5 h-5 text-white"></i>
-                  </div>
-                  <div class="flex-1">
-                    <div class="text-[10px] font-bold uppercase tracking-widest text-white/60 mb-1">The result</div>
-                    <h3 class="text-xl font-bold text-white mb-2">It all backs up in the same place</h3>
-                    <p class="text-[14px] text-white/85 leading-relaxed mb-4 max-w-2xl">
-                      Speed, Scale, and Risk all hit the same spot — the application layer. Packaging, patching, deploying. This is where the queue builds. This is why everything else waits.
-                    </p>
-                    <div class="flex flex-wrap gap-2">
-                      ${['Packaging','Patching','Deploying','Updates','Compliance'].map(task=>`
-                        <span class="inline-flex items-center px-3 py-1 rounded-full bg-white/15 text-white text-[12px] font-medium border border-white/20">
-                          ${task}
-                        </span>
-                      `).join('')}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- ROW 5: What teams actually need -->
-            <div class="section-card p-6">
-              <h3 class="text-base font-semibold text-[#0A1C60] mb-1">What IT teams actually need</h3>
-              <p class="text-[13px] text-[#4A5568] mb-4">Not more headcount. A better way to work.</p>
-              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                ${[
-                  {icon:'copy-minus', title:'Stop repeating the same work', body:'Package an app once. It should work everywhere — not need rebuilding for every platform.'},
-                  {icon:'user-check', title:'Free up your best people', body:'About 40% of engineering time goes to routine upkeep. That time belongs on better work.'},
-                  {icon:'rocket', title:'Deliver when it matters', body:'Apps on day one. Fast patches. New tools without a growing queue.'},
-                  {icon:'cpu', title:'Have room for what\'s next', body:'AI tools, new platforms, new demands — teams need capacity to keep up.'}
-                ].map(g=>`
-                  <div class="rounded-xl border border-slate-200 bg-slate-50/60 p-4 hover:border-[#0070F3]/30 hover:bg-blue-50/30 transition-colors">
-                    <div class="h-8 w-8 rounded-lg bg-[#0070F3]/10 grid place-items-center mb-3">
-                      <i data-lucide="${g.icon}" class="w-4 h-4 text-[#0070F3]"></i>
-                    </div>
-                    <div class="text-[13px] font-semibold text-[#0A1C60] mb-1">${g.title}</div>
-                    <p class="text-[12px] text-[#4A5568] leading-relaxed">${g.body}</p>
-                  </div>
-                `).join('')}
-              </div>
-            </div>
-
           </section>
         `;
       }
