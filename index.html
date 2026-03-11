@@ -108,26 +108,34 @@
       .chart-container { width: 100%; height: auto; aspect-ratio: 900 / 500; }
       #capacity-gap-chart { width: 100%; height: 100%; overflow: visible; }
       .chart-text { font-size: 13px; font-weight: 500; fill: #0f172a; letter-spacing: 0.01em; }
-      .chart-axis { stroke: #e2e8f0; stroke-width: 1; }
-      .chart-axis-label { font-size: 14px; font-weight: 600; fill: #0A1C60; }
-      .chart-year-label { font-size: 12px; fill: #64748b; font-weight: 500; }
+      .chart-axis { stroke: #cbd5e1; stroke-width: 1.5; }
+      .chart-axis-label { font-size: 13px; font-weight: 600; fill: #0A1C60; letter-spacing: 0.02em; }
+      .chart-year-label { font-size: 12px; fill: #64748b; font-weight: 600; letter-spacing: 0.03em; }
       @media (max-width: 640px) { .chart-year-label { font-size: 11px; } }
-      .chart-annotation { font-size: 15px; font-weight: 600; fill: #94a3b8; letter-spacing: 0.05em; text-transform: uppercase; }
-      .demand-line { stroke-width: 2.5; filter: drop-shadow(0 0 3px rgba(239,68,68,0.2)); }
-      .capacity-line { stroke-width: 2.5; filter: drop-shadow(0 0 3px rgba(59,130,246,0.2)); }
+      .chart-annotation { font-size: 14px; font-weight: 700; fill: #94a3b8; letter-spacing: 0.08em; text-transform: uppercase; }
+      .demand-line { stroke-width: 3; filter: drop-shadow(0 2px 6px rgba(239,68,68,0.25)); }
+      .capacity-line { stroke-width: 3; filter: drop-shadow(0 2px 6px rgba(59,130,246,0.25)); }
       .gap-fill { }
-      .chart-grid-line { stroke: #f1f5f9; stroke-width: 1; stroke-dasharray: 4 4; }
+      .chart-grid-line { stroke: #f1f5f9; stroke-width: 1; stroke-dasharray: 6 6; }
       .marker-group { cursor: pointer; }
       .marker-group:hover circle:last-of-type { r: 8; transition: r 0.2s ease; }
-      .chart-element { opacity: 0; animation: fadeIn 0.5s forwards; }
-      @keyframes fadeIn { to { opacity: 1; } }
+      .chart-element { opacity: 0; animation: chartFadeIn 0.6s cubic-bezier(0.2,0.8,0.2,1) forwards; }
+      @keyframes chartFadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
       .axis-element { animation-delay: 0s; }
       .line-element { animation-delay: 0.3s; }
-      .gap-element { animation-delay: 0.6s; }
-      .marker-element { animation-delay: 0.9s; }
-      .label-element { animation-delay: 1.2s; }
-      .chart-legend { font-size: 12px; font-weight: 500; fill: #475569; }
-      .chart-tooltip { pointer-events: none; font-size: 12px; font-weight: 500; fill: #1e293b; }
+      .gap-element { animation-delay: 0.5s; }
+      .marker-element { animation-delay: 0.8s; }
+      .label-element { animation-delay: 1s; }
+      .chart-legend { font-size: 12px; font-weight: 600; fill: #475569; }
+      .chart-tooltip { pointer-events: none; font-size: 11px; font-weight: 600; fill: #1e293b; }
+      .force-card { position: relative; overflow: hidden; border-radius: 1rem; transition: all 250ms cubic-bezier(0.2,0.8,0.2,1); }
+      .force-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--force-color, transparent); opacity: 0; transition: opacity 250ms ease; }
+      .force-card:hover::before, .force-card[aria-pressed="true"]::before { opacity: 1; }
+      .force-card:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(15,23,42,0.12), 0 4px 8px rgba(15,23,42,0.06); }
+      .chart-panel { background: rgba(255,255,255,0.92); border: 1px solid rgba(226,232,240,0.80); border-radius: 1.25rem; box-shadow: 0 4px 24px rgba(15,23,42,0.06), 0 1px 4px rgba(15,23,42,0.04); }
+      .sidebar-card { background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(249,250,251,0.90)); border: 1px solid rgba(226,232,240,0.60); border-radius: 1rem; box-shadow: 0 2px 12px rgba(15,23,42,0.05); backdrop-filter: blur(12px); }
+      .sidebar-btn { border-radius: 0.875rem; transition: all 200ms cubic-bezier(0.2,0.8,0.2,1); }
+      .sidebar-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(15,23,42,0.10); }
 
       :root{
         --bg-main:
@@ -572,7 +580,7 @@
         attachEvents();
 
         if (STATE.activeTab === 'solution') { buildFlow(); attachAccordionKeyboard(); }
-        if (STATE.activeTab === 'roi') { updateROIOutputs(); }
+        if (STATE.activeTab === 'roi' && typeof updateROIOutputs === 'function') { updateROIOutputs(); }
         if (STATE.activeTab === 'problems') {
           renderCapacityGapChart();
           if (Math.abs(STATE.currentDemandExponent - STATE.targetDemandExponent) > 0.001 || Math.abs(STATE.currentCapacitySlope - STATE.targetCapacitySlope) > 0.001) {
@@ -654,19 +662,13 @@
 
       function renderProblems(){
         const af = STATE.activeForce;
+        const activeDriverCount = STATE.drivers.filter(d => d.state !== 'off').length;
 
         return `
           <section id="panel-problems" class="space-y-5">
 
-            <!-- ROW 1: Context -->
-                </div>
-                <div>
-                </div>
-              </div>
-            </div>
-
-            <!-- ROW 2: Three force cards -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <!-- Force cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
               ${FORCES.map(f => {
                 const isActive = af === f.id;
                 return `
@@ -674,61 +676,80 @@
                     type="button"
                     data-action="select-force"
                     data-force="${f.id}"
-                    class="text-left section-card p-5 transition-all duration-200 focus-ring w-full"
-                    style="${isActive
-                      ? 'background:'+f.colorLight+';border-left:4px solid '+f.color+';box-shadow:0 0 0 1.5px '+f.color+'33;'
-                      : 'border-left:4px solid transparent;'}"
+                    class="force-card text-left focus-ring w-full p-0"
+                    style="--force-color:${f.color}; background:${isActive ? f.colorLight : 'rgba(255,255,255,0.92)'}; border:1px solid ${isActive ? f.colorBorder : 'rgba(226,232,240,0.70)'}; ${isActive ? 'box-shadow:0 8px 32px '+f.color+'18, 0 0 0 1px '+f.color+'22;' : 'box-shadow: 0 2px 10px rgba(15,23,42,0.06);'}"
                     aria-pressed="${isActive}"
                   >
-                    <div class="flex items-center justify-between mb-3">
-                      <div class="flex items-center gap-2">
-                        <div class="h-8 w-8 rounded-lg grid place-items-center flex-shrink-0"
-                             style="background:${f.colorLight}; border:1px solid ${f.colorBorder}">
-                          <i data-lucide="${f.icon}" class="w-4 h-4" style="color:${f.color}"></i>
+                    <div class="p-5 pb-4">
+                      <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-3">
+                          <div class="h-10 w-10 rounded-xl grid place-items-center flex-shrink-0"
+                               style="background:${f.colorLight}; border:1px solid ${f.colorBorder}">
+                            <i data-lucide="${f.icon}" class="w-5 h-5" style="color:${f.color}"></i>
+                          </div>
+                          <span class="text-[18px] font-bold tracking-tight text-[#0A1C60]">${f.title}</span>
                         </div>
-                        <span class="text-lg font-bold text-[#0A1C60]">${f.title}</span>
+                        ${isActive ? `<span class="h-2.5 w-2.5 rounded-full flex-shrink-0 animate-pulse" style="background:${f.color}"></span>` : ''}
                       </div>
-                      ${isActive ? `<span class="h-2.5 w-2.5 rounded-full flex-shrink-0" style="background:${f.color}"></span>` : ''}
+                      <p class="text-[13px] font-medium text-[#0A1C60] mb-3 leading-snug">${f.tagline}</p>
+                      <ul class="space-y-2.5">
+                        ${f.bullets.map(b=>`
+                          <li class="flex items-start gap-2.5 text-[12.5px] text-[#4A5568] leading-relaxed">
+                            <span class="h-1.5 w-1.5 rounded-full flex-shrink-0 mt-[6px]" style="background:${f.color}"></span>
+                            <span>${b}</span>
+                          </li>
+                        `).join('')}
+                      </ul>
                     </div>
-                    <p class="text-[13px] font-medium text-[#0A1C60] mb-3 leading-snug">${f.tagline}</p>
-                    <ul class="space-y-2">
-                      ${f.bullets.map(b=>`
-                        <li class="flex items-start gap-2 text-[12px] text-[#4A5568] leading-relaxed">
-                          <span class="h-1.5 w-1.5 rounded-full flex-shrink-0" style="background:${f.color}; margin-top:5px"></span>
-                          <span>${b}</span>
-                        </li>
-                      `).join('')}
-                    </ul>
+                    <div class="px-5 py-3 flex items-center gap-2 text-[11px] font-semibold tracking-wide uppercase" style="border-top:1px solid ${isActive ? f.colorBorder : 'rgba(226,232,240,0.5)'}; color:${f.color}">
+                      <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                      ${isActive ? 'Viewing' : 'Explore'}
+                    </div>
                   </button>
                 `;
               }).join('')}
             </div>
 
-            <!-- ROW 3: Chart + sidebar -->
-            <div class="section-card p-6">
+            <!-- Chart + sidebar -->
+            <div class="chart-panel p-6 md:p-8">
               ${af ? `
-                <div class="mb-4 flex items-center justify-between">
-                  <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[12px] font-semibold"
+                <div class="mb-5 flex items-center justify-between">
+                  <div class="inline-flex items-center gap-2.5 px-4 py-2 rounded-full text-[12px] font-bold tracking-wide"
                        style="background:${FORCES.find(f=>f.id===af).colorLight}; color:${FORCES.find(f=>f.id===af).color}; border:1px solid ${FORCES.find(f=>f.id===af).colorBorder}">
-                    <span class="h-2 w-2 rounded-full" style="background:${FORCES.find(f=>f.id===af).color}"></span>
-                    ${FORCES.find(f=>f.id===af).title}
+                    <i data-lucide="${FORCES.find(f=>f.id===af).icon}" class="w-3.5 h-3.5"></i>
+                    Showing: ${FORCES.find(f=>f.id===af).title}
                   </div>
                   <button type="button" data-action="clear-force"
-                    class="inline-flex items-center gap-1 text-[11px] text-[#6b7280] hover:text-[#0A1C60] focus-ring rounded px-2 py-1 transition-colors">
-                    <i data-lucide="x" class="w-3 h-3"></i> Clear
+                    class="inline-flex items-center gap-1.5 text-[12px] text-[#6b7280] hover:text-[#0A1C60] focus-ring rounded-lg px-3 py-1.5 transition-colors hover:bg-slate-50">
+                    <i data-lucide="x" class="w-3.5 h-3.5"></i> Clear filter
                   </button>
                 </div>
-              ` : ''}
-              <div class="grid grid-cols-1 lg:grid-cols-[1fr_260px] gap-6 items-start">
+              ` : `
+                <div class="mb-5 flex items-center gap-3">
+                  <div class="h-8 w-8 rounded-lg grid place-items-center bg-slate-100">
+                    <i data-lucide="trending-up" class="w-4 h-4 text-[#0A1C60]"></i>
+                  </div>
+                  <div>
+                    <h3 class="text-[15px] font-bold text-[#0A1C60] tracking-tight">Demand vs. Capacity</h3>
+                    <p class="text-[12px] text-[#64748b]">Select a force above to highlight its drivers on the chart</p>
+                  </div>
+                </div>
+              `}
+              <div class="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-8 items-start">
                 <div class="chart-container relative">
                   <svg id="capacity-gap-chart" viewBox="0 0 900 500"></svg>
                 </div>
-                <div class="w-full bg-white/70 backdrop-blur-lg rounded-2xl shadow-md p-5 border border-slate-200">
-                  <h3 class="text-sm font-semibold text-[#0A1C60] mb-4">Dig deeper</h3>
-                  <div class="grid grid-cols-1 gap-3 items-stretch">
-                    ${calloutDropdown('change','alert-triangle','Why Change','bg-slate-50')}
-                    ${calloutDropdown('now','clock-4','Why Now','bg-slate-50', false, "")}
-                    ${calloutDropdown('recast','sparkles','Why Recast','bg-slate-50', true)}
+                <div class="sidebar-card p-5">
+                  <div class="flex items-center gap-2 mb-5">
+                    <div class="h-7 w-7 rounded-lg grid place-items-center bg-[#0A1C60]/5">
+                      <i data-lucide="compass" class="w-4 h-4 text-[#0A1C60]"></i>
+                    </div>
+                    <h3 class="text-sm font-bold text-[#0A1C60] tracking-tight">Dig Deeper</h3>
+                  </div>
+                  <div class="grid grid-cols-1 gap-2.5 items-stretch">
+                    ${calloutDropdown('change','alert-triangle','Why Change','bg-white/80')}
+                    ${calloutDropdown('now','clock-4','Why Now','bg-white/80', false, "")}
+                    ${calloutDropdown('recast','sparkles','Why Recast','bg-white/80', true)}
                   </div>
                 </div>
               </div>
@@ -752,22 +773,32 @@
         const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
         defs.innerHTML = `
           <linearGradient id="demandGradient" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stop-color="#ef4444"/>
+            <stop offset="0%" stop-color="#f87171"/>
+            <stop offset="50%" stop-color="#ef4444"/>
             <stop offset="100%" stop-color="#dc2626"/>
           </linearGradient>
           <linearGradient id="capacityGradient" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stop-color="#3b82f6"/>
+            <stop offset="0%" stop-color="#60a5fa"/>
+            <stop offset="50%" stop-color="#3b82f6"/>
             <stop offset="100%" stop-color="#2563eb"/>
           </linearGradient>
           <linearGradient id="gapGradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="rgba(239,68,68,0.08)"/>
-            <stop offset="100%" stop-color="rgba(59,130,246,0.08)"/>
+            <stop offset="0%" stop-color="rgba(239,68,68,0.06)"/>
+            <stop offset="50%" stop-color="rgba(168,85,247,0.04)"/>
+            <stop offset="100%" stop-color="rgba(59,130,246,0.06)"/>
+          </linearGradient>
+          <linearGradient id="demandGlow" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="rgba(239,68,68,0.15)"/>
+            <stop offset="100%" stop-color="rgba(239,68,68,0)"/>
           </linearGradient>
           <filter id="markerGlow" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur in="SourceAlpha" stdDeviation="3" result="blur"/>
-            <feFlood flood-color="#2563eb" flood-opacity="0.3"/>
+            <feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blur"/>
+            <feFlood flood-color="#2563eb" flood-opacity="0.35"/>
             <feComposite in2="blur" operator="in"/>
             <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <filter id="lineShadow" x="-10%" y="-10%" width="120%" height="120%">
+            <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.08"/>
           </filter>
         `;
         svg.appendChild(defs);
@@ -788,15 +819,15 @@
         xAxis.classList.add('axis-element', 'chart-element');
         xAxis.innerHTML = `
           <line x1="${margin.left}" y1="${margin.top + height}" x2="${margin.left + width}" y2="${margin.top + height}" class="chart-axis"/>
-          <text x="${margin.left + width / 2}" y="${margin.top + height + 50}" text-anchor="middle" class="chart-axis-label">${STATE.chartConfig.xAxis}</text>
+          <text x="${margin.left + width / 2}" y="${margin.top + height + 52}" text-anchor="middle" class="chart-axis-label">${STATE.chartConfig.xAxis}</text>
           ${STATE.years.map((year, i) => {
             const x = xScale(i / 3);
             return `
-              <line x1="${x}" y1="${margin.top + height}" x2="${x}" y2="${margin.top + height + 6}" stroke="#cbd5e1" stroke-width="1"/>
-              <text x="${x}" y="${margin.top + height + 24}" text-anchor="middle" class="chart-year-label label-element chart-element">${year}</text>
+              <line x1="${x}" y1="${margin.top + height}" x2="${x}" y2="${margin.top + height + 8}" stroke="#94a3b8" stroke-width="1.5"/>
+              <text x="${x}" y="${margin.top + height + 26}" text-anchor="middle" class="chart-year-label label-element chart-element">${year}</text>
             `;
           }).join('')}
-          ${STATE.chartConfig.footer ? `<text x="${margin.left + width / 2}" y="${margin.top + height + 65}" text-anchor="middle" font-size="11" fill="#94a3b8" font-family="Inter" class="label-element chart-element">${STATE.chartConfig.footer}</text>` : ''}
+          ${STATE.chartConfig.footer ? `<text x="${margin.left + width / 2}" y="${margin.top + height + 65}" text-anchor="middle" font-size="11" fill="#94a3b8" font-family="Inter" font-weight="500" class="label-element chart-element">${STATE.chartConfig.footer}</text>` : ''}
         `;
         svg.appendChild(xAxis);
 
@@ -865,16 +896,32 @@
         gapLabel.textContent = STATE.chartConfig.center;
         svg.appendChild(gapLabel);
 
+        // Legend at top-right of chart
+        const legendG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        legendG.classList.add('label-element', 'chart-element');
+        const legendX = margin.left + width - 190;
+        const legendY = margin.top - 8;
+        legendG.innerHTML = `
+          <rect x="${legendX - 12}" y="${legendY - 14}" width="210" height="30" rx="8" fill="rgba(255,255,255,0.85)" stroke="rgba(226,232,240,0.6)" stroke-width="1"/>
+          <line x1="${legendX}" y1="${legendY}" x2="${legendX + 24}" y2="${legendY}" stroke="url(#demandGradient)" stroke-width="3" stroke-linecap="round"/>
+          <text x="${legendX + 30}" y="${legendY + 4}" font-size="11" font-weight="600" fill="#dc2626" font-family="Inter">Demand</text>
+          <line x1="${legendX + 100}" y1="${legendY}" x2="${legendX + 124}" y2="${legendY}" stroke="url(#capacityGradient)" stroke-width="3" stroke-linecap="round"/>
+          <text x="${legendX + 130}" y="${legendY + 4}" font-size="11" font-weight="600" fill="#2563eb" font-family="Inter">Capacity</text>
+        `;
+        svg.appendChild(legendG);
+
         // Inline line labels (right end of each line)
         const demandEndY = yScale(Math.pow(1, exp));
         const capacityEndY = yScale(0.3 + slope);
         const lineLabelsG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
         lineLabelsG.classList.add('label-element', 'chart-element');
         lineLabelsG.innerHTML = `
-          <rect x="${xScale(1) + 6}" y="${demandEndY - 11}" width="70" height="18" rx="4" fill="rgba(239,68,68,0.08)" stroke="rgba(239,68,68,0.2)" stroke-width="0.5"/>
-          <text x="${xScale(1) + 10}" y="${demandEndY + 2}" font-size="11" font-weight="600" fill="#dc2626" font-family="Inter">Demand</text>
-          <rect x="${xScale(1) + 6}" y="${capacityEndY - 11}" width="70" height="18" rx="4" fill="rgba(59,130,246,0.08)" stroke="rgba(59,130,246,0.2)" stroke-width="0.5"/>
-          <text x="${xScale(1) + 10}" y="${capacityEndY + 2}" font-size="11" font-weight="600" fill="#2563eb" font-family="Inter">Capacity</text>
+          <rect x="${xScale(1) + 8}" y="${demandEndY - 12}" width="76" height="22" rx="6" fill="rgba(239,68,68,0.06)" stroke="rgba(239,68,68,0.20)" stroke-width="1"/>
+          <circle cx="${xScale(1) + 20}" cy="${demandEndY}" r="3" fill="#ef4444"/>
+          <text x="${xScale(1) + 28}" y="${demandEndY + 4}" font-size="11" font-weight="700" fill="#dc2626" font-family="Inter">Demand</text>
+          <rect x="${xScale(1) + 8}" y="${capacityEndY - 12}" width="76" height="22" rx="6" fill="rgba(59,130,246,0.06)" stroke="rgba(59,130,246,0.20)" stroke-width="1"/>
+          <circle cx="${xScale(1) + 20}" cy="${capacityEndY}" r="3" fill="#3b82f6"/>
+          <text x="${xScale(1) + 28}" y="${capacityEndY + 4}" font-size="11" font-weight="700" fill="#2563eb" font-family="Inter">Capacity</text>
         `;
         svg.appendChild(lineLabelsG);
 
@@ -938,10 +985,11 @@
           g.innerHTML = `
             <title>${d.short}</title>
             <circle cx="${x}" cy="${y}" r="18" fill="transparent" stroke="none"/>
-            <circle cx="${x}" cy="${y}" r="${emphasis}" fill="${dotColor}" stroke="white" stroke-width="2" ${filterAttr}/>
+            <circle cx="${x}" cy="${y}" r="${emphasis + 3}" fill="${dotColor}" fill-opacity="0.12" stroke="none"/>
+            <circle cx="${x}" cy="${y}" r="${emphasis}" fill="${dotColor}" stroke="white" stroke-width="2.5" ${filterAttr}/>
             ${connector}
-            <rect x="${anchor === 'end' ? labelX - label.length * 7 - 8 : labelX - 4}" y="${labelY - 12}" width="${label.length * 7 + 12}" height="18" rx="4" fill="white" fill-opacity="0.85" stroke="${dotColor}" stroke-width="0.5" stroke-opacity="0.3"/>
-            <text x="${labelX}" y="${labelY}" text-anchor="${anchor}" font-size="11" font-weight="500" fill="#334155" font-family="Inter" class="chart-tooltip">${label}</text>
+            <rect x="${anchor === 'end' ? labelX - label.length * 7 - 10 : labelX - 6}" y="${labelY - 13}" width="${label.length * 7 + 16}" height="22" rx="6" fill="white" fill-opacity="0.92" stroke="${dotColor}" stroke-width="0.8" stroke-opacity="0.25" filter="url(#lineShadow)"/>
+            <text x="${labelX}" y="${labelY + 1}" text-anchor="${anchor}" font-size="11" font-weight="600" fill="#1e293b" font-family="Inter" class="chart-tooltip">${label}</text>
           `;
           g.addEventListener('click', () => openInsight(d));
           g.addEventListener('keydown', e => { if (e.key === 'Enter') openInsight(d); });
@@ -970,8 +1018,9 @@
           badgeG.classList.add('label-element', 'chart-element');
           const tippingLabel = 'Inflection Point';
           badgeG.innerHTML = `
-            <rect x="${x - 55}" y="${yScale(1) - 28}" width="110" height="22" rx="11" fill="#fef2f2" stroke="#fecaca" stroke-width="1"/>
-            <text x="${x}" y="${yScale(1) - 13}" text-anchor="middle" font-size="10" font-weight="600" fill="#dc2626" font-family="Inter" letter-spacing="0.03em">${tippingLabel}</text>
+            <rect x="${x - 60}" y="${yScale(1) - 30}" width="120" height="26" rx="13" fill="#fef2f2" stroke="#fecaca" stroke-width="1.5"/>
+            <circle cx="${x - 40}" cy="${yScale(1) - 17}" r="3" fill="#ef4444"/>
+            <text x="${x + 4}" y="${yScale(1) - 13}" text-anchor="middle" font-size="10" font-weight="700" fill="#dc2626" font-family="Inter" letter-spacing="0.05em">${tippingLabel}</text>
           `;
           svg.appendChild(badgeG);
 
@@ -1120,24 +1169,26 @@
       const whyOrder = ['change', 'now', 'recast'];
 
       function calloutDropdown(id, icon, label, headerTone, cta=false, subtext=''){
+        const colors = { change: '#f59e0b', now: '#3b82f6', recast: '#8b5cf6' };
+        const accentColor = colors[id] || '#0A1C60';
         return `
           <div class="h-full flex flex-col">
             <button
               type="button"
-              class="w-full overflow-hidden ring-1 ring-slate-200 focus-ring transition hover:ring-slate-300 shadow-sm"
+              class="sidebar-btn w-full overflow-hidden focus-ring bg-white border border-slate-200/80"
               data-action="open-why-modal"
               data-why="${id}"
-              style="border-radius:var(--radius)"
             >
-              <div class="${cx('flex items-center justify-between px-4 py-3', headerTone)}" style="border-bottom:1px solid var(--border-subtle)">
-                <div class="flex items-center gap-2">
-                  <i data-lucide="${icon}" class="w-4 h-4 text-[#0A1C60]" aria-hidden="true"></i>
-                  <span class="text-[18px] font-semibold tracking-normal text-[#0A1C60]">${label}</span>
+              <div class="flex items-center justify-between px-4 py-3.5">
+                <div class="flex items-center gap-3">
+                  <div class="h-8 w-8 rounded-lg grid place-items-center flex-shrink-0" style="background:${accentColor}12; border:1px solid ${accentColor}25">
+                    <i data-lucide="${icon}" class="w-4 h-4" style="color:${accentColor}" aria-hidden="true"></i>
+                  </div>
+                  <span class="text-[15px] font-bold tracking-tight text-[#0A1C60]">${label}</span>
                 </div>
-                <i data-lucide="chevron-right" class="w-4 h-4 text-[#4A5568] transition-transform duration-150" aria-hidden="true"></i>
+                <i data-lucide="chevron-right" class="w-4 h-4 text-[#94a3b8] transition-transform duration-150" aria-hidden="true"></i>
               </div>
             </button>
-            ${subtext ? `<p class="px-5 py-2 text-sm text-gray-700">${subtext}</p>` : ''}
           </div>
         `;
       }
