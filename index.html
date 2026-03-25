@@ -159,8 +159,8 @@
     <script>
       // ─── CHANGE 1: TABS — updated roi label and icon ───
       const TABS = [
-        { id: 'problems', label: 'Current State', icon: 'alert-triangle' },
-        { id: 'solution', label: 'Recast Approach', icon: 'workflow' },
+        { id: 'problems', label: 'Where Things Stand', icon: 'alert-triangle' },
+        { id: 'solution', label: 'How Application Workspace Works', icon: 'workflow' },
         { id: 'roi', label: 'Time & Cost Calculator', icon: 'calculator' }
       ];
 
@@ -292,10 +292,9 @@
               "Add a platform and every app has to be repackaged for it.",
               "Patches run on weekly tool cycles. Security problems don't wait.",
               "Back-end changes break things users see. Engineers spend days fixing it.",
-              "SaaS moved the workload. It didn't remove it.",
               "40% of engineering time goes to routine maintenance."
             ],
-            analyst: "Teams winning on AI and cloud fixed app delivery first."
+            analyst: "The teams that have capacity for AI and cloud initiatives aren't bigger — they've eliminated the repeat work."
           },
           now: {
             intro: "There's no slack left.",
@@ -305,7 +304,7 @@
               "Leadership wants AI tools deployed. The team is buried in the backlog.",
               "Platform count grows every year. Team size doesn't."
             ],
-            analyst: "Fix it now or spend years catching up."
+            analyst: "Every quarter this runs on manual process is another quarter the backlog grows. It doesn't self-correct."
           },
           recast: {
             intro: "Package an app once. It goes everywhere — automatically.",
@@ -328,10 +327,9 @@
                 "Add a platform and every app has to be repackaged for it.",
                 "Patches run on weekly tool cycles. Security problems don't wait.",
                 "Back-end changes break things users see. Engineers spend days fixing it.",
-                "SaaS moved the workload. It didn't remove it.",
                 "40% of engineering time goes to routine maintenance."
               ],
-              analyst: "Teams winning on AI and cloud fixed app delivery first."
+              analyst: "The teams that have capacity for AI and cloud initiatives aren't bigger — they've eliminated the repeat work."
             },
             now: {
               intro: "There's no slack left.",
@@ -341,7 +339,7 @@
                 "Leadership wants AI tools deployed. The team is buried in the backlog.",
                 "Platform count grows every year. Team size doesn't."
               ],
-              analyst: "Fix it now or spend years catching up."
+              analyst: "Every quarter this runs on manual process is another quarter the backlog grows. It doesn't self-correct."
             },
             recast: {
               intro: "Package an app once. It goes everywhere — automatically.",
@@ -463,7 +461,7 @@
           bullets: [
             'Set up an app once. It deploys everywhere — ConfigMgr, Intune, Citrix, AVD, Windows 365, macOS. No rebuilding for each platform.',
             '8,000+ apps are already packaged and ready. Most of your catalog is covered before you start.',
-            'The right app reaches the right person automatically, based on who they are and what device they\'re on.',
+            'The right app reaches the right person on the right device — automatically. No ticket required.',
             'Patches go out across every environment on a schedule. Compliance reports are generated automatically.',
             'Works alongside your existing tools. Nothing gets replaced — just connected.'
           ],
@@ -481,7 +479,7 @@
             'Nothing gets ripped out. Application Workspace connects to what you already have.',
             'A dedicated success manager is with you from day one to go-live.',
             'Takes 1–2 engineers part-time. No big project team needed.',
-            'Users notice the difference immediately — apps are there when they need them.'
+            'End users notice on day one. The app is there before they have to ask for it.'
           ],
           closer: 'Faster than your next patch cycle.',
           timeline: true,
@@ -526,10 +524,10 @@
               <h1 class="text-[40px] md:text-[56px] font-semibold leading-tight"><span style="color:#0070F3">Re</span><span style="color:#0A1C60">cast</span> Software</h1>
               <p class="mt-2 max-w-2xl text-[16px] leading-[1.5] text-[#4A5568]">
                 ${STATE.activeTab==='problems'
-                  ? 'IT teams are managing more platforms, more applications, and faster update cycles — with the same teams and flat budgets. The application layer is where every strategic initiative goes to slow down.'
+                  ? 'Most IT teams we talk to are managing more platforms than they were two or three years ago — with the same headcount. The work keeps multiplying. The team doesn\'t. <em class="font-normal text-[#6b7280]">Does that match what you\'re seeing?</em>'
                   : STATE.activeTab==='solution'
-                  ? 'Application Workspace changes the fundamental model — from building once per platform to defining once and delivering everywhere. Every other IT layer has already made this shift. Application delivery is the last one.'
-                  : 'Most application work is not hard — it is just repeated once for every platform. Enter your environment numbers to see exactly how much of that disappears.'}
+                  ? 'Right now, every app change gets rebuilt for each platform it runs on. Application Workspace eliminates that. You define an application once — it deploys to every platform automatically.'
+                  : 'You already know where the time goes. Put in your numbers and see what it adds up to.'}
               </p>
             </div>
 
@@ -604,7 +602,7 @@
           id: 'speed',
           icon: 'zap',
           title: 'Speed',
-          tagline: 'The business moves fast. App delivery doesn\'t.',
+          tagline: 'The queue never fully clears — and leadership keeps adding to it.',
           color: '#0070F3',
           colorLight: 'rgba(0,112,243,0.07)',
           colorBorder: 'rgba(0,112,243,0.25)',
@@ -663,7 +661,8 @@
               </div>
             </div>
 
-            <!-- ROW 2: Three force cards -->
+            <!-- ROW 2: Conversational prompt + Three force cards -->
+            <p class="text-[17px] text-[#0A1C60] leading-snug">Which of these is causing the most friction right now?</p>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
               ${FORCES.map(f => {
                 const isActive = af === f.id;
@@ -697,14 +696,15 @@
                         </li>
                       `).join('')}
                     </ul>
+                    ${isActive ? `<p class="mt-3 pt-3 border-t text-[13px] font-semibold text-[#0A1C60] leading-snug" style="border-color:${f.colorBorder}">${f.closing}</p>` : ''}
                   </button>
                 `;
               }).join('')}
             </div>
 
-            <!-- ROW 3: Chart + sidebar -->
+            <!-- ROW 3: Chart (collapsed by default, expands on force card selection) -->
+            ${af ? `
             <div class="section-card p-6">
-              ${af ? `
                 <div class="mb-4 flex items-center justify-between">
                   <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[12px] font-semibold"
                        style="background:${FORCES.find(f=>f.id===af).colorLight}; color:${FORCES.find(f=>f.id===af).color}; border:1px solid ${FORCES.find(f=>f.id===af).colorBorder}">
@@ -716,19 +716,23 @@
                     <i data-lucide="x" class="w-3 h-3"></i> Clear
                   </button>
                 </div>
-              ` : ''}
-              <div class="grid grid-cols-1 lg:grid-cols-[1fr_260px] gap-6 items-start">
-                <div class="chart-container relative">
-                  <svg id="capacity-gap-chart" viewBox="0 0 800 400"></svg>
-                </div>
-                <div class="w-full bg-white/70 backdrop-blur-lg rounded-2xl shadow-md p-5 border border-slate-200">
-                  <h3 class="text-sm font-semibold text-[#0A1C60] mb-4">Dig deeper</h3>
-                  <div class="grid grid-cols-1 gap-3 items-stretch">
-                    ${calloutDropdown('change','alert-triangle','Why Change','bg-slate-50')}
-                    ${calloutDropdown('now','clock-4','Why Now','bg-slate-50', false, "")}
-                    ${calloutDropdown('recast','sparkles','Why Recast','bg-slate-50', true)}
-                  </div>
-                </div>
+              <p class="text-[13px] text-[#4A5568] mb-3">Here's how this compounds over time</p>
+              <div class="chart-container relative">
+                <svg id="capacity-gap-chart" viewBox="0 0 800 400"></svg>
+              </div>
+            </div>
+            ` : ''}
+
+            <!-- ROW 3b: Why Change / Why Now / Why Recast — full-width horizontal cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div class="section-card p-0 overflow-hidden">
+                ${calloutDropdown('change','alert-triangle','Why Change','bg-slate-50')}
+              </div>
+              <div class="section-card p-0 overflow-hidden">
+                ${calloutDropdown('now','clock-4','Why Now','bg-slate-50', false, "")}
+              </div>
+              <div class="section-card p-0 overflow-hidden">
+                ${calloutDropdown('recast','sparkles','Why Recast','bg-slate-50', true)}
               </div>
             </div>
 
@@ -743,7 +747,7 @@
                     <div class="text-[10px] font-bold uppercase tracking-widest text-white/60 mb-1">The result</div>
                     <h3 class="text-xl font-bold text-white mb-2">It all backs up in the same place</h3>
                     <p class="text-[14px] text-white/85 leading-relaxed mb-4 max-w-2xl">
-                      Speed, Scale, and Risk all hit the same spot — the application layer. Packaging, patching, deploying. This is where the queue builds. This is why everything else waits.
+                      Speed, Scale, and Risk all compress into the same bottleneck — the application layer. Packaging, patching, deploying. It's not the hardest work. It's just the work that never stops.
                     </p>
                     <div class="flex flex-wrap gap-2">
                       ${['Packaging','Patching','Deploying','Updates','Compliance'].map(task=>`
@@ -766,7 +770,7 @@
                   {icon:'copy-minus', title:'Stop repeating the same work', body:'Package an app once. It should work everywhere — not need rebuilding for every platform.'},
                   {icon:'user-check', title:'Free up your best people', body:'About 40% of engineering time goes to routine upkeep. That time belongs on better work.'},
                   {icon:'rocket', title:'Deliver when it matters', body:'Apps on day one. Fast patches. New tools without a growing queue.'},
-                  {icon:'cpu', title:'Have room for what\'s next', body:'AI tools, new platforms, new demands — teams need capacity to keep up.'}
+                  {icon:'cpu', title:'Deploy new tools without growing the queue', body:'AI rollouts, platform migrations, new M365 updates — these land on the same team that\'s already behind. Capacity to respond to what leadership asks for next.'}
                 ].map(g=>`
                   <div class="rounded-xl border border-slate-200 bg-slate-50/60 p-4 hover:border-[#0070F3]/30 hover:bg-blue-50/30 transition-colors">
                     <div class="h-8 w-8 rounded-lg bg-[#0070F3]/10 grid place-items-center mb-3">
@@ -1207,7 +1211,7 @@
                 <!-- ─── CHANGE 2.5: sticky header label updated ─── -->
                 <div class="sticky top-0 z-10 bg-white/60 backdrop-blur-lg py-2 shadow-sm rounded-xl px-2">
                   <div class="flex justify-between items-center text-sm">
-                    <span class="font-semibold">Application Workspace — How It Works</span>
+                    <span class="font-semibold">Defined once. Delivered everywhere.</span>
                     <span class="text-[#4A5568]">${STATE.visitedCards.length} of 3 explored</span>
                   </div>
                 </div>
@@ -1231,7 +1235,7 @@
             <div class="section-card p-6">
               <h3 class="text-xl font-semibold text-[#0A1C60] mb-2">See How Much Time You Get Back</h3>
               <p class="text-sm text-[#4A5568] leading-relaxed max-w-2xl">
-                Right now, every app change gets rebuilt for each platform it runs on. Enter your numbers below to see how many hours that's costing your team — and what you get back when you stop.
+                Enter your environment below. The calculator shows you exactly how many engineering hours are going to repeat work — and what those hours are worth.
               </p>
             </div>
 
@@ -1241,7 +1245,7 @@
                 <div class="text-[11px] font-semibold uppercase tracking-widest text-[#0070F3]">Your Environment</div>
 
                 <label class="flex flex-col gap-1">
-                  <span class="text-sm font-medium text-[#0A1C60]">How many platforms do your apps run on?</span>
+                  <span class="text-sm font-medium text-[#0A1C60]">How many platforms are you managing today?</span>
                   <span class="text-xs text-[#4A5568]">Count each separately: ConfigMgr, Intune, Citrix, AVD, macOS, Windows 365.</span>
                   <input type="number" id="calc-envs" min="1" max="10" value="${STATE.calcInputs.envs}"
                     class="mt-1 w-full rounded border border-slate-200 bg-slate-50 px-3 py-2 text-sm focus-ring">
@@ -1257,7 +1261,7 @@
                 </label>
 
                 <label class="flex flex-col gap-1">
-                  <span class="text-sm font-medium text-[#0A1C60]">Hours to complete one change on one platform?</span>
+                  <span class="text-sm font-medium text-[#0A1C60]">How long does one change take, start to finish, on a single platform?</span>
                   <span class="text-xs text-[#4A5568]">Include packaging, testing, deployment, and fixing anything that breaks.</span>
                   <input type="number" id="calc-time" min="1" max="100" value="${STATE.calcInputs.time}"
                     class="mt-1 w-full rounded border border-slate-200 bg-slate-50 px-3 py-2 text-sm focus-ring">
@@ -1265,7 +1269,7 @@
                 </label>
 
                 <label class="flex flex-col gap-1">
-                  <span class="text-sm font-medium text-[#0A1C60]">Average IT admin salary (USD/year)</span>
+                  <span class="text-sm font-medium text-[#0A1C60]">Fully-loaded IT admin salary (USD/year)</span>
                   <span class="text-xs text-[#4A5568]">Used to put a dollar value on the time saved.</span>
                   <input type="number" id="calc-salary" min="50000" max="300000" step="5000" value="${STATE.calcInputs.salary || 110000}"
                     class="mt-1 w-full rounded border border-slate-200 bg-slate-50 px-3 py-2 text-sm focus-ring">
@@ -1290,7 +1294,7 @@
             </div>
 
             <div class="rounded-xl border border-slate-200 bg-white/60 p-3 text-[11px] text-[#9ca3af] leading-relaxed">
-              <strong class="text-[#6b7280]">How this works:</strong> Hours saved = the time currently spent repackaging the same app for each platform. With Application Workspace that work happens once. Dollar values are based on your salary input. The FTE number shows what that recovered time is worth — not a suggestion to reduce headcount.
+              <strong class="text-[#6b7280]">How this works:</strong> Hours saved = the time currently spent repackaging the same app for each platform. With Application Workspace that work happens once. Dollar values are based on your salary input. The FTE number shows what that recovered time is worth — not a suggestion to reduce headcount. Most teams reinvest that capacity into the backlog or strategic projects — not reductions.
             </div>
 
             <div class="flex justify-start">
@@ -1314,6 +1318,7 @@
             <div class="text-[10px] font-semibold uppercase tracking-widest opacity-70 mb-1">Hours Saved Per Year</div>
             <div class="text-[36px] font-bold tabular-nums leading-none">${fmtHr(r.h_saved_year)}</div>
             <div class="text-sm opacity-75 mt-1">hours your team stops spending on repeat work</div>
+            <div class="text-[12px] opacity-60 mt-2 leading-relaxed">That's engineering time your team stops spending on work that only needs to be done once.</div>
           </div>
 
           <div class="grid grid-cols-3 gap-2">
@@ -2368,13 +2373,12 @@
             updateCurves();
             requestAnimationFrame(animateCurves);
 
-            // Open insight modal with force detail
-            openInsight({
-              id: force.id,
-              title: force.title,
-              short: force.tagline,
-              bullets: force.bullets,
-              closing: force.closing
+            render();
+
+            // Scroll chart into view after it appears
+            requestAnimationFrame(() => {
+              const chart = document.getElementById('capacity-gap-chart');
+              if (chart) chart.scrollIntoView({ behavior: 'smooth', block: 'center' });
             });
             return;
           }
