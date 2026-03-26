@@ -654,11 +654,22 @@
         return `
           <section id="panel-problems" class="space-y-5">
 
-            <!-- ROW 1: Context -->
+            <!-- ROW 1: Four Challenge Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              ${[
+                {icon:'shuffle', title:'Inconsistent Apps', body:'The same application behaves differently depending on the platform it was packaged for — creating confusion and support load.'},
+                {icon:'clock', title:'Slow Changes', body:'Every update, patch, or new app has to be rebuilt for each platform. A single change can take days to reach all users.'},
+                {icon:'shield-off', title:'Delayed Patching', body:'Security patches that should ship in hours take days or weeks — leaving known vulnerabilities open.'},
+                {icon:'alert-triangle', title:'Risky Upgrades', body:'Platform migrations and OS upgrades stall because no one is confident the apps will work on the other side.'}
+              ].map(c=>`
+                <div class="section-card p-4 hover:border-[#0070F3]/30 transition-colors">
+                  <div class="h-8 w-8 rounded-lg bg-red-50 grid place-items-center mb-3">
+                    <i data-lucide="${c.icon}" class="w-4 h-4 text-red-500"></i>
+                  </div>
+                  <div class="text-[13px] font-semibold text-[#0A1C60] mb-1">${c.title}</div>
+                  <p class="text-[12px] text-[#4A5568] leading-relaxed">${c.body}</p>
                 </div>
-                <div>
-                </div>
-              </div>
+              `).join('')}
             </div>
 
             <!-- ROW 2: Conversational prompt + Three force cards -->
@@ -700,6 +711,107 @@
                   </button>
                 `;
               }).join('')}
+            </div>
+
+            <!-- ROW 2b: Speed / Scale / Risk tier -->
+            <div class="section-card p-6">
+              <h3 class="text-base font-semibold text-[#0A1C60] mb-4">Where the Pain Shows Up</h3>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <div class="rounded-t-lg px-4 py-2 text-white font-semibold text-sm" style="background:#dc2626">Speed</div>
+                  <ul class="bg-red-50 rounded-b-lg px-4 py-3 space-y-2 text-[12px] text-[#4A5568] leading-relaxed border border-t-0 border-red-200">
+                    <li class="flex items-start gap-2"><span class="h-1.5 w-1.5 rounded-full flex-shrink-0 mt-1.5" style="background:#dc2626"></span><span>Same app rebuilt 3-4x — once per platform</span></li>
+                    <li class="flex items-start gap-2"><span class="h-1.5 w-1.5 rounded-full flex-shrink-0 mt-1.5" style="background:#dc2626"></span><span>Critical patches take 5-10 days to ship</span></li>
+                    <li class="flex items-start gap-2"><span class="h-1.5 w-1.5 rounded-full flex-shrink-0 mt-1.5" style="background:#dc2626"></span><span>New hires wait days for the right tools</span></li>
+                    <li class="flex items-start gap-2"><span class="h-1.5 w-1.5 rounded-full flex-shrink-0 mt-1.5" style="background:#dc2626"></span><span>AI rollouts stuck behind packaging queues</span></li>
+                  </ul>
+                </div>
+                <div>
+                  <div class="rounded-t-lg px-4 py-2 text-white font-semibold text-sm" style="background:#f59e0b">Scale</div>
+                  <ul class="bg-amber-50 rounded-b-lg px-4 py-3 space-y-2 text-[12px] text-[#4A5568] leading-relaxed border border-t-0 border-amber-200">
+                    <li class="flex items-start gap-2"><span class="h-1.5 w-1.5 rounded-full flex-shrink-0 mt-1.5" style="background:#f59e0b"></span><span>Every new platform multiplies every existing app</span></li>
+                    <li class="flex items-start gap-2"><span class="h-1.5 w-1.5 rounded-full flex-shrink-0 mt-1.5" style="background:#f59e0b"></span><span>Senior engineers spend 30-40% on rework</span></li>
+                    <li class="flex items-start gap-2"><span class="h-1.5 w-1.5 rounded-full flex-shrink-0 mt-1.5" style="background:#f59e0b"></span><span>Packaging talent: scarce, expensive, hard to replace</span></li>
+                    <li class="flex items-start gap-2"><span class="h-1.5 w-1.5 rounded-full flex-shrink-0 mt-1.5" style="background:#f59e0b"></span><span>Migrations stall because app delivery can't keep pace</span></li>
+                  </ul>
+                </div>
+                <div>
+                  <div class="rounded-t-lg px-4 py-2 text-white font-semibold text-sm" style="background:#dc2626">Risk</div>
+                  <ul class="bg-red-50 rounded-b-lg px-4 py-3 space-y-2 text-[12px] text-[#4A5568] leading-relaxed border border-t-0 border-red-200">
+                    <li class="flex items-start gap-2"><span class="h-1.5 w-1.5 rounded-full flex-shrink-0 mt-1.5" style="background:#dc2626"></span><span>Compliance evidence built manually after the fact</span></li>
+                    <li class="flex items-start gap-2"><span class="h-1.5 w-1.5 rounded-full flex-shrink-0 mt-1.5" style="background:#dc2626"></span><span>Same app behaves differently per delivery method</span></li>
+                    <li class="flex items-start gap-2"><span class="h-1.5 w-1.5 rounded-full flex-shrink-0 mt-1.5" style="background:#dc2626"></span><span>Delivery knowledge lives in specific people's heads</span></li>
+                    <li class="flex items-start gap-2"><span class="h-1.5 w-1.5 rounded-full flex-shrink-0 mt-1.5" style="background:#dc2626"></span><span>30-65% of IT capacity trapped in reactive work</span></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <!-- ROW 2c: Architecture Diagram -->
+            <div class="section-card p-6">
+              <h3 class="text-base font-semibold text-[#0A1C60] mb-4">How It Fits Together</h3>
+
+              <!-- TOP ROW: Your Existing Mgmt Tools -->
+              <div class="text-center mb-2">
+                <span class="text-[10px] font-bold uppercase tracking-widest text-[#6b7280]">Your Existing Mgmt Tools</span>
+              </div>
+              <div class="flex flex-wrap justify-center gap-2 mb-4">
+                <span class="inline-flex items-center px-3 py-1.5 rounded-full text-[12px] font-medium text-white" style="background:#7c3aed">Intune</span>
+                <span class="inline-flex items-center px-3 py-1.5 rounded-full text-[12px] font-medium text-white" style="background:#ea580c">ConfigMgr</span>
+                <span class="inline-flex items-center px-3 py-1.5 rounded-full text-[12px] font-medium text-white" style="background:#1e293b">Citrix</span>
+                <span class="inline-flex items-center px-3 py-1.5 rounded-full text-[12px] font-medium text-white" style="background:#7c3aed">AVD / W365</span>
+                <span class="inline-flex items-center px-3 py-1.5 rounded-full text-[12px] font-medium text-white" style="background:#6b7280">macOS</span>
+                <span class="inline-flex items-center px-3 py-1.5 rounded-full text-[12px] font-medium text-white" style="background:#0d9488">Nerdio</span>
+              </div>
+
+              <!-- Dashed lines connecting top to middle -->
+              <div class="flex justify-center mb-4">
+                <div style="width:60%;height:2rem;border-left:2px dashed #94a3b8;border-right:2px dashed #94a3b8;border-bottom:2px dashed #94a3b8;border-radius:0 0 12px 12px"></div>
+              </div>
+
+              <!-- MIDDLE: Application Workspace hub -->
+              <div class="flex items-center gap-4 mb-4">
+                <div class="hidden md:flex flex-col gap-1.5 text-right flex-shrink-0" style="min-width:160px">
+                  <span class="text-[11px] font-medium text-[#4A5568] bg-blue-50 border border-blue-200 rounded-full px-2 py-0.5">8,000+ Pre-tested Apps</span>
+                  <span class="text-[11px] font-medium text-[#4A5568] bg-blue-50 border border-blue-200 rounded-full px-2 py-0.5">Custom App Packaging</span>
+                  <span class="text-[11px] font-medium text-[#4A5568] bg-blue-50 border border-blue-200 rounded-full px-2 py-0.5">Smart Icon Technology</span>
+                </div>
+                <div class="flex-1 rounded-xl p-5 text-center text-white" style="background:linear-gradient(135deg,#0A1C60 0%,#0070F3 100%)">
+                  <div class="text-lg font-bold">Application Workspace</div>
+                  <div class="text-[12px] opacity-80 mt-1">Package &middot; Deliver &middot; Update &middot; Self-Service &middot; Audit</div>
+                </div>
+                <div class="hidden md:flex flex-col gap-1.5 flex-shrink-0" style="min-width:140px">
+                  <span class="text-[11px] font-medium text-[#4A5568] bg-blue-50 border border-blue-200 rounded-full px-2 py-0.5">Identity-Based Access</span>
+                  <span class="text-[11px] font-medium text-[#4A5568] bg-blue-50 border border-blue-200 rounded-full px-2 py-0.5">CVE / Auto-Patching</span>
+                </div>
+              </div>
+
+              <!-- Solid lines connecting middle to bottom -->
+              <div class="flex justify-center mb-4">
+                <div style="width:70%;height:2rem;border-left:2px solid #2563eb;border-right:2px solid #2563eb;border-bottom:2px solid #2563eb;border-radius:0 0 12px 12px"></div>
+              </div>
+
+              <!-- BOTTOM ROW: End Users & Devices -->
+              <div class="text-center mb-2">
+                <span class="text-[10px] font-bold uppercase tracking-widest text-[#6b7280]">End Users & Devices</span>
+              </div>
+              <div class="flex flex-wrap justify-center gap-2">
+                <span class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-[12px] font-medium text-[#0A1C60] bg-slate-100 border border-slate-200">
+                  <i data-lucide="laptop" class="w-3.5 h-3.5"></i> Laptop
+                </span>
+                <span class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-[12px] font-medium text-[#0A1C60] bg-slate-100 border border-slate-200">
+                  <i data-lucide="monitor" class="w-3.5 h-3.5"></i> Virtual Desktop
+                </span>
+                <span class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-[12px] font-medium text-[#0A1C60] bg-slate-100 border border-slate-200">
+                  <i data-lucide="cloud" class="w-3.5 h-3.5"></i> Cloud PC / W365
+                </span>
+                <span class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-[12px] font-medium text-[#0A1C60] bg-slate-100 border border-slate-200">
+                  <i data-lucide="apple" class="w-3.5 h-3.5"></i> macOS
+                </span>
+                <span class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-[12px] font-medium text-[#0A1C60] bg-slate-100 border border-slate-200">
+                  <i data-lucide="smartphone" class="w-3.5 h-3.5"></i> BYOD / Remote
+                </span>
+              </div>
             </div>
 
             <!-- ROW 3: Chart (collapsed by default, expands on force card selection) -->
@@ -1365,6 +1477,8 @@
           `}
         `;
       }
+
+      function updateROIOutputs(){ /* placeholder — calc runs on button click */ }
 
       function setText(id, value){
         const el=document.getElementById(id);
