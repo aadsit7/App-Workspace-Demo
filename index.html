@@ -1481,232 +1481,210 @@
       /* ---------- Flow assets ---------- */
 
       const CATALOG_APPS = [
-        {name:'Teams',    abbr:'T',  bg:'#5B53D6'},
-        {name:'Outlook',  abbr:'O',  bg:'#106EBE'},
-        {name:'Excel',    abbr:'X',  bg:'#107C41'},
-        {name:'Word',     abbr:'W',  bg:'#185ABD'},
-        {name:'Chrome',   abbr:'C',  bg:'#4285F4'},
-        {name:'Zoom',     abbr:'Z',  bg:'#0B5CFF'},
-        {name:'SAP',      abbr:'S',  bg:'#0A6ED1'},
-        {name:'Slack',    abbr:'Sl', bg:'#4A154B'},
-        {name:'Edge',     abbr:'E',  bg:'#0C8EC5'},
-        {name:'Acrobat',  abbr:'A',  bg:'#ED2224'},
-        {name:'Defender', abbr:'D',  bg:'#0067B8'},
-        {name:'Power BI', abbr:'PB', bg:'#F2C811'}
+        { id: 'word', letter: 'W', color: '#185ABD', name: 'Word' },
+        { id: 'excel', letter: 'X', color: '#107C41', name: 'Excel' },
+        { id: 'teams', letter: 'T', color: '#5B53D6', name: 'Teams' },
+        { id: 'ppt', letter: 'P', color: '#D24726', name: 'PowerPoint' },
+        { id: 'outlook', letter: 'O', color: '#106EBE', name: 'Outlook' },
+        { id: 'zoom', letter: 'Z', color: '#0B5CFF', name: 'Zoom' },
+        { id: 'chrome', letter: 'C', color: '#4285F4', name: 'Chrome' },
+        { id: 'slack', letter: 'S', color: '#E01E5A', name: 'Slack' },
+        { id: 'salesforce', letter: 'SF', color: '#00A1E0', name: 'Salesforce' },
+        { id: 'sap', letter: 'SAP', color: '#0A6ED1', name: 'SAP' },
+        { id: 'adobe', letter: 'A', color: '#ED2224', name: 'Acrobat' },
+        { id: 'servicenow', letter: 'SN', color: '#81B29A', name: 'ServiceNow' },
+        { id: 'onedrive', letter: 'OD', color: '#0A5BD5', name: 'OneDrive' },
+        { id: 'okta', letter: 'Ok', color: '#007DC1', name: 'Okta' },
+        { id: 'duo', letter: 'D', color: '#3CB371', name: 'Duo' },
+        { id: 'edge', letter: 'E', color: '#0C8EC5', name: 'Edge' },
+        { id: 'workday', letter: 'WD', color: '#1F5BFF', name: 'Workday' },
+        { id: 'crowdstrike', letter: 'CS', color: '#D61F26', name: 'CrowdStrike' },
+        { id: 'box', letter: 'BX', color: '#0061D5', name: 'Box' },
+        { id: 'defender', letter: 'MD', color: '#0067B8', name: 'Defender' },
       ];
-
       const SCENARIOS = [
-        {label:'First-Time App Launch', tag:'first',
-         checks:['Identity verified','Device compliant','Policy matched','Config resolved','Package selected'],
-         paths:[
-           {from:'User Device',to:'Workspace Agent',method:'Local call'},
-           {from:'Workspace Agent',to:'Orchestration Engine',method:'REST API'},
-           {from:'Orchestration Engine',to:'App Repository',method:'Pull config'},
-           {from:'App Repository',to:'User Device',method:'Stream / install'}
-         ],
-         overlay:'teams', bannerText:'App delivered in < 30 seconds'},
-        {label:'Silent Patch (CVE)',tag:'patch',
-         checks:['CVE feed ingested','Affected apps identified','Pre-tested patch located','Validation passed','Rollout staged'],
-         paths:[
-           {from:'CVE Feed',to:'Orchestration Engine',method:'Webhook'},
-           {from:'Orchestration Engine',to:'Patch Store',method:'Lookup'},
-           {from:'Patch Store',to:'Workspace Agent',method:'Push delta'},
-           {from:'Workspace Agent',to:'User Device',method:'Silent apply'}
-         ],
-         overlay:null, bannerText:'Patch applied silently \u2014 zero user disruption'},
-        {label:'Platform Migration',tag:'migrate',
-         checks:['Migration scope defined','App compatibility checked','Config mapped to new platform','Staged rollout planned','Rollback path confirmed'],
-         paths:[
-           {from:'Admin Console',to:'Orchestration Engine',method:'Migration rule'},
-           {from:'Orchestration Engine',to:'Config Store',method:'Remap'},
-           {from:'Config Store',to:'Target Platform',method:'Deploy'},
-           {from:'Target Platform',to:'Validation',method:'Health check'}
-         ],
-         overlay:null, bannerText:'Migration complete \u2014 no repackaging required'}
+        { id: 'access', label: 'First access', subtitle: 'New user opens their workspace',
+          scenarioDesc: "A new employee opens Application Workspace and sees their personalized app catalog \u2014 every app assigned to them, ready to go. They click Teams. The system determines the best delivery method based on their device, location, and policy.",
+          checks: [ { q: 'User identity?', a: 'Verified \u2014 assigned to Engineering' }, { q: 'Best delivery?', a: 'Local install (corporate device)' }, { q: 'Config?', a: 'Applying MFA + VPN policy' }, { q: 'Environment?', a: 'Windows / On-prem network' } ],
+          activePath: 'local', pathLabel: 'Install + Configure Locally',
+          configNote: 'App delivered with MFA + VPN policy', bannerMsg: 'One catalog. Every app. The right delivery method chosen automatically.' },
+        { id: 'backend', label: 'Backend changed', subtitle: 'IT migrated VDI to SaaS',
+          scenarioDesc: "IT migrated Teams delivery from VDI to SaaS last week. The same user clicks the same icon. Application Workspace routes to the new delivery path automatically. The user experience is identical.",
+          checks: [ { q: 'User identity?', a: 'Verified \u2014 same user' }, { q: 'Best delivery?', a: 'SaaS (IT changed routing)' }, { q: 'Config?', a: 'SSO policy enforced via web' }, { q: 'Environment?', a: 'Delivery switched VDI to SaaS' } ],
+          activePath: 'saas', pathLabel: 'Route to SaaS URL',
+          configNote: 'Same policies, different delivery path \u2014 zero user disruption', bannerMsg: "Backend changes. User experience doesn't. No repackaging. No rework." },
+        { id: 'update', label: 'Version outdated', subtitle: 'Auto-patched at access',
+          scenarioDesc: "A critical security patch was released overnight. When the user accesses Teams, Application Workspace detects the outdated version and updates it automatically \u2014 no maintenance window, no IT ticket.",
+          checks: [ { q: 'User identity?', a: 'Verified \u2014 existing user' }, { q: 'Best delivery?', a: 'Local (already installed)' }, { q: 'Version current?', a: 'No \u2014 v2.1, updating to v2.2' }, { q: 'Config?', a: 'Re-validating compliance' } ],
+          activePath: 'update', pathLabel: 'Auto-Update to v2.2',
+          configNote: 'Patched at access \u2014 no maintenance window, no downtime', bannerMsg: 'Security patches applied at launch \u2014 no maintenance windows. No disruption.' }
       ];
-
-      const ALL_PATHS = SCENARIOS.map(s=>s.paths);
-
+      const ALL_PATHS = [
+        { id: 'local', icon: 'hard-drive', label: 'Install to Device' },
+        { id: 'vdi', icon: 'monitor', label: 'Stream via VDI' },
+        { id: 'saas', icon: 'globe', label: 'Open via SaaS/Web' },
+        { id: 'update', icon: 'refresh-cw', label: 'Auto-Update' },
+        { id: 'download', icon: 'download', label: 'Desktop Download' },
+      ];
       function renderFlow(){
-        var sc = SCENARIOS[Math.max(0, STATE.flowScenarioIdx)] || SCENARIOS[0];
-        var pills = '';
-        for(var i=0;i<SCENARIOS.length;i++){
-          pills += '<span class="scenario-pill" id="scenPill'+i+'" data-action="start-flow" data-scenario="'+i+'"><span>'+SCENARIOS[i].label+'</span></span>';
-        }
-        var apps = '';
-        for(var j=0;j<CATALOG_APPS.length;j++){
-          var a = CATALOG_APPS[j];
-          apps += '<div class="catalog-app" id="catApp'+j+'"><div class="app-icon" style="background:'+a.bg+'">'+a.abbr+'</div><div class="app-name">'+a.name+'</div></div>';
-        }
-        var checks = '';
-        for(var k=0;k<sc.checks.length;k++){
-          checks += '<div class="pipeline-stage" id="pStage'+k+'"><div class="pipeline-node" id="pNode'+k+'"></div><div class="stage-content"><div class="stage-title">'+sc.checks[k]+'</div><div class="stage-detail" id="pDetail'+k+'">Pending</div></div></div>';
-        }
-        var paths = '';
-        for(var m=0;m<sc.paths.length;m++){
-          var p = sc.paths[m];
-          paths += '<div class="path-row" id="pPath'+m+'" style="opacity:0.25;transition:opacity 0.5s ease"><span style="font-weight:600;font-size:11px">'+p.from+'</span> <i data-lucide="arrow-right" class="w-3 h-3" style="flex-shrink:0;color:#94a3b8"></i> <span style="font-weight:600;font-size:11px">'+p.to+'</span><span style="margin-left:auto;font-size:9px;color:#94a3b8">'+p.method+'</span></div>';
-          if(m < sc.paths.length-1) paths += '<div style="height:1px;margin:2px 0 2px 20px;background:#e2e8f0;opacity:0.3"></div>';
-        }
-        return '<div class="section-card p-4">' +
-          '<div class="flex items-center justify-between gap-3 mb-3">' +
-            '<div class="flex items-center gap-2"><div class="h-6 w-6 rounded-[2px] grid place-items-center bg-[#0A1C60]"><i data-lucide="boxes" class="h-3.5 w-3.5 text-white"></i></div><div><h3 class="text-base font-semibold">Application Workspace</h3><div class="text-[12px] text-[#4A5568]">What happens when a user clicks an app</div></div></div>' +
-            '<div class="flex items-center gap-2 text-[12px]">' +
-              '<button type="button" data-action="start-flow" id="btnStart" class="bg-[#0070F3] text-white px-2.5 py-1.5 font-semibold rounded hover:bg-[#005AD0]">Start</button>' +
-              '<button type="button" data-action="pause-flow" id="btnPause" class="bg-transparent text-[#0A1C60] border-2 border-[#0A1C60] px-2.5 py-1.5 rounded hover:text-[#0070F3] hover:border-[#0070F3]" style="display:none">Pause</button>' +
-              '<button type="button" data-action="reset-flow" class="bg-transparent text-[#0A1C60] border-2 border-[#0A1C60] px-2.5 py-1.5 rounded hover:text-[#0070F3] hover:border-[#0070F3]">Reset</button>' +
-            '</div>' +
-          '</div>' +
-          '<div class="flex flex-wrap gap-2 mb-3" id="scenPills">'+pills+'</div>' +
-          '<div class="grid grid-cols-1 md:grid-cols-2 gap-3">' +
-            '<div class="device-frame"><div class="device-titlebar"><div class="device-dot" style="background:#ef4444"></div><div class="device-dot" style="background:#f59e0b"></div><div class="device-dot" style="background:#22c55e"></div><span id="titlebarText" style="flex:1;text-align:center;font-size:10px;color:#94a3b8">Application Workspace</span></div>' +
-            '<div class="device-screen" style="position:relative;min-height:280px">' +
-              '<div class="catalog-grid" id="catalogGrid" style="transition:opacity 0.3s ease">'+apps+'</div>' +
-              '<div class="app-window-overlay" id="appOverlay">' +
-                '<div class="app-window-topbar"><div class="aw-icon" style="background:#5B53D6">T</div><div><div class="aw-title">Microsoft Teams</div><div class="aw-subtitle" id="appSubtitle">Desktop App</div></div></div>' +
-                '<div class="app-window-body" style="flex-direction:row">' +
-                  '<div class="teams-sidebar"><div class="teams-sidebar-dot active"><i data-lucide="message-square" class="w-3 h-3"></i></div><div class="teams-sidebar-dot"><i data-lucide="users" class="w-3 h-3"></i></div><div class="teams-sidebar-dot"><i data-lucide="calendar" class="w-3 h-3"></i></div><div class="teams-sidebar-dot"><i data-lucide="phone" class="w-3 h-3"></i></div></div>' +
-                  '<div class="teams-chat-area"><div class="teams-chat-header"><i data-lucide="hash" class="w-3 h-3 text-slate-400"></i> Engineering</div>' +
-                    '<div class="teams-chat-body">' +
-                      '<div class="teams-msg" id="tMsg0" style="transition:opacity 0.4s ease 0.2s,transform 0.4s ease 0.2s"><div class="teams-msg-avatar" style="background:#3b82f6">AK</div><div class="teams-msg-bubble">The Q3 deck is updated and ready for review</div></div>' +
-                      '<div class="teams-msg" id="tMsg1" style="transition:opacity 0.4s ease 0.5s,transform 0.4s ease 0.5s"><div class="teams-msg-avatar" style="background:#10b981">JR</div><div class="teams-msg-bubble">Sprint review at 2pm today</div></div>' +
-                      '<div class="teams-msg" id="tMsg2" style="transition:opacity 0.4s ease 0.8s,transform 0.4s ease 0.8s"><div class="teams-msg-bubble self">Thanks, I\'ll be there!</div></div>' +
-                    '</div>' +
-                    '<div class="teams-chat-input"><div class="teams-chat-input-box">Type a message...</div><i data-lucide="send" class="w-3 h-3 text-slate-300"></i></div>' +
-                  '</div>' +
-                '</div>' +
-              '</div>' +
-            '</div></div>' +
-            '<div>' +
-              '<div class="bts-label bts-label-engine"><i data-lucide="cpu" class="w-3 h-3"></i> Behind the scenes</div>' +
-              '<div class="pipeline" id="pipelineStages">'+checks+'</div>' +
-              '<div class="mt-3"><div class="text-[10px] font-semibold uppercase tracking-widest text-[#64748b] mb-2">Delivery Path</div><div class="space-y-1" id="cfgPaths">'+paths+'</div></div>' +
-              '<div class="flow-banner" id="flowBanner" style="margin-top:8px">'+sc.bannerText+'</div>' +
-            '</div>' +
-          '</div>' +
-        '</div>';
+        const sc = STATE.flowScenarioIdx;
+        const phase = STATE.flowPhase;
+        const scenario = sc >= 0 && sc < SCENARIOS.length ? SCENARIOS[sc] : null;
+        const appOpen = scenario && phase !== 'idle';
+        const stageState = (stagePhases) => {
+          if (!scenario) return '';
+          const idx = ['clicking','checking','routing','config','done','final'];
+          const currentIdx = idx.indexOf(phase);
+          const lastIdx = idx.indexOf(stagePhases[stagePhases.length - 1]);
+          if (currentIdx > lastIdx) return 'reached';
+          if (stagePhases.includes(phase)) return 'active-stage';
+          return '';
+        };
+        const progressPct = !scenario ? 0 : phase === 'clicking' ? 8 : phase === 'checking' ? 28 : phase === 'routing' ? 48 : phase === 'config' ? 68 : phase === 'done' ? 88 : phase === 'final' ? 100 : 0;
+        const checkDone = ['routing','config','done','final'].includes(phase);
+        return `
+          <div class="section-card p-4">
+            <div class="flex items-center justify-between gap-3 mb-3">
+              <div class="flex items-center gap-2">
+                <div class="h-6 w-6 rounded-[2px] grid place-items-center bg-[#0A1C60]"><i data-lucide="zap" class="h-3.5 w-3.5 text-white"></i></div>
+                <div>
+                  <h3 class="text-base font-semibold">What happens when a user clicks an app?</h3>
+                  <div class="text-[12px] text-[#4A5568]">The user sees simplicity. The system handles everything else.</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 text-[12px]">
+                <button type="button" data-action="start-flow" class="bg-[#0070F3] text-white px-2.5 py-1.5 text-[12px] font-semibold rounded hover:bg-[#005AD0]">${STATE.flowRunning ? 'Playing...' : 'Start'}</button>
+                <button type="button" data-action="reset-flow" class="bg-transparent text-[#0A1C60] border-2 border-[#0A1C60] px-2.5 py-1.5 rounded hover:text-[#0070F3] hover:border-[#0070F3]">Reset</button>
+              </div>
+            </div>
+            <div class="flex gap-2 mb-2">
+              ${SCENARIOS.map((s, i) => '<div class="scenario-pill '+(i === sc ? 'active-scenario' : (i < sc ? 'done-scenario' : ''))+'"><span>'+(i < sc ? '<i data-lucide="check" class="w-3 h-3"></i>' : '') + s.label+'</span></div>').join('')}
+            </div>
+            ${scenario ? '<div class="text-xs text-[#475569] mb-3 px-1 leading-relaxed" style="border-left:3px solid #0070F3;padding-left:10px"><strong>'+scenario.subtitle+':</strong> '+scenario.scenarioDesc+'</div>' : ''}
+            <div class="bts-label bts-label-user"><i data-lucide="user" class="w-3 h-3"></i> What the user sees</div>
+            <div class="device-frame">
+              <div class="device-screen" style="position:relative">
+                <div class="device-titlebar">
+                  <div class="device-dot device-dot-r"></div><div class="device-dot device-dot-y"></div><div class="device-dot device-dot-g"></div>
+                  <span class="device-titlebar-text">${appOpen ? 'Microsoft Teams' : 'Application Workspace'}</span>
+                </div>
+                <div class="catalog-grid">
+                  ${CATALOG_APPS.map(app => '<div class="catalog-app '+(appOpen && app.id === 'teams' ? 'clicked' : '')+'" data-app="'+app.id+'"><div class="app-icon" style="background:'+app.color+'">'+app.letter+(phase === 'clicking' && app.id === 'teams' ? '<div class="click-ring"></div>' : '')+'</div><span class="app-name">'+app.name+'</span></div>').join('')}
+                </div>
+                <div class="app-window-overlay ${appOpen ? 'open' : ''}">
+                  <div class="app-window-topbar"><div class="aw-icon" style="background:#5B53D6">T</div><div><div class="aw-title">Microsoft Teams</div><div class="aw-subtitle">${scenario && scenario.id === 'backend' ? 'teams.microsoft.com (SaaS)' : scenario && scenario.id === 'update' ? 'v2.2 \u2014 just updated' : 'Desktop App'}</div></div></div>
+                  <div class="app-window-body" style="flex-direction:row">
+                    <div class="teams-sidebar"><div class="teams-sidebar-dot active"><i data-lucide="message-square" class="w-3 h-3"></i></div><div class="teams-sidebar-dot"><i data-lucide="users" class="w-3 h-3"></i></div><div class="teams-sidebar-dot"><i data-lucide="calendar" class="w-3 h-3"></i></div><div class="teams-sidebar-dot"><i data-lucide="phone" class="w-3 h-3"></i></div><div class="teams-sidebar-dot"><i data-lucide="file" class="w-3 h-3"></i></div></div>
+                    <div class="teams-chat-area"><div class="teams-chat-header"><i data-lucide="hash" class="w-3 h-3 text-slate-400"></i> General</div><div class="teams-chat-body"><div class="teams-msg ${appOpen ? 'show' : ''}" style="transition-delay:0.3s"><div class="teams-msg-avatar" style="background:#3b82f6">AK</div><div class="teams-msg-bubble">Hey team, the Q3 deck is updated and ready for review</div></div><div class="teams-msg ${appOpen ? 'show' : ''}" style="transition-delay:0.6s"><div class="teams-msg-avatar" style="background:#10b981">JR</div><div class="teams-msg-bubble">Perfect timing \u2014 pulling it up now</div></div><div class="teams-msg ${appOpen ? 'show' : ''}" style="transition-delay:0.9s"><div class="teams-msg-bubble self">On it. Give me 5 min.</div></div></div><div class="teams-chat-input"><div class="teams-chat-input-box">Type a message...</div><i data-lucide="send" class="w-3 h-3 text-slate-300"></i></div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="flex items-center gap-3 my-3">
+              <div class="flex-1 h-px bg-gradient-to-r from-transparent via-slate-300 to-transparent"></div>
+              <div class="bts-label bts-label-engine"><i data-lucide="cpu" class="w-3 h-3"></i> Behind the scenes</div>
+              ${STATE.flowRunning ? '<button type="button" data-action="pause-flow" class="inline-flex items-center gap-1 px-2 py-1 text-[10px] font-semibold rounded-full border transition '+(STATE.flowPaused ? 'bg-[#0070F3] text-white border-[#0070F3]' : 'bg-white text-[#64748b] border-slate-300')+'"><i data-lucide="'+(STATE.flowPaused ? 'play' : 'pause')+'" class="w-3 h-3"></i>'+(STATE.flowPaused ? 'Resume' : 'Pause')+'</button>' : ''}
+              <div class="flex-1 h-px bg-gradient-to-r from-transparent via-slate-300 to-transparent"></div>
+            </div>
+            <div class="sub-card p-3 bg-gradient-to-b from-white to-slate-50">
+              ${!scenario ? '<div class="text-center py-6 text-sm text-slate-400"><i data-lucide="play-circle" class="w-8 h-8 mx-auto mb-2 text-slate-300"></i><div>Press <strong>Start</strong> to see what happens behind every click</div></div>' : `
+                <div class="flex items-center gap-2 mb-2 px-1"><div style="background:linear-gradient(135deg,#0A1C60,#0070F3);width:18px;height:18px;border-radius:4px;display:grid;place-items:center;flex-shrink:0"><i data-lucide="boxes" class="w-2.5 h-2.5 text-white"></i></div><span class="text-[10px] font-semibold text-[#0A1C60] uppercase tracking-wide">Application Workspace \u2014 Real-Time Orchestration</span></div>
+                <div class="pipeline"><div class="pipeline-progress" style="height:${progressPct}%"></div>
+                  <div class="pipeline-stage ${stageState(['clicking'])}"><div class="pipeline-node"><i data-lucide="zap" class="w-2 h-2 text-white"></i></div><div class="stage-content"><div class="stage-title"><i data-lucide="workflow" class="w-3.5 h-3.5 text-[#0070F3]"></i> Smart Icon activates</div><div class="stage-detail">The app icon is a workflow, not a shortcut. One click triggers real-time orchestration.</div></div></div>
+                  <div class="pipeline-stage ${stageState(['checking'])}"><div class="pipeline-node"><i data-lucide="search" class="w-2 h-2 text-white"></i></div><div class="stage-content"><div class="stage-title"><i data-lucide="scan-search" class="w-3.5 h-3.5 text-[#0070F3]"></i> Evaluate user context</div><div class="stage-detail mb-1.5">The system checks the user, device, and environment instantly.</div><div class="flex flex-wrap gap-1.5">${scenario.checks.map((c, i) => '<div class="check-item '+(checkDone ? 'pass' : '')+'" title="'+c.a+'"><i data-lucide="'+(checkDone ? 'check-circle' : 'circle')+'" class="w-3 h-3"></i><span>'+c.q+'</span>'+(checkDone ? '<span style="color:#059669;font-weight:600;margin-left:2px">'+c.a+'</span>' : '')+'</div>').join('')}</div></div></div>
+                  <div class="pipeline-stage ${stageState(['routing'])}"><div class="pipeline-node"><i data-lucide="git-branch" class="w-2 h-2 text-white"></i></div><div class="stage-content"><div class="stage-title"><i data-lucide="route" class="w-3.5 h-3.5 text-[#0070F3]"></i> Route to correct delivery path</div><div class="stage-detail mb-1.5">One execution path activates. The rest stay dormant.</div><div class="flex flex-wrap gap-1.5">${ALL_PATHS.map(p => { const isActive = p.id === scenario.activePath && ['routing','config','done','final'].includes(phase); const isInactive = p.id !== scenario.activePath && ['routing','config','done','final'].includes(phase); return '<div class="path-row '+(isActive?'active-path':'')+(isInactive?' inactive-path':'')+'"><i data-lucide="'+p.icon+'" class="w-3 h-3"></i><span>'+(p.id === scenario.activePath ? scenario.pathLabel : p.label)+'</span>'+(isActive?'<i data-lucide="check" class="w-3 h-3 text-green-500"></i>':'')+'</div>'; }).join('')}</div></div></div>
+                  <div class="pipeline-stage ${stageState(['config'])}"><div class="pipeline-node"><i data-lucide="settings" class="w-2 h-2 text-white"></i></div><div class="stage-content"><div class="stage-title"><i data-lucide="shield-check" class="w-3.5 h-3.5 text-amber-500"></i> Apply configuration + policy</div><div class="cfg-wrap ${['config','done','final'].includes(phase) ? 'wrapped' : ''} flex items-center gap-2 mt-1"><div style="background:#5B53D6;width:20px;height:20px;border-radius:5px;display:grid;place-items:center;font-size:9px;font-weight:800;color:white;flex-shrink:0">T</div><span class="text-[10px] text-slate-400">+</span><i data-lucide="settings" class="w-3 h-3 text-amber-500"></i><span class="text-[10px] text-slate-400">=</span><i data-lucide="check-circle" class="w-3 h-3 text-green-500"></i><span class="text-[10px] text-slate-500 font-medium">${scenario.configNote}</span></div>${scenario.id === 'update' ? '<div class="flex items-center gap-2 mt-2"><span class="px-1.5 py-0.5 rounded bg-red-50 border border-red-200 text-red-600 text-[10px]">v2.1</span><div class="flex-1"><div class="upd-bar '+(['config','done','final'].includes(phase)?'filling':'')+'"></div></div><span class="px-1.5 py-0.5 rounded '+(['done','final'].includes(phase)?'bg-green-50 border border-green-200 text-green-600':'bg-slate-50 border border-slate-200 text-slate-400')+' text-[10px]">v2.2</span></div>' : ''}</div></div>
+                  <div class="pipeline-stage ${stageState(['done','final'])}"><div class="pipeline-node"><i data-lucide="check" class="w-2 h-2 text-white"></i></div><div class="stage-content" style="${['done','final'].includes(phase)?'border-color:#10b981;background:linear-gradient(135deg,#f0fdf4,#ecfdf5)':''}"><div class="stage-title"><i data-lucide="rocket" class="w-3.5 h-3.5 text-green-500"></i> Delivered \u2014 defined once, works everywhere</div><div class="flex items-center gap-2 mt-1"><div style="background:#5B53D6;width:16px;height:16px;border-radius:4px;display:grid;place-items:center;font-size:7px;font-weight:800;color:white;border:2px solid #0070F3;flex-shrink:0">T</div>${['Laptop','VDI','Cloud PC','Browser'].map((env, i) => '<div class="orch-connector flex-1 '+(['done','final'].includes(phase)?'drawn':'')+'" style="transition-delay:'+i*0.15+'s"></div><span class="text-[9px] text-slate-500 flex-shrink-0 font-medium">'+env+'</span>').join('')}</div></div></div>
+                </div>
+              `}
+            </div>
+            <div class="flow-banner mt-2 ${scenario && phase !== 'idle' ? 'visible' : ''}">${scenario ? scenario.bannerMsg : ''}</div>
+            ${phase === 'final' && sc >= SCENARIOS.length - 1 ? '<div class="sub-card p-4 mt-2 text-center final-glow" style="background:linear-gradient(135deg,#f0fdf4,#eff6ff);border-color:#10b981"><div class="text-lg font-bold text-[#0A1C60] mb-1">Click \u2192 It just works</div><div class="text-xs text-[#4A5568]">Three different scenarios. Same simple user experience. One centralized system handling everything.</div></div>' : ''}
+          </div>
+        `;
       }
-
       function clearFlowTimers(){
-        if(!STATE.flowTimers) STATE.flowTimers={intervals:[],timeouts:[]};
-        STATE.flowTimers.timeouts.forEach(function(id){clearTimeout(id);});
-        STATE.flowTimers.intervals.forEach(function(id){clearInterval(id);});
-        STATE.flowTimers.timeouts=[];
-        STATE.flowTimers.intervals=[];
+        if (!STATE.flowTimers) STATE.flowTimers = { intervals: [], timeouts: [] };
+        STATE.flowTimers.intervals.forEach(id => clearInterval(id));
+        STATE.flowTimers.timeouts.forEach(id => clearTimeout(id));
+        STATE.flowTimers.intervals = [];
+        STATE.flowTimers.timeouts = [];
       }
-
-      function startFlow(scenarioIdx){
-        clearFlowTimers();
-        if(typeof scenarioIdx!=='number') scenarioIdx=0;
-        STATE.flowScenarioIdx=scenarioIdx;
-        STATE.flowStep=-1;
-        STATE.flowPhase='idle';
-        STATE.flowRunning=true;
-        STATE.flowPaused=false;
-        render();
-        // Highlight active pill
-        var pill=document.getElementById('scenPill'+scenarioIdx);
-        if(pill) pill.classList.add('active-scenario');
-        // Update buttons
-        var btnS=document.getElementById('btnStart');
-        if(btnS) btnS.textContent='Running...';
-        var btnP=document.getElementById('btnPause');
-        if(btnP) btnP.style.display='';
-        // Update subtitle per scenario
-        var sc=SCENARIOS[scenarioIdx];
-        var sub=document.getElementById('appSubtitle');
-        if(sub) sub.textContent=sc.tag==='patch'?'Patched silently':sc.tag==='migrate'?'Migrated platform':'Desktop App';
-        // STEP 1: Open app window INSTANTLY
-        STATE.flowTimers.timeouts.push(setTimeout(function(){
-          STATE.flowPhase='running';
-          var cat=document.getElementById('catalogGrid');
-          if(cat){cat.style.opacity='0';cat.style.pointerEvents='none';}
-          var overlay=document.getElementById('appOverlay');
-          if(overlay) overlay.classList.add('open');
-          var tb=document.getElementById('titlebarText');
-          if(tb) tb.textContent='Microsoft Teams';
-          for(var m=0;m<3;m++){var msg=document.getElementById('tMsg'+m);if(msg)msg.classList.add('show');}
-          // STEP 2: Animate pipeline
-          STATE.flowTimers.timeouts.push(setTimeout(function(){animateStep(0,sc);},500));
-        },400));
-      }
-
-      function animateStep(idx,sc){
-        if(STATE.flowPaused){STATE._pausedAt=idx;STATE._pausedSc=sc;return;}
-        if(idx>=sc.checks.length){
-          STATE.flowStep=sc.checks.length;
-          STATE.flowPhase='done';
-          STATE.flowRunning=false;
-          // Mark last step done
-          if(idx>0){
-            var prev=document.getElementById('pStage'+(idx-1));
-            if(prev)prev.className='pipeline-stage reached';
-            var pn=document.getElementById('pNode'+(idx-1));
-            if(pn)pn.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
-            var pd=document.getElementById('pDetail'+(idx-1));
-            if(pd)pd.textContent='Complete';
+      function buildFlowQueue(){
+        const queue = [];
+        for (let i = 0; i < SCENARIOS.length; i++) {
+          const idx = i;
+          queue.push({ delay: (i === 0 ? 600 : 800), fn(){ STATE.flowScenarioIdx = idx; STATE.flowPhase = 'clicking'; render(); } });
+          queue.push({ delay: 1200, fn(){ STATE.flowPhase = 'checking'; render(); animateChecks(); } });
+          queue.push({ delay: 2000, fn(){ STATE.flowPhase = 'routing'; render(); } });
+          queue.push({ delay: 1500, fn(){ STATE.flowPhase = 'config'; render(); } });
+          queue.push({ delay: 1500, fn(){ STATE.flowPhase = 'done'; render(); } });
+          if (i === SCENARIOS.length - 1) {
+            queue.push({ delay: 2000, fn(){ STATE.flowPhase = 'final'; render(); } });
+            queue.push({ delay: 3000, fn(){ STATE.flowRunning = false; STATE.flowPaused = false; render(); } });
           }
-          // Light up all paths
-          for(var p=0;p<sc.paths.length;p++){var pe=document.getElementById('pPath'+p);if(pe)pe.style.opacity='1';}
-          // Show banner
-          var banner=document.getElementById('flowBanner');
-          if(banner)banner.classList.add('visible');
-          // Update buttons
-          var btnS=document.getElementById('btnStart');
-          if(btnS)btnS.textContent='Start';
-          var btnP=document.getElementById('btnPause');
-          if(btnP)btnP.style.display='none';
-          return;
         }
-        STATE.flowStep=idx;
-        // Mark previous done
-        if(idx>0){
-          var prev=document.getElementById('pStage'+(idx-1));
-          if(prev)prev.className='pipeline-stage reached';
-          var pn=document.getElementById('pNode'+(idx-1));
-          if(pn)pn.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
-          var pd=document.getElementById('pDetail'+(idx-1));
-          if(pd)pd.textContent='Complete';
-          // Light up path
-          var pe=document.getElementById('pPath'+(idx-1));
-          if(pe)pe.style.opacity='1';
-        }
-        // Mark current active
-        var cur=document.getElementById('pStage'+idx);
-        if(cur)cur.className='pipeline-stage active-stage';
-        var cn=document.getElementById('pNode'+idx);
-        if(cn)cn.innerHTML='<div class="spinner" style="width:8px;height:8px;border-width:1.5px"></div>';
-        var cd=document.getElementById('pDetail'+idx);
-        if(cd)cd.textContent='Processing...';
-        STATE.flowTimers.timeouts.push(setTimeout(function(){animateStep(idx+1,sc);},900));
+        return queue;
       }
-
+      function runFlowQueue(){
+        if (STATE.flowPaused || STATE.flowQueueIdx >= STATE.flowQueue.length) return;
+        const step = STATE.flowQueue[STATE.flowQueueIdx];
+        const tid = setTimeout(() => {
+          if (STATE.flowPaused) return;
+          step.fn();
+          STATE.flowQueueIdx++;
+          runFlowQueue();
+        }, step.delay);
+        STATE.flowTimers.timeouts.push(tid);
+      }
+      function startFlow(){
+        if (STATE.flowRunning) return;
+        clearFlowTimers();
+        STATE.flowRunning = true;
+        STATE.flowPaused = false;
+        STATE.flowScenarioIdx = 0;
+        STATE.flowPhase = 'idle';
+        STATE.flowQueue = buildFlowQueue();
+        STATE.flowQueueIdx = 0;
+        render();
+        runFlowQueue();
+      }
       function pauseFlow(){
-        STATE.flowPaused=true;
-        var btnP=document.getElementById('btnPause');
-        if(btnP)btnP.textContent='Resume';
+        if (!STATE.flowRunning) return;
+        STATE.flowPaused = true;
+        STATE.flowTimers.timeouts.forEach(id => clearTimeout(id));
+        STATE.flowTimers.timeouts = [];
+        render();
       }
-
       function resumeFlow(){
-        STATE.flowPaused=false;
-        var btnP=document.getElementById('btnPause');
-        if(btnP)btnP.textContent='Pause';
-        if(STATE._pausedAt!==undefined){
-          animateStep(STATE._pausedAt,STATE._pausedSc);
-          delete STATE._pausedAt;delete STATE._pausedSc;
-        }
+        if (!STATE.flowRunning || !STATE.flowPaused) return;
+        STATE.flowPaused = false;
+        render();
+        runFlowQueue();
       }
-
+      function animateChecks(){
+        const items = document.querySelectorAll('.check-item');
+        items.forEach((item, i) => {
+          const tid = setTimeout(() => {
+            if (STATE.flowPaused) return;
+            item.classList.add('pass');
+            const ico = item.querySelector('[data-lucide]');
+            if (ico) { ico.setAttribute('data-lucide', 'check-circle'); if (window.lucide?.createIcons) try { window.lucide.createIcons(); } catch {} }
+          }, i * 350);
+          STATE.flowTimers.timeouts.push(tid);
+        });
+      }
       function resetFlow(){
         clearFlowTimers();
-        STATE.flowStep=-1;
-        STATE.flowRunning=false;
-        STATE.flowPhase='idle';
-        STATE.flowPaused=false;
-        STATE.flowScenarioIdx=0;
+        STATE.flowStep = -1;
+        STATE.flowRunning = false;
+        STATE.flowPaused = false;
+        STATE.flowScenarioIdx = -1;
+        STATE.flowPhase = 'idle';
+        STATE.flowQueue = [];
+        STATE.flowQueueIdx = 0;
         render();
       }
-
       // ─── CHANGE 15: calculateImpact — adds dollar/hourly outputs ───
       function calculateImpact(){
         const envs    = Math.max(1, STATE.calcInputs.envs);
@@ -2131,11 +2109,7 @@
             return;
           }
 
-          if (action === 'start-flow') {
-            const scenarioAttr = act.getAttribute('data-scenario');
-            if (scenarioAttr !== null) { startFlow(parseInt(scenarioAttr, 10)); }
-            else { startFlow(); }
-            return;
+          if (action === 'start-flow') { startFlow(); return; }
           }
           if (action === 'reset-flow') { resetFlow(); return; }
 
