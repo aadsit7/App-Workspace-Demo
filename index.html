@@ -523,6 +523,14 @@
       STATE.editChartBuffer = null;
       STATE.highlightDriverId = null;
       STATE.activeForce = null;
+      STATE.flowStep = -1;
+      STATE.flowRunning = false;
+      STATE.flowScenario = 'first';
+      STATE.flowScenarioIdx = -1;
+      STATE.flowPhase = 'idle';
+      STATE.flowPaused = false;
+      STATE.flowQueue = [];
+      STATE.flowQueueIdx = 0;
 
       // ─── CHANGE 10: NEW_CARDS — all 3 replaced with accurate content ───
       const NEW_CARDS = [
@@ -598,7 +606,9 @@
               <p class="mt-2 max-w-2xl text-[16px] leading-[1.5] text-[#4A5568]">
                 ${STATE.activeTab==='problems'
                   ? 'The application layer is now the #1 primary constraint in modern IT.'
-                  : 'Application Workspace helps IT keep applications running smoothly as platforms change — without creating more work'}
+                  : STATE.activeTab==='solution'
+                    ? 'What actually happens when a user clicks an app? This is the core differentiator.'
+                    : 'Application Workspace helps IT keep applications running smoothly as platforms change — without creating more work'}
               </p>
             </div>
 
@@ -638,7 +648,7 @@
         if (window.lucide?.createIcons) { try { window.lucide.createIcons(); } catch {} }
         attachEvents();
 
-        if (STATE.activeTab === 'solution') { buildFlow(); attachAccordionKeyboard(); }
+        if (STATE.activeTab === 'solution') { attachAccordionKeyboard(); }
         if (STATE.activeTab === 'roi') { updateROIOutputs(); }
         if (STATE.activeTab === 'problems') {
           renderCapacityGapChart();
@@ -1302,10 +1312,9 @@
       function renderSolution(){
         return `
           <section id="panel-solution" class="space-y-3">
-            <div class="grid grid-cols-1 gap-3 lg:grid-cols-[3fr_2fr]">
+            <div class="grid grid-cols-1 gap-3 lg:grid-cols-2">
               ${renderFlow()}
               <div class="flex flex-col gap-3 relative">
-                <!-- ─── CHANGE 2.5: sticky header label updated ─── -->
                 <div class="sticky top-0 z-10 bg-white/60 backdrop-blur-lg py-2 shadow-sm rounded-xl px-2">
                   <div class="flex justify-between items-center text-sm">
                     <span class="font-semibold">Recast Approach</span>
@@ -1315,7 +1324,6 @@
                 <button type="button" class="md:hidden bg-transparent text-[#0A1C60] border-2 border-[#0A1C60] py-2 text-sm rounded hover:text-[#0070F3] hover:border-[#0070F3]" data-action="expand-all">Expand All</button>
                 ${NEW_CARDS.map(card => popoutCard(card)).join('')}
                 <div class="sticky bottom-0 bg-white/70 backdrop-blur-lg py-3 shadow-lg mt-3 rounded-xl px-2 border border-slate-200">
-                  <!-- ─── CHANGE 2.6: CTA button text updated ─── -->
                   <button type="button" class="bg-[#0070F3] text-white px-4 py-2 text-sm font-semibold rounded hover:bg-[#005AD0]" data-action="advance" data-next="roi">See Business Impact</button>
                 </div>
               </div>
@@ -1470,351 +1478,175 @@
         if(el) el.textContent = String(value);
       }
 
-      /* ---------- Catalog / Flow assets ---------- */
+      /* ---------- Flow assets ---------- */
 
-      const CATALOG=[
-        {title:'CORE PRODUCTIVITY',id:'cat-core',items:[
-          logo('Microsoft Word','W','#185ABD'),
-          logo('Microsoft Excel','X','#107C41'),
-          logo('PowerPoint','P','#D24726'),
-          logo('Outlook','O','#106EBE'),
-          logo('Microsoft Teams','T','#5B53D6'),
-          logo('Google Docs','Dc','#1A73E8'),
-          logo('Google Sheets','Sh','#1E8E3E'),
-          logo('Google Slides','Sl','#F9AB00')
-        ]},
-        {title:'MESSAGING & MEETINGS',id:'cat-collab',items:[
-          multiLogo('Slack',['#36C5F0','#2EB67D','#E01E5A','#ECB22E']),
-          logo('Zoom','Z','#0B5CFF'),
-          logo('Gmail','G','#EA4335'),
-          logo('Google Meet','GM','#0F9D58')
-        ]},
-        {title:'WEB BROWSERS',id:'cat-browsers',items:[
-          triLogo('Google Chrome','#EA4335','#FBBC05','#34A853','#4285F4'),
-          ringLogo('Microsoft Edge','#0C8EC5','#0AA0A3'),
-          flameLogo('Mozilla Firefox','#FF7139','#FFCC00')
-        ]},
-        {title:'ENTERPRISE APPS',id:'cat-enterprise',items:[
-          logo('Salesforce','SF','#00A1E0'),
-          logo('Workday','WD','#1F5BFF'),
-          logo('ServiceNow','SN','#81B29A'),
-          logo('SAP','SAP','#0A6ED1'),
-          logo('Oracle NetSuite','NS','#C74634')
-        ]},
-        {title:'SECURITY & ACCESS',id:'cat-security',items:[
-          logo('Duo','D','#3CB371'),
-          logo('Okta','O','#007DC1'),
-          logo('Ping Identity','P','#C0172C'),
-          logo('Cisco AnyConnect','AC','#00B5AD'),
-          logo('Microsoft Defender','MD','#0067B8'),
-          logo('CrowdStrike Falcon','CS','#D61F26')
-        ]},
-        {title:'STORAGE & CREATIVE',id:'cat-storage',items:[
-          logo('Adobe Acrobat','A','#ED2224'),
-          logo('Dropbox','DB','#0061FF'),
-          logo('Box','BX','#0061D5'),
-          logo('OneDrive','OD','#0A5BD5'),
-          logo('ZoomIt / Sysinternals','ZI','#58595B')
-        ]}
+      const CATALOG_APPS = [
+        {name:'Teams',    abbr:'T',  bg:'#5B53D6'},
+        {name:'Outlook',  abbr:'O',  bg:'#106EBE'},
+        {name:'Excel',    abbr:'X',  bg:'#107C41'},
+        {name:'Word',     abbr:'W',  bg:'#185ABD'},
+        {name:'Chrome',   abbr:'C',  bg:'#4285F4'},
+        {name:'Zoom',     abbr:'Z',  bg:'#0B5CFF'},
+        {name:'SAP',      abbr:'S',  bg:'#0A6ED1'},
+        {name:'Slack',    abbr:'Sl', bg:'#4A154B'},
+        {name:'Edge',     abbr:'E',  bg:'#0C8EC5'},
+        {name:'Acrobat',  abbr:'A',  bg:'#ED2224'},
+        {name:'Defender', abbr:'D',  bg:'#0067B8'},
+        {name:'Power BI', abbr:'PB', bg:'#F2C811'}
       ];
 
-      // ─── CHANGE 11: ENV_SOURCES renamed to ENV_DESTINATIONS — platforms are outputs, not sources ───
-      const ENV_DESTINATIONS = [
-        { name: 'SCCM', svg: '<i data-lucide="server-cog" class="w-5 h-5 text-[#0078D4]"></i>' },
-        { name: 'Intune', svg: '<i data-lucide="cloud-cog" class="w-5 h-5 text-[#0078D4]"></i>' },
-        { name: 'Citrix', svg: '<i data-lucide="layout-dashboard" class="w-5 h-5 text-[#000000]"></i>' },
-        { name: 'AVD', svg: '<i data-lucide="monitor" class="w-5 h-5 text-[#0078D4]"></i>' },
-        { name: 'Win 365', svg: '<i data-lucide="cloud" class="w-5 h-5 text-[#0078D4]"></i>' },
-        { name: 'Jamf', svg: '<i data-lucide="apple" class="w-5 h-5 text-[#000000]"></i>' }
+      const SCENARIOS = [
+        {label:'First-Time App Launch', tag:'first',
+         checks:['Identity verified','Device compliant','Policy matched','Config resolved','Package selected'],
+         paths:[
+           {from:'User Device',to:'Workspace Agent',method:'Local call'},
+           {from:'Workspace Agent',to:'Orchestration Engine',method:'REST API'},
+           {from:'Orchestration Engine',to:'App Repository',method:'Pull config'},
+           {from:'App Repository',to:'User Device',method:'Stream / install'}
+         ],
+         overlay:'teams', bannerText:'App delivered in < 30 seconds'},
+        {label:'Silent Patch (CVE)',tag:'patch',
+         checks:['CVE feed ingested','Affected apps identified','Pre-tested patch located','Validation passed','Rollout staged'],
+         paths:[
+           {from:'CVE Feed',to:'Orchestration Engine',method:'Webhook'},
+           {from:'Orchestration Engine',to:'Patch Store',method:'Lookup'},
+           {from:'Patch Store',to:'Workspace Agent',method:'Push delta'},
+           {from:'Workspace Agent',to:'User Device',method:'Silent apply'}
+         ],
+         overlay:null, bannerText:'Patch applied silently \u2014 zero user disruption'},
+        {label:'Platform Migration',tag:'migrate',
+         checks:['Migration scope defined','App compatibility checked','Config mapped to new platform','Staged rollout planned','Rollback path confirmed'],
+         paths:[
+           {from:'Admin Console',to:'Orchestration Engine',method:'Migration rule'},
+           {from:'Orchestration Engine',to:'Config Store',method:'Remap'},
+           {from:'Config Store',to:'Target Platform',method:'Deploy'},
+           {from:'Target Platform',to:'Validation',method:'Health check'}
+         ],
+         overlay:null, bannerText:'Migration complete \u2014 no repackaging required'}
       ];
 
-      const appConfigs = [
-        {stage:'Prod', policy:'MFA + VPN', region:'AMER', device:'Windows'},
-        {stage:'QA', policy:'Compliant only', region:'APAC', device:'Any'},
-        {stage:'Dev', policy:'MFA required', region:'EMEA', device:'Mac'},
-        {stage:'Prod', policy:'VPN only', region:'Global', device:'Windows'},
-        {stage:'QA', policy:'MFA required', region:'AMER', device:'Any'},
-        {stage:'Dev', policy:'MFA required', region:'APAC', device:'Mac'},
-        {stage:'Prod', policy:'Compliant only', region:'EMEA', device:'Windows'},
-        {stage:'QA', policy:'VPN only', region:'Global', device:'Any'}
-      ];
-      let flatIndex = 0;
-      CATALOG.forEach(sec => sec.items.forEach(itm => { itm.config = appConfigs[flatIndex % appConfigs.length]; flatIndex++; }));
+      const ALL_PATHS = SCENARIOS.map(s=>s.paths);
 
-      function logo(name,letter,color){ return { name, svg: mark(letter,color) }; }
-      function mark(letter,color){
-        return `
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="24" height="24" role="img" aria-label="${letter}">
-            <defs><linearGradient id="g${letter.replace(/\W/g,'')}" x1="0" x2="1"><stop offset="0" stop-color="${shade(color,.9)}"/><stop offset="1" stop-color="${shade(color,1.1)}"/></linearGradient></defs>
-            <rect x="1.5" y="1.5" width="45" height="45" rx="12" fill="url(#g${letter.replace(/\W/g,'')})" stroke="rgba(0,0,0,.15)"/>
-            <text x="50%" y="56%" text-anchor="middle" font-size="22" font-family="Inter,Segoe UI,Arial" font-weight="800" fill="#0A1C60">${letter}</text>
-          </svg>`;
-      }
-      function multiLogo(name,colors){
-        const slices=colors.map((c,i)=>`<rect x="${4+i*9}" y="8" width="7" height="32" rx="4" fill="${c}"></rect>`).join('');
-        return { name, svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="24" height="24" role="img" aria-label="${name}"><rect x="1.5" y="1.5" width="45" height="45" rx="12" fill="#F7F9FB" stroke="rgba(0,0,0,.15)"/>${slices}</svg>` };
-      }
-      function triLogo(name,r1,r2,r3,r4){
-        return { name, svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="24" height="24" aria-label="${name}"><rect x="1.5" y="1.5" width="45" height="45" rx="12" fill="#F7F9FB" stroke="rgba(0,0,0,.15)"/><circle cx="24" cy="24" r="12" fill="${r4}"/><path d="M24 12 A12 12 0 0 1 36 24 L24 24 Z" fill="${r1}"/><path d="M36 24 A12 12 0 0 1 24 36 L24 24 Z" fill="${r2}"/><path d="M24 36 A12 12 0 0 1 24 12 L24 24 Z" fill="${r3}"/></svg>` };
-      }
-      function ringLogo(name,c1,c2){
-        return { name, svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="24" height="24" aria-label="${name}"><rect x="1.5" y="1.5" width="45" height="45" rx="12" fill="#F7F9FB" stroke="rgba(0,0,0,.15)"/><circle cx="24" cy="24" r="11" fill="${c1}"/><circle cx="20" cy="20" r="8" fill="${c2}"/></svg>` };
-      }
-      function flameLogo(name,c1,c2){
-        return { name, svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="24" height="24" aria-label="${name}"><rect x="1.5" y="1.5" width="45" height="45" rx="12" fill="#F7F9FB" stroke="rgba(0,0,0,.15)"/><path d="M24 12c5 7-2 9 3 14 3 3 2 9-3 11-5-2-6-8-3-11 5-5-3-7 3-14z" fill="${c1}"/><circle cx="26" cy="28" r="4" fill="${c2}"/></svg>` };
-      }
-      function shade(hex,m){
-        const c=hex.replace('#','');
-        const n=[0,1,2].map(i=>parseInt(c.slice(i*2,i*2+2),16));
-        const s=n.map(v=>Math.max(0,Math.min(255,Math.round(v*m))));
-        return '#'+s.map(v=>v.toString(16).padStart(2,'0')).join('');
-      }
-
-      const miniApps = [
-        logo('Microsoft Word','W','#185ABD'),
-        logo('Microsoft Teams','T','#5B53D6'),
-        logo('SAP','SAP','#0A6ED1'),
-        logo('Zoom','Z','#0B5CFF')
-      ];
-
-      // ─── CHANGE 11: renderFlow — hub at top, platforms as destinations below ───
       function renderFlow(){
+        const sc = SCENARIOS[Math.max(0, STATE.flowScenarioIdx)] || SCENARIOS[0];
         return `
           <div class="section-card p-4">
-            <div class="flex items-center justify-between gap-3">
+            <div class="flex items-center justify-between gap-3 mb-3">
               <div class="flex items-center gap-2">
                 <div class="h-6 w-6 rounded-[2px] grid place-items-center bg-[#0A1C60]"><i data-lucide="boxes" class="h-3.5 w-3.5 text-white"></i></div>
                 <div>
                   <h3 class="text-base font-semibold">Application Workspace</h3>
-                  <div class="text-[12px] text-[#4A5568]">Application Delivery Hub — configure once, deliver anywhere</div>
+                  <div class="text-[12px] text-[#4A5568]">What happens when a user clicks an app</div>
                 </div>
               </div>
               <div class="flex items-center gap-2 text-[12px]">
-                <button type="button" class="bg-transparent text-[#0A1C60] border-2 border-[#0A1C60] px-2.5 py-1 rounded hover:text-[#0070F3] hover:border-[#0070F3]" data-action="toggle-labels">${STATE.showLabels?'Hide':'Show'} labels</button>
-                <button type="button" data-action="start-flow" class="bg-[#0070F3] text-white px-2.5 py-1.5 text-[12px] font-semibold rounded hover:bg-[#005AD0]">Start</button>
+                <button type="button" data-action="start-flow" class="bg-[#0070F3] text-white px-2.5 py-1.5 font-semibold rounded hover:bg-[#005AD0]">${STATE.flowRunning ? 'Running...' : 'Start'}</button>
+                <button type="button" data-action="pause-flow" class="bg-transparent text-[#0A1C60] border-2 border-[#0A1C60] px-2.5 py-1.5 rounded hover:text-[#0070F3] hover:border-[#0070F3]">${STATE.flowPaused ? 'Resume' : 'Pause'}</button>
                 <button type="button" data-action="reset-flow" class="bg-transparent text-[#0A1C60] border-2 border-[#0A1C60] px-2.5 py-1.5 rounded hover:text-[#0070F3] hover:border-[#0070F3]">Reset</button>
               </div>
             </div>
 
-            <!-- ─── Flow Section: Platforms at top → arrows → Hub (delivery hub) ─── -->
-            <div id="envFlow" class="mt-3 sub-card p-3 relative bg-gradient-to-b from-white to-slate-50 shadow-inner ${STATE.showLabels ? 'show-labels' : ''}" role="region" aria-label="Environment flow">
-
-              <!-- STEP 1: Platforms & Environments at top -->
-              <div class="text-[10px] font-semibold uppercase tracking-widest text-[#4A5568] mb-2 text-center">Your Platforms & Environments</div>
-              <div id="envSources" class="flex flex-wrap justify-between gap-2">
-                ${ENV_DESTINATIONS.map((env, idx) => `
-                  <div class="env-wrap" style="--d: ${idx * 0.2}s">
-                    <div class="env-ring logo-ring">${env.svg}</div>
-                    <span class="env-name">${env.name}</span>
-                  </div>
-                `).join('')}
-              </div>
-
-              <!-- STEP 2: Arrows flow DOWN from platforms to hub -->
-              <div id="envArrows" class="grid grid-cols-6 gap-2 mt-2 mb-2">
-                ${ENV_DESTINATIONS.map((_, idx) => `<div class="arrow-line" style="--d: ${1 + idx * 0.2}s"></div>`).join('')}
-              </div>
-
-              <!-- STEP 3: Application Workspace hub — the delivery hub -->
-              <div class="text-[10px] font-semibold uppercase tracking-widest text-[#0070F3] mb-1 text-center">Application Delivery Hub</div>
-              <div id="envHub" class="hub-card sub-card p-3 text-center bg-gradient-to-r from-[#0A1C60] to-[#0070F3] text-white">
-                <div class="flex items-center justify-center gap-2">
-                  <i data-lucide="server" class="w-4 h-4 text-white"></i>
-                  <span class="text-sm font-semibold">Application Workspace</span>
-                </div>
-                <div class="text-[10px] opacity-75 mt-0.5">Application Delivery Hub — configure once, deliver anywhere</div>
-              </div>
-
-              <div class="text-[10px] font-semibold uppercase tracking-widest text-[#059669] mt-2 mb-1 text-center">Consistent User Experience</div>
-
-              <div id="metricsBanner" class="metrics-banner mt-2">
-                <span id="appsProcessedCounter" class="tabular-nums">0</span>+ Apps Processed
-              </div>
+            <!-- Scenario pills -->
+            <div class="flex flex-wrap gap-2 mb-3">
+              ${SCENARIOS.map((s,i)=>`
+                <span class="scenario-pill ${STATE.flowScenarioIdx===i?'active':''}" data-action="start-flow" data-scenario="${i}">${s.label}</span>
+              `).join('')}
             </div>
 
-            <!-- Application Catalog -->
-            <div id="flowCard" class="mt-3 sub-card p-2 relative bg-gradient-to-b from-white to-slate-50 shadow-inner ${STATE.showLabels ? 'show-labels' : ''}" role="region" aria-label="Application catalog flow">
-              <div id="progressCounters" class="hidden mb-3 grid grid-cols-3 gap-2 text-sm text-center">
-                <div><span class="font-semibold tabular-nums" id="appsProcessed">0</span> apps processed</div>
-                <div><span class="font-semibold tabular-nums" id="timeSaved">0</span> hours saved</div>
-                <div><span class="font-semibold tabular-nums" id="ticketsAvoided">0</span> tickets avoided</div>
-              </div>
+            <!-- Split view: Device + Pipeline -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
 
-              <div class="space-y-2 relative">
-                <div class="text-[11px] font-semibold text-[#4A5568] uppercase tracking-widest mb-2">Application Catalog — Defined Once</div>
-                ${CATALOG.map(s=>`
-                  <div class="cat-row">
-                    <div class="cat-title uppercase text-[#4A5568]"><i data-lucide="folder" class="w-3 h-3"></i>${s.title}</div>
-                    <div id="${s.id}" class="flex flex-wrap gap-2"></div>
+              <!-- LEFT: Device frame -->
+              <div class="device-frame" id="deviceFrame">
+                <div class="device-titlebar">
+                  <div class="device-dot" style="background:#ef4444"></div>
+                  <div class="device-dot" style="background:#f59e0b"></div>
+                  <div class="device-dot" style="background:#22c55e"></div>
+                  <span style="flex:1;text-align:center;font-size:10px;color:#94a3b8">Application Workspace</span>
+                </div>
+                <div class="device-screen" id="deviceScreen">
+                  <div class="catalog-grid" id="catalogGrid">
+                    ${CATALOG_APPS.map((app,i)=>`
+                      <div class="catalog-app ${STATE.flowStep>=0 && i===0 ? 'active':''}" id="catApp${i}">
+                        <div class="app-icon" style="background:${app.bg}">${app.abbr}</div>
+                        <div class="app-name">${app.name}</div>
+                      </div>
+                    `).join('')}
                   </div>
-                `).join('')}
-                <div id="overlayTag" class="overlay-tag hidden text-center text-sm text-[#4A5568]">Every app mapped to stage, policy, region, and device.</div>
-              </div>
-
-              <div id="flowHubFlash" class="mt-2 hidden text-[#0070F3]">
-                <span class="inline-flex items-center gap-1 text-[12px]"><i data-lucide="bolt" class="h-4 w-4"></i><span>Update published — deploying to all platforms</span></span>
-              </div>
-
-              <div class="mt-3 grid grid-cols-3 gap-2 relative" aria-hidden="true">
-                ${['A','B','C'].map((k,i)=>`
-                  <div class="sub-card p-2 relative">
-                    <div class="text-[12px] text-[#4A5568]">${['Existing Platforms','Staged Rings','Access & Policy'][i]}</div>
-                    <div id="flowConn${k}" class="mt-1 grid grid-cols-10 gap-1.5"></div>
-                    <div class="mt-1 flow-bar w-full" style="background:linear-gradient(to right,#0070F3,#005AD0);--d:${3 + .5*i}s"></div>
-                    <i data-lucide="check-circle" class="check-appear absolute top-1 right-1 w-4 h-4" style="--d:${4 + .5*i}s;color:var(--re-green)"></i>
+                  <div class="user-status" id="userStatus" style="display:${STATE.flowPhase!=='idle'?'flex':'none'}">
+                    ${STATE.flowPhase==='running' ? '<div class="spinner"></div>' : ''}
+                    <span id="userStatusText">${STATE.flowPhase==='done'?'App ready':'Preparing app...'}</span>
                   </div>
-                `).join('')}
-                <div class="flow-connect absolute top-[-0.5rem] left-0 w-full"></div>
-              </div>
 
-              <div class="mt-3 grid grid-cols-3 gap-2 relative" aria-hidden="true">
-                ${['A','B','C'].map((k,i)=>`
-                  <div class="sub-card p-2 relative">
-                    <div class="text-[12px] text-[#4A5568]">${['Business Unit','Subsidiary','Region'][i]}</div>
-                    <div id="flowGrp${k}" class="mt-1 grid grid-cols-8 gap-1.5"></div>
-                    <div class="mx-auto mt-1 bolt-line h-16 w-1" style="background:linear-gradient(to bottom,#0A1C60,#0070F3);--d:${5 + .5*i}s"></div>
-                    <i data-lucide="shield-check" class="check-appear absolute top-1 right-1 w-4 h-4" style="--d:${6 + .5*i}s;color:var(--re-green)"></i>
-                  </div>
-                `).join('')}
-                <div class="flow-connect absolute top-[-0.5rem] left-0 w-full"></div>
-              </div>
-
-              <div class="mt-3 grid grid-cols-3 gap-2 relative" aria-hidden="true">
-                ${['A','B','C'].map((k,i)=>`
-                  <div class="sub-card p-2 text-center relative">
-                    <i data-lucide="${['monitor-smartphone','laptop','smartphone'][i]}" class="h-5 w-5 text-[#4A5568]"></i>
-                    <div id="flowDev${k}" class="mt-1 grid grid-cols-6 gap-1.5"></div>
-                    <div class="mt-1 text-[11px] text-[#4A5568]">${['Windows & macOS','VDI / Web','Mobile'][i]}</div>
-                    <i data-lucide="check-circle" class="check-appear absolute top-1 right-1 w-4 h-4" style="--d:${8 + .5*i}s;color:var(--re-green)"></i>
-                  </div>
-                `).join('')}
-                <div class="flow-connect absolute top-[-0.5rem] left-0 w-full"></div>
-              </div>
-
-              <div class="mt-3">
-                <div id="endUserCard" class="sub-card p-3 transition-all duration-500">
-                  <div class="flex items-center gap-3">
-                    <div id="endUserAvatar" class="h-9 w-9 grid place-items-center font-semibold rounded-full" style="background:#EA4335">U</div>
-                    <div class="text-sm">
-                      <div class="font-medium">End user</div>
-                      <div id="endUserMessage" class="text-[#4A5568]">Right app, right device — automatically. No ticket required.</div>
+                  <!-- App window overlay (Teams) -->
+                  <div class="app-window-overlay ${STATE.flowPhase==='done' && sc.overlay==='teams' ? 'show':''}" id="appOverlay">
+                    <div class="app-window-topbar">
+                      <div class="app-icon" style="background:#5B53D6;width:20px;height:20px;font-size:10px;border-radius:4px">T</div>
+                      Microsoft Teams
+                    </div>
+                    <div style="display:flex;flex:1">
+                      <div class="teams-sidebar">
+                        <div style="width:28px;height:28px;border-radius:6px;background:#3b3d6e"></div>
+                        <div style="width:28px;height:28px;border-radius:6px;background:#3b3d6e"></div>
+                        <div style="width:28px;height:28px;border-radius:6px;background:#5B53D6"></div>
+                      </div>
+                      <div class="teams-chat-area" id="teamsChatArea">
+                        <div class="teams-msg incoming">Welcome to the Engineering channel</div>
+                        <div class="teams-msg incoming">Sprint review at 2pm today</div>
+                        <div class="teams-msg outgoing">Thanks, I'll be there!</div>
+                      </div>
                     </div>
                   </div>
-                  <div class="mt-3 user-beam" style="background:linear-gradient(to right,#0070F3,#005AD0);--d:10s"></div>
-                  <div class="relative mt-2" style="border:1px solid var(--border-subtle);background:#F7F9FB;border-radius:var(--radius);padding:1rem">
-                    <i data-lucide="laptop" class="h-5 w-5 text-[#4A5568]"></i>
-                    <div id="endUserBadge" class="absolute right-2 top-2 badge grid place-items-center font-bold" style="--d:11s;background:#E11D48;color:#000">!</div>
-                    <div class="mt-1 text-[11px] text-[#4A5568]">Application Workspace delivers the correct app instantly — no manual provisioning</div>
-                  </div>
-                  <div id="miniWorkspace" class="mt-3 hidden grid grid-cols-4 gap-2">
-                    ${miniApps.map(app => `<div class="logo-ring cursor-pointer" data-action="launch-icon">${app.svg}</div>`).join('')}
-                  </div>
                 </div>
-                <div id="flowSuccess" class="mt-2 hidden inline-flex items-center gap-1 text-[13px] tagline-fade" style="color:var(--re-green)"><i data-lucide="sparkles" class="h-4 w-4"></i><span>Defined once → delivered everywhere. No repackaging required.</span></div>
+              </div>
+
+              <!-- RIGHT: Orchestration pipeline -->
+              <div>
+                <div class="bts-label bts-label-engine">Behind the scenes</div>
+                <div class="pipeline" id="pipelineStages">
+                  ${(sc.checks||[]).map((chk,i)=>{
+                    let stClass = '';
+                    let nClass = '';
+                    if(STATE.flowStep > i){ stClass='done'; nClass='done'; }
+                    else if(STATE.flowStep === i){ stClass='active'; nClass='active'; }
+                    return `
+                      <div class="pipeline-stage ${stClass}">
+                        <div class="pipeline-node ${nClass}">
+                          ${STATE.flowStep > i ? '<i data-lucide="check" class="w-3 h-3 text-emerald-600"></i>'
+                            : STATE.flowStep === i ? '<div class="spinner" style="width:10px;height:10px;border-width:1.5px"></div>'
+                            : '<span style="width:6px;height:6px;border-radius:50%;background:#e2e8f0;display:block"></span>'}
+                        </div>
+                        <div class="pipeline-progress">
+                          <div class="stage-title">${chk}</div>
+                          <div class="stage-detail">${STATE.flowStep > i ? 'Complete' : STATE.flowStep === i ? 'Processing...' : 'Pending'}</div>
+                        </div>
+                      </div>
+                    `;
+                  }).join('')}
+                </div>
+
+                <!-- Delivery path -->
+                <div class="cfg-wrap mt-3" id="cfgPaths">
+                  <div class="bts-label" style="margin-top:4px">Delivery Path</div>
+                  ${(sc.paths||[]).map((p,i)=>`
+                    <div class="path-row" id="pathRow${i}" style="opacity:${STATE.flowStep > i ? 1 : 0.4}">
+                      <span style="font-weight:600">${p.from}</span>
+                      <i data-lucide="arrow-right" class="w-3 h-3" style="flex-shrink:0"></i>
+                      <span style="font-weight:600">${p.to}</span>
+                      <span style="margin-left:auto;font-size:9px;color:#94a3b8">${p.method}</span>
+                    </div>
+                    ${i < sc.paths.length-1 ? '<div class="orch-connector"></div>' : ''}
+                  `).join('')}
+                </div>
+
+                <!-- Banner -->
+                <div class="flow-banner ${STATE.flowPhase==='done'?'show success':''}" id="flowBanner">
+                  ${sc.bannerText || ''}
+                </div>
               </div>
             </div>
           </div>
         `;
-      }
-
-      function buildFlow(){
-        let base=0;
-        CATALOG.forEach(section=>{
-          const mount=document.getElementById(section.id); if(!mount) return;
-          mount.innerHTML='';
-          section.items.forEach((itm,idx)=>{
-            const wrap=document.createElement('div');
-            wrap.className='logo-wrap';
-            wrap.style.setProperty('--d',(base+idx*0.2 + 4).toFixed(2)+'s');
-
-            const ring=document.createElement('div');
-            ring.className='logo-ring';
-            ring.innerHTML=itm.svg;
-            ring.title=itm.name;
-            ring.setAttribute('role','img');
-            ring.setAttribute('aria-label',itm.name);
-            wrap.appendChild(ring);
-
-            if(STATE.showLabels){
-              const label=document.createElement('span');
-              label.className='logo-name';
-              label.textContent=itm.name;
-              wrap.appendChild(label);
-
-              const meta=document.createElement('div');
-              meta.className='meta-label';
-              meta.innerHTML = `<span>Stage: ${itm.config.stage}</span><span>Policy: ${itm.config.policy}</span><span>Region: ${itm.config.region}</span><span>Device: ${itm.config.device}</span>`;
-              wrap.appendChild(meta);
-            }
-
-            mount.appendChild(wrap);
-          });
-          base+=1.5;
-        });
-
-        buildTiles(document.getElementById('flowConnA'), 14, 7);
-        buildTiles(document.getElementById('flowConnB'), 14, 7.5);
-        buildTiles(document.getElementById('flowConnC'), 14, 8);
-        buildTiles(document.getElementById('flowGrpA'), 18, 9);
-        buildTiles(document.getElementById('flowGrpB'), 18, 9.5);
-        buildTiles(document.getElementById('flowGrpC'), 18, 10);
-        buildTiles(document.getElementById('flowDevA'), 10, 12);
-        buildTiles(document.getElementById('flowDevB'), 10, 12.5);
-        buildTiles(document.getElementById('flowDevC'), 10, 13);
-
-        const avatar=document.getElementById('endUserAvatar');
-        const badge=document.getElementById('endUserBadge');
-        if(avatar){ avatar.style.background='#EA4335'; avatar.style.color='#fff'; avatar.textContent='U'; }
-        if(badge){ badge.textContent='!'; badge.style.background='#E11D48'; badge.style.color='#000'; }
-
-        const message = document.getElementById('endUserMessage');
-        if(message) message.textContent = 'Right app, right device — automatically. No ticket required.';
-
-        const mini = document.getElementById('miniWorkspace');
-        if(mini) mini.classList.add('hidden');
-
-        const counters = document.getElementById('progressCounters');
-        if(counters) counters.classList.add('hidden');
-
-        const card = document.getElementById('flowCard');
-        if(card) card.classList.remove('run');
-
-        const envCard = document.getElementById('envFlow');
-        if(envCard) envCard.classList.remove('run');
-
-        if(STATE.showLabels) { card?.classList.add('show-labels'); envCard?.classList.add('show-labels'); }
-        else { card?.classList.remove('show-labels'); envCard?.classList.remove('show-labels'); }
-
-        const endCard = document.getElementById('endUserCard');
-        endCard?.classList.remove('end-user-expand');
-
-        STATE.progress = { apps: 0, time: 0, tickets: 0 };
-        STATE.envProgress = { appsProcessed: 0 };
-        updateProgress();
-        updateEnvProgress();
-
-        const success=document.getElementById('flowSuccess');
-        success?.classList.add('hidden');
-      }
-
-      function buildTiles(container,count,baseDelay){
-        if(!container) return;
-        container.innerHTML='';
-        for(let i=0;i<count;i++){
-          const d=document.createElement('div');
-          d.className='tile';
-          d.style.setProperty('--d',(baseDelay+i*0.1).toFixed(2)+'s');
-          container.appendChild(d);
-        }
-      }
-
-      function toggleOverlay(){
-        const overlay = document.getElementById('overlayTag');
-        if(!overlay) return;
-        if(STATE.showLabels){
-          overlay.classList.remove('hidden');
-          setTimeout(()=>{ overlay.classList.add('hidden'); },3000);
-        }
       }
 
       function clearFlowTimers(){
@@ -1825,86 +1657,164 @@
         STATE.flowTimers.timeouts = [];
       }
 
-      function startFlow(){
-        clearFlowTimers();
+      function buildFlowQueue(scenarioIdx){
+        const sc = SCENARIOS[scenarioIdx];
+        if(!sc) return [];
+        const q = [];
+        // click ring on first app
+        q.push({type:'click', delay:400});
+        // user status
+        q.push({type:'status', text:'Preparing app...', delay:300});
+        // pipeline steps
+        sc.checks.forEach((chk,i)=>{
+          q.push({type:'step', step:i, delay:800});
+        });
+        // done
+        q.push({type:'done', delay:500});
+        return q;
+      }
 
-        const envCard=document.getElementById('envFlow'); if(!envCard) return;
-        const card=document.getElementById('flowCard'); if(!card) return;
-
-        envCard.classList.remove('run'); card.classList.remove('run');
-        void envCard.offsetWidth; void card.offsetWidth;
-        envCard.classList.add('run'); card.classList.add('run');
-
-        const flash=document.getElementById('flowHubFlash');
-        const success=document.getElementById('flowSuccess');
-        const avatar=document.getElementById('endUserAvatar');
-        const badge=document.getElementById('endUserBadge');
-        const message = document.getElementById('endUserMessage');
-        const mini = document.getElementById('miniWorkspace');
-        const counters = document.getElementById('progressCounters');
-        const endCard = document.getElementById('endUserCard');
-
-        if(flash){
-          flash.classList.remove('hidden');
-          STATE.flowTimers.timeouts.push(setTimeout(()=>flash.classList.add('hidden'),2000));
+      function runFlowQueue(){
+        if(STATE.flowPaused) return;
+        if(STATE.flowQueueIdx >= STATE.flowQueue.length){
+          STATE.flowRunning = false;
+          STATE.flowPhase = 'done';
+          updateFlowDOM();
+          return;
         }
-        success?.classList.add('hidden');
-        counters?.classList.remove('hidden');
+        const item = STATE.flowQueue[STATE.flowQueueIdx];
+        STATE.flowQueueIdx++;
 
-        const envInterval = setInterval(updateEnvProgress, 50);
-        STATE.flowTimers.intervals.push(envInterval);
+        if(item.type === 'click'){
+          const app0 = document.getElementById('catApp0');
+          if(app0){
+            app0.classList.add('active');
+            const ring = document.createElement('div');
+            ring.className = 'click-ring';
+            app0.appendChild(ring);
+            setTimeout(()=>{ try{ ring.remove(); }catch{} }, 600);
+          }
+        } else if(item.type === 'status'){
+          STATE.flowPhase = 'running';
+          updateFlowDOM();
+        } else if(item.type === 'step'){
+          STATE.flowStep = item.step;
+          updateFlowDOM();
+        } else if(item.type === 'done'){
+          STATE.flowStep = SCENARIOS[STATE.flowScenarioIdx].checks.length;
+          STATE.flowPhase = 'done';
+          updateFlowDOM();
+          return;
+        }
 
-        STATE.flowTimers.timeouts.push(setTimeout(() => {
-          clearInterval(envInterval);
-
-          const interval = setInterval(updateProgress, 100);
-          STATE.flowTimers.intervals.push(interval);
-
-          STATE.flowTimers.timeouts.push(setTimeout(()=> {
-            if(avatar){
-              avatar.style.background = 'var(--re-green)';
-              avatar.style.color = '#fff';
-            }
-            if(badge){
-              badge.textContent='✓';
-              badge.style.background = 'var(--re-green)';
-              badge.style.color = '#fff';
-            }
-            if(message) message.textContent = 'Right app, right device — automatically. No ticket required.';
-            mini?.classList.remove('hidden');
-            endCard?.classList.add('end-user-expand');
-            success?.classList.remove('hidden');
-
-            clearInterval(interval);
-          }, 7000));
-        }, 4000));
-
-        STATE.flowTimers.timeouts.push(setTimeout(()=> {
-          envCard.classList.remove('run');
-          card.classList.remove('run');
-        }, 16000));
+        const tid = setTimeout(runFlowQueue, item.delay);
+        STATE.flowTimers.timeouts.push(tid);
       }
 
-      function updateProgress(){
-        if(STATE.progress.apps < 128) STATE.progress.apps += 4;
-        if(STATE.progress.time < 46) STATE.progress.time += 2;
-        if(STATE.progress.tickets < 73) STATE.progress.tickets += 3;
-        setText('appsProcessed', STATE.progress.apps > 128 ? 128 : STATE.progress.apps);
-        setText('timeSaved', STATE.progress.time > 46 ? 46 : STATE.progress.time);
-        setText('ticketsAvoided', STATE.progress.tickets > 73 ? 73 : STATE.progress.tickets);
+      function startFlow(scenarioIdx){
+        clearFlowTimers();
+        if(typeof scenarioIdx !== 'number') scenarioIdx = STATE.flowScenarioIdx >= 0 ? STATE.flowScenarioIdx : 0;
+        STATE.flowScenarioIdx = scenarioIdx;
+        STATE.flowStep = -1;
+        STATE.flowPhase = 'idle';
+        STATE.flowRunning = true;
+        STATE.flowPaused = false;
+        STATE.flowQueue = buildFlowQueue(scenarioIdx);
+        STATE.flowQueueIdx = 0;
+        render();
+        setTimeout(runFlowQueue, 200);
       }
 
-      function updateEnvProgress(){
-        if(STATE.envProgress.appsProcessed < 8000) STATE.envProgress.appsProcessed += 200;
-        setText('appsProcessedCounter', STATE.envProgress.appsProcessed > 8000 ? '8,000' : STATE.envProgress.appsProcessed);
+      function pauseFlow(){
+        STATE.flowPaused = true;
+        updateFlowDOM();
+      }
+
+      function resumeFlow(){
+        STATE.flowPaused = false;
+        updateFlowDOM();
+        runFlowQueue();
+      }
+
+      function updateFlowDOM(){
+        const sc = SCENARIOS[STATE.flowScenarioIdx] || SCENARIOS[0];
+        // Update pipeline nodes
+        const stages = document.querySelectorAll('#pipelineStages .pipeline-stage');
+        stages.forEach((el,i)=>{
+          el.classList.remove('active','done');
+          const node = el.querySelector('.pipeline-node');
+          if(node) node.classList.remove('active','done');
+          const title = el.querySelector('.stage-detail');
+
+          if(STATE.flowStep > i){
+            el.classList.add('done');
+            if(node){ node.classList.add('done'); node.innerHTML='<i data-lucide="check" class="w-3 h-3 text-emerald-600"></i>'; }
+            if(title) title.textContent = 'Complete';
+          } else if(STATE.flowStep === i){
+            el.classList.add('active');
+            if(node){ node.classList.add('active'); node.innerHTML='<div class="spinner" style="width:10px;height:10px;border-width:1.5px"></div>'; }
+            if(title) title.textContent = 'Processing...';
+          } else {
+            if(node) node.innerHTML='<span style="width:6px;height:6px;border-radius:50%;background:#e2e8f0;display:block"></span>';
+            if(title) title.textContent = 'Pending';
+          }
+        });
+
+        // Update path rows
+        const paths = document.querySelectorAll('[id^="pathRow"]');
+        paths.forEach((el,i)=>{
+          el.style.opacity = STATE.flowStep > i ? '1' : '0.4';
+        });
+
+        // User status
+        const status = document.getElementById('userStatus');
+        const statusText = document.getElementById('userStatusText');
+        if(status){
+          status.style.display = STATE.flowPhase !== 'idle' ? 'flex' : 'none';
+          if(STATE.flowPhase === 'done'){
+            status.innerHTML = '<i data-lucide="check-circle" class="w-4 h-4" style="color:#059669"></i><span>App ready</span>';
+          } else if(STATE.flowPhase === 'running'){
+            status.innerHTML = '<div class="spinner"></div><span>Preparing app...</span>';
+          }
+        }
+
+        // Banner
+        const banner = document.getElementById('flowBanner');
+        if(banner){
+          if(STATE.flowPhase === 'done'){
+            banner.classList.add('show','success');
+            banner.textContent = sc.bannerText || 'Complete';
+          } else {
+            banner.classList.remove('show','success');
+          }
+        }
+
+        // Overlay
+        const overlay = document.getElementById('appOverlay');
+        if(overlay){
+          if(STATE.flowPhase === 'done' && sc.overlay === 'teams') overlay.classList.add('show');
+          else overlay.classList.remove('show');
+        }
+
+        // App highlight
+        const app0 = document.getElementById('catApp0');
+        if(app0){
+          if(STATE.flowStep >= 0) app0.classList.add('active');
+          else app0.classList.remove('active');
+        }
+
+        if(window.lucide?.createIcons) try{ window.lucide.createIcons(); }catch{}
       }
 
       function resetFlow(){
         clearFlowTimers();
-        STATE.progress = { apps: 0, time: 0, tickets: 0 };
-        STATE.envProgress = { appsProcessed: 0 };
-        STATE.showLabels = false;
-        buildFlow();
+        STATE.flowStep = -1;
+        STATE.flowRunning = false;
+        STATE.flowPhase = 'idle';
+        STATE.flowPaused = false;
+        STATE.flowQueue = [];
+        STATE.flowQueueIdx = 0;
+        render();
       }
 
       // ─── CHANGE 15: calculateImpact — adds dollar/hourly outputs ───
@@ -2224,6 +2134,11 @@
 
           if (!action) return;
 
+          if (action === 'pause-flow') {
+            if (STATE.flowPaused) { resumeFlow(); } else { pauseFlow(); }
+            return;
+          }
+
           if (action === 'switch-tab') {
             STATE.activeTab = act.getAttribute('data-tab');
             STATE.visitedCards = [];
@@ -2232,6 +2147,7 @@
             STATE.openWhyModal = null;
             STATE.insightContent = null;
             STATE.activeForce = null;
+            STATE.flowPaused = false;
             render();
             return;
           }
@@ -2325,21 +2241,13 @@
             return;
           }
 
-          if (action === 'start-flow') { startFlow(); return; }
+          if (action === 'start-flow') {
+            const scenarioAttr = act.getAttribute('data-scenario');
+            if (scenarioAttr !== null) { startFlow(parseInt(scenarioAttr, 10)); }
+            else { startFlow(); }
+            return;
+          }
           if (action === 'reset-flow') { resetFlow(); return; }
-
-          if (action === 'toggle-labels') {
-            STATE.showLabels = !STATE.showLabels;
-            toggleOverlay();
-            buildFlow();
-            return;
-          }
-
-          if (action === 'launch-icon') {
-            act.classList.add('icon-launch');
-            setTimeout(() => act.classList.remove('icon-launch'), 500);
-            return;
-          }
 
           if (action === 'open-currentstate-editor') {
             STATE.modalOpen = true;
