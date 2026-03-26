@@ -654,25 +654,7 @@
         return `
           <section id="panel-problems" class="space-y-5">
 
-            <!-- ROW 1: Four Challenge Cards -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-              ${[
-                {icon:'shuffle', title:'Inconsistent Apps', body:'The same application behaves differently depending on the platform it was packaged for — creating confusion and support load.'},
-                {icon:'clock', title:'Slow Changes', body:'Every update, patch, or new app has to be rebuilt for each platform. A single change can take days to reach all users.'},
-                {icon:'shield-off', title:'Delayed Patching', body:'Security patches that should ship in hours take days or weeks — leaving known vulnerabilities open.'},
-                {icon:'alert-triangle', title:'Risky Upgrades', body:'Platform migrations and OS upgrades stall because no one is confident the apps will work on the other side.'}
-              ].map(c=>`
-                <div class="section-card p-4 hover:border-[#0070F3]/30 transition-colors">
-                  <div class="h-8 w-8 rounded-lg bg-red-50 grid place-items-center mb-3">
-                    <i data-lucide="${c.icon}" class="w-4 h-4 text-red-500"></i>
-                  </div>
-                  <div class="text-[13px] font-semibold text-[#0A1C60] mb-1">${c.title}</div>
-                  <p class="text-[12px] text-[#4A5568] leading-relaxed">${c.body}</p>
-                </div>
-              `).join('')}
-            </div>
-
-            <!-- ROW 2: Speed / Scale / Risk tier -->
+            <!-- ROW 1: Speed / Scale / Risk tier -->
             <div class="section-card p-6">
               <h3 class="text-base font-semibold text-[#0A1C60] mb-4">Where the Pain Shows Up</h3>
               <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
