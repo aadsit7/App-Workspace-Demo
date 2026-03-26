@@ -150,6 +150,77 @@
       @media (prefers-reduced-motion: reduce) {
         .marker-group, .section-card, .logo-ring { transition: none !important; animation: none !important; }
       }
+
+      /* ─── SPLIT-VIEW FLOW ANIMATION ─── */
+      .device-frame{border:2px solid #e2e8f0;border-radius:1.2rem;overflow:hidden;background:#f8fafc;position:relative}
+      .device-screen{padding:0.75rem;min-height:320px;position:relative}
+      .device-titlebar{display:flex;align-items:center;gap:6px;padding:6px 12px;background:#f1f5f9;border-bottom:1px solid #e2e8f0}
+      .device-dot{width:8px;height:8px;border-radius:50%}
+
+      .catalog-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0.5rem;padding:0.5rem}
+      .catalog-app{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 4px;border-radius:10px;cursor:pointer;transition:all 0.2s;position:relative}
+      .catalog-app:hover{background:rgba(37,99,235,0.06)}
+      .catalog-app.active{background:rgba(37,99,235,0.10);box-shadow:0 0 0 2px rgba(37,99,235,0.3);border-radius:10px}
+      .app-icon{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;font-weight:700;font-size:14px;color:#fff;transition:transform 0.2s}
+      .app-name{font-size:9px;color:#64748b;text-align:center;line-height:1.2}
+      .click-ring{position:absolute;top:50%;left:50%;width:0;height:0;border-radius:50%;border:2px solid rgba(37,99,235,0.5);transform:translate(-50%,-50%);animation:clickRing 0.6s ease-out forwards;pointer-events:none}
+      @keyframes clickRing{0%{width:0;height:0;opacity:1}100%{width:60px;height:60px;opacity:0}}
+
+      .user-status{display:flex;align-items:center;gap:6px;padding:6px 10px;border-radius:8px;font-size:11px;color:#64748b;background:#f8fafc;border:1px solid #e2e8f0;margin-top:0.5rem}
+      .spinner{width:14px;height:14px;border:2px solid #e2e8f0;border-top-color:#2563eb;border-radius:50%;animation:spin 0.8s linear infinite}
+      @keyframes spin{to{transform:rotate(360deg)}}
+
+      .bts-label{font-size:10px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;color:#94a3b8;margin:8px 0 4px}
+      .bts-label-user{color:#2563eb}
+      .bts-label-engine{color:#7c3aed}
+
+      .check-item{display:flex;align-items:center;gap:6px;padding:4px 8px;border-radius:6px;font-size:11px;color:#64748b;opacity:0;transform:translateX(-8px);transition:all 0.3s ease}
+      .check-item.show{opacity:1;transform:translateX(0)}
+      .check-item.pass{color:#059669}
+      .check-item.pass .check-icon{color:#059669}
+      .check-item .check-icon{width:14px;height:14px;flex-shrink:0}
+
+      .path-row{display:flex;align-items:center;gap:4px;padding:3px 8px;font-size:10px;color:#64748b;border-radius:4px;background:#f8fafc;border:1px solid #f1f5f9}
+      .orch-connector{width:1px;height:12px;background:#e2e8f0;margin:0 auto}
+      .cfg-wrap{display:flex;flex-direction:column;gap:2px;margin-top:4px}
+      .upd-bar{height:3px;border-radius:2px;background:linear-gradient(90deg,#2563eb,#7c3aed);transform-origin:left;transform:scaleX(0);transition:transform 0.8s ease}
+
+      .scenario-pill{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:999px;font-size:10px;font-weight:600;border:1px solid #e2e8f0;background:#fff;color:#334155;cursor:pointer;transition:all 0.2s}
+      .scenario-pill.active{background:#2563eb;color:#fff;border-color:#2563eb}
+      .final-glow{animation:glowPulse 1.5s ease-in-out infinite alternate}
+      @keyframes glowPulse{0%{box-shadow:0 0 0 rgba(37,99,235,0)}100%{box-shadow:0 0 20px rgba(37,99,235,0.15)}}
+
+      .pipeline{display:flex;flex-direction:column;gap:0;position:relative}
+      .pipeline-stage{display:flex;align-items:flex-start;gap:10px;padding:8px 10px;border-left:2px solid #e2e8f0;position:relative;transition:border-color 0.3s}
+      .pipeline-stage.active{border-left-color:#2563eb}
+      .pipeline-stage.done{border-left-color:#059669}
+      .pipeline-node{width:20px;height:20px;border-radius:50%;border:2px solid #e2e8f0;background:#fff;display:grid;place-items:center;flex-shrink:0;position:relative;left:-11px;transition:all 0.3s;z-index:1}
+      .pipeline-node.active{border-color:#2563eb;background:#eff6ff}
+      .pipeline-node.done{border-color:#059669;background:#ecfdf5}
+      .pipeline-progress{flex:1;min-width:0}
+      .stage-title{font-size:11px;font-weight:600;color:#334155}
+      .stage-detail{font-size:10px;color:#94a3b8;margin-top:2px}
+
+      .flow-banner{text-align:center;padding:8px 12px;border-radius:8px;font-size:12px;font-weight:600;opacity:0;transform:translateY(4px);transition:all 0.4s}
+      .flow-banner.show{opacity:1;transform:translateY(0)}
+      .flow-banner.success{background:#ecfdf5;color:#059669;border:1px solid #a7f3d0}
+
+      .app-window-overlay{position:absolute;inset:0;background:#fff;border-radius:0.8rem;z-index:5;opacity:0;pointer-events:none;transition:opacity 0.3s;display:flex;flex-direction:column}
+      .app-window-overlay.show{opacity:1;pointer-events:auto}
+      .app-window-topbar{display:flex;align-items:center;gap:8px;padding:6px 10px;background:#f1f5f9;border-bottom:1px solid #e2e8f0;border-radius:0.8rem 0.8rem 0 0;font-size:11px;font-weight:600;color:#334155}
+      .teams-sidebar{width:48px;background:#292b4a;display:flex;flex-direction:column;align-items:center;gap:8px;padding:8px 0;flex-shrink:0;border-radius:0 0 0 0.8rem}
+      .teams-chat-area{flex:1;padding:10px;display:flex;flex-direction:column;gap:6px;overflow:hidden}
+      .teams-msg{padding:6px 10px;border-radius:8px;font-size:10px;max-width:80%;animation:msgSlide 0.3s ease}
+      .teams-msg.incoming{background:#f1f5f9;color:#334155;align-self:flex-start}
+      .teams-msg.outgoing{background:#2563eb;color:#fff;align-self:flex-end}
+      @keyframes msgSlide{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+      .dash-metric{text-align:center;padding:8px;border-radius:8px;background:#f8fafc;border:1px solid #e2e8f0}
+      .compare-bar-track{height:6px;border-radius:3px;background:#f1f5f9;overflow:hidden;margin-top:4px}
+      .compare-bar-fill{height:100%;border-radius:3px;transition:width 0.8s ease}
+      .qual-badge{display:inline-flex;align-items:center;gap:4px;padding:4px 12px;border-radius:999px;font-size:11px;font-weight:600}
+      .input-field{width:100%;padding:6px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:12px;background:#fff;outline:none;transition:border-color 0.2s}
+      .input-field:focus{border-color:#2563eb}
     </style>
   </head>
 
