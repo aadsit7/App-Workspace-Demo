@@ -159,9 +159,9 @@
     <script>
       // ─── CHANGE 1: TABS — updated roi label and icon ───
       const TABS = [
-        { id: 'problems', label: 'Where Things Stand', icon: 'alert-triangle' },
-        { id: 'solution', label: 'Our Approach', icon: 'workflow' },
-        { id: 'roi', label: 'Impact & Benefits', icon: 'calculator' }
+        { id: 'problems', label: 'Current State', icon: 'alert-triangle' },
+        { id: 'solution', label: 'Recast Approach', icon: 'workflow' },
+        { id: 'roi', label: 'Business Impact', icon: 'bar-chart-3' }
       ];
 
       const STATE = {
@@ -271,11 +271,11 @@
 
         // ─── CHANGE 2: chartConfig — labels and tipping updated ───
         chartConfig: {
-          yAxis: "IT Delivery Demand",
+          yAxis: "Expectations & Requests",
           xAxis: "Time",
-          center: "Team Capacity",
+          center: "Resources & Appreciation",
           footer: "",
-          tipping: "The point where IT becomes the bottleneck on everything"
+          tipping: ""
         },
 
         currentDemandExponent: 1.6,
@@ -287,80 +287,81 @@
         // ─── CHANGE 5: STATE.currentState — all three sections replaced ───
         currentState: {
           change: {
-            intro: "Application delivery still runs on platform-by-platform processes — while everything around it has changed.",
+            intro: "Forrester, Gartner, and McKinsey all highlight the application layer is the #1 drag on IT delivery and modernization.",
             bullets: [
-              "Every platform requires its own packaging, configuration, and deployment workflow.",
-              "End users experience inconsistent app behavior across devices and environments.",
-              "Back-end changes break things users see. Engineers spend days fixing it.",
-              "About 40% of IT engineering time goes to routine app maintenance — not strategic work."
+              "TODAY Apps are tied to devices, not people = The same app has to be built and managed differently for Intune, SCCM, VDI, macOS, etc.",
+              "The same app gets rebuilt multiple times = Each platform needs its own version, packaging, testing, and fixes.",
+              "Change becomes risky = New platforms, migrations, or updates often break apps, so teams delay changes",
+              "Inconsistent User Experience = What works on one device doesn't always work on another. = Higher Support Tickets",
+              "Tribal Knowledge is a huge risk = Tribal knowledge (workarounds) is heavily relying on individuals"
             ],
-            analyst: "The organizations that have capacity for new initiatives didn't add headcount — they eliminated the duplication in application delivery."
+            analyst: "Across industries, application delivery — not infrastructure — is now the primary bottleneck to modernization. Most transformation projects slow or fail because teams lack capacity to keep apps ready while platforms change."
           },
           now: {
-            intro: "The operational gap is getting wider, not narrower.",
+            intro: "The gap between what IT is ASKED to deliver and what it CAN sustain is widening fast.",
             bullets: [
-              "Cloud adoption, VDI, hybrid states — every shift adds work across every app you already manage.",
-              "Organizations need to support multiple platforms simultaneously, indefinitely.",
-              "Patching windows have shrunk from weeks to days. Manual processes can't hit that.",
-              "Every quarter this runs on manual process is another quarter the backlog grows."
+              "Change is accelerating, not slowing down. More app updates, more security pressure, more platforms — with the same teams.",
+              "Manual app work compounds over time. Every custom or internal app adds more versions, more dependencies, and more risk with each change",
+              "Teams that should be driving innovation are stuck keeping apps alive."
             ],
-            analyst: "This doesn't self-correct. Environments keep evolving. The delivery model has to evolve with them."
+            analyst: "Organizations that succeed with AI, cloud, and new platforms over the next few years will be the ones that stabilize application delivery first. Everyone else hits a capacity wall where progress slows regardless of strategy"
           },
           recast: {
-            intro: "One abstraction layer for application delivery and management — across every platform.",
+            intro: "Application Workspace changes how apps are delivered — to the user, not the device.",
             bullets: [
-              "Applications are configured once and delivered to every environment automatically.",
-              "Separates application binaries from configuration and delivery workflows — updates need minimal changes, not full rebuilds.",
-              "End users get a simple, consistent experience. Click an app and it just works.",
-              "Supports coexistence of multiple platforms. Backend changes don't disrupt the user experience.",
-              "Works alongside your existing tools. Nothing gets replaced — just connected."
+              "Applications Are Tied to the User = Apps follow the user across platforms. Assigned by user identity, not device or location.",
+              "Define Once, Deliver Everywhere = Applications are defined a single time. Delivered consistently across platforms. No repackaging or extra configuration required.",
+              "Support is Simplified = IT uses a single support model across all delivery methods.",
+              "New platforms can be integrated without rework = Backend updates don't affect user-facing experience.",
+              "Consistent User Experience = Users see the same apps and interfaces every time. Reduces user confusion and support demand.",
+              "Central management of application delivery = Ensures design consistency across environments. Reduces fragmentation and configuration drift."
             ],
-            analyst: "The primary value: reduce operational complexity, eliminate repetitive work, enable continuous change without disruption."
+            analyst: "Leading IT organizations are shifting from device-centric management to user-centric delivery models to reduce operational friction and keep pace with constant platform change"
           }
         },
 
         defaultsCurrentState() {
           return JSON.parse(JSON.stringify({
             change: {
-              intro: "Application delivery still runs on platform-by-platform processes — while everything around it has changed.",
+              intro: "Forrester, Gartner, and McKinsey all highlight the application layer is the #1 drag on IT delivery and modernization.",
               bullets: [
-                "Every platform requires its own packaging, configuration, and deployment workflow.",
-                "End users experience inconsistent app behavior across devices and environments.",
-                "Back-end changes break things users see. Engineers spend days fixing it.",
-                "About 40% of IT engineering time goes to routine app maintenance — not strategic work."
+                "TODAY Apps are tied to devices, not people = The same app has to be built and managed differently for Intune, SCCM, VDI, macOS, etc.",
+                "The same app gets rebuilt multiple times = Each platform needs its own version, packaging, testing, and fixes.",
+                "Change becomes risky = New platforms, migrations, or updates often break apps, so teams delay changes",
+                "Inconsistent User Experience = What works on one device doesn't always work on another. = Higher Support Tickets",
+                "Tribal Knowledge is a huge risk = Tribal knowledge (workarounds) is heavily relying on individuals"
               ],
-              analyst: "The organizations that have capacity for new initiatives didn't add headcount — they eliminated the duplication in application delivery."
+              analyst: "Across industries, application delivery — not infrastructure — is now the primary bottleneck to modernization. Most transformation projects slow or fail because teams lack capacity to keep apps ready while platforms change."
             },
             now: {
-              intro: "The operational gap is getting wider, not narrower.",
+              intro: "The gap between what IT is ASKED to deliver and what it CAN sustain is widening fast.",
               bullets: [
-                "Cloud adoption, VDI, hybrid states — every shift adds work across every app you already manage.",
-                "Organizations need to support multiple platforms simultaneously, indefinitely.",
-                "Patching windows have shrunk from weeks to days. Manual processes can't hit that.",
-                "Every quarter this runs on manual process is another quarter the backlog grows."
+                "Change is accelerating, not slowing down. More app updates, more security pressure, more platforms — with the same teams.",
+                "Manual app work compounds over time. Every custom or internal app adds more versions, more dependencies, and more risk with each change",
+                "Teams that should be driving innovation are stuck keeping apps alive."
               ],
-              analyst: "This doesn't self-correct. Environments keep evolving. The delivery model has to evolve with them."
+              analyst: "Organizations that succeed with AI, cloud, and new platforms over the next few years will be the ones that stabilize application delivery first. Everyone else hits a capacity wall where progress slows regardless of strategy"
             },
             recast: {
-              intro: "One abstraction layer for application delivery and management — across every platform.",
+              intro: "Application Workspace changes how apps are delivered — to the user, not the device.",
               bullets: [
-                "Applications are configured once and delivered to every environment automatically.",
-                "Separates application binaries from configuration and delivery workflows — updates need minimal changes, not full rebuilds.",
-                "End users get a simple, consistent experience. Click an app and it just works.",
-                "Supports coexistence of multiple platforms. Backend changes don't disrupt the user experience.",
-                "Works alongside your existing tools. Nothing gets replaced — just connected."
+                "Applications Are Tied to the User = Apps follow the user across platforms. Assigned by user identity, not device or location.",
+                "Define Once, Deliver Everywhere = Applications are defined a single time. Delivered consistently across platforms. No repackaging or extra configuration required.",
+                "Support is Simplified = IT uses a single support model across all delivery methods.",
+                "New platforms can be integrated without rework = Backend updates don't affect user-facing experience.",
+                "Consistent User Experience = Users see the same apps and interfaces every time. Reduces user confusion and support demand.",
+                "Central management of application delivery = Ensures design consistency across environments. Reduces fragmentation and configuration drift."
               ],
-              analyst: "The primary value: reduce operational complexity, eliminate repetitive work, enable continuous change without disruption."
+              analyst: "Leading IT organizations are shifting from device-centric management to user-centric delivery models to reduce operational friction and keep pace with constant platform change."
             }
           }));
         },
 
-        // ─── CHANGE 7: defaultsChartConfig — mirrors STATE.chartConfig exactly ───
         defaultsChartConfig() {
           return JSON.parse(JSON.stringify({
-            yAxis: "IT Delivery Demand",
+            yAxis: "Expectations & Requests",
             xAxis: "Time",
-            center: "Team Capacity",
+            center: "Resources & Appreciation",
             footer: "",
             tipping: "The point where IT becomes the bottleneck on everything"
           }));
@@ -447,7 +448,6 @@
       };
 
       STATE.recastMode = false;
-      STATE.demoStep = 0;
       STATE.flowTimers = { intervals: [], timeouts: [] };
       STATE.editChartBuffer = null;
       STATE.highlightDriverId = null;
@@ -458,15 +458,16 @@
         {
           id: 'core',
           icon: 'layers',
-          title: 'How It Works',
+          title: 'How Recast Does It.',
           bullets: [
-            'Set up an app once. It deploys everywhere — ConfigMgr, Intune, Citrix, AVD, Windows 365, macOS. No rebuilding for each platform.',
-            '8,000+ apps are already packaged and ready. Most of your catalog is covered before you start.',
-            'The right app reaches the right person on the right device — automatically. No ticket required.',
-            'Patches go out across every environment on a schedule. Compliance reports are generated automatically.',
-            'Works alongside your existing tools. Nothing gets replaced — just connected.'
+            'One workspace to package, deploy, update, and retire apps across Intune, SCCM, Citrix, Omnissa, and Azure.',
+            '8,000+ pre-tested enterprise apps ready to deploy instantly.',
+            'Automated patching and validation keep apps secure and compliant.',
+            'Unified dashboard for visibility and governance across all environments.',
+            'Policy-driven automation reduces manual work by over 60%.',
+            'End users get the right app instantly — no tickets, no delays.'
           ],
-          closer: 'Set up once. Works everywhere.',
+          closer: 'Configured once — Delivered everywhere.',
           timeline: false,
           bgHeader: 'bg-[#f9fafb]',
           bgContent: 'bg-[#f9fafb]'
@@ -474,15 +475,15 @@
         {
           id: 'onboarding',
           icon: 'clock',
-          title: 'Up and Running Fast',
+          title: 'Onboard & Up to Speed Fast.',
           bullets: [
-            'Live in 4–6 weeks. Kickoff → Assessment → Pilot → Validation → Full rollout.',
-            'Nothing gets ripped out. Application Workspace connects to what you already have.',
-            'A dedicated success manager is with you from day one to go-live.',
-            'Takes 1–2 engineers part-time. No big project team needed.',
-            'End users notice on day one. The app is there before they have to ask for it.'
+            'Standard rollout in 4–6 weeks (Kickoff — Implementation — UAT — Launch — Enablement).',
+            'No new infrastructure — integrates with your existing management tools.',
+            'Guided setup with dedicated Customer Success Manager.',
+            'Typical resource: 1–2 IT engineers part-time.',
+            'Enablement includes training, certification, and success planning.'
           ],
-          closer: 'Faster than your next patch cycle.',
+          closer: 'From first call to production in weeks, not months.',
           timeline: true,
           bgHeader: 'bg-[#f9fafb]',
           bgContent: 'bg-[#f9fafb]'
@@ -490,15 +491,15 @@
         {
           id: 'trust',
           icon: 'shield-check',
-          title: 'Proven at Scale',
+          title: 'Trusted by Customers',
           bullets: [
-            '60M+ devices managed across 130+ countries.',
-            'Deployed across enterprise, government, healthcare, and financial services organizations globally.',
-            '87 CSAT score — highest in the industry.',
-            'SOC 2 Type II and ISO 27001 certified.',
-            'Works across Windows, macOS, Citrix, AVD, ConfigMgr, and Intune.'
+            '60M+ endpoints across 130+ countries.',
+            '70k+ Customers across enterprise, government, healthcare, and financial services organizations globally.',
+            '87 CSAT Score | Most trusted in the industry',
+            'Proven scalability from small pilots to global deployments.',
+            'Backed by enterprise-grade support and compliance alignment (SOC 2, ISO 27001).'
           ],
-          closer: 'Built for teams that can\'t afford downtime.',
+          closer: 'Trusted by organizations that can\'t afford downtime.',
           timeline: false,
           bgHeader: 'bg-[#f9fafb]',
           bgContent: 'bg-[#f9fafb]'
@@ -525,10 +526,8 @@
               <h1 class="text-[40px] md:text-[56px] font-semibold leading-tight"><span style="color:#0070F3">Re</span><span style="color:#0A1C60">cast</span> Software</h1>
               <p class="mt-2 max-w-2xl text-[16px] leading-[1.5] text-[#4A5568]">
                 ${STATE.activeTab==='problems'
-                  ? 'Application delivery has gotten more complex every year — more platforms, more environments, more change. But the tools and processes most teams use haven\'t kept up. <em class="font-normal text-[#6b7280]">Does that match what you\'re seeing?</em>'
-                  : STATE.activeTab==='solution'
-                  ? 'Application Workspace is a single abstraction layer for application delivery and management. Configure once, deploy anywhere, and continuously adapt the back end — without disrupting the user experience.'
-                  : 'Put in your numbers. See exactly how much time goes to repeat work — and what that capacity is worth when you get it back.'}
+                  ? 'The application layer is now the #1 primary constraint in modern IT.'
+                  : 'Application Workspace helps IT keep applications running smoothly as platforms change — without creating more work'}
               </p>
             </div>
 
@@ -568,7 +567,7 @@
         if (window.lucide?.createIcons) { try { window.lucide.createIcons(); } catch {} }
         attachEvents();
 
-        if (STATE.activeTab === 'solution') { try { buildFlow(); } catch(e) {} try { attachAccordionKeyboard(); } catch(e) {} }
+        if (STATE.activeTab === 'solution') { buildFlow(); attachAccordionKeyboard(); }
         if (STATE.activeTab === 'roi') { updateROIOutputs(); }
         if (STATE.activeTab === 'problems') {
           renderCapacityGapChart();
@@ -603,46 +602,46 @@
           id: 'speed',
           icon: 'zap',
           title: 'Speed',
-          tagline: 'Deployment and updates take too long to keep up with demand.',
+          tagline: 'The queue never fully clears — and leadership keeps adding to it.',
           color: '#0070F3',
           colorLight: 'rgba(0,112,243,0.07)',
           colorBorder: 'rgba(0,112,243,0.25)',
           bullets: [
-            'End users wait days for apps they need on day one — productivity lost before they start.',
-            'Patches take weeks when security expects days. Manual processes can\'t keep pace.',
-            'Every new tool request from leadership lands on a team already buried in the backlog.'
+            'New hires wait days for apps they need on day one.',
+            'Security patches take weeks when they need to go out in days.',
+            'Leadership asks for AI tools. The team is already behind.'
           ],
-          closing: 'The team isn\'t slow. The delivery model is.',
+          closing: 'The team isn\'t slow. The process is.',
           drivers: ['constant_updates', 'security_compliance']
         },
         {
           id: 'scale',
           icon: 'layers',
           title: 'Scale',
-          tagline: 'More platforms, more environments — same team, same tools.',
+          tagline: 'More platforms. Same team size.',
           color: '#7c3aed',
           colorLight: 'rgba(124,58,237,0.07)',
           colorBorder: 'rgba(124,58,237,0.25)',
           bullets: [
-            'Windows, macOS, VDI, cloud, SaaS — each one managed with different tools and different processes.',
-            'The same app gets rebuilt, reconfigured, and redeployed for each platform separately.',
-            'Every environment added multiplies the work. The team size doesn\'t change.'
+            'Most teams now manage Windows, Mac, VDI, cloud, and mobile together.',
+            'Add one platform and every app has to be repackaged for it.',
+            'The work multiplies. The team doesn\'t.'
           ],
-          closing: 'You can\'t standardize delivery when every platform is its own silo.',
+          closing: 'Engineers spend most of their time on upkeep, not on progress.',
           drivers: ['more_apps', 'too_many_tools']
         },
         {
           id: 'risk',
           icon: 'shield-alert',
           title: 'Risk',
-          tagline: 'Inconsistency creates gaps. Manual process creates fragility.',
+          tagline: 'Too much depends on too few people.',
           color: '#dc2626',
           colorLight: 'rgba(220,38,38,0.07)',
           colorBorder: 'rgba(220,38,38,0.25)',
           bullets: [
-            'App behavior is inconsistent across devices and environments — users get different experiences.',
-            'Version sprawl and configuration drift build up quietly across platforms.',
-            'One person out and delivery slows or stops. Too much depends on too few.'
+            'App delivery runs on manual steps that only a few people know.',
+            'One person out. Delivery slows down or stops.',
+            'Patches fall behind. Compliance gaps build up quietly.'
           ],
           closing: 'You can\'t hire your way out of this. The model has to change.',
           drivers: ['manual_rework', 'security_compliance']
@@ -651,149 +650,108 @@
 
       function renderProblems(){
         const af = STATE.activeForce;
-        const activeForceObj = af ? FORCES.find(f=>f.id===af) : null;
 
         return `
-          <section id="panel-problems" class="space-y-8">
+          <section id="panel-problems" class="space-y-5">
 
-            <!-- ROW 1: Industry Pressure Banner -->
-            <div class="section-card overflow-hidden">
-              <div class="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-slate-200/70">
-                ${[
-                  {num:'5+', label:'platforms most teams manage simultaneously', icon:'monitor-smartphone'},
-                  {num:'40%', label:'of IT engineering time on routine app work', icon:'wrench'},
-                  {num:'1', label:'app change &times; every platform = multiplied effort', icon:'copy'}
-                ].map(s=>`
-                  <div class="flex items-center gap-4 px-6 py-5">
-                    <div class="h-11 w-11 rounded-xl bg-[#0070F3]/8 grid place-items-center flex-shrink-0">
-                      <i data-lucide="${s.icon}" class="w-5 h-5 text-[#0070F3]"></i>
-                    </div>
-                    <div>
-                      <div class="text-[28px] font-bold text-[#0A1C60] leading-none tracking-tight">${s.num}</div>
-                      <div class="text-[13px] text-[#4A5568] mt-0.5 leading-snug">${s.label}</div>
-                    </div>
-                  </div>
-                `).join('')}
+            <!-- ROW 1: Context -->
+                </div>
+                <div>
+                </div>
               </div>
             </div>
 
-            <!-- ROW 2: Diagnostic Force Cards -->
-            <div>
-              <p class="text-[18px] font-medium text-[#0A1C60] leading-snug mb-4">Which of these is causing the most friction right now?</p>
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                ${FORCES.map(f => {
-                  const isActive = af === f.id;
-                  return `
-                    <button
-                      type="button"
-                      data-action="select-force"
-                      data-force="${f.id}"
-                      class="text-left section-card transition-all duration-300 focus-ring w-full overflow-hidden group"
-                      style="${isActive
-                        ? 'background:'+f.colorLight+';border-top:4px solid '+f.color+';box-shadow:0 8px 30px '+f.color+'22;'
-                        : 'border-top:4px solid transparent;'}"
-                      aria-pressed="${isActive}"
-                    >
-                      <div class="p-6 pb-5">
-                        <div class="flex items-center justify-between mb-4">
-                          <div class="h-12 w-12 rounded-2xl grid place-items-center flex-shrink-0 transition-transform duration-300 group-hover:scale-110"
-                               style="background:${f.colorLight}; border:1.5px solid ${f.colorBorder}">
-                            <i data-lucide="${f.icon}" class="w-6 h-6" style="color:${f.color}"></i>
-                          </div>
-                          ${isActive ? '<span class="h-3 w-3 rounded-full flex-shrink-0 animate-pulse" style="background:'+f.color+'"></span>' : ''}
+            <!-- ROW 2: Conversational prompt + Three force cards -->
+            <p class="text-[17px] text-[#0A1C60] leading-snug">Which of these is causing the most friction right now?</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+              ${FORCES.map(f => {
+                const isActive = af === f.id;
+                return `
+                  <button
+                    type="button"
+                    data-action="select-force"
+                    data-force="${f.id}"
+                    class="text-left section-card p-5 transition-all duration-200 focus-ring w-full"
+                    style="${isActive
+                      ? 'background:'+f.colorLight+';border-left:4px solid '+f.color+';box-shadow:0 0 0 1.5px '+f.color+'33;'
+                      : 'border-left:4px solid transparent;'}"
+                    aria-pressed="${isActive}"
+                  >
+                    <div class="flex items-center justify-between mb-3">
+                      <div class="flex items-center gap-2">
+                        <div class="h-8 w-8 rounded-lg grid place-items-center flex-shrink-0"
+                             style="background:${f.colorLight}; border:1px solid ${f.colorBorder}">
+                          <i data-lucide="${f.icon}" class="w-4 h-4" style="color:${f.color}"></i>
                         </div>
-                        <h3 class="text-xl font-bold text-[#0A1C60] mb-1">${f.title}</h3>
-                        <p class="text-[14px] font-medium leading-snug mb-4" style="color:${f.color}">${f.tagline}</p>
-                        ${isActive ? `
-                          <ul class="space-y-2.5 mb-4">
-                            ${f.bullets.map(b=>'<li class="flex items-start gap-2 text-[13px] text-[#4A5568] leading-relaxed"><span class="h-1.5 w-1.5 rounded-full flex-shrink-0 mt-[6px]" style="background:'+f.color+'"></span><span>'+b+'</span></li>').join('')}
-                          </ul>
-                          <p class="pt-3 border-t text-[14px] font-semibold text-[#0A1C60] leading-snug" style="border-color:${f.colorBorder}">${f.closing}</p>
-                        ` : `
-                          <div class="flex items-center gap-1 text-[12px] font-medium transition-colors" style="color:${f.color}">
-                            <span>Click to explore</span>
-                            <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
-                          </div>
-                        `}
+                        <span class="text-lg font-bold text-[#0A1C60]">${f.title}</span>
                       </div>
-                    </button>
-                  `;
-                }).join('')}
-              </div>
+                      ${isActive ? `<span class="h-2.5 w-2.5 rounded-full flex-shrink-0" style="background:${f.color}"></span>` : ''}
+                    </div>
+                    <p class="text-[13px] font-medium text-[#0A1C60] mb-3 leading-snug">${f.tagline}</p>
+                    <ul class="space-y-2">
+                      ${f.bullets.map(b=>`
+                        <li class="flex items-start gap-2 text-[12px] text-[#4A5568] leading-relaxed">
+                          <span class="h-1.5 w-1.5 rounded-full flex-shrink-0" style="background:${f.color}; margin-top:5px"></span>
+                          <span>${b}</span>
+                        </li>
+                      `).join('')}
+                    </ul>
+                    ${isActive ? `<p class="mt-3 pt-3 border-t text-[13px] font-semibold text-[#0A1C60] leading-snug" style="border-color:${f.colorBorder}">${f.closing}</p>` : ''}
+                  </button>
+                `;
+              }).join('')}
             </div>
 
-            <!-- ROW 3: Capacity Gap Chart (collapsed by default) -->
-            ${af && activeForceObj ? `
-            <div class="section-card p-8 transition-all duration-500">
-                <div class="mb-5 flex items-center justify-between">
-                  <div class="flex items-center gap-3">
-                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-[13px] font-semibold"
-                         style="background:${activeForceObj.colorLight}; color:${activeForceObj.color}; border:1px solid ${activeForceObj.colorBorder}">
-                      <span class="h-2 w-2 rounded-full" style="background:${activeForceObj.color}"></span>
-                      ${activeForceObj.title}
-                    </div>
-                    <span class="text-[14px] text-[#4A5568]">Here is how this compounds over time</span>
+            <!-- ROW 3: Chart (collapsed by default, expands on force card selection) -->
+            ${af ? `
+            <div class="section-card p-6">
+                <div class="mb-4 flex items-center justify-between">
+                  <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[12px] font-semibold"
+                       style="background:${FORCES.find(f=>f.id===af).colorLight}; color:${FORCES.find(f=>f.id===af).color}; border:1px solid ${FORCES.find(f=>f.id===af).colorBorder}">
+                    <span class="h-2 w-2 rounded-full" style="background:${FORCES.find(f=>f.id===af).color}"></span>
+                    ${FORCES.find(f=>f.id===af).title}
                   </div>
                   <button type="button" data-action="clear-force"
-                    class="inline-flex items-center gap-1.5 text-[12px] text-[#6b7280] hover:text-[#0A1C60] focus-ring rounded-lg px-3 py-1.5 transition-colors border border-slate-200 hover:border-slate-300">
-                    <i data-lucide="x" class="w-3.5 h-3.5"></i> Clear
+                    class="inline-flex items-center gap-1 text-[11px] text-[#6b7280] hover:text-[#0A1C60] focus-ring rounded px-2 py-1 transition-colors">
+                    <i data-lucide="x" class="w-3 h-3"></i> Clear
                   </button>
                 </div>
+              <p class="text-[13px] text-[#4A5568] mb-3">Here's how this compounds over time</p>
               <div class="chart-container relative">
                 <svg id="capacity-gap-chart" viewBox="0 0 800 400"></svg>
               </div>
             </div>
             ` : ''}
 
-            <!-- ROW 4: Why Change / Why Now / Why Recast — visual journey -->
-            <div>
-              <p class="text-[11px] font-semibold uppercase tracking-widest text-[#0070F3] mb-4">The strategic argument</p>
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-4 relative">
-                ${[
-                  {id:'change', icon:'alert-triangle', label:'Why Change', num:'1', desc:'App delivery still works the way it did a decade ago — but environments have multiplied.'},
-                  {id:'now', icon:'clock-4', label:'Why Now', num:'2', desc:'Every new platform, migration, or hybrid state makes the operational gap wider.'},
-                  {id:'recast', icon:'sparkles', label:'Why Application Workspace', num:'3', desc:'A single abstraction layer that decouples the user experience from infrastructure complexity.'}
-                ].map((w,idx)=>`
-                  <button
-                    type="button"
-                    data-action="open-why-modal"
-                    data-why="${w.id}"
-                    class="text-left section-card p-0 overflow-hidden focus-ring transition-all duration-300 hover:shadow-lg hover:-translate-y-1 group w-full"
-                  >
-                    <div class="px-6 pt-6 pb-5">
-                      <div class="flex items-center gap-3 mb-3">
-                        <div class="h-10 w-10 rounded-full bg-[#0070F3] grid place-items-center flex-shrink-0 text-white font-bold text-sm">${w.num}</div>
-                        <div>
-                          <div class="text-[16px] font-bold text-[#0A1C60]">${w.label}</div>
-                        </div>
-                      </div>
-                      <p class="text-[13px] text-[#4A5568] leading-relaxed mb-3">${w.desc}</p>
-                      <div class="flex items-center gap-1.5 text-[#0070F3] text-[13px] font-medium group-hover:gap-2.5 transition-all">
-                        <span>Explore</span>
-                        <i data-lucide="arrow-right" class="w-3.5 h-3.5 transition-transform group-hover:translate-x-1"></i>
-                      </div>
-                    </div>
-                  </button>
-                `).join('')}
+            <!-- ROW 3b: Why Change / Why Now / Why Recast — full-width horizontal cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div class="section-card p-0 overflow-hidden">
+                ${calloutDropdown('change','alert-triangle','Why Change','bg-slate-50')}
+              </div>
+              <div class="section-card p-0 overflow-hidden">
+                ${calloutDropdown('now','clock-4','Why Now','bg-slate-50', false, "")}
+              </div>
+              <div class="section-card p-0 overflow-hidden">
+                ${calloutDropdown('recast','sparkles','Why Recast','bg-slate-50', true)}
               </div>
             </div>
 
-            <!-- ROW 5: The Bottleneck Banner -->
+            <!-- ROW 4: The bottleneck -->
             <div class="rounded-2xl overflow-hidden" style="background:linear-gradient(135deg,#0A1C60 0%,#0070F3 100%)">
-              <div class="px-8 py-8 md:px-10 md:py-9">
-                <div class="flex items-start gap-5">
-                  <div class="flex-shrink-0 h-12 w-12 rounded-2xl bg-white/15 grid place-items-center mt-0.5">
-                    <i data-lucide="alert-octagon" class="w-6 h-6 text-white"></i>
+              <div class="px-6 py-6 md:px-8 md:py-7">
+                <div class="flex items-start gap-4">
+                  <div class="flex-shrink-0 h-10 w-10 rounded-xl bg-white/15 grid place-items-center mt-0.5">
+                    <i data-lucide="alert-octagon" class="w-5 h-5 text-white"></i>
                   </div>
                   <div class="flex-1">
-                    <div class="text-[10px] font-bold uppercase tracking-widest text-white/60 mb-1.5">The result</div>
-                    <h3 class="text-2xl font-bold text-white mb-3">It all converges in the application layer</h3>
-                    <p class="text-[15px] text-white/85 leading-relaxed mb-5 max-w-2xl">
-                      Speed, Scale, and Risk all compress into the same bottleneck — application delivery and management. Every platform, every environment, every update. The work never stops because there is no abstraction layer between what users need and how IT delivers it.
+                    <div class="text-[10px] font-bold uppercase tracking-widest text-white/60 mb-1">The result</div>
+                    <h3 class="text-xl font-bold text-white mb-2">It all backs up in the same place</h3>
+                    <p class="text-[14px] text-white/85 leading-relaxed mb-4 max-w-2xl">
+                      Speed, Scale, and Risk all compress into the same bottleneck — the application layer. Packaging, patching, deploying. It's not the hardest work. It's just the work that never stops.
                     </p>
                     <div class="flex flex-wrap gap-2">
                       ${['Packaging','Patching','Deploying','Updates','Compliance'].map(task=>`
-                        <span class="inline-flex items-center px-3.5 py-1.5 rounded-full bg-white/15 text-white text-[12px] font-medium border border-white/20 backdrop-blur-sm">
+                        <span class="inline-flex items-center px-3 py-1 rounded-full bg-white/15 text-white text-[12px] font-medium border border-white/20">
                           ${task}
                         </span>
                       `).join('')}
@@ -803,17 +761,25 @@
               </div>
             </div>
 
-            <!-- ROW 6: Bridge to Tab 2 -->
-            <div class="section-card p-8 text-center">
-              <div class="max-w-lg mx-auto">
-                <div class="h-12 w-12 rounded-2xl bg-[#0070F3]/10 grid place-items-center mx-auto mb-4">
-                  <i data-lucide="lightbulb" class="w-6 h-6 text-[#0070F3]"></i>
-                </div>
-                <h3 class="text-xl font-bold text-[#0A1C60] mb-2">What if there was a single layer between your apps and every platform?</h3>
-                <p class="text-[14px] text-[#4A5568] leading-relaxed mb-6">Application Workspace provides one abstraction layer for delivery and management. Configure once, deploy anywhere, and continuously adapt the back end — without disrupting the user experience.</p>
-                <button type="button" class="re-primary inline-flex items-center gap-2 text-[15px] px-8 py-3" data-action="advance" data-next="solution">
-                  See how it works <i data-lucide="arrow-right" class="w-5 h-5"></i>
-                </button>
+            <!-- ROW 5: What teams actually need -->
+            <div class="section-card p-6">
+              <h3 class="text-base font-semibold text-[#0A1C60] mb-1">What IT teams actually need</h3>
+              <p class="text-[13px] text-[#4A5568] mb-4">Not more headcount. A better way to work.</p>
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                ${[
+                  {icon:'copy-minus', title:'Stop repeating the same work', body:'Package an app once. It should work everywhere — not need rebuilding for every platform.'},
+                  {icon:'user-check', title:'Free up your best people', body:'About 40% of engineering time goes to routine upkeep. That time belongs on better work.'},
+                  {icon:'rocket', title:'Deliver when it matters', body:'Apps on day one. Fast patches. New tools without a growing queue.'},
+                  {icon:'cpu', title:'Deploy new tools without growing the queue', body:'AI rollouts, platform migrations, new M365 updates — these land on the same team that\'s already behind. Capacity to respond to what leadership asks for next.'}
+                ].map(g=>`
+                  <div class="rounded-xl border border-slate-200 bg-slate-50/60 p-4 hover:border-[#0070F3]/30 hover:bg-blue-50/30 transition-colors">
+                    <div class="h-8 w-8 rounded-lg bg-[#0070F3]/10 grid place-items-center mb-3">
+                      <i data-lucide="${g.icon}" class="w-4 h-4 text-[#0070F3]"></i>
+                    </div>
+                    <div class="text-[13px] font-semibold text-[#0A1C60] mb-1">${g.title}</div>
+                    <p class="text-[12px] text-[#4A5568] leading-relaxed">${g.body}</p>
+                  </div>
+                `).join('')}
               </div>
             </div>
 
@@ -1099,35 +1065,24 @@
       const whyOrder = ['change', 'now', 'recast'];
 
       function calloutDropdown(id, icon, label, headerTone, cta=false, subtext=''){
-        const subtextMap = {
-          change: 'The process hasn\'t kept up with the demands.',
-          now: 'The gap is getting wider, not narrower.',
-          recast: 'One definition. Every platform. Automatic.'
-        };
-        const desc = subtext || subtextMap[id] || '';
         return `
           <div class="h-full flex flex-col">
             <button
               type="button"
-              class="w-full overflow-hidden ring-1 ring-slate-200 focus-ring transition hover:ring-[#0070F3]/40 hover:shadow-md shadow-sm h-full"
+              class="w-full overflow-hidden ring-1 ring-slate-200 focus-ring transition hover:ring-slate-300 shadow-sm"
               data-action="open-why-modal"
               data-why="${id}"
               style="border-radius:var(--radius)"
             >
-              <div class="${cx('flex flex-col gap-2 px-5 py-5', headerTone)}">
+              <div class="${cx('flex items-center justify-between px-4 py-3', headerTone)}" style="border-bottom:1px solid var(--border-subtle)">
                 <div class="flex items-center gap-2">
-                  <div class="h-8 w-8 rounded-lg bg-[#0070F3]/10 grid place-items-center flex-shrink-0">
-                    <i data-lucide="${icon}" class="w-4 h-4 text-[#0070F3]" aria-hidden="true"></i>
-                  </div>
-                  <span class="text-[16px] font-semibold tracking-normal text-[#0A1C60]">${label}</span>
+                  <i data-lucide="${icon}" class="w-4 h-4 text-[#0A1C60]" aria-hidden="true"></i>
+                  <span class="text-[18px] font-semibold tracking-normal text-[#0A1C60]">${label}</span>
                 </div>
-                <p class="text-[12px] text-[#4A5568] leading-relaxed text-left">${desc}</p>
-                <div class="flex items-center gap-1 text-[#0070F3] text-[12px] font-medium mt-1">
-                  <span>Explore</span>
-                  <i data-lucide="arrow-right" class="w-3 h-3" aria-hidden="true"></i>
-                </div>
+                <i data-lucide="chevron-right" class="w-4 h-4 text-[#4A5568] transition-transform duration-150" aria-hidden="true"></i>
               </div>
             </button>
+            ${subtext ? `<p class="px-5 py-2 text-sm text-gray-700">${subtext}</p>` : ''}
           </div>
         `;
       }
@@ -1229,10 +1184,10 @@
       function renderMiniTimeline(){
         const phases = [
           {icon: 'play-circle', label: 'Kickoff'},
-          {icon: 'search', label: 'Assessment'},
-          {icon: 'users', label: 'Pilot'},
-          {icon: 'check-circle', label: 'Validation'},
-          {icon: 'flag', label: 'Full Rollout'}
+          {icon: 'hammer', label: 'Implementation'},
+          {icon: 'check-circle', label: 'UAT'},
+          {icon: 'flag', label: 'Launch'},
+          {icon: 'book-open', label: 'Enablement'}
         ];
         return `
           <div class="flex items-center justify-between mt-4" aria-hidden="true">
@@ -1247,345 +1202,103 @@
         `;
       }
 
-      // Demo step visual renderers — separated to avoid nested template literal issues
-      function renderDemoVisual(id) {
-        var platforms = ['ConfigMgr','Intune','Citrix','AVD','Win 365','macOS'];
-        if (id === 'before') {
-          return '<div class="flex flex-col items-center gap-3 py-4">' +
-            '<div class="text-[11px] font-semibold uppercase tracking-widest text-[#dc2626] mb-1">Today\'s Process</div>' +
-            '<div class="flex items-center gap-2 mb-3">' +
-              '<div class="px-3 py-1.5 rounded-lg bg-blue-50 border border-blue-200 text-[12px] font-medium text-[#0A1C60]">1 App Change</div>' +
-              '<i data-lucide="arrow-right" class="w-4 h-4 text-[#9ca3af]"></i>' +
-              '<div class="px-3 py-1.5 rounded-lg bg-red-50 border border-red-200 text-[12px] font-medium text-[#dc2626]">&times; Repeated per platform</div>' +
-            '</div>' +
-            '<div class="grid grid-cols-3 sm:grid-cols-6 gap-2 w-full">' +
-              platforms.map(function(p) {
-                return '<div class="flex flex-col items-center gap-1 p-2 rounded-lg border border-red-100 bg-red-50/50">' +
-                  '<div class="h-7 w-7 rounded bg-red-100 grid place-items-center"><i data-lucide="package" class="w-3.5 h-3.5 text-[#dc2626]"></i></div>' +
-                  '<span class="text-[10px] text-[#4A5568] text-center">' + p + '</span>' +
-                  '<span class="text-[9px] text-[#dc2626] font-medium">Rebuild</span></div>';
-              }).join('') +
-            '</div>' +
-            '<p class="text-[12px] text-[#dc2626] mt-2 font-medium">6 platforms &times; 4 hrs each = 24 hours per change</p>' +
-          '</div>';
-        }
-        if (id === 'define') {
-          var topRow = ['ConfigMgr','Intune','Citrix','AVD','Win 365','macOS'];
-          var tags = ['Binaries','Configuration','Policy','Identity','Targeting','Delivery Logic'];
-          return '<div class="flex flex-col items-center gap-3 py-4">' +
-            '<div class="text-[11px] font-semibold uppercase tracking-widest text-[#4A5568] mb-1">Your Platforms</div>' +
-            '<div class="flex flex-wrap justify-center gap-2 mb-2">' +
-              topRow.map(function(p) { return '<span class="px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200 text-[10px] font-medium text-[#4A5568]">' + p + '</span>'; }).join('') +
-            '</div>' +
-            '<div class="flex items-center gap-1 text-[#0070F3]"><i data-lucide="chevrons-up" class="w-4 h-4"></i></div>' +
-            '<div class="w-full max-w-md rounded-xl border-2 border-[#0070F3] bg-blue-50/30 p-5 text-center">' +
-              '<i data-lucide="layers" class="w-8 h-8 text-[#0070F3] mx-auto mb-2"></i>' +
-              '<div class="text-[15px] font-bold text-[#0A1C60]">Application Workspace</div>' +
-              '<div class="text-[11px] text-[#4A5568] mt-1">Single abstraction layer — decouples apps from infrastructure</div>' +
-              '<div class="mt-3 flex flex-wrap justify-center gap-1.5">' +
-                tags.map(function(t) { return '<span class="px-2 py-0.5 rounded-full bg-[#0070F3]/10 text-[10px] font-medium text-[#0070F3]">' + t + '</span>'; }).join('') +
-              '</div>' +
-            '</div>' +
-            '<div class="flex items-center gap-1 text-[#0070F3]"><i data-lucide="chevrons-down" class="w-4 h-4"></i></div>' +
-            '<div class="text-[11px] font-semibold uppercase tracking-widest text-[#059669]">Consistent End-User Experience</div>' +
-            '<p class="text-[12px] text-[#0070F3] mt-1 font-medium">Configure once. Complexity is handled behind the scenes.</p>' +
-          '</div>';
-        }
-        if (id === 'deliver') {
-          return '<div class="flex flex-col items-center gap-3 py-4">' +
-            '<div class="text-[11px] font-semibold uppercase tracking-widest text-[#059669] mb-1">Automatic Delivery</div>' +
-            '<div class="w-16 h-16 rounded-xl bg-[#0070F3] grid place-items-center mb-1">' +
-              '<i data-lucide="server" class="w-7 h-7 text-white"></i>' +
-            '</div>' +
-            '<div class="flex items-center gap-1 text-[#4A5568]"><i data-lucide="chevrons-down" class="w-5 h-5 text-[#0070F3]"></i></div>' +
-            '<div class="grid grid-cols-3 sm:grid-cols-6 gap-2 w-full">' +
-              platforms.map(function(p) {
-                return '<div class="flex flex-col items-center gap-1 p-2 rounded-lg border border-green-100 bg-green-50/50">' +
-                  '<div class="h-7 w-7 rounded bg-green-100 grid place-items-center"><i data-lucide="check" class="w-3.5 h-3.5 text-[#059669]"></i></div>' +
-                  '<span class="text-[10px] text-[#4A5568] text-center">' + p + '</span>' +
-                  '<span class="text-[9px] text-[#059669] font-medium">Auto</span></div>';
-              }).join('') +
-            '</div>' +
-            '<p class="text-[12px] text-[#059669] mt-2 font-medium">Same change. 4 hours total instead of 24.</p>' +
-          '</div>';
-        }
-        if (id === 'users') {
-          var scenarios = [
-            {title:'New Hire, Day One', desc:'Opens laptop. All apps are already there — configured, ready to launch. No tickets filed, no waiting.', icon:'user-plus', color:'#0070F3'},
-            {title:'Platform Migration', desc:'IT moves from one delivery platform to another. The user sees no change. Same apps, same experience.', icon:'refresh-cw', color:'#7c3aed'},
-            {title:'Urgent Patch', desc:'Security patch deployed across every environment on schedule. Compliance tracked automatically. No manual steps.', icon:'shield-check', color:'#059669'}
-          ];
-          return '<div class="flex flex-col items-center gap-4 py-4">' +
-            '<div class="text-[11px] font-semibold uppercase tracking-widest text-[#0A1C60] mb-1">Consumer-Grade Experience</div>' +
-            '<div class="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full">' +
-              scenarios.map(function(s) {
-                return '<div class="rounded-xl border border-slate-200 bg-white p-4">' +
-                  '<div class="h-10 w-10 rounded-xl grid place-items-center mb-3" style="background:' + s.color + '10">' +
-                    '<i data-lucide="' + s.icon + '" class="w-5 h-5" style="color:' + s.color + '"></i>' +
-                  '</div>' +
-                  '<div class="text-[13px] font-semibold text-[#0A1C60] mb-1">' + s.title + '</div>' +
-                  '<div class="text-[11px] text-[#4A5568] leading-relaxed">' + s.desc + '</div>' +
-                '</div>';
-              }).join('') +
-            '</div>' +
-            '<div class="rounded-lg bg-[#0070F3]/5 border border-[#0070F3]/20 px-4 py-3 text-[12px] text-[#4A5568] text-center">' +
-              '<strong class="text-[#0A1C60]">The goal:</strong> Users interact with a simple, consistent interface. Apps install, configure, update, and launch seamlessly — regardless of what platform delivers them.' +
-            '</div>' +
-          '</div>';
-        }
-        if (id === 'result') {
-          var outcomes = [
-            {icon:'copy-minus', title:'Reduce Operational Complexity', desc:'One layer replaces fragmented, platform-by-platform processes.'},
-            {icon:'refresh-cw', title:'Eliminate Repetitive Work', desc:'Apps and workflows built once, reused across every environment.'},
-            {icon:'shield-check', title:'Enable Change Without Disruption', desc:'Backend migrations and platform shifts happen without impacting users.'},
-            {icon:'smile', title:'Improve End-User Experience', desc:'Consistent, reliable app delivery. Lower support burden, higher satisfaction.'}
-          ];
-          return '<div class="flex flex-col gap-3 py-4">' +
-            '<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">' +
-              outcomes.map(function(o) {
-                return '<div class="rounded-xl border border-slate-200 bg-white p-4 flex items-start gap-3">' +
-                  '<div class="h-9 w-9 rounded-lg bg-[#0070F3]/8 grid place-items-center flex-shrink-0 mt-0.5">' +
-                    '<i data-lucide="' + o.icon + '" class="w-4 h-4 text-[#0070F3]"></i>' +
-                  '</div>' +
-                  '<div>' +
-                    '<div class="text-[13px] font-semibold text-[#0A1C60] mb-0.5">' + o.title + '</div>' +
-                    '<div class="text-[11px] text-[#4A5568] leading-relaxed">' + o.desc + '</div>' +
-                  '</div></div>';
-              }).join('') +
-            '</div>' +
-            '<div class="rounded-xl bg-slate-50 border border-slate-200 p-3 text-[12px] text-[#4A5568] leading-relaxed">' +
-              '<strong class="text-[#0A1C60]">Works alongside your existing tools.</strong> Nothing gets replaced — just connected. SOC 2 Type II and ISO 27001 certified. Live in 4\u20136 weeks.' +
-            '</div>' +
-          '</div>';
-        }
-        return '';
-      }
-
-      const DEMO_STEPS = [
-        { id: 'overview', label: 'The Problem', icon: 'alert-triangle',
-          headline: 'Every platform is its own silo',
-          body: 'Today, every app change gets rebuilt, reconfigured, and redeployed separately for each platform — ConfigMgr, Intune, Citrix, AVD, Windows 365, macOS. The same work, repeated. Different tools, different processes, different results.',
-          visual: 'before'
-        },
-        { id: 'define', label: 'The Abstraction Layer', icon: 'layers',
-          headline: 'One layer between your apps and every platform',
-          body: 'Application Workspace separates application binaries from configuration and delivery workflows. You configure an application once — the platform, policy, identity, and targeting are all handled by the workspace. Not by your engineers rebuilding for each environment.',
-          visual: 'define'
-        },
-        { id: 'deliver', label: 'Deploy Anywhere', icon: 'send',
-          headline: 'Configure once. Deliver to every platform automatically.',
-          body: 'One configuration flows to every environment. Patches go out on schedule. Compliance is tracked automatically. Updates often need minimal changes instead of full rebuilds. The back end adapts — the user experience stays consistent.',
-          visual: 'deliver'
-        },
-        { id: 'users', label: 'End-User Experience', icon: 'user-check',
-          headline: 'Click an app and it just works',
-          body: 'Users interact with applications through a simple, consistent interface — regardless of which platform delivers it. Apps install, configure, update, and launch seamlessly. No tickets. No troubleshooting. No inconsistency between devices.',
-          visual: 'users'
-        },
-        { id: 'result', label: 'The Result', icon: 'check-circle',
-          headline: 'Reduce complexity. Eliminate repetition. Enable continuous change.',
-          body: 'IT handles increasing complexity behind the scenes while delivering a simple, reliable experience to end users. Migrations, hybrid states, new platforms — the back end changes without disrupting anyone. Capacity comes back to the team.',
-          visual: 'result'
-        }
-      ];
-
       function renderSolution(){
-        var step = STATE.demoStep || 0;
-        var current = DEMO_STEPS[step];
-        var isLast = step === DEMO_STEPS.length - 1;
-        var isFirst = step === 0;
-        var total = DEMO_STEPS.length;
-
-        // Build stepper: circles connected by lines
-        var stepperHtml = '<div class="flex items-center w-full px-4">';
-        for (var i = 0; i < total; i++) {
-          var isComplete = i < step;
-          var isCurrent = i === step;
-          var isFuture = i > step;
-
-          // Circle
-          var circleClasses = 'relative z-10 flex items-center justify-center rounded-full transition-all duration-300 cursor-pointer focus-ring ';
-          var circleStyle = '';
-          var innerHtml = '';
-
-          if (isComplete) {
-            circleClasses += 'h-10 w-10 ';
-            circleStyle = 'background:#059669;';
-            innerHtml = '<i data-lucide="check" class="w-5 h-5 text-white"></i>';
-          } else if (isCurrent) {
-            circleClasses += 'h-12 w-12 ring-4 ring-[#0070F3]/20 ';
-            circleStyle = 'background:#0070F3;';
-            innerHtml = '<span class="text-sm font-bold text-white">' + (i + 1) + '</span>';
-          } else {
-            circleClasses += 'h-10 w-10 border-2 border-slate-300 bg-white hover:border-[#0070F3]/50 ';
-            circleStyle = '';
-            innerHtml = '<span class="text-sm font-medium text-[#9ca3af]">' + (i + 1) + '</span>';
-          }
-
-          if (i > 0) {
-            // Connecting line
-            var lineColor = i <= step ? '#059669' : '#e5e7eb';
-            stepperHtml += '<div class="flex-1 h-0.5 transition-colors duration-500" style="background:' + lineColor + '"></div>';
-          }
-
-          stepperHtml += '<button type="button" data-action="demo-step" data-step="' + i + '" class="' + circleClasses + '" style="' + circleStyle + '" aria-current="' + (isCurrent ? 'step' : 'false') + '" aria-label="Step ' + (i+1) + ': ' + DEMO_STEPS[i].label + '">' + innerHtml + '</button>';
-        }
-        stepperHtml += '</div>';
-
-        // Step labels row
-        var labelsHtml = '<div class="flex items-start w-full px-0 mt-2">';
-        for (var j = 0; j < total; j++) {
-          var labelColor = j === step ? 'text-[#0070F3] font-semibold' : j < step ? 'text-[#059669]' : 'text-[#9ca3af]';
-          labelsHtml += '<div class="flex-1 text-center"><span class="text-[11px] ' + labelColor + ' leading-tight block">' + DEMO_STEPS[j].label + '</span></div>';
-        }
-        labelsHtml += '</div>';
-
-        var backBtn = isFirst
-          ? '<div></div>'
-          : '<button type="button" class="re-secondary inline-flex items-center gap-2 text-[15px] px-6 py-2.5" data-action="demo-step" data-step="' + (step - 1) + '"><i data-lucide="arrow-left" class="w-5 h-5"></i> Back</button>';
-        var nextBtn = isLast
-          ? '<button type="button" class="re-primary inline-flex items-center gap-2 text-[15px] px-6 py-2.5" data-action="advance" data-next="roi">Calculate Your Impact <i data-lucide="arrow-right" class="w-5 h-5"></i></button>'
-          : '<button type="button" class="re-primary inline-flex items-center gap-2 text-[15px] px-6 py-2.5" data-action="demo-step" data-step="' + (step + 1) + '">Next: ' + DEMO_STEPS[step + 1].label + ' <i data-lucide="arrow-right" class="w-5 h-5"></i></button>';
-
-        return '<section id="panel-solution" class="space-y-6">' +
-          '<div class="section-card p-6">' +
-            stepperHtml +
-            labelsHtml +
-          '</div>' +
-          '<div class="section-card p-8 md:p-10">' +
-            '<div class="max-w-3xl mx-auto text-center">' +
-              '<div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#0070F3]/8 text-[#0070F3] text-[12px] font-semibold mb-4">' +
-                '<i data-lucide="' + current.icon + '" class="w-4 h-4"></i>' +
-                '<span>Step ' + (step + 1) + ' of ' + total + '</span>' +
-              '</div>' +
-              '<h2 class="text-2xl md:text-3xl font-bold text-[#0A1C60] mb-3 leading-tight">' + current.headline + '</h2>' +
-              '<p class="text-[15px] text-[#4A5568] leading-relaxed mb-8 max-w-2xl mx-auto">' + current.body + '</p>' +
-            '</div>' +
-            '<div class="max-w-3xl mx-auto">' +
-              renderDemoVisual(current.visual) +
-            '</div>' +
-          '</div>' +
-          '<div class="flex items-center justify-between px-2">' + backBtn + nextBtn + '</div>' +
-        '</section>';
+        return `
+          <section id="panel-solution" class="space-y-3">
+            <div class="grid grid-cols-1 gap-3 lg:grid-cols-[3fr_2fr]">
+              ${renderFlow()}
+              <div class="flex flex-col gap-3 relative">
+                <!-- ─── CHANGE 2.5: sticky header label updated ─── -->
+                <div class="sticky top-0 z-10 bg-white/60 backdrop-blur-lg py-2 shadow-sm rounded-xl px-2">
+                  <div class="flex justify-between items-center text-sm">
+                    <span class="font-semibold">Recast Approach</span>
+                    <span class="text-[#4A5568]">${STATE.visitedCards.length} of 3 explored</span>
+                  </div>
+                </div>
+                <button type="button" class="md:hidden bg-transparent text-[#0A1C60] border-2 border-[#0A1C60] py-2 text-sm rounded hover:text-[#0070F3] hover:border-[#0070F3]" data-action="expand-all">Expand All</button>
+                ${NEW_CARDS.map(card => popoutCard(card)).join('')}
+                <div class="sticky bottom-0 bg-white/70 backdrop-blur-lg py-3 shadow-lg mt-3 rounded-xl px-2 border border-slate-200">
+                  <!-- ─── CHANGE 2.6: CTA button text updated ─── -->
+                  <button type="button" class="bg-[#0070F3] text-white px-4 py-2 text-sm font-semibold rounded hover:bg-[#005AD0]" data-action="advance" data-next="roi">See Business Impact</button>
+                </div>
+              </div>
+            </div>
+          </section>
+        `;
       }
 
       // ─── CHANGE 13 & 14: renderROI and renderCalcResult fully replaced ───
       function renderROI(){
         return `
-          <section id="panel-roi" class="space-y-8">
+          <section id="panel-roi" class="space-y-6">
 
-            <!-- Hero Header -->
-            <div class="section-card p-8 md:p-10 text-center">
-              <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#0070F3]/8 text-[#0070F3] text-[12px] font-semibold mb-4">
-                <i data-lucide="trending-up" class="w-4 h-4"></i>
-                <span>Impact Calculator</span>
-              </div>
-              <h2 class="text-3xl md:text-4xl font-bold text-[#0A1C60] mb-3">See the Impact</h2>
-              <p class="text-[16px] text-[#4A5568] leading-relaxed max-w-2xl mx-auto">
-                Enter your environment below. The calculator shows exactly how many engineering hours go to repeat work — and what those hours are worth.
+            <div class="section-card p-6">
+              <h3 class="text-xl font-semibold text-[#0A1C60] mb-2">See How Much Time You Get Back</h3>
+              <p class="text-sm text-[#4A5568] leading-relaxed max-w-2xl">
+                Enter your environment below. The calculator shows you exactly how many engineering hours are going to repeat work — and what those hours are worth.
               </p>
             </div>
 
-            <!-- Calculator + Results -->
-            <div class="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-6">
+            <div class="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-4">
 
-              <div class="section-card p-8 space-y-6">
+              <div class="section-card p-6 space-y-5">
                 <div class="text-[11px] font-semibold uppercase tracking-widest text-[#0070F3]">Your Environment</div>
 
-                <label class="flex flex-col gap-1.5">
-                  <span class="text-[15px] font-medium text-[#0A1C60]">How many platforms are you managing today?</span>
-                  <span class="text-[13px] text-[#4A5568]">Count each separately: ConfigMgr, Intune, Citrix, AVD, macOS, Windows 365.</span>
+                <label class="flex flex-col gap-1">
+                  <span class="text-sm font-medium text-[#0A1C60]">How many platforms are you managing today?</span>
+                  <span class="text-xs text-[#4A5568]">Count each separately: ConfigMgr, Intune, Citrix, AVD, macOS, Windows 365.</span>
                   <input type="number" id="calc-envs" min="1" max="10" value="${STATE.calcInputs.envs}"
-                    class="mt-1 w-full rounded-lg border border-slate-200 bg-slate-50/70 px-4 py-3 text-[15px] focus-ring transition-shadow hover:shadow-sm">
-                  <span class="text-[11px] text-[#9ca3af] italic">Most teams: 3 to 5 platforms</span>
+                    class="mt-1 w-full rounded border border-slate-200 bg-slate-50 px-3 py-2 text-sm focus-ring">
+                  <span class="text-[11px] text-[#9ca3af] italic">Most teams: 3–5 platforms</span>
                 </label>
 
-                <label class="flex flex-col gap-1.5">
-                  <span class="text-[15px] font-medium text-[#0A1C60]">How many app changes do you make per month?</span>
-                  <span class="text-[13px] text-[#4A5568]">Include patches, vendor updates, new releases, and urgent fixes.</span>
+                <label class="flex flex-col gap-1">
+                  <span class="text-sm font-medium text-[#0A1C60]">How many app changes do you make per month?</span>
+                  <span class="text-xs text-[#4A5568]">Include patches, vendor updates, new releases, and urgent fixes.</span>
                   <input type="number" id="calc-changes" min="1" max="500" value="${STATE.calcInputs.changes}"
-                    class="mt-1 w-full rounded-lg border border-slate-200 bg-slate-50/70 px-4 py-3 text-[15px] focus-ring transition-shadow hover:shadow-sm">
-                  <span class="text-[11px] text-[#9ca3af] italic">Most teams: 10 to 30 changes/month</span>
+                    class="mt-1 w-full rounded border border-slate-200 bg-slate-50 px-3 py-2 text-sm focus-ring">
+                  <span class="text-[11px] text-[#9ca3af] italic">Most teams: 10–30 changes/month</span>
                 </label>
 
-                <label class="flex flex-col gap-1.5">
-                  <span class="text-[15px] font-medium text-[#0A1C60]">How long does one change take, start to finish, on a single platform?</span>
-                  <span class="text-[13px] text-[#4A5568]">Include packaging, testing, deployment, and fixing anything that breaks.</span>
+                <label class="flex flex-col gap-1">
+                  <span class="text-sm font-medium text-[#0A1C60]">How long does one change take, start to finish, on a single platform?</span>
+                  <span class="text-xs text-[#4A5568]">Include packaging, testing, deployment, and fixing anything that breaks.</span>
                   <input type="number" id="calc-time" min="1" max="100" value="${STATE.calcInputs.time}"
-                    class="mt-1 w-full rounded-lg border border-slate-200 bg-slate-50/70 px-4 py-3 text-[15px] focus-ring transition-shadow hover:shadow-sm">
+                    class="mt-1 w-full rounded border border-slate-200 bg-slate-50 px-3 py-2 text-sm focus-ring">
                   <span class="text-[11px] text-[#9ca3af] italic">Recast benchmark: ~4 hours per app per platform</span>
                 </label>
 
-                <label class="flex flex-col gap-1.5">
-                  <span class="text-[15px] font-medium text-[#0A1C60]">Fully-loaded IT admin salary (USD/year)</span>
-                  <span class="text-[13px] text-[#4A5568]">Used to put a dollar value on the time saved.</span>
+                <label class="flex flex-col gap-1">
+                  <span class="text-sm font-medium text-[#0A1C60]">Fully-loaded IT admin salary (USD/year)</span>
+                  <span class="text-xs text-[#4A5568]">Used to put a dollar value on the time saved.</span>
                   <input type="number" id="calc-salary" min="50000" max="300000" step="5000" value="${STATE.calcInputs.salary || 110000}"
-                    class="mt-1 w-full rounded-lg border border-slate-200 bg-slate-50/70 px-4 py-3 text-[15px] focus-ring transition-shadow hover:shadow-sm">
-                  <span class="text-[11px] text-[#9ca3af] italic">Typical range: $90,000 to $130,000</span>
+                    class="mt-1 w-full rounded border border-slate-200 bg-slate-50 px-3 py-2 text-sm focus-ring">
+                  <span class="text-[11px] text-[#9ca3af] italic">Typical range: $90,000–$130,000</span>
                 </label>
 
                 <button type="button" data-action="calculate-impact"
-                  class="re-primary inline-flex items-center gap-2 text-[15px] px-8 py-3">
-                  <i data-lucide="calculator" class="w-5 h-5"></i>
-                  Calculate Impact
+                  class="bg-[#0070F3] text-white px-6 py-2.5 text-sm font-semibold rounded-full hover:bg-[#005AD0] focus-ring">
+                  Calculate
                 </button>
               </div>
 
               <div class="section-card p-6 flex flex-col gap-4" id="calc-output-panel">
                 ${STATE.calcResult ? renderCalcResult() : `
-                  <div class="flex flex-col items-center justify-center h-full gap-4 py-16 text-center">
-                    <div class="h-16 w-16 rounded-2xl bg-[#0070F3]/8 grid place-items-center">
-                      <i data-lucide="calculator" class="w-8 h-8 text-[#0070F3]"></i>
-                    </div>
-                    <div>
-                      <p class="text-[15px] font-medium text-[#0A1C60] mb-1">Your results will appear here</p>
-                      <p class="text-[13px] text-[#4A5568]">Fill in your numbers and hit Calculate Impact.</p>
-                    </div>
+                  <div class="flex flex-col items-center justify-center h-full gap-3 py-12 text-center">
+                    <i data-lucide="calculator" class="w-8 h-8 text-[#0070F3]"></i>
+                    <p class="text-sm text-[#4A5568]">Fill in your numbers and hit Calculate.</p>
                   </div>
                 `}
               </div>
 
             </div>
 
-            <!-- Benefits Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-              ${[
-                {icon:'layers', title:'Single Abstraction Layer', body:'One control layer across all platforms. Decouple app delivery from infrastructure complexity.'},
-                {icon:'refresh-cw', title:'Continuous Adaptation', body:'Migrations, hybrid states, new platforms — the back end changes without disrupting users.'},
-                {icon:'smile', title:'Consumer-Grade Experience', body:'End users get consistent, reliable apps. IT handles complexity behind the scenes.'}
-              ].map(b=>`
-                <div class="section-card p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-                  <div class="h-11 w-11 rounded-2xl bg-[#0070F3]/8 grid place-items-center mb-4">
-                    <i data-lucide="${b.icon}" class="w-5 h-5 text-[#0070F3]"></i>
-                  </div>
-                  <h4 class="text-[16px] font-bold text-[#0A1C60] mb-2">${b.title}</h4>
-                  <p class="text-[14px] text-[#4A5568] leading-relaxed">${b.body}</p>
-                </div>
-              `).join('')}
-            </div>
-
-            <!-- Platform Support Strip -->
-            <div class="section-card p-6">
-              <div class="text-center mb-4">
-                <div class="text-[11px] font-semibold uppercase tracking-widest text-[#4A5568]">Works across your existing environment</div>
-              </div>
-              <div class="flex flex-wrap justify-center gap-3">
-                ${['ConfigMgr / SCCM','Microsoft Intune','Citrix','Azure Virtual Desktop','Windows 365','macOS / Jamf','Physical Devices','VDI','SaaS'].map(n=>`
-                  <span class="px-4 py-2 rounded-full bg-slate-50 border border-slate-200 text-[12px] font-medium text-[#0A1C60] hover:bg-[#0070F3]/5 hover:border-[#0070F3]/20 transition-colors">
-                    ${n}
-                  </span>
-                `).join('')}
-              </div>
-            </div>
-
-            <!-- Disclaimer -->
-            <div class="rounded-xl border border-slate-200 bg-white/60 p-4 text-[12px] text-[#9ca3af] leading-relaxed">
+            <div class="rounded-xl border border-slate-200 bg-white/60 p-3 text-[11px] text-[#9ca3af] leading-relaxed">
               <strong class="text-[#6b7280]">How this works:</strong> Hours saved = the time currently spent repackaging the same app for each platform. With Application Workspace that work happens once. Dollar values are based on your salary input. The FTE number shows what that recovered time is worth — not a suggestion to reduce headcount. Most teams reinvest that capacity into the backlog or strategic projects — not reductions.
             </div>
 
-            <!-- Edit Button -->
             <div class="flex justify-start">
-              <button type="button" data-action="open-currentstate-editor" class="inline-flex items-center gap-2 bg-transparent text-gray-600 border-2 border-gray-300 px-5 py-3 text-base font-medium focus-ring rounded-full hover:text-[#0070F3] hover:border-[#0070F3] transition-colors">
+              <button type="button" data-action="open-currentstate-editor" class="inline-flex items-center gap-2 bg-transparent text-gray-600 border-2 border-gray-300 px-5 py-3 text-base font-medium focus-ring rounded-full hover:text-[#0070F3] hover:border-[#0070F3]">
                 <i data-lucide="edit-3" class="w-5 h-5"></i> Edit Current State
               </button>
             </div>
@@ -1652,8 +1365,6 @@
           `}
         `;
       }
-
-      function updateROIOutputs(){ /* no-op: calc results rendered inline */ }
 
       function setText(id, value){
         const el=document.getElementById(id);
@@ -1776,7 +1487,7 @@
                 <div class="h-6 w-6 rounded-[2px] grid place-items-center bg-[#0A1C60]"><i data-lucide="boxes" class="h-3.5 w-3.5 text-white"></i></div>
                 <div>
                   <h3 class="text-base font-semibold">Application Workspace</h3>
-                  <div class="text-[12px] text-[#4A5568]">Define applications once — delivered automatically to every platform and user</div>
+                  <div class="text-[12px] text-[#4A5568]">Single abstraction layer — configure once, deliver anywhere</div>
                 </div>
               </div>
               <div class="flex items-center gap-2 text-[12px]">
@@ -1786,38 +1497,39 @@
               </div>
             </div>
 
-            <!-- ─── Flow Section: Hub at top → platforms below (correct direction) ─── -->
-            <div id="envFlow" class="mt-3 sub-card p-3 relative bg-gradient-to-b from-white to-slate-50 shadow-inner ${STATE.showLabels ? 'show-labels' : ''}" role="region" aria-label="Application Workspace delivery flow">
+            <!-- ─── Flow Section: Platforms at top → arrows → Hub (abstraction layer) ─── -->
+            <div id="envFlow" class="mt-3 sub-card p-3 relative bg-gradient-to-b from-white to-slate-50 shadow-inner ${STATE.showLabels ? 'show-labels' : ''}" role="region" aria-label="Environment flow">
 
-              <!-- STEP 1: Application Workspace hub — where definition happens -->
-              <div id="envHub" class="hub-card sub-card p-3 text-center bg-gradient-to-r from-[#0A1C60] to-[#0070F3] text-white mb-2">
+              <!-- STEP 1: Platforms & Environments at top -->
+              <div class="text-[10px] font-semibold uppercase tracking-widest text-[#4A5568] mb-2 text-center">Your Platforms & Environments</div>
+              <div id="envSources" class="flex flex-wrap justify-between gap-2">
+                ${ENV_DESTINATIONS.map((env, idx) => `
+                  <div class="env-wrap" style="--d: ${idx * 0.2}s">
+                    <div class="env-ring logo-ring">${env.svg}</div>
+                    <span class="env-name">${env.name}</span>
+                  </div>
+                `).join('')}
+              </div>
+
+              <!-- STEP 2: Arrows flow DOWN from platforms to hub -->
+              <div id="envArrows" class="grid grid-cols-6 gap-2 mt-2 mb-2">
+                ${ENV_DESTINATIONS.map((_, idx) => `<div class="arrow-line" style="--d: ${1 + idx * 0.2}s"></div>`).join('')}
+              </div>
+
+              <!-- STEP 3: Application Workspace hub — the abstraction layer -->
+              <div class="text-[10px] font-semibold uppercase tracking-widest text-[#0070F3] mb-1 text-center">Abstraction Layer</div>
+              <div id="envHub" class="hub-card sub-card p-3 text-center bg-gradient-to-r from-[#0A1C60] to-[#0070F3] text-white">
                 <div class="flex items-center justify-center gap-2">
                   <i data-lucide="server" class="w-4 h-4 text-white"></i>
                   <span class="text-sm font-semibold">Application Workspace</span>
                 </div>
-                <div class="text-[10px] opacity-75 mt-0.5">Define once here — delivered everywhere below</div>
+                <div class="text-[10px] opacity-75 mt-0.5">Single abstraction layer — configure once, deliver anywhere</div>
               </div>
 
-              <!-- STEP 2: Arrows flow DOWN from hub to platforms -->
-              <div id="envArrows" class="grid grid-cols-6 gap-2 mt-1 mb-1">
-                ${ENV_DESTINATIONS.map((_, idx) => `<div class="arrow-line" style="--d: ${0.5 + idx * 0.15}s"></div>`).join('')}
-              </div>
-
-              <!-- STEP 3: Delivery destinations — platforms receive the app -->
-              <div class="mb-1">
-                <div class="text-[10px] font-semibold uppercase tracking-widest text-[#4A5568] mb-2 text-center">Delivery Destinations</div>
-                <div id="envDestinations" class="flex flex-wrap justify-between gap-2">
-                  ${ENV_DESTINATIONS.map((env, idx) => `
-                    <div class="env-wrap" style="--d: ${0.8 + idx * 0.2}s">
-                      <div class="env-ring logo-ring">${env.svg}</div>
-                      <span class="env-name">${env.name}</span>
-                    </div>
-                  `).join('')}
-                </div>
-              </div>
+              <div class="text-[10px] font-semibold uppercase tracking-widest text-[#059669] mt-2 mb-1 text-center">Consistent User Experience</div>
 
               <div id="metricsBanner" class="metrics-banner mt-2">
-                <span id="appsProcessedCounter" class="tabular-nums">0</span>+ Apps — Defined Once, Delivered Everywhere
+                <span id="appsProcessedCounter" class="tabular-nums">0</span>+ Apps Processed
               </div>
             </div>
 
@@ -2514,11 +2226,6 @@
             return;
           }
 
-          if (action === 'demo-step') {
-            STATE.demoStep = parseInt(act.getAttribute('data-step'), 10) || 0;
-            render();
-            return;
-          }
           if (action === 'start-flow') { startFlow(); return; }
           if (action === 'reset-flow') { resetFlow(); return; }
 
@@ -2768,19 +2475,6 @@
           STATE.insightContent=null;
           STATE.highlightDriverId=null;
           render();
-          return;
-        }
-        // Arrow key navigation for demo steps
-        if(STATE.activeTab==='solution' && !STATE.modalOpen && !STATE.openWhyModal && !STATE.insightContent){
-          if(e.key==='ArrowRight' && STATE.demoStep < DEMO_STEPS.length - 1){
-            STATE.demoStep++;
-            render();
-            e.preventDefault();
-          } else if(e.key==='ArrowLeft' && STATE.demoStep > 0){
-            STATE.demoStep--;
-            render();
-            e.preventDefault();
-          }
         }
       });
     </script>
