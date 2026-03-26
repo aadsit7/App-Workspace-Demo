@@ -527,8 +527,8 @@
                 ${STATE.activeTab==='problems'
                   ? 'Most IT teams we talk to are managing more platforms than they were two or three years ago — with the same headcount. The work keeps multiplying. The team doesn\'t. <em class="font-normal text-[#6b7280]">Does that match what you\'re seeing?</em>'
                   : STATE.activeTab==='solution'
-                  ? 'Application Workspace eliminates repeated work. You define an application once — it deploys to every platform automatically. Walk through it step by step.'
-                  : 'You already know where the time goes. Put in your numbers and see what the impact looks like — in hours, dollars, and capacity returned.'}
+                  ? 'Application Workspace eliminates repeated work. You define an application once — it deploys to every platform automatically. Walk through it step by step using the arrows.'
+                  : 'You already know where the time goes. Put in your numbers and see what the impact looks like — in hours saved, dollars recovered, and capacity returned to your team.'}
               </p>
             </div>
 
@@ -651,101 +651,149 @@
 
       function renderProblems(){
         const af = STATE.activeForce;
+        const activeForceObj = af ? FORCES.find(f=>f.id===af) : null;
 
         return `
-          <section id="panel-problems" class="space-y-5">
+          <section id="panel-problems" class="space-y-8">
 
-            <!-- ROW 2: Conversational prompt + Three force cards -->
-            <p class="text-[17px] text-[#0A1C60] leading-snug">Which of these is causing the most friction right now?</p>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-              ${FORCES.map(f => {
-                const isActive = af === f.id;
-                return `
-                  <button
-                    type="button"
-                    data-action="select-force"
-                    data-force="${f.id}"
-                    class="text-left section-card p-5 transition-all duration-200 focus-ring w-full"
-                    style="${isActive
-                      ? 'background:'+f.colorLight+';border-left:4px solid '+f.color+';box-shadow:0 0 0 1.5px '+f.color+'33;'
-                      : 'border-left:4px solid transparent;'}"
-                    aria-pressed="${isActive}"
-                  >
-                    <div class="flex items-center justify-between mb-3">
-                      <div class="flex items-center gap-2">
-                        <div class="h-8 w-8 rounded-lg grid place-items-center flex-shrink-0"
-                             style="background:${f.colorLight}; border:1px solid ${f.colorBorder}">
-                          <i data-lucide="${f.icon}" class="w-4 h-4" style="color:${f.color}"></i>
-                        </div>
-                        <span class="text-lg font-bold text-[#0A1C60]">${f.title}</span>
-                      </div>
-                      ${isActive ? `<span class="h-2.5 w-2.5 rounded-full flex-shrink-0" style="background:${f.color}"></span>` : ''}
+            <!-- ROW 1: Industry Pressure Banner -->
+            <div class="section-card overflow-hidden">
+              <div class="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-slate-200/70">
+                ${[
+                  {num:'73%', label:'of IT teams manage 4+ platforms', icon:'monitor-smartphone'},
+                  {num:'72 hrs', label:'patch windows shrunk from 30 days', icon:'clock'},
+                  {num:'40%', label:'of engineering time on routine maintenance', icon:'wrench'}
+                ].map(s=>`
+                  <div class="flex items-center gap-4 px-6 py-5">
+                    <div class="h-11 w-11 rounded-xl bg-[#0070F3]/8 grid place-items-center flex-shrink-0">
+                      <i data-lucide="${s.icon}" class="w-5 h-5 text-[#0070F3]"></i>
                     </div>
-                    <p class="text-[13px] font-medium text-[#0A1C60] mb-3 leading-snug">${f.tagline}</p>
-                    <ul class="space-y-2">
-                      ${f.bullets.map(b=>`
-                        <li class="flex items-start gap-2 text-[12px] text-[#4A5568] leading-relaxed">
-                          <span class="h-1.5 w-1.5 rounded-full flex-shrink-0" style="background:${f.color}; margin-top:5px"></span>
-                          <span>${b}</span>
-                        </li>
-                      `).join('')}
-                    </ul>
-                    ${isActive ? `<p class="mt-3 pt-3 border-t text-[13px] font-semibold text-[#0A1C60] leading-snug" style="border-color:${f.colorBorder}">${f.closing}</p>` : ''}
-                  </button>
-                `;
-              }).join('')}
+                    <div>
+                      <div class="text-[28px] font-bold text-[#0A1C60] leading-none tracking-tight">${s.num}</div>
+                      <div class="text-[13px] text-[#4A5568] mt-0.5 leading-snug">${s.label}</div>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
             </div>
 
-            <!-- ROW 3: Chart (collapsed by default, expands on force card selection) -->
-            ${af ? `
-            <div class="section-card p-6">
-                <div class="mb-4 flex items-center justify-between">
-                  <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[12px] font-semibold"
-                       style="background:${FORCES.find(f=>f.id===af).colorLight}; color:${FORCES.find(f=>f.id===af).color}; border:1px solid ${FORCES.find(f=>f.id===af).colorBorder}">
-                    <span class="h-2 w-2 rounded-full" style="background:${FORCES.find(f=>f.id===af).color}"></span>
-                    ${FORCES.find(f=>f.id===af).title}
+            <!-- ROW 2: Diagnostic Force Cards -->
+            <div>
+              <p class="text-[18px] font-medium text-[#0A1C60] leading-snug mb-4">Which of these is causing the most friction right now?</p>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                ${FORCES.map(f => {
+                  const isActive = af === f.id;
+                  return `
+                    <button
+                      type="button"
+                      data-action="select-force"
+                      data-force="${f.id}"
+                      class="text-left section-card transition-all duration-300 focus-ring w-full overflow-hidden group"
+                      style="${isActive
+                        ? 'background:'+f.colorLight+';border-top:4px solid '+f.color+';box-shadow:0 8px 30px '+f.color+'22;'
+                        : 'border-top:4px solid transparent;'}"
+                      aria-pressed="${isActive}"
+                    >
+                      <div class="p-6 pb-5">
+                        <div class="flex items-center justify-between mb-4">
+                          <div class="h-12 w-12 rounded-2xl grid place-items-center flex-shrink-0 transition-transform duration-300 group-hover:scale-110"
+                               style="background:${f.colorLight}; border:1.5px solid ${f.colorBorder}">
+                            <i data-lucide="${f.icon}" class="w-6 h-6" style="color:${f.color}"></i>
+                          </div>
+                          ${isActive ? '<span class="h-3 w-3 rounded-full flex-shrink-0 animate-pulse" style="background:'+f.color+'"></span>' : ''}
+                        </div>
+                        <h3 class="text-xl font-bold text-[#0A1C60] mb-1">${f.title}</h3>
+                        <p class="text-[14px] font-medium leading-snug mb-4" style="color:${f.color}">${f.tagline}</p>
+                        ${isActive ? `
+                          <ul class="space-y-2.5 mb-4">
+                            ${f.bullets.map(b=>'<li class="flex items-start gap-2 text-[13px] text-[#4A5568] leading-relaxed"><span class="h-1.5 w-1.5 rounded-full flex-shrink-0 mt-[6px]" style="background:'+f.color+'"></span><span>'+b+'</span></li>').join('')}
+                          </ul>
+                          <p class="pt-3 border-t text-[14px] font-semibold text-[#0A1C60] leading-snug" style="border-color:${f.colorBorder}">${f.closing}</p>
+                        ` : `
+                          <div class="flex items-center gap-1 text-[12px] font-medium transition-colors" style="color:${f.color}">
+                            <span>Click to explore</span>
+                            <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                          </div>
+                        `}
+                      </div>
+                    </button>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+
+            <!-- ROW 3: Capacity Gap Chart (collapsed by default) -->
+            ${af && activeForceObj ? `
+            <div class="section-card p-8 transition-all duration-500">
+                <div class="mb-5 flex items-center justify-between">
+                  <div class="flex items-center gap-3">
+                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-[13px] font-semibold"
+                         style="background:${activeForceObj.colorLight}; color:${activeForceObj.color}; border:1px solid ${activeForceObj.colorBorder}">
+                      <span class="h-2 w-2 rounded-full" style="background:${activeForceObj.color}"></span>
+                      ${activeForceObj.title}
+                    </div>
+                    <span class="text-[14px] text-[#4A5568]">Here is how this compounds over time</span>
                   </div>
                   <button type="button" data-action="clear-force"
-                    class="inline-flex items-center gap-1 text-[11px] text-[#6b7280] hover:text-[#0A1C60] focus-ring rounded px-2 py-1 transition-colors">
-                    <i data-lucide="x" class="w-3 h-3"></i> Clear
+                    class="inline-flex items-center gap-1.5 text-[12px] text-[#6b7280] hover:text-[#0A1C60] focus-ring rounded-lg px-3 py-1.5 transition-colors border border-slate-200 hover:border-slate-300">
+                    <i data-lucide="x" class="w-3.5 h-3.5"></i> Clear
                   </button>
                 </div>
-              <p class="text-[13px] text-[#4A5568] mb-3">Here's how this compounds over time</p>
               <div class="chart-container relative">
                 <svg id="capacity-gap-chart" viewBox="0 0 800 400"></svg>
               </div>
             </div>
             ` : ''}
 
-            <!-- ROW 3b: Why Change / Why Now / Why Recast — full-width horizontal cards -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-              <div class="section-card p-0 overflow-hidden">
-                ${calloutDropdown('change','alert-triangle','Why Change','bg-slate-50')}
-              </div>
-              <div class="section-card p-0 overflow-hidden">
-                ${calloutDropdown('now','clock-4','Why Now','bg-slate-50', false, "")}
-              </div>
-              <div class="section-card p-0 overflow-hidden">
-                ${calloutDropdown('recast','sparkles','Why Recast','bg-slate-50', true)}
+            <!-- ROW 4: Why Change / Why Now / Why Recast — visual journey -->
+            <div>
+              <p class="text-[11px] font-semibold uppercase tracking-widest text-[#0070F3] mb-4">The strategic argument</p>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4 relative">
+                ${[
+                  {id:'change', icon:'alert-triangle', label:'Why Change', num:'1', desc:'The process has not kept up with the demands.'},
+                  {id:'now', icon:'clock-4', label:'Why Now', num:'2', desc:'The gap is getting wider, not narrower.'},
+                  {id:'recast', icon:'sparkles', label:'Why Recast', num:'3', desc:'One definition. Every platform. Automatic.'}
+                ].map((w,idx)=>`
+                  <button
+                    type="button"
+                    data-action="open-why-modal"
+                    data-why="${w.id}"
+                    class="text-left section-card p-0 overflow-hidden focus-ring transition-all duration-300 hover:shadow-lg hover:-translate-y-1 group w-full"
+                  >
+                    <div class="px-6 pt-6 pb-5">
+                      <div class="flex items-center gap-3 mb-3">
+                        <div class="h-10 w-10 rounded-full bg-[#0070F3] grid place-items-center flex-shrink-0 text-white font-bold text-sm">${w.num}</div>
+                        <div>
+                          <div class="text-[16px] font-bold text-[#0A1C60]">${w.label}</div>
+                        </div>
+                      </div>
+                      <p class="text-[13px] text-[#4A5568] leading-relaxed mb-3">${w.desc}</p>
+                      <div class="flex items-center gap-1.5 text-[#0070F3] text-[13px] font-medium group-hover:gap-2.5 transition-all">
+                        <span>Explore</span>
+                        <i data-lucide="arrow-right" class="w-3.5 h-3.5 transition-transform group-hover:translate-x-1"></i>
+                      </div>
+                    </div>
+                  </button>
+                `).join('')}
               </div>
             </div>
 
-            <!-- ROW 4: The bottleneck -->
+            <!-- ROW 5: The Bottleneck Banner -->
             <div class="rounded-2xl overflow-hidden" style="background:linear-gradient(135deg,#0A1C60 0%,#0070F3 100%)">
-              <div class="px-6 py-6 md:px-8 md:py-7">
-                <div class="flex items-start gap-4">
-                  <div class="flex-shrink-0 h-10 w-10 rounded-xl bg-white/15 grid place-items-center mt-0.5">
-                    <i data-lucide="alert-octagon" class="w-5 h-5 text-white"></i>
+              <div class="px-8 py-8 md:px-10 md:py-9">
+                <div class="flex items-start gap-5">
+                  <div class="flex-shrink-0 h-12 w-12 rounded-2xl bg-white/15 grid place-items-center mt-0.5">
+                    <i data-lucide="alert-octagon" class="w-6 h-6 text-white"></i>
                   </div>
                   <div class="flex-1">
-                    <div class="text-[10px] font-bold uppercase tracking-widest text-white/60 mb-1">The result</div>
-                    <h3 class="text-xl font-bold text-white mb-2">It all backs up in the same place</h3>
-                    <p class="text-[14px] text-white/85 leading-relaxed mb-4 max-w-2xl">
+                    <div class="text-[10px] font-bold uppercase tracking-widest text-white/60 mb-1.5">The result</div>
+                    <h3 class="text-2xl font-bold text-white mb-3">It all backs up in the same place</h3>
+                    <p class="text-[15px] text-white/85 leading-relaxed mb-5 max-w-2xl">
                       Speed, Scale, and Risk all compress into the same bottleneck — the application layer. Packaging, patching, deploying. It's not the hardest work. It's just the work that never stops.
                     </p>
                     <div class="flex flex-wrap gap-2">
                       ${['Packaging','Patching','Deploying','Updates','Compliance'].map(task=>`
-                        <span class="inline-flex items-center px-3 py-1 rounded-full bg-white/15 text-white text-[12px] font-medium border border-white/20">
+                        <span class="inline-flex items-center px-3.5 py-1.5 rounded-full bg-white/15 text-white text-[12px] font-medium border border-white/20 backdrop-blur-sm">
                           ${task}
                         </span>
                       `).join('')}
@@ -755,32 +803,16 @@
               </div>
             </div>
 
-            <!-- ROW 5: What teams actually need -->
-            <div class="section-card p-6">
-              <h3 class="text-base font-semibold text-[#0A1C60] mb-1">What would have to be true to fix this?</h3>
-              <p class="text-[13px] text-[#4A5568] mb-4">Four things. None of them require more headcount.</p>
-              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                ${[
-                  {icon:'copy-minus', num:'1', title:'Define once, deploy everywhere', body:'One app definition works across every platform — ConfigMgr, Intune, Citrix, AVD, macOS. No repackaging.'},
-                  {icon:'user-check', num:'2', title:'Free up your senior engineers', body:'40% of engineering time is routine upkeep. Automate that and your best people work on what matters.'},
-                  {icon:'rocket', num:'3', title:'Ship on the timeline security expects', body:'Patches in days, not weeks. Apps on day one. Updates that go out on schedule, across every environment.'},
-                  {icon:'cpu', num:'4', title:'Absorb new demands without growing the queue', body:'AI rollouts, platform migrations, M365 updates — they all land on the same team. That team needs capacity, not more hours.'}
-                ].map(g=>`
-                  <div class="rounded-xl border border-slate-200 bg-slate-50/60 p-4 hover:border-[#0070F3]/30 hover:bg-blue-50/30 transition-colors relative">
-                    <div class="flex items-center gap-2 mb-3">
-                      <div class="h-8 w-8 rounded-lg bg-[#0070F3]/10 grid place-items-center flex-shrink-0">
-                        <span class="text-[13px] font-bold text-[#0070F3]">${g.num}</span>
-                      </div>
-                      <i data-lucide="${g.icon}" class="w-4 h-4 text-[#0070F3]"></i>
-                    </div>
-                    <div class="text-[13px] font-semibold text-[#0A1C60] mb-1">${g.title}</div>
-                    <p class="text-[12px] text-[#4A5568] leading-relaxed">${g.body}</p>
-                  </div>
-                `).join('')}
-              </div>
-              <div class="mt-4 flex justify-center">
-                <button type="button" class="re-primary inline-flex items-center gap-2 text-sm" data-action="advance" data-next="solution">
-                  See how Application Workspace does this <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            <!-- ROW 6: Bridge to Tab 2 -->
+            <div class="section-card p-8 text-center">
+              <div class="max-w-lg mx-auto">
+                <div class="h-12 w-12 rounded-2xl bg-[#0070F3]/10 grid place-items-center mx-auto mb-4">
+                  <i data-lucide="lightbulb" class="w-6 h-6 text-[#0070F3]"></i>
+                </div>
+                <h3 class="text-xl font-bold text-[#0A1C60] mb-2">There is a way to fix this without adding headcount</h3>
+                <p class="text-[14px] text-[#4A5568] leading-relaxed mb-6">Application Workspace eliminates the repeat work at the root. Define once, deliver everywhere, automatically.</p>
+                <button type="button" class="re-primary inline-flex items-center gap-2 text-[15px] px-8 py-3" data-action="advance" data-next="solution">
+                  See how it works <i data-lucide="arrow-right" class="w-5 h-5"></i>
                 </button>
               </div>
             </div>
@@ -1369,115 +1401,198 @@
         var current = DEMO_STEPS[step];
         var isLast = step === DEMO_STEPS.length - 1;
         var isFirst = step === 0;
+        var total = DEMO_STEPS.length;
 
-        var stepIndicators = DEMO_STEPS.map(function(s, i) {
-          var cls = i === step ? 'bg-[#0070F3]/10 ring-1 ring-[#0070F3]/30' : i < step ? 'bg-green-50' : 'bg-slate-50 hover:bg-slate-100';
-          var iconCls = i === step ? 'text-[#0070F3]' : i < step ? 'text-[#059669]' : 'text-[#9ca3af]';
-          var labelCls = i === step ? 'text-[#0070F3]' : i < step ? 'text-[#059669]' : 'text-[#9ca3af]';
-          return '<button type="button" data-action="demo-step" data-step="' + i + '" class="flex-1 flex flex-col items-center gap-1 py-2 px-1 rounded-lg transition-all ' + cls + '" aria-current="' + (i === step ? 'step' : 'false') + '">' +
-            '<i data-lucide="' + s.icon + '" class="w-4 h-4 ' + iconCls + '"></i>' +
-            '<span class="text-[10px] font-medium ' + labelCls + ' text-center leading-tight hidden sm:block">' + s.label + '</span></button>';
-        }).join('');
+        // Build stepper: circles connected by lines
+        var stepperHtml = '<div class="flex items-center w-full px-4">';
+        for (var i = 0; i < total; i++) {
+          var isComplete = i < step;
+          var isCurrent = i === step;
+          var isFuture = i > step;
 
-        var backBtn = isFirst ? '<div></div>' : '<button type="button" class="re-secondary inline-flex items-center gap-2 text-sm" data-action="demo-step" data-step="' + (step - 1) + '"><i data-lucide="arrow-left" class="w-4 h-4"></i> Back</button>';
+          // Circle
+          var circleClasses = 'relative z-10 flex items-center justify-center rounded-full transition-all duration-300 cursor-pointer focus-ring ';
+          var circleStyle = '';
+          var innerHtml = '';
+
+          if (isComplete) {
+            circleClasses += 'h-10 w-10 ';
+            circleStyle = 'background:#059669;';
+            innerHtml = '<i data-lucide="check" class="w-5 h-5 text-white"></i>';
+          } else if (isCurrent) {
+            circleClasses += 'h-12 w-12 ring-4 ring-[#0070F3]/20 ';
+            circleStyle = 'background:#0070F3;';
+            innerHtml = '<span class="text-sm font-bold text-white">' + (i + 1) + '</span>';
+          } else {
+            circleClasses += 'h-10 w-10 border-2 border-slate-300 bg-white hover:border-[#0070F3]/50 ';
+            circleStyle = '';
+            innerHtml = '<span class="text-sm font-medium text-[#9ca3af]">' + (i + 1) + '</span>';
+          }
+
+          if (i > 0) {
+            // Connecting line
+            var lineColor = i <= step ? '#059669' : '#e5e7eb';
+            stepperHtml += '<div class="flex-1 h-0.5 transition-colors duration-500" style="background:' + lineColor + '"></div>';
+          }
+
+          stepperHtml += '<button type="button" data-action="demo-step" data-step="' + i + '" class="' + circleClasses + '" style="' + circleStyle + '" aria-current="' + (isCurrent ? 'step' : 'false') + '" aria-label="Step ' + (i+1) + ': ' + DEMO_STEPS[i].label + '">' + innerHtml + '</button>';
+        }
+        stepperHtml += '</div>';
+
+        // Step labels row
+        var labelsHtml = '<div class="flex items-start w-full px-0 mt-2">';
+        for (var j = 0; j < total; j++) {
+          var labelColor = j === step ? 'text-[#0070F3] font-semibold' : j < step ? 'text-[#059669]' : 'text-[#9ca3af]';
+          labelsHtml += '<div class="flex-1 text-center"><span class="text-[11px] ' + labelColor + ' leading-tight block">' + DEMO_STEPS[j].label + '</span></div>';
+        }
+        labelsHtml += '</div>';
+
+        var backBtn = isFirst
+          ? '<div></div>'
+          : '<button type="button" class="re-secondary inline-flex items-center gap-2 text-[15px] px-6 py-2.5" data-action="demo-step" data-step="' + (step - 1) + '"><i data-lucide="arrow-left" class="w-5 h-5"></i> Back</button>';
         var nextBtn = isLast
-          ? '<button type="button" class="re-primary inline-flex items-center gap-2 text-sm" data-action="advance" data-next="roi">Calculate Your Time Savings <i data-lucide="arrow-right" class="w-4 h-4"></i></button>'
-          : '<button type="button" class="re-primary inline-flex items-center gap-2 text-sm" data-action="demo-step" data-step="' + (step + 1) + '">Next: ' + DEMO_STEPS[step + 1].label + ' <i data-lucide="arrow-right" class="w-4 h-4"></i></button>';
+          ? '<button type="button" class="re-primary inline-flex items-center gap-2 text-[15px] px-6 py-2.5" data-action="advance" data-next="roi">Calculate Your Impact <i data-lucide="arrow-right" class="w-5 h-5"></i></button>'
+          : '<button type="button" class="re-primary inline-flex items-center gap-2 text-[15px] px-6 py-2.5" data-action="demo-step" data-step="' + (step + 1) + '">Next: ' + DEMO_STEPS[step + 1].label + ' <i data-lucide="arrow-right" class="w-5 h-5"></i></button>';
 
-        return '<section id="panel-solution" class="space-y-4">' +
-          '<div class="section-card p-4">' +
-            '<div class="flex items-center justify-between mb-3">' +
-              '<span class="text-sm font-semibold text-[#0A1C60]">Defined once. Delivered everywhere.</span>' +
-              '<span class="text-[12px] text-[#4A5568]">Step ' + (step + 1) + ' of ' + DEMO_STEPS.length + '</span>' +
-            '</div>' +
-            '<div class="flex gap-1">' + stepIndicators + '</div>' +
-          '</div>' +
+        return '<section id="panel-solution" class="space-y-6">' +
           '<div class="section-card p-6">' +
-            '<div class="flex items-center gap-2 mb-2">' +
-              '<div class="h-8 w-8 rounded-lg bg-[#0070F3]/10 grid place-items-center flex-shrink-0">' +
-                '<i data-lucide="' + current.icon + '" class="w-4 h-4 text-[#0070F3]"></i>' +
-              '</div>' +
-              '<h3 class="text-lg font-semibold text-[#0A1C60]">' + current.headline + '</h3>' +
-            '</div>' +
-            '<p class="text-[14px] text-[#4A5568] leading-relaxed mb-4 max-w-2xl">' + current.body + '</p>' +
-            renderDemoVisual(current.visual) +
+            stepperHtml +
+            labelsHtml +
           '</div>' +
-          '<div class="flex items-center justify-between">' + backBtn + nextBtn + '</div>' +
+          '<div class="section-card p-8 md:p-10">' +
+            '<div class="max-w-3xl mx-auto text-center">' +
+              '<div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#0070F3]/8 text-[#0070F3] text-[12px] font-semibold mb-4">' +
+                '<i data-lucide="' + current.icon + '" class="w-4 h-4"></i>' +
+                '<span>Step ' + (step + 1) + ' of ' + total + '</span>' +
+              '</div>' +
+              '<h2 class="text-2xl md:text-3xl font-bold text-[#0A1C60] mb-3 leading-tight">' + current.headline + '</h2>' +
+              '<p class="text-[15px] text-[#4A5568] leading-relaxed mb-8 max-w-2xl mx-auto">' + current.body + '</p>' +
+            '</div>' +
+            '<div class="max-w-3xl mx-auto">' +
+              renderDemoVisual(current.visual) +
+            '</div>' +
+          '</div>' +
+          '<div class="flex items-center justify-between px-2">' + backBtn + nextBtn + '</div>' +
         '</section>';
       }
 
       // ─── CHANGE 13 & 14: renderROI and renderCalcResult fully replaced ───
       function renderROI(){
         return `
-          <section id="panel-roi" class="space-y-6">
+          <section id="panel-roi" class="space-y-8">
 
-            <div class="section-card p-6">
-              <h3 class="text-xl font-semibold text-[#0A1C60] mb-2">See How Much Time You Get Back</h3>
-              <p class="text-sm text-[#4A5568] leading-relaxed max-w-2xl">
-                Enter your environment below. The calculator shows you exactly how many engineering hours are going to repeat work — and what those hours are worth.
+            <!-- Hero Header -->
+            <div class="section-card p-8 md:p-10 text-center">
+              <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#0070F3]/8 text-[#0070F3] text-[12px] font-semibold mb-4">
+                <i data-lucide="trending-up" class="w-4 h-4"></i>
+                <span>Impact Calculator</span>
+              </div>
+              <h2 class="text-3xl md:text-4xl font-bold text-[#0A1C60] mb-3">See the Impact</h2>
+              <p class="text-[16px] text-[#4A5568] leading-relaxed max-w-2xl mx-auto">
+                Enter your environment below. The calculator shows exactly how many engineering hours go to repeat work — and what those hours are worth.
               </p>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-4">
+            <!-- Calculator + Results -->
+            <div class="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-6">
 
-              <div class="section-card p-6 space-y-5">
+              <div class="section-card p-8 space-y-6">
                 <div class="text-[11px] font-semibold uppercase tracking-widest text-[#0070F3]">Your Environment</div>
 
-                <label class="flex flex-col gap-1">
-                  <span class="text-sm font-medium text-[#0A1C60]">How many platforms are you managing today?</span>
-                  <span class="text-xs text-[#4A5568]">Count each separately: ConfigMgr, Intune, Citrix, AVD, macOS, Windows 365.</span>
+                <label class="flex flex-col gap-1.5">
+                  <span class="text-[15px] font-medium text-[#0A1C60]">How many platforms are you managing today?</span>
+                  <span class="text-[13px] text-[#4A5568]">Count each separately: ConfigMgr, Intune, Citrix, AVD, macOS, Windows 365.</span>
                   <input type="number" id="calc-envs" min="1" max="10" value="${STATE.calcInputs.envs}"
-                    class="mt-1 w-full rounded border border-slate-200 bg-slate-50 px-3 py-2 text-sm focus-ring">
-                  <span class="text-[11px] text-[#9ca3af] italic">Most teams: 3–5 platforms</span>
+                    class="mt-1 w-full rounded-lg border border-slate-200 bg-slate-50/70 px-4 py-3 text-[15px] focus-ring transition-shadow hover:shadow-sm">
+                  <span class="text-[11px] text-[#9ca3af] italic">Most teams: 3 to 5 platforms</span>
                 </label>
 
-                <label class="flex flex-col gap-1">
-                  <span class="text-sm font-medium text-[#0A1C60]">How many app changes do you make per month?</span>
-                  <span class="text-xs text-[#4A5568]">Include patches, vendor updates, new releases, and urgent fixes.</span>
+                <label class="flex flex-col gap-1.5">
+                  <span class="text-[15px] font-medium text-[#0A1C60]">How many app changes do you make per month?</span>
+                  <span class="text-[13px] text-[#4A5568]">Include patches, vendor updates, new releases, and urgent fixes.</span>
                   <input type="number" id="calc-changes" min="1" max="500" value="${STATE.calcInputs.changes}"
-                    class="mt-1 w-full rounded border border-slate-200 bg-slate-50 px-3 py-2 text-sm focus-ring">
-                  <span class="text-[11px] text-[#9ca3af] italic">Most teams: 10–30 changes/month</span>
+                    class="mt-1 w-full rounded-lg border border-slate-200 bg-slate-50/70 px-4 py-3 text-[15px] focus-ring transition-shadow hover:shadow-sm">
+                  <span class="text-[11px] text-[#9ca3af] italic">Most teams: 10 to 30 changes/month</span>
                 </label>
 
-                <label class="flex flex-col gap-1">
-                  <span class="text-sm font-medium text-[#0A1C60]">How long does one change take, start to finish, on a single platform?</span>
-                  <span class="text-xs text-[#4A5568]">Include packaging, testing, deployment, and fixing anything that breaks.</span>
+                <label class="flex flex-col gap-1.5">
+                  <span class="text-[15px] font-medium text-[#0A1C60]">How long does one change take, start to finish, on a single platform?</span>
+                  <span class="text-[13px] text-[#4A5568]">Include packaging, testing, deployment, and fixing anything that breaks.</span>
                   <input type="number" id="calc-time" min="1" max="100" value="${STATE.calcInputs.time}"
-                    class="mt-1 w-full rounded border border-slate-200 bg-slate-50 px-3 py-2 text-sm focus-ring">
+                    class="mt-1 w-full rounded-lg border border-slate-200 bg-slate-50/70 px-4 py-3 text-[15px] focus-ring transition-shadow hover:shadow-sm">
                   <span class="text-[11px] text-[#9ca3af] italic">Recast benchmark: ~4 hours per app per platform</span>
                 </label>
 
-                <label class="flex flex-col gap-1">
-                  <span class="text-sm font-medium text-[#0A1C60]">Fully-loaded IT admin salary (USD/year)</span>
-                  <span class="text-xs text-[#4A5568]">Used to put a dollar value on the time saved.</span>
+                <label class="flex flex-col gap-1.5">
+                  <span class="text-[15px] font-medium text-[#0A1C60]">Fully-loaded IT admin salary (USD/year)</span>
+                  <span class="text-[13px] text-[#4A5568]">Used to put a dollar value on the time saved.</span>
                   <input type="number" id="calc-salary" min="50000" max="300000" step="5000" value="${STATE.calcInputs.salary || 110000}"
-                    class="mt-1 w-full rounded border border-slate-200 bg-slate-50 px-3 py-2 text-sm focus-ring">
-                  <span class="text-[11px] text-[#9ca3af] italic">Typical range: $90,000–$130,000</span>
+                    class="mt-1 w-full rounded-lg border border-slate-200 bg-slate-50/70 px-4 py-3 text-[15px] focus-ring transition-shadow hover:shadow-sm">
+                  <span class="text-[11px] text-[#9ca3af] italic">Typical range: $90,000 to $130,000</span>
                 </label>
 
                 <button type="button" data-action="calculate-impact"
-                  class="bg-[#0070F3] text-white px-6 py-2.5 text-sm font-semibold rounded-full hover:bg-[#005AD0] focus-ring">
-                  Calculate
+                  class="re-primary inline-flex items-center gap-2 text-[15px] px-8 py-3">
+                  <i data-lucide="calculator" class="w-5 h-5"></i>
+                  Calculate Impact
                 </button>
               </div>
 
               <div class="section-card p-6 flex flex-col gap-4" id="calc-output-panel">
                 ${STATE.calcResult ? renderCalcResult() : `
-                  <div class="flex flex-col items-center justify-center h-full gap-3 py-12 text-center">
-                    <i data-lucide="calculator" class="w-8 h-8 text-[#0070F3]"></i>
-                    <p class="text-sm text-[#4A5568]">Fill in your numbers and hit Calculate.</p>
+                  <div class="flex flex-col items-center justify-center h-full gap-4 py-16 text-center">
+                    <div class="h-16 w-16 rounded-2xl bg-[#0070F3]/8 grid place-items-center">
+                      <i data-lucide="calculator" class="w-8 h-8 text-[#0070F3]"></i>
+                    </div>
+                    <div>
+                      <p class="text-[15px] font-medium text-[#0A1C60] mb-1">Your results will appear here</p>
+                      <p class="text-[13px] text-[#4A5568]">Fill in your numbers and hit Calculate Impact.</p>
+                    </div>
                   </div>
                 `}
               </div>
 
             </div>
 
-            <div class="rounded-xl border border-slate-200 bg-white/60 p-3 text-[11px] text-[#9ca3af] leading-relaxed">
+            <!-- Benefits Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+              ${[
+                {icon:'copy-minus', title:'Eliminate Repeat Work', body:'Package once, deploy everywhere. No more rebuilding the same app for each platform.'},
+                {icon:'rocket', title:'4\u20136 Week Go-Live', body:'Not a 6-month project. Kickoff to full rollout in weeks, not quarters.'},
+                {icon:'plug', title:'Keep Your Tools', body:'Works alongside ConfigMgr, Intune, and the rest. Nothing gets replaced.'}
+              ].map(b=>`
+                <div class="section-card p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                  <div class="h-11 w-11 rounded-2xl bg-[#0070F3]/8 grid place-items-center mb-4">
+                    <i data-lucide="${b.icon}" class="w-5 h-5 text-[#0070F3]"></i>
+                  </div>
+                  <h4 class="text-[16px] font-bold text-[#0A1C60] mb-2">${b.title}</h4>
+                  <p class="text-[14px] text-[#4A5568] leading-relaxed">${b.body}</p>
+                </div>
+              `).join('')}
+            </div>
+
+            <!-- Social Proof Strip -->
+            <div class="section-card p-6">
+              <div class="text-center mb-4">
+                <div class="text-[11px] font-semibold uppercase tracking-widest text-[#4A5568]">Trusted by industry leaders</div>
+              </div>
+              <div class="flex flex-wrap justify-center gap-3">
+                ${['Costco','Citibank','McKinsey','Johns Hopkins','U.S. Air Force','Gov. of Canada'].map(n=>`
+                  <span class="px-5 py-2.5 rounded-full bg-slate-50 border border-slate-200 text-[13px] font-medium text-[#0A1C60] hover:bg-[#0070F3]/5 hover:border-[#0070F3]/20 transition-colors">
+                    ${n}
+                  </span>
+                `).join('')}
+              </div>
+            </div>
+
+            <!-- Disclaimer -->
+            <div class="rounded-xl border border-slate-200 bg-white/60 p-4 text-[12px] text-[#9ca3af] leading-relaxed">
               <strong class="text-[#6b7280]">How this works:</strong> Hours saved = the time currently spent repackaging the same app for each platform. With Application Workspace that work happens once. Dollar values are based on your salary input. The FTE number shows what that recovered time is worth — not a suggestion to reduce headcount. Most teams reinvest that capacity into the backlog or strategic projects — not reductions.
             </div>
 
+            <!-- Edit Button -->
             <div class="flex justify-start">
-              <button type="button" data-action="open-currentstate-editor" class="inline-flex items-center gap-2 bg-transparent text-gray-600 border-2 border-gray-300 px-5 py-3 text-base font-medium focus-ring rounded-full hover:text-[#0070F3] hover:border-[#0070F3]">
+              <button type="button" data-action="open-currentstate-editor" class="inline-flex items-center gap-2 bg-transparent text-gray-600 border-2 border-gray-300 px-5 py-3 text-base font-medium focus-ring rounded-full hover:text-[#0070F3] hover:border-[#0070F3] transition-colors">
                 <i data-lucide="edit-3" class="w-5 h-5"></i> Edit Current State
               </button>
             </div>
@@ -1544,6 +1659,8 @@
           `}
         `;
       }
+
+      function updateROIOutputs(){ /* no-op: calc results rendered inline */ }
 
       function setText(id, value){
         const el=document.getElementById(id);
@@ -2658,6 +2775,19 @@
           STATE.insightContent=null;
           STATE.highlightDriverId=null;
           render();
+          return;
+        }
+        // Arrow key navigation for demo steps
+        if(STATE.activeTab==='solution' && !STATE.modalOpen && !STATE.openWhyModal && !STATE.insightContent){
+          if(e.key==='ArrowRight' && STATE.demoStep < DEMO_STEPS.length - 1){
+            STATE.demoStep++;
+            render();
+            e.preventDefault();
+          } else if(e.key==='ArrowLeft' && STATE.demoStep > 0){
+            STATE.demoStep--;
+            render();
+            e.preventDefault();
+          }
         }
       });
     </script>
