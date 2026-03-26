@@ -672,48 +672,7 @@
               `).join('')}
             </div>
 
-            <!-- ROW 2: Conversational prompt + Three force cards -->
-            <p class="text-[17px] text-[#0A1C60] leading-snug">Which of these is causing the most friction right now?</p>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-              ${FORCES.map(f => {
-                const isActive = af === f.id;
-                return `
-                  <button
-                    type="button"
-                    data-action="select-force"
-                    data-force="${f.id}"
-                    class="text-left section-card p-5 transition-all duration-200 focus-ring w-full"
-                    style="${isActive
-                      ? 'background:'+f.colorLight+';border-left:4px solid '+f.color+';box-shadow:0 0 0 1.5px '+f.color+'33;'
-                      : 'border-left:4px solid transparent;'}"
-                    aria-pressed="${isActive}"
-                  >
-                    <div class="flex items-center justify-between mb-3">
-                      <div class="flex items-center gap-2">
-                        <div class="h-8 w-8 rounded-lg grid place-items-center flex-shrink-0"
-                             style="background:${f.colorLight}; border:1px solid ${f.colorBorder}">
-                          <i data-lucide="${f.icon}" class="w-4 h-4" style="color:${f.color}"></i>
-                        </div>
-                        <span class="text-lg font-bold text-[#0A1C60]">${f.title}</span>
-                      </div>
-                      ${isActive ? `<span class="h-2.5 w-2.5 rounded-full flex-shrink-0" style="background:${f.color}"></span>` : ''}
-                    </div>
-                    <p class="text-[13px] font-medium text-[#0A1C60] mb-3 leading-snug">${f.tagline}</p>
-                    <ul class="space-y-2">
-                      ${f.bullets.map(b=>`
-                        <li class="flex items-start gap-2 text-[12px] text-[#4A5568] leading-relaxed">
-                          <span class="h-1.5 w-1.5 rounded-full flex-shrink-0" style="background:${f.color}; margin-top:5px"></span>
-                          <span>${b}</span>
-                        </li>
-                      `).join('')}
-                    </ul>
-                    ${isActive ? `<p class="mt-3 pt-3 border-t text-[13px] font-semibold text-[#0A1C60] leading-snug" style="border-color:${f.colorBorder}">${f.closing}</p>` : ''}
-                  </button>
-                `;
-              }).join('')}
-            </div>
-
-            <!-- ROW 2b: Speed / Scale / Risk tier -->
+            <!-- ROW 2: Speed / Scale / Risk tier -->
             <div class="section-card p-6">
               <h3 class="text-base font-semibold text-[#0A1C60] mb-4">Where the Pain Shows Up</h3>
               <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
