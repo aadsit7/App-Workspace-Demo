@@ -29,9 +29,9 @@
         font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       }
       .focus-ring:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
-      .section-card { border-radius: var(--radius); background: #ffffff; box-shadow: var(--shadow-card); transition: box-shadow 300ms ease, transform 300ms ease; }
+      .section-card { border-radius: var(--radius); background: #ffffff; box-shadow: var(--shadow-card); transition: box-shadow 300ms ease, transform 300ms ease; contain: layout style; }
       .section-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
-      .sub-card { border-radius: calc(var(--radius) / 1.5); border: 1px solid var(--border-subtle); background: #f9fafb; transition: box-shadow 300ms ease; }
+      .sub-card { border-radius: calc(var(--radius) / 1.5); border: 1px solid var(--border-subtle); background: #f9fafb; transition: box-shadow 300ms ease; contain: layout style; }
       .tile { width: 0.45rem; height: 0.45rem; border-radius: 2px; background: #e5e7eb; opacity: 0.9; }
       .run .tile { animation: tilePulse 1s ease-in-out var(--d, 0s) 1 forwards; }
       @keyframes tilePulse { 0% { transform: scale(0.7); background: #e5e7eb; opacity: 0.4; } 60% { transform: scale(1); background: var(--primary); opacity: 1; } 100% { background: #e5e7eb; opacity: 0.9; } }
@@ -41,10 +41,10 @@
       .bolt-line { width: 0.22rem; border-radius: 2px; transform-origin: top center; transform: scaleY(0); }
       .run .bolt-line { animation: boltDrop 0.9s ease forwards var(--d, 0s); }
       @keyframes boltDrop { to { transform: scaleY(1); } }
-      .logo-ring { width: 2.1rem; height: 2.1rem; border-radius: 9999px; display: grid; place-items: center; background: #ffffff; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1); transition: all 0.3s ease; }
+      .logo-ring { width: 2.1rem; height: 2.1rem; border-radius: 9999px; display: grid; place-items: center; background: #ffffff; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1); transition: box-shadow 0.3s ease, transform 0.3s ease; }
       .logo-ring:hover { box-shadow: 0 0 8px rgba(37,99,235,0.3); transform: scale(1.05); }
-      .logo-wrap { display: flex; align-items: center; gap: 0.4rem; position: relative; transition: all 300ms ease; }
-      .logo-name { font-size: 0.7rem; color: #6b7280; opacity: 0; transform: translateX(-10px); transition: all 0.3s ease; }
+      .logo-wrap { display: flex; align-items: center; gap: 0.4rem; position: relative; transition: gap 300ms ease, flex-direction 300ms ease; }
+      .logo-name { font-size: 0.7rem; color: #6b7280; opacity: 0; transform: translateX(-10px); transition: opacity 0.3s ease, transform 0.3s ease; }
       .show-labels .logo-wrap { flex-direction: column; align-items: flex-start; gap: 0.2rem; }
       .show-labels .logo-name { opacity: 1; transform: translateX(0); white-space: normal; text-align: left; }
       .show-labels .logo-wrap .logo-ring { width: 1.8rem; height: 1.8rem; }
@@ -55,14 +55,17 @@
       .badge { width: 1.15rem; height: 1.15rem; border-radius: 9999px; opacity: 0; transform: translateY(-6px) scale(0.9); }
       .run .badge { animation: badgeDrop 0.8s ease-out var(--d, 0s) forwards; }
       @keyframes badgeDrop { to { opacity: 1; transform: translateY(0) scale(1); } }
-      .cat-row { display: grid; grid-template-columns: 15ch 1fr; gap: 0.5rem; align-items: center; border-top: 1px solid #e5e7eb; padding-top: 0.5rem; transition: all 300ms ease; }
+      .cat-row { display: grid; grid-template-columns: 15ch 1fr; gap: 0.5rem; align-items: center; border-top: 1px solid #e5e7eb; padding-top: 0.5rem; transition: gap 300ms ease, grid-template-columns 300ms ease; }
       .cat-row:first-child { border-top: none; padding-top: 0; }
       .cat-title { font-size: 0.7rem; letter-spacing: 0.08em; display: flex; align-items: center; gap: 0.5rem; }
       .re-primary { background: var(--primary) !important; color: #fff !important; border: 0; border-radius: 9999px; padding: 0.5rem 1.5rem; transition: background 0.2s ease, transform 0.2s ease; }
       .re-primary:hover { background: var(--primary-hover) !important; transform: scale(1.02); }
       .re-primary:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
-      .re-secondary { background: transparent !important; color: var(--text-primary) !important; border: 2px solid var(--text-primary) !important; border-radius: 9999px; padding: 0.5rem 1.5rem; transition: all 0.2s ease, transform 0.2s ease; }
+      .re-secondary { background: transparent !important; color: var(--text-primary) !important; border: 2px solid var(--text-primary) !important; border-radius: 9999px; padding: 0.5rem 1.5rem; transition: color 0.2s ease, border-color 0.2s ease, transform 0.2s ease; }
       .re-secondary:hover { color: var(--primary) !important; border-color: var(--primary) !important; transform: scale(1.02); }
+      .accordion-content {
+        will-change: max-height, opacity;
+      }
       @media (prefers-reduced-motion: reduce) {
         .accordion-content { transition: none !important; }
       }
@@ -85,8 +88,8 @@
       .show-labels .cat-row{grid-template-columns:15ch 1fr;gap:1rem}
       .show-labels #flowCard .flex-wrap{gap:1rem}
       .show-labels .logo-wrap{width:calc(33.333% - 0.666rem);margin-bottom:0.5rem}
-      .env-wrap { display: flex; align-items: center; gap: 0.2rem; position: relative; transition: all 300ms ease; width: calc(16.666% - 0.5rem); flex-direction: column; }
-      .env-name { font-size: 0.7rem; color: #6b7280; opacity: 1; transform: translateY(0); transition: all 0.3s ease; white-space: nowrap; text-align: center; }
+      .env-wrap { display: flex; align-items: center; gap: 0.2rem; position: relative; transition: gap 300ms ease; width: calc(16.666% - 0.5rem); flex-direction: column; }
+      .env-name { font-size: 0.7rem; color: #6b7280; opacity: 1; transform: translateY(0); transition: opacity 0.3s ease, transform 0.3s ease; white-space: nowrap; text-align: center; }
       .env-ring { width: 1.8rem; height: 1.8rem; }
       .run .env-ring { animation: envPulse 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) var(--d, 0s) 1 forwards; }
       @keyframes envPulse { 0% { transform: scale(1); filter: saturate(0.4); opacity: 0.65; box-shadow: 0 0 0 rgba(37,99,235,0); } 30% { transform: scale(1.05); box-shadow: 0 0 12px rgba(37,99,235,0.5); } 60% { transform: scale(1.02); filter: saturate(1); opacity: 1; box-shadow: 0 0 8px rgba(37,99,235,0.3); } 100% { transform: scale(1); box-shadow: 0 0 0 rgba(37,99,235,0); } }
@@ -96,10 +99,10 @@
       .run .arrow-line::after { animation: arrowTip 0.8s ease forwards var(--d, 0s); }
       @keyframes arrowDrop { 0% { transform: scaleY(0); } 100% { transform: scaleY(1); } }
       @keyframes arrowTip { 0% { opacity: 0; } 80% { opacity: 0; } 100% { opacity: 1; } }
-      .hub-card { opacity: 0; transform: translateY(10px); transition: all 0.5s ease; }
+      .hub-card { opacity: 0; transform: translateY(10px); transition: opacity 0.5s ease, transform 0.5s ease; }
       .run .hub-card { animation: hubAppear 0.8s ease forwards var(--d, 2.5s); }
       @keyframes hubAppear { to { opacity: 1; transform: translateY(0); } }
-      .metrics-banner { opacity: 0; transform: translateY(10px); transition: all 0.5s ease; text-align: center; font-size: 0.9rem; font-weight: 500; color: #111827; }
+      .metrics-banner { opacity: 0; transform: translateY(10px); transition: opacity 0.5s ease, transform 0.5s ease; text-align: center; font-size: 0.9rem; font-weight: 500; color: #111827; }
       .run .metrics-banner { animation: metricsAppear 0.8s ease forwards var(--d, 3.5s); }
       @keyframes metricsAppear { to { opacity: 1; transform: translateY(0); } }
       .interactive-node { transition: opacity 0.3s, transform 0.3s; }
@@ -117,8 +120,8 @@
       .demand-line { stroke-width: 3; filter: drop-shadow(0 0 4px rgba(239,68,68,0.3)); }
       .capacity-line { stroke-width: 3; }
       .gap-fill { }
+      .marker-group { cursor: pointer; }
       .marker-group:hover { transform: scale(1.1); transition: transform 0.2s ease; }
-      .marker-group:hover circle { animation: pulse 1.5s infinite; }
       @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
       .chart-element { opacity: 0; animation: fadeIn 0.5s forwards; }
       @keyframes fadeIn { to { opacity: 1; } }
@@ -201,6 +204,7 @@
         box-shadow: 0 8px 30px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.05);
         position: relative;
         overflow: hidden;
+        contain: layout style;
       }
       .device-screen {
         background: #f8fafc;
@@ -250,7 +254,7 @@
         display: grid; place-items: center;
         font-weight: 800; font-size: 12px;
         color: white;
-        transition: all 0.3s ease;
+        transition: box-shadow 0.3s ease, transform 0.3s ease;
         position: relative;
       }
       .catalog-app .app-name {
@@ -285,7 +289,7 @@
         align-items: center;
         gap: 8px;
         min-height: 40px;
-        transition: all 0.4s ease;
+        transition: color 0.4s ease, background 0.4s ease;
         font-size: 12px;
         color: #64748b;
       }
@@ -336,6 +340,7 @@
         opacity: 0;
         transform: translateY(8px);
         transition: opacity 0.5s ease, transform 0.5s ease;
+        will-change: transform, opacity;
       }
       .orch-row.visible {
         opacity: 1;
@@ -357,7 +362,7 @@
         font-size: 11px;
         border: 1px solid #e2e8f0;
         background: white;
-        transition: all 0.3s ease;
+        transition: border-color 0.3s ease, background 0.3s ease, color 0.3s ease;
         color: #94a3b8;
       }
       .check-item.pass {
@@ -376,7 +381,7 @@
         font-size: 11px;
         border: 1px solid #e5e7eb;
         background: #fafafa;
-        transition: all 0.4s ease;
+        transition: border-color 0.4s ease, background 0.4s ease, color 0.4s ease, opacity 0.4s ease, box-shadow 0.4s ease;
         color: #94a3b8;
       }
       .path-row.active-path {
@@ -410,7 +415,7 @@
         border: 2px dashed transparent;
         border-radius: 6px;
         padding: 4px 8px;
-        transition: all 0.5s ease;
+        transition: border-color 0.5s ease, background 0.5s ease;
       }
       .cfg-wrap.wrapped {
         animation: cfgWrap 0.6s ease forwards;
@@ -440,7 +445,7 @@
         border: 1px solid #e2e8f0;
         background: white;
         color: #64748b;
-        transition: all 0.3s ease;
+        transition: border-color 0.3s ease, background 0.3s ease, color 0.3s ease;
       }
       .scenario-pill.active-scenario {
         border-color: #0070F3;
@@ -470,7 +475,7 @@
         border-radius: 12px;
         background: white;
         border: 1px solid #e2e8f0;
-        transition: all 0.3s ease;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
         position: relative;
         overflow: hidden;
       }
@@ -628,8 +633,9 @@
         position: relative;
         padding: 6px 0;
         opacity: 0.25;
-        transition: opacity 0.5s ease, transform 0.5s ease;
+        transition: opacity 0.4s ease, transform 0.4s ease;
         transform: translateX(-4px);
+        will-change: transform, opacity;
       }
       .pipeline-stage.reached {
         opacity: 1;
@@ -651,7 +657,7 @@
         display: grid;
         place-items: center;
         z-index: 2;
-        transition: all 0.4s ease;
+        transition: background 0.4s ease, box-shadow 0.4s ease;
       }
       .pipeline-stage.reached .pipeline-node {
         background: #10b981;
@@ -665,7 +671,7 @@
         border: 1px solid #e5e7eb;
         border-radius: 8px;
         padding: 8px 10px;
-        transition: all 0.4s ease;
+        transition: border-color 0.4s ease, background 0.4s ease, box-shadow 0.4s ease;
       }
       .pipeline-stage.active-stage .stage-content {
         border-color: #0070F3;
@@ -760,6 +766,7 @@
       .platform-cap:hover {
         background: rgba(255,255,255,0.2);
       }
+      .platform-bar { contain: layout style; }
       .platform-stat {
         text-align: center;
         padding: 6px 8px;
@@ -818,8 +825,9 @@
         flex-direction: column;
         opacity: 0;
         transform: translateY(20px) scale(0.96);
-        transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.2,0.8,0.2,1);
+        transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.2,0.8,0.2,1);
         pointer-events: none;
+        will-change: transform, opacity;
       }
       .app-window-overlay.open {
         opacity: 1;
@@ -1688,7 +1696,8 @@
             const ico = item.querySelector('[data-lucide]');
             if (ico) {
               ico.setAttribute('data-lucide', 'check-circle');
-              if (window.lucide?.createIcons) try { window.lucide.createIcons(); } catch {}
+              // Only re-create icons within this item, not the entire DOM
+              if (window.lucide?.createIcons) try { window.lucide.createIcons({ nodes: [item] }); } catch(e) { try { window.lucide.createIcons(); } catch {} }
             }
           }, i * 350);
           STATE.flowTimers.timeouts.push(tid);
@@ -1696,6 +1705,15 @@
       }
 
       function updateFlowDOM(){
+        // Partial update: only replace the flow section instead of rebuilding the entire page
+        if (STATE.activeTab === 'solution') {
+          const flowContainer = document.getElementById('flowContainer');
+          if (flowContainer) {
+            flowContainer.innerHTML = renderFlow();
+            if (window.lucide?.createIcons) try { window.lucide.createIcons({ nodes: [flowContainer] }); } catch(e) { try { window.lucide.createIcons(); } catch {} }
+            return;
+          }
+        }
         render();
       }
 
@@ -1710,6 +1728,9 @@
         STATE.flowQueueIdx = 0;
         render();
       }
+
+      let _renderQueued = false;
+      function scheduleRender(){ if (_renderQueued) return; _renderQueued = true; requestAnimationFrame(() => { _renderQueued = false; render(); }); }
 
       function render(){
         const root=document.getElementById('app');
@@ -2109,7 +2130,41 @@
       function animateCurves(){
         STATE.currentDemandExponent += (STATE.targetDemandExponent - STATE.currentDemandExponent) * 0.1;
         STATE.currentCapacitySlope += (STATE.targetCapacitySlope - STATE.currentCapacitySlope) * 0.1;
-        renderCapacityGapChart();
+        // Fast path: only update the SVG path data instead of rebuilding the entire chart
+        const svg = document.getElementById('capacity-gap-chart');
+        const demandEl = svg?.querySelector('.demand-line');
+        const capacityEl = svg?.querySelector('.capacity-line');
+        const gapEl = svg?.querySelector('.gap-fill');
+        if (demandEl && capacityEl && gapEl) {
+          const width = 700, margin = {left: 50, top: 50}, height = 300;
+          const xScale = t => margin.left + t * width;
+          const yScale = v => margin.top + height - v * height;
+          const exp = STATE.currentDemandExponent;
+          const slope = STATE.currentCapacitySlope;
+          let demandPath = `M ${xScale(0)} ${yScale(0)}`;
+          let capacityPath = `M ${xScale(0)} ${yScale(0.3)}`;
+          const dPts = [], cPts = [];
+          for (let i = 0; i <= 100; i++) {
+            const t = i / 100;
+            const dem = Math.pow(t, exp);
+            const cap = 0.3 + slope * t;
+            demandPath += ` L ${xScale(t)} ${yScale(dem)}`;
+            capacityPath += ` L ${xScale(t)} ${yScale(cap)}`;
+            dPts.push({x: xScale(t), y: yScale(dem)});
+            cPts.push({x: xScale(t), y: yScale(cap)});
+          }
+          demandEl.setAttribute('d', demandPath);
+          capacityEl.setAttribute('d', capacityPath);
+          const gapPath = `M ${dPts[0].x} ${dPts[0].y} ` +
+            dPts.map(p => `L ${p.x} ${p.y}`).join(' ') +
+            cPts.slice().reverse().map(p => `L ${p.x} ${p.y}`).join(' ') + 'Z';
+          gapEl.setAttribute('d', gapPath);
+          // Update gap label position
+          const gapLabel = svg.querySelector('.chart-annotation');
+          if (gapLabel) { gapLabel.setAttribute('y', yScale(0.5)); }
+        } else {
+          renderCapacityGapChart();
+        }
         if (Math.abs(STATE.currentDemandExponent - STATE.targetDemandExponent) > 0.001 || Math.abs(STATE.currentCapacitySlope - STATE.targetCapacitySlope) > 0.001) {
           requestAnimationFrame(animateCurves);
         }
@@ -2252,7 +2307,7 @@
         return `
           <section id="panel-solution" class="space-y-3">
             <div class="grid grid-cols-1 gap-3 lg:grid-cols-2">
-              ${renderFlow()}
+              <div id="flowContainer">${renderFlow()}</div>
               <div class="flex flex-col gap-3 relative">
                 <div class="sticky top-0 z-10 bg-white/60 backdrop-blur-lg py-2 shadow-sm rounded-xl px-2">
                   <div class="flex justify-between items-center text-sm">
@@ -2293,7 +2348,7 @@
                 </div>
               </div>
             </button>
-            <div id="${contentId}" class="accordion-content overflow-hidden border-l-4 border-[#0070F3] ${expanded ? 'glass-soft' : ''}" style="max-height:${expanded?'1200px':'0'};opacity:${expanded?'1':'0'};transition:max-height 180ms cubic-bezier(.2,.8,.2,1),opacity 180ms ease; padding:${expanded?'24px 20px':'0 20px'}">
+            <div id="${contentId}" class="accordion-content overflow-hidden border-l-4 border-[#0070F3] ${expanded ? 'glass-soft' : ''}" style="max-height:${expanded?'600px':'0'};opacity:${expanded?'1':'0'};transition:max-height 200ms cubic-bezier(.4,0,.2,1),opacity 150ms ease,padding 200ms ease; padding:${expanded?'24px 20px':'0 20px'}">
               <ul class="list-disc pl-6 text-[16px] leading-[1.45] space-y-3 text-[#4A5568] text-left">
                 ${card.bullets.map(b=>`<li>${b}</li>`).join('')}
               </ul>
@@ -2713,12 +2768,14 @@
 
       /* ========== Event system (UNCHANGED except flow actions) ========== */
 
+      let _eventsAttached = false;
       function attachEvents(){
+        if (_eventsAttached) return;
+        _eventsAttached = true;
         const root = document.getElementById('app');
-        if (!root || root.dataset.bound === '1') return;
-        root.dataset.bound = '1';
+        if (!root) return;
 
-        root.addEventListener('click', (e) => {
+        document.addEventListener('click', (e) => {
           const act = e.target.closest('[data-action]');
           const action = act?.getAttribute('data-action');
 
@@ -2809,7 +2866,7 @@
           if (action === 'reset-sliders') { resetSliders(); return; }
         });
 
-        root.addEventListener('input', (e) => {
+        document.addEventListener('input', (e) => {
           if (e.target?.id === 'calc-envs') { STATE.calcInputs.envs = cleanNum(e.target.value); render(); return; }
           if (e.target?.id === 'calc-changes') { STATE.calcInputs.changes = cleanNum(e.target.value); render(); return; }
           if (e.target?.id === 'calc-time') { STATE.calcInputs.time = cleanNum(e.target.value); render(); return; }
