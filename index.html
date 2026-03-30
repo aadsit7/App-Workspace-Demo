@@ -23,14 +23,18 @@
         --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
         --shadow-hover: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
       }
+      html { scroll-behavior: smooth; }
       html, body {
         background: var(--bg-main);
         color: var(--text-primary);
         font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       }
+      @keyframes panelFadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+      .panel-enter { animation: panelFadeIn 0.35s ease-out both; }
       .focus-ring:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
       .section-card { border-radius: var(--radius); background: #ffffff; box-shadow: var(--shadow-card); transition: box-shadow 300ms ease, transform 300ms ease; }
-      .section-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
+      .section-card:hover { box-shadow: var(--shadow-hover); }
+      .section-card.card-lift:hover { transform: translateY(-2px); }
       .sub-card { border-radius: calc(var(--radius) / 1.5); border: 1px solid var(--border-subtle); background: #f9fafb; transition: box-shadow 300ms ease; }
       .tile { width: 0.45rem; height: 0.45rem; border-radius: 2px; background: #e5e7eb; opacity: 0.9; }
       .run .tile { animation: tilePulse 1s ease-in-out var(--d, 0s) 1 forwards; }
@@ -228,6 +232,7 @@
         gap: 6px;
         padding: 12px;
       }
+      @media (max-width: 480px) { .catalog-grid { grid-template-columns: repeat(4, 1fr); } }
       .catalog-app {
         display: flex;
         flex-direction: column;
@@ -958,6 +963,7 @@
         packHrs: 8, configHrs: 2, currentHrs: 24,
         roiInputs: { users: 5000, ticketsPerUserPerMonth: 0.035, avgHandleMins: 18 },
         copied: false,
+        visitedTabs: [],
         showLabels: false,
         showSolutionCards: true,
         openWhy: null,
@@ -1005,31 +1011,31 @@
     "The same app gets rebuilt multiple times = Each platform needs its own version, packaging, testing, and fixes.",
     "Change becomes risky = New platforms, migrations, or updates often break apps, so teams delay changes",
     "Inconsistent User Experience = What works on one device doesn't always work on another. = Higher Support Tickets",
-    "Tribal Knowledge is a huge risk = Tribal knowledge (workarounds) is heavliy relying on individuals"
+    "Tribal Knowledge is a huge risk = Tribal knowledge (workarounds) is heavily relying on individuals"
   ],
-  analyst: "Across industries, application delivery — not infrastructure — is now the primary bottleneck to modernization. Most transformation projects slow or fail because teams lack capacity to keep apps ready while platforms change.."
+  analyst: "Across industries, application delivery — not infrastructure — is now the primary bottleneck to modernization. Most transformation projects slow or fail because teams lack capacity to keep apps ready while platforms change."
 },
 
           now: {
             intro: "The gap between what IT is ASKED to deliver and what it CAN sustain is widening fast.",
             bullets: [
               'Change is accelerating, not slowing down. More app updates, more security pressure, more platforms — with the same teams.',
-              'Manual app work compounds over time. Every custom or internal app adds more versions, more dependencies, and more risk with each change',
+              'Manual app work compounds over time. Every custom or internal app adds more versions, more dependencies, and more risk with each change.',
               'Teams that should be driving innovation are stuck keeping apps alive.',
             ],
-            analyst: "Organizations that succeed with AI, cloud, and new platforms over the next few years will be the ones that stabilize application delivery first. Everyone else hits a capacity wall where progress slows regardless of strategy"
+            analyst: "Organizations that succeed with AI, cloud, and new platforms over the next few years will be the ones that stabilize application delivery first. Everyone else hits a capacity wall where progress slows regardless of strategy."
           },
           recast: {
             intro: "Application Workspace changes how apps are delivered — to the user, not the device.",
             bullets: [
               "Applications Are Tied to the User = Apps follow the user across platforms. Assigned by user identity, not device or location.",
               "Define Once, Deliver Everywhere = Applications are defined a single time. Delivered consistently across platforms. No repackaging or extra configuration required.",
-              "Support is Simplfied = IT uses a single support model across all delivery methods.",
-              " New platforms can be integrated without rework = Backend updates don't affect user-facing experience.",
+              "Support is Simplified = IT uses a single support model across all delivery methods.",
+              "New platforms can be integrated without rework = Backend updates don't affect user-facing experience.",
               "Consistent User Experience = Users see the same apps and interfaces every time. Reduces user confusion and support demand.",
               "Central management of application delivery = Ensures design consistency across environments. Reduces fragmentation and configuration drift."
             ],
-            analyst: "Leading IT organizations are shifting from device-centric management to user-centric delivery models to reduce operational friction and keep pace with constant platform change"
+            analyst: "Leading IT organizations are shifting from device-centric management to user-centric delivery models to reduce operational friction and keep pace with constant platform change."
           }
         },
         defaultsCurrentState() {
@@ -1041,27 +1047,27 @@
     "The same app gets rebuilt multiple times = Each platform needs its own version, packaging, testing, and fixes.",
     "Change becomes risky = New platforms, migrations, or updates often break apps, so teams delay changes",
     "Inconsistent User Experience = What works on one device doesn't always work on another. = Higher Support Tickets",
-    "Tribal Knowledge is a huge risk = Tribal knowledge (workarounds) is heavliy relying on individuals"
+    "Tribal Knowledge is a huge risk = Tribal knowledge (workarounds) is heavily relying on individuals"
   ],
-  analyst: "Across industries, application delivery — not infrastructure — is now the primary bottleneck to modernization. Most transformation projects slow or fail because teams lack capacity to keep apps ready while platforms change.."
+  analyst: "Across industries, application delivery — not infrastructure — is now the primary bottleneck to modernization. Most transformation projects slow or fail because teams lack capacity to keep apps ready while platforms change."
 },
 
             now: {
               intro: "The gap between what IT is ASKED to deliver and what it CAN sustain is widening fast.",
               bullets: [
                 'Change is accelerating, not slowing down. More app updates, more security pressure, more platforms — with the same teams.',
-                'Manual app work compounds over time. Every custom or internal app adds more versions, more dependencies, and more risk with each change',
+                'Manual app work compounds over time. Every custom or internal app adds more versions, more dependencies, and more risk with each change.',
                 'Teams that should be driving innovation are stuck keeping apps alive.',
               ],
-              analyst: "Organizations that succeed with AI, cloud, and new platforms over the next few years will be the ones that stabilize application delivery first. Everyone else hits a capacity wall where progress slows regardless of strategy"
+              analyst: "Organizations that succeed with AI, cloud, and new platforms over the next few years will be the ones that stabilize application delivery first. Everyone else hits a capacity wall where progress slows regardless of strategy."
             },
             recast: {
               intro: "Application Workspace changes how apps are delivered — to the user, not the device.",
               bullets: [
               "Applications Are Tied to the User = Apps follow the user across platforms. Assigned by user identity, not device or location.",
               "Define Once, Deliver Everywhere = Applications are defined a single time. Delivered consistently across platforms. No repackaging or extra configuration required.",
-              "Support is Simplfied = IT uses a single support model across all delivery methods.",
-              " New platforms can be integrated without rework = Backend updates don't affect user-facing experience.",
+              "Support is Simplified = IT uses a single support model across all delivery methods.",
+              "New platforms can be integrated without rework = Backend updates don't affect user-facing experience.",
               "Consistent User Experience = Users see the same apps and interfaces every time. Reduces user confusion and support demand.",
               "Central management of application delivery = Ensures design consistency across environments. Reduces fragmentation and configuration drift."
               ],
@@ -1310,7 +1316,12 @@
                 </div>
               </div>
               <div class="flex items-center gap-2 text-[12px]">
-                <button type="button" data-action="start-flow" class="bg-[#0070F3] text-white px-2.5 py-1.5 text-[12px] font-semibold rounded hover:bg-[#005AD0]">${STATE.flowRunning ? 'Playing...' : 'Start'}</button>
+                ${STATE.flowRunning ? `
+                  <button type="button" data-action="pause-flow" class="bg-[#0070F3] text-white px-2.5 py-1.5 text-[12px] font-semibold rounded hover:bg-[#005AD0] inline-flex items-center gap-1"><i data-lucide="${STATE.flowPaused ? 'play' : 'pause'}" class="w-3 h-3"></i> ${STATE.flowPaused ? 'Resume' : 'Pause'}</button>
+                ` : `
+                  <button type="button" data-action="start-flow" class="bg-[#0070F3] text-white px-2.5 py-1.5 text-[12px] font-semibold rounded hover:bg-[#005AD0] inline-flex items-center gap-1"><i data-lucide="play" class="w-3 h-3"></i> Auto</button>
+                  <button type="button" data-action="step-flow" class="bg-white text-[#0070F3] border border-[#0070F3] px-2.5 py-1.5 text-[12px] font-semibold rounded hover:bg-[#eff6ff] inline-flex items-center gap-1"><i data-lucide="skip-forward" class="w-3 h-3"></i> Step</button>
+                `}
                 <button type="button" data-action="reset-flow" class="bg-transparent text-[#0A1C60] border-2 border-[#0A1C60] px-2.5 py-1.5 rounded hover:text-[#0070F3] hover:border-[#0070F3]">Reset</button>
               </div>
             </div>
@@ -1679,6 +1690,24 @@
         runFlowQueue();
       }
 
+      function stepFlow(){
+        if (STATE.flowRunning) return;
+        if (!STATE.flowQueue || STATE.flowQueue.length === 0) {
+          STATE.flowQueue = buildFlowQueue();
+          STATE.flowQueueIdx = 0;
+          STATE.flowScenarioIdx = 0;
+          STATE.flowPhase = 'idle';
+        }
+        if (STATE.flowQueueIdx >= STATE.flowQueue.length) return;
+        const step = STATE.flowQueue[STATE.flowQueueIdx];
+        step.fn();
+        STATE.flowQueueIdx++;
+        if (STATE.flowQueueIdx >= STATE.flowQueue.length) {
+          STATE.flowRunning = false;
+          STATE.flowPaused = false;
+        }
+      }
+
       function animateChecks(){
         const items = document.querySelectorAll('.check-item');
         items.forEach((item, i) => {
@@ -1730,13 +1759,16 @@
               <div role="tablist" aria-label="Demo sections" class="flex w-full flex-wrap gap-2 rounded bg-white/60 backdrop-blur-lg p-1 ring-1 ring-slate-200">
                 ${TABS.map(t=>`
                   <button type="button"
+                    id="tab-${t.id}"
+                    role="tab"
                     class="${cx('inline-flex items-center gap-2 px-3.5 py-1.5 text-sm focus-ring transition',
                       STATE.activeTab===t.id ? 'bg-[#0070F3] text-white hover:bg-[#005AD0] rounded' : 'text-[#0A1C60] hover:bg-slate-100 rounded')}"
                     data-action="switch-tab"
                     data-tab="${t.id}"
                     aria-controls="panel-${t.id}"
-                    aria-selected="${STATE.activeTab===t.id}">
-                    <i data-lucide="${t.icon}" class="w-4 h-4"></i><span>${t.label}</span>
+                    aria-selected="${STATE.activeTab===t.id}"
+                    tabindex="${STATE.activeTab===t.id ? '0' : '-1'}">
+                    <i data-lucide="${t.icon}" class="w-4 h-4"></i><span>${t.label}</span>${STATE.visitedTabs.includes(t.id) && STATE.activeTab !== t.id ? '<i data-lucide="check" class="w-3 h-3 ml-0.5 opacity-50"></i>' : ''}
                   </button>
                 `).join('')}
               </div>
@@ -1751,7 +1783,7 @@
               ${chip('Avg. Hours Saved from Faster Patching', String(round(STATE.impact.riskHrs)), 'yellow')}
             </div>` : ''}
 
-            <section class="mt-5">${renderActivePanel()}</section>
+            <section class="mt-5 panel-enter" role="tabpanel" id="panel-${STATE.activeTab}" aria-labelledby="tab-${STATE.activeTab}">${renderActivePanel()}</section>
           </main>
 
           ${renderModal()}
@@ -1805,7 +1837,7 @@
           <section id="panel-problems" class="space-y-4">
             <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
               ${items.map(p=>`
-                <article class="section-card p-4">
+                <article class="section-card card-lift p-4">
                   <div class="flex items-center gap-2"><i data-lucide="${p.i}" class="w-5 h-5 text-[#0070F3]"></i><h3 class="text-base font-semibold">${p.t}</h3></div>
                   <p class="mt-1 text-sm text-[#4A5568]">${p.s}</p>
                 </article>
@@ -2151,8 +2183,8 @@
         const bullets = c.bullets || [];
         const closing = c.closing || '';
         return `
-          <div class="fixed inset-0 z-50 flex items-center justify-center modal-overlay" role="dialog" aria-modal="true" aria-labelledby="insight-modal-title">
-            <div class="w-full max-w-4xl mx-4 rounded-2xl overflow-hidden transform modal-content glass">
+          <div class="fixed inset-0 z-50 flex items-center justify-center modal-overlay" role="dialog" aria-modal="true" aria-labelledby="insight-modal-title" data-action="close-insight-modal">
+            <div class="w-full max-w-4xl mx-4 rounded-2xl overflow-hidden transform modal-content glass" onclick="event.stopPropagation()">
               <div class="bg-white/40 backdrop-blur-lg px-8 py-6 flex items-center justify-between" style="border-bottom:1px solid var(--border-subtle)">
                 <div class="flex items-center gap-3">
                   <i data-lucide="lightbulb" class="w-8 h-8 text-[#0A1C60]" aria-hidden="true"></i>
@@ -2213,8 +2245,8 @@
         const prev = currentIdx > 0 ? whyOrder[currentIdx - 1] : null;
         const next = currentIdx < whyOrder.length - 1 ? whyOrder[currentIdx + 1] : null;
         return `
-          <div class="fixed inset-0 z-50 flex items-center justify-center modal-overlay" role="dialog" aria-modal="true" aria-labelledby="why-modal-title-${id}">
-            <div class="w-full max-w-4xl mx-4 rounded-2xl overflow-hidden transform modal-content glass">
+          <div class="fixed inset-0 z-50 flex items-center justify-center modal-overlay" role="dialog" aria-modal="true" aria-labelledby="why-modal-title-${id}" data-action="close-why-modal">
+            <div class="w-full max-w-4xl mx-4 rounded-2xl overflow-hidden transform modal-content glass" onclick="event.stopPropagation()">
               <div class="bg-white/40 backdrop-blur-lg px-8 py-6 flex items-center justify-between" style="border-bottom:1px solid var(--border-subtle)">
                 <div class="flex items-center gap-3">
                   <i data-lucide="${iconMap[id]}" class="w-8 h-8 text-[#0A1C60]" aria-hidden="true"></i>
@@ -2649,8 +2681,8 @@
         const ensure = v => v ?? '';
         const editTabs = [ {id: 'change', label: 'Why Change'}, {id: 'now', label: 'Why Now'}, {id: 'recast', label: 'Why Recast'}, {id: 'chart', label: 'Chart Config'} ];
         return `
-          <div role="dialog" aria-modal="true" aria-labelledby="cs-editor-title" class="fixed inset-0 z-50 flex items-center justify-center modal-overlay overflow-auto p-4 md:p-8">
-            <div class="w-[95vw] h-[95vh] rounded-2xl shadow-2xl p-8 overflow-y-auto glass">
+          <div role="dialog" aria-modal="true" aria-labelledby="cs-editor-title" class="fixed inset-0 z-50 flex items-center justify-center modal-overlay overflow-auto p-4 md:p-8" data-action="close-modal">
+            <div class="w-[95vw] h-[95vh] rounded-2xl shadow-2xl p-8 overflow-y-auto glass" onclick="event.stopPropagation()">
               <div class="flex items-center justify-between">
                 <h2 id="cs-editor-title" class="text-xl font-semibold tracking-normal">Edit Current State</h2>
                 <button type="button" class="bg-transparent text-[#0A1C60] p-2 focus-ring rounded" data-action="close-modal" aria-label="Close"><i data-lucide="x" class="w-4 h-4"></i></button>
@@ -2727,7 +2759,7 @@
 
           if (!action) return;
 
-          if (action === 'switch-tab') { STATE.activeTab = act.getAttribute('data-tab'); STATE.visitedCards = []; STATE.activePopover = null; STATE.calcResult = null; STATE.openWhyModal = null; STATE.insightContent = null; STATE.flowStep = -1; STATE.flowRunning = false; STATE.flowPaused = false; STATE.flowScenarioIdx = -1; STATE.flowPhase = 'idle'; clearFlowTimers(); render(); return; }
+          if (action === 'switch-tab') { const tab = act.getAttribute('data-tab'); if (!STATE.visitedTabs) STATE.visitedTabs = []; if (!STATE.visitedTabs.includes(STATE.activeTab)) STATE.visitedTabs.push(STATE.activeTab); STATE.activeTab = tab; STATE.visitedCards = []; STATE.activePopover = null; STATE.calcResult = null; STATE.openWhyModal = null; STATE.insightContent = null; STATE.flowStep = -1; STATE.flowRunning = false; STATE.flowPaused = false; STATE.flowScenarioIdx = -1; STATE.flowPhase = 'idle'; clearFlowTimers(); window.scrollTo({ top: 0, behavior: 'smooth' }); render(); return; }
           if (action === 'advance') { STATE.activeTab = act.getAttribute('data-next'); STATE.openWhyModal = null; render(); return; }
           if (action === 'close-modal') { STATE.modalOpen = false; render(); return; }
           if (action === 'close-why-modal') { STATE.openWhyModal = null; render(); return; }
@@ -2760,6 +2792,7 @@
           if (action === 'expand-all') { Object.keys(STATE.openCards).forEach(k => STATE.openCards[k] = true); STATE.visitedCards = ['core','onboarding','trust']; render(); return; }
           if (action === 'calculate-impact') { calculateImpact(); render(); return; }
           if (action === 'start-flow') { startFlow(); return; }
+          if (action === 'step-flow') { stepFlow(); return; }
           if (action === 'reset-flow') { resetFlow(); return; }
           if (action === 'pause-flow') { if (STATE.flowPaused) { resumeFlow(); } else { pauseFlow(); } return; }
 
@@ -2810,9 +2843,9 @@
         });
 
         root.addEventListener('input', (e) => {
-          if (e.target?.id === 'calc-envs') { STATE.calcInputs.envs = cleanNum(e.target.value); render(); return; }
-          if (e.target?.id === 'calc-changes') { STATE.calcInputs.changes = cleanNum(e.target.value); render(); return; }
-          if (e.target?.id === 'calc-time') { STATE.calcInputs.time = cleanNum(e.target.value); render(); return; }
+          if (e.target?.id === 'calc-envs') { STATE.calcInputs.envs = cleanNum(e.target.value); return; }
+          if (e.target?.id === 'calc-changes') { STATE.calcInputs.changes = cleanNum(e.target.value); return; }
+          if (e.target?.id === 'calc-time') { STATE.calcInputs.time = cleanNum(e.target.value); return; }
           const buf = e.target.closest('[data-action="edit-buffer"]');
           if (buf) { const key = buf.getAttribute('data-key'); const sub = buf.getAttribute('data-subkey'); if (STATE.editBuffers?.[key]) STATE.editBuffers[key][sub] = e.target.value; }
           if (STATE.modalOpen && STATE.editTab === 'chart') { STATE.editChartBuffer = readChartFieldsRaw(); }
