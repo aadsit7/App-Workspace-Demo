@@ -694,7 +694,7 @@
 
         const stageState = (stagePhases) => {
           if (!scenario) return '';
-          const idx = ['clicking','checking','routing','config','done','final'];
+          const idx = ['launch','clicking','checking','routing','config','done','final'];
           const currentIdx = idx.indexOf(phase);
           if (currentIdx < 0) return '';
           const lastIdx = idx.indexOf(stagePhases[stagePhases.length - 1]);
@@ -941,7 +941,7 @@
 
         const stageState = (stagePhases) => {
           if (!scenario) return '';
-          const idx = ['clicking','checking','routing','config','done','final'];
+          const idx = ['launch','clicking','checking','routing','config','done','final'];
           const currentIdx = idx.indexOf(phase);
           if (currentIdx < 0) return '';
           const lastIdx = idx.indexOf(stagePhases[stagePhases.length - 1]);
@@ -1084,11 +1084,14 @@
         for (let i = 0; i < SCENARIOS.length; i++) {
           const idx = i;
           const isCatalog = SCENARIOS[i].id === 'catalog';
+          // Launch phase: user opens Application Workspace on their device
           if (i === 0) {
-            queue.push({ delay: 600, fn(){ STATE.flowScenarioIdx = idx; STATE.flowPhase = 'clicking'; if (!isCatalog) { STATE.flowAppOpened = true; } updateFlowDOM(); } });
+            queue.push({ delay: 600, fn(){ STATE.flowScenarioIdx = idx; STATE.flowPhase = 'launch'; STATE.flowAppOpened = false; updateFlowDOM(); } });
           } else {
-            queue.push({ delay: 1200, fn(){ STATE.flowScenarioIdx = idx; STATE.flowPhase = 'clicking'; if (SCENARIOS[idx].id !== 'catalog') STATE.flowAppOpened = true; updateFlowDOM(); } });
+            queue.push({ delay: 1200, fn(){ STATE.flowScenarioIdx = idx; STATE.flowPhase = 'launch'; STATE.flowAppOpened = false; updateFlowDOM(); } });
           }
+          // Clicking phase: catalog is open, user selects an app
+          queue.push({ delay: 1200, fn(){ STATE.flowPhase = 'clicking'; if (!isCatalog) { STATE.flowAppOpened = true; } updateFlowDOM(); } });
           queue.push({ delay: 1200, fn(){ STATE.flowPhase = 'checking'; updateFlowDOM(); animateChecks(); } });
           queue.push({ delay: 2000, fn(){ STATE.flowPhase = 'routing'; updateFlowDOM(); } });
           queue.push({ delay: 1500, fn(){ STATE.flowPhase = 'config'; updateFlowDOM(); } });
@@ -1525,11 +1528,13 @@
         const sc = STATE.flowScenarioIdx;
         const phase = STATE.flowPhase;
         const scenario = sc >= 0 && sc < SCENARIOS.length ? SCENARIOS[sc] : null;
-        const appOpen = scenario && !['idle','catalog'].includes(phase);
+        const appOpen = scenario && !['idle','catalog','launch'].includes(phase);
+        const showDesktop = !scenario || phase === 'idle' || phase === 'launch';
 
         const phaseLabel = !scenario ? 'Ready' :
           phase === 'idle' ? 'Waiting...' :
-          phase === 'clicking' ? 'User clicks app...' :
+          phase === 'launch' ? 'User opens Application Workspace...' :
+          phase === 'clicking' ? 'User selects app...' :
           phase === 'checking' ? 'Verifying identity & context...' :
           phase === 'routing' ? 'Selecting delivery path...' :
           phase === 'config' ? 'Applying configuration...' :
@@ -1593,8 +1598,44 @@
                   <div class="device-dot device-dot-r"></div>
                   <div class="device-dot device-dot-y"></div>
                   <div class="device-dot device-dot-g"></div>
-                  <span class="device-titlebar-text">${appOpen ? 'Microsoft Teams' : 'Application Workspace'}</span>
+                  <span class="device-titlebar-text">${appOpen ? 'Microsoft Teams' : showDesktop ? (phase === 'launch' ? 'Opening Application Workspace...' : 'Desktop') : 'Application Workspace'}</span>
                 </div>
+
+                ${showDesktop ? `
+                <!-- Desktop view: user's device with app icons -->
+                <div style="background:linear-gradient(135deg,#e0e7ff 0%,#dbeafe 40%,#eff6ff 100%);min-height:180px;display:flex;flex-direction:column;position:relative">
+                  <!-- Desktop icons -->
+                  <div style="flex:1;padding:16px 20px;display:flex;flex-wrap:wrap;gap:16px;align-content:start">
+                    ${[
+                      {l:'W',c:'#185ABD',n:'Word'},
+                      {l:'X',c:'#107C41',n:'Excel'},
+                      {l:'C',c:'#4285F4',n:'Chrome'},
+                      {l:'O',c:'#106EBE',n:'Outlook'},
+                    ].map(a => `
+                      <div style="display:flex;flex-direction:column;align-items:center;gap:3px;width:48px">
+                        <div style="width:36px;height:36px;border-radius:10px;background:${a.c};display:grid;place-items:center;font-size:14px;font-weight:800;color:white;box-shadow:0 2px 8px rgba(0,0,0,0.15)">${a.l}</div>
+                        <span style="font-size:9px;color:#334155;text-align:center">${a.n}</span>
+                      </div>
+                    `).join('')}
+                    <!-- Application Workspace icon (hero) -->
+                    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;width:48px;position:relative">
+                      <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#0A1C60,#0070F3);display:grid;place-items:center;box-shadow:0 2px 12px rgba(0,112,243,0.3);${phase === 'launch' ? 'box-shadow:0 0 0 3px rgba(0,112,243,0.4),0 2px 12px rgba(0,112,243,0.3)' : ''}">
+                        <i data-lucide="layout-grid" class="w-4 h-4 text-white"></i>
+                      </div>
+                      ${phase === 'launch' ? '<div class="click-ring" style="width:36px;height:36px;border-radius:10px;position:absolute;top:0"></div>' : ''}
+                      <span style="font-size:9px;color:#0A1C60;font-weight:600;text-align:center">Workspace</span>
+                    </div>
+                  </div>
+                  <!-- Taskbar -->
+                  <div style="background:rgba(255,255,255,0.85);backdrop-filter:blur(8px);border-top:1px solid rgba(203,213,225,0.5);padding:4px 12px;display:flex;align-items:center;justify-content:center;gap:8px">
+                    ${[
+                      {c:'#185ABD',l:'W'},{c:'#107C41',l:'X'},{c:'#4285F4',l:'C'},{c:'#106EBE',l:'O'},
+                    ].map(a => `<div style="width:22px;height:22px;border-radius:5px;background:${a.c};display:grid;place-items:center;font-size:8px;font-weight:800;color:white">${a.l}</div>`).join('')}
+                    <div style="width:22px;height:22px;border-radius:5px;background:linear-gradient(135deg,#0A1C60,#0070F3);display:grid;place-items:center;${phase === 'launch' ? 'box-shadow:0 0 8px rgba(0,112,243,0.5)' : ''}"><i data-lucide="layout-grid" class="w-3 h-3 text-white"></i></div>
+                  </div>
+                </div>
+                ` : `
+                <!-- Catalog grid view -->
                 <div class="catalog-grid" id="catalogGrid">
                   ${CATALOG_APPS.map(app => `
                     <div class="catalog-app ${(appOpen && app.id === 'teams') ? 'clicked' : ''}" data-app="${app.id}">
@@ -1606,6 +1647,7 @@
                     </div>
                   `).join('')}
                 </div>
+                `}
 
                 <div class="app-window-overlay ${appOpen ? 'open' : ''}" id="appWindow">
                   <div class="app-window-topbar">
@@ -1655,7 +1697,13 @@
               </div>
             </div>
 
-            ${scenario && !['idle'].includes(phase) ? `
+            <!-- Device type strip -->
+            <div class="flex items-center justify-center gap-2 mt-2 flex-wrap">
+              <span class="text-[9px] text-slate-400 font-semibold uppercase tracking-wider">Same experience on:</span>
+              ${['Windows','macOS','VDI','Cloud PC','BYOD'].map(d => `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border border-slate-200 bg-white text-[10px] text-[#475569] font-medium">${d}</span>`).join('')}
+            </div>
+
+            ${scenario && !['idle','launch'].includes(phase) ? `
               <div class="text-[10px] text-center mt-2 text-slate-400">${scenario.bannerMsg}</div>
             ` : ''}
 
@@ -1680,7 +1728,7 @@
 
         const rowState = (phases) => {
           if (!scenario) return 'row-idle';
-          const idx = ['clicking','checking','routing','config','done','final'];
+          const idx = ['launch','clicking','checking','routing','config','done','final'];
           const cur = idx.indexOf(phase);
           const last = idx.indexOf(phases[phases.length - 1]);
           if (cur < 0) return 'row-idle';
