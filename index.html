@@ -1696,11 +1696,95 @@
             </div>
 
             ${!scenario ? `
-              <div class="text-center py-8 text-sm text-slate-400">
-                <i data-lucide="monitor-cog" class="w-8 h-8 mx-auto mb-2 text-slate-300"></i>
+              <!-- Architecture diagram (idle state) -->
+              <div class="rounded-xl border border-slate-200 bg-white/80 p-4 mb-3">
+                <div class="text-[10px] font-semibold text-[#0A1C60] text-center mb-3 uppercase tracking-widest">How It Fits Together</div>
+                <div class="text-center mb-2">
+                  <div class="text-[9px] font-semibold uppercase tracking-widest text-[#64748b] mb-1.5">Your Existing Mgmt Tools</div>
+                  <div class="flex flex-wrap justify-center gap-1.5">
+                    <span class="px-3 py-1 rounded-full text-[11px] font-medium text-white" style="background:#5B53D6">Intune</span>
+                    <span class="px-3 py-1 rounded-full text-[11px] font-medium text-white" style="background:#E84D1A">ConfigMgr</span>
+                    <span class="px-3 py-1 rounded-full text-[11px] font-medium text-white" style="background:#374151">Citrix</span>
+                    <span class="px-3 py-1 rounded-full text-[11px] font-medium text-white" style="background:#4B5563">AVD / W365</span>
+                    <span class="px-3 py-1 rounded-full text-[11px] font-medium text-white" style="background:#4B5563">macOS</span>
+                  </div>
+                </div>
+                <div class="flex justify-center"><div style="width:70%;height:18px;border:2px dashed #cbd5e1;border-top:none;border-radius:0 0 12px 12px"></div></div>
+                <div class="relative my-1.5">
+                  <div class="flex items-center">
+                    <div class="hidden md:flex flex-col gap-1 flex-shrink-0 mr-3">
+                      <div class="flex items-center gap-1 px-2 py-0.5 rounded-full border border-slate-200 bg-white text-[10px] text-[#475569]"><div class="w-1.5 h-1.5 rounded-full bg-green-400"></div>8,000+ Pre-tested Apps</div>
+                      <div class="flex items-center gap-1 px-2 py-0.5 rounded-full border border-slate-200 bg-white text-[10px] text-[#475569]"><div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div>Custom App Packaging</div>
+                      <div class="flex items-center gap-1 px-2 py-0.5 rounded-full border border-slate-200 bg-white text-[10px] text-[#475569]"><div class="w-1.5 h-1.5 rounded-full bg-purple-400"></div>Smart Icon Technology</div>
+                    </div>
+                    <div class="flex-1 rounded-lg p-3 text-center" style="background:linear-gradient(135deg,#0A1C60 0%,#0070F3 100%)">
+                      <div class="text-sm font-bold text-white">Application Workspace</div>
+                      <div class="text-[11px] text-blue-200 mt-0.5">Package &middot; Deliver &middot; Update &middot; Self-Service &middot; Audit</div>
+                    </div>
+                    <div class="hidden md:flex flex-col gap-1 flex-shrink-0 ml-3">
+                      <div class="flex items-center gap-1 px-2 py-0.5 rounded-full border border-slate-200 bg-white text-[10px] text-[#475569]"><div class="w-1.5 h-1.5 rounded-full bg-indigo-400"></div>Identity-Based Access</div>
+                      <div class="flex items-center gap-1 px-2 py-0.5 rounded-full border border-slate-200 bg-white text-[10px] text-[#475569]"><div class="w-1.5 h-1.5 rounded-full bg-red-400"></div>CVE / Auto-Patching</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex justify-center"><div style="width:70%;height:18px;border:2px solid #0070F3;border-top:none;border-radius:0 0 12px 12px"></div></div>
+                <div class="text-center mt-2">
+                  <div class="text-[9px] font-semibold uppercase tracking-widest text-[#0070F3] mb-1.5">End Users & Devices</div>
+                  <div class="flex flex-wrap justify-center gap-1.5">
+                    ${['Laptop','Virtual Desktop','Cloud PC / W365','macOS','BYOD / Remote'].map(d => `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border border-slate-200 bg-white text-[11px] text-[#475569]">${d}</span>`).join('')}
+                  </div>
+                </div>
+              </div>
+              <div class="text-center py-4 text-sm text-slate-400">
+                <i data-lucide="play-circle" class="w-6 h-6 mx-auto mb-2 text-slate-300"></i>
                 <div>Press <strong>Start</strong> or <strong>Step</strong> to see the admin perspective</div>
               </div>
             ` : `
+              <!-- Architecture diagram: How It Fits Together -->
+              <div class="rounded-xl border border-slate-200 bg-white/80 p-4 mb-3">
+                <div class="text-[10px] font-semibold text-[#0A1C60] text-center mb-3 uppercase tracking-widest">How It Fits Together</div>
+                <!-- Existing Mgmt Tools -->
+                <div class="text-center mb-2">
+                  <div class="text-[9px] font-semibold uppercase tracking-widest text-[#64748b] mb-1.5">Your Existing Mgmt Tools</div>
+                  <div class="flex flex-wrap justify-center gap-1.5">
+                    <span class="px-3 py-1 rounded-full text-[11px] font-medium text-white" style="background:#5B53D6">Intune</span>
+                    <span class="px-3 py-1 rounded-full text-[11px] font-medium text-white" style="background:#E84D1A">ConfigMgr</span>
+                    <span class="px-3 py-1 rounded-full text-[11px] font-medium text-white" style="background:#374151">Citrix</span>
+                    <span class="px-3 py-1 rounded-full text-[11px] font-medium text-white" style="background:#4B5563">AVD / W365</span>
+                    <span class="px-3 py-1 rounded-full text-[11px] font-medium text-white" style="background:#4B5563">macOS</span>
+                  </div>
+                </div>
+                <!-- Dashed bracket down -->
+                <div class="flex justify-center"><div style="width:70%;height:18px;border:2px dashed #cbd5e1;border-top:none;border-radius:0 0 12px 12px"></div></div>
+                <!-- Application Workspace with side capabilities -->
+                <div class="relative my-1.5">
+                  <div class="flex items-center">
+                    <div class="hidden md:flex flex-col gap-1 flex-shrink-0 mr-3">
+                      <div class="flex items-center gap-1 px-2 py-0.5 rounded-full border border-slate-200 bg-white text-[10px] text-[#475569]"><div class="w-1.5 h-1.5 rounded-full bg-green-400"></div>8,000+ Pre-tested Apps</div>
+                      <div class="flex items-center gap-1 px-2 py-0.5 rounded-full border border-slate-200 bg-white text-[10px] text-[#475569]"><div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div>Custom App Packaging</div>
+                      <div class="flex items-center gap-1 px-2 py-0.5 rounded-full border border-slate-200 bg-white text-[10px] text-[#475569]"><div class="w-1.5 h-1.5 rounded-full bg-purple-400"></div>Smart Icon Technology</div>
+                    </div>
+                    <div class="flex-1 rounded-lg p-3 text-center" style="background:linear-gradient(135deg,#0A1C60 0%,#0070F3 100%)">
+                      <div class="text-sm font-bold text-white">Application Workspace</div>
+                      <div class="text-[11px] text-blue-200 mt-0.5">Package &middot; Deliver &middot; Update &middot; Self-Service &middot; Audit</div>
+                    </div>
+                    <div class="hidden md:flex flex-col gap-1 flex-shrink-0 ml-3">
+                      <div class="flex items-center gap-1 px-2 py-0.5 rounded-full border border-slate-200 bg-white text-[10px] text-[#475569]"><div class="w-1.5 h-1.5 rounded-full bg-indigo-400"></div>Identity-Based Access</div>
+                      <div class="flex items-center gap-1 px-2 py-0.5 rounded-full border border-slate-200 bg-white text-[10px] text-[#475569]"><div class="w-1.5 h-1.5 rounded-full bg-red-400"></div>CVE / Auto-Patching</div>
+                    </div>
+                  </div>
+                </div>
+                <!-- Solid bracket down -->
+                <div class="flex justify-center"><div style="width:70%;height:18px;border:2px solid #0070F3;border-top:none;border-radius:0 0 12px 12px"></div></div>
+                <!-- End Users & Devices -->
+                <div class="text-center mt-2">
+                  <div class="text-[9px] font-semibold uppercase tracking-widest text-[#0070F3] mb-1.5">End Users & Devices</div>
+                  <div class="flex flex-wrap justify-center gap-1.5">
+                    ${['Laptop','Virtual Desktop','Cloud PC / W365','macOS','BYOD / Remote'].map(d => `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border border-slate-200 bg-white text-[11px] text-[#475569]">${d}</span>`).join('')}
+                  </div>
+                </div>
+              </div>
+
               <!-- Platform stats strip -->
               <div class="platform-bar mb-3" style="padding:8px 12px">
                 <div class="flex items-center justify-between">
