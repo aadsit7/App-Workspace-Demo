@@ -694,7 +694,7 @@
 
         const stageState = (stagePhases) => {
           if (!scenario) return '';
-          const idx = ['launch','clicking','checking','routing','config','done','final'];
+          const idx = ['launch','catalog','clicking','checking','routing','config','done','final'];
           const currentIdx = idx.indexOf(phase);
           if (currentIdx < 0) return '';
           const lastIdx = idx.indexOf(stagePhases[stagePhases.length - 1]);
@@ -941,7 +941,7 @@
 
         const stageState = (stagePhases) => {
           if (!scenario) return '';
-          const idx = ['launch','clicking','checking','routing','config','done','final'];
+          const idx = ['launch','catalog','clicking','checking','routing','config','done','final'];
           const currentIdx = idx.indexOf(phase);
           if (currentIdx < 0) return '';
           const lastIdx = idx.indexOf(stagePhases[stagePhases.length - 1]);
@@ -1090,8 +1090,10 @@
           } else {
             queue.push({ delay: 1200, fn(){ STATE.flowScenarioIdx = idx; STATE.flowPhase = 'launch'; STATE.flowAppOpened = false; updateFlowDOM(); } });
           }
-          // Clicking phase: catalog is open, user selects an app
-          queue.push({ delay: 1200, fn(){ STATE.flowPhase = 'clicking'; if (!isCatalog) { STATE.flowAppOpened = true; } updateFlowDOM(); } });
+          // Catalog phase: workspace opens, user sees all their apps
+          queue.push({ delay: 1200, fn(){ STATE.flowPhase = 'catalog'; updateFlowDOM(); } });
+          // Clicking phase: user selects an app from the catalog
+          queue.push({ delay: 1500, fn(){ STATE.flowPhase = 'clicking'; updateFlowDOM(); } });
           queue.push({ delay: 1200, fn(){ STATE.flowPhase = 'checking'; updateFlowDOM(); animateChecks(); } });
           queue.push({ delay: 2000, fn(){ STATE.flowPhase = 'routing'; updateFlowDOM(); } });
           queue.push({ delay: 1500, fn(){ STATE.flowPhase = 'config'; updateFlowDOM(); } });
@@ -1528,13 +1530,14 @@
         const sc = STATE.flowScenarioIdx;
         const phase = STATE.flowPhase;
         const scenario = sc >= 0 && sc < SCENARIOS.length ? SCENARIOS[sc] : null;
-        const appOpen = scenario && !['idle','catalog','launch'].includes(phase);
+        const appOpen = scenario && !['idle','launch','catalog','clicking'].includes(phase);
         const showDesktop = !scenario || phase === 'idle' || phase === 'launch';
 
         const phaseLabel = !scenario ? 'Ready' :
           phase === 'idle' ? 'Waiting...' :
           phase === 'launch' ? 'User opens Application Workspace...' :
-          phase === 'clicking' ? 'User selects app...' :
+          phase === 'catalog' ? 'Browsing app catalog...' :
+          phase === 'clicking' ? 'User selects Teams...' :
           phase === 'checking' ? 'Verifying identity & context...' :
           phase === 'routing' ? 'Selecting delivery path...' :
           phase === 'config' ? 'Applying configuration...' :
@@ -1598,7 +1601,7 @@
                   <div class="device-dot device-dot-r"></div>
                   <div class="device-dot device-dot-y"></div>
                   <div class="device-dot device-dot-g"></div>
-                  <span class="device-titlebar-text">${appOpen ? 'Microsoft Teams' : showDesktop ? (phase === 'launch' ? 'Opening Application Workspace...' : 'Desktop') : 'Application Workspace'}</span>
+                  <span class="device-titlebar-text">${appOpen ? 'Microsoft Teams' : showDesktop ? (phase === 'launch' ? 'Opening Application Workspace...' : 'Desktop') : phase === 'clicking' ? 'Application Workspace — selecting Teams...' : 'Application Workspace'}</span>
                 </div>
 
                 ${showDesktop ? `
@@ -1703,7 +1706,7 @@
               ${['Windows','macOS','VDI','Cloud PC','BYOD'].map(d => `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border border-slate-200 bg-white text-[10px] text-[#475569] font-medium">${d}</span>`).join('')}
             </div>
 
-            ${scenario && !['idle','launch'].includes(phase) ? `
+            ${scenario && !['idle','launch','catalog','clicking'].includes(phase) ? `
               <div class="text-[10px] text-center mt-2 text-slate-400">${scenario.bannerMsg}</div>
             ` : ''}
 
@@ -1728,7 +1731,7 @@
 
         const rowState = (phases) => {
           if (!scenario) return 'row-idle';
-          const idx = ['launch','clicking','checking','routing','config','done','final'];
+          const idx = ['launch','catalog','clicking','checking','routing','config','done','final'];
           const cur = idx.indexOf(phase);
           const last = idx.indexOf(phases[phases.length - 1]);
           if (cur < 0) return 'row-idle';
