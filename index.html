@@ -105,25 +105,22 @@
       @keyframes metricsAppear { to { opacity: 1; transform: translateY(0); } }
       .interactive-node { transition: opacity 0.3s, transform 0.3s; }
       .interactive-node:hover { opacity: 0.9; transform: scale(1.05); }
-      .chart-container { width: 100%; height: auto; aspect-ratio: 800 / 360; background: #ffffff; border-radius: 16px; padding: 8px 12px; }
+      .chart-container { width: 100%; height: auto; aspect-ratio: 800 / 340; background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%); border-radius: 16px; padding: 0; overflow: hidden; }
       #capacity-gap-chart { width: 100%; height: 100%; }
-      .chart-text { font-size: 11px; font-weight: 500; fill: #64748b; letter-spacing: 0.01em; font-family: Inter, system-ui, sans-serif; }
-      .chart-axis { stroke: #e2e8f0; stroke-width: 1; }
-      .chart-axis-label { font-size: 10px; font-weight: 600; fill: #94a3b8; font-family: Inter, system-ui, sans-serif; letter-spacing: 0.12em; text-transform: uppercase; }
-      .chart-year-label { font-size: 11px; fill: #94a3b8; font-weight: 500; }
-      @media (max-width: 640px) { .chart-year-label { font-size: 9px; } }
-      .chart-annotation { font-size: 13px; font-weight: 700; fill: #0A1C60; font-family: Inter, system-ui, sans-serif; letter-spacing: 0.06em; text-transform: uppercase; }
-      .demand-line { stroke-width: 3; filter: drop-shadow(0 3px 8px rgba(239,68,68,0.25)); }
-      .capacity-line { stroke-width: 3; filter: drop-shadow(0 3px 8px rgba(10,28,96,0.18)); }
-      .gap-fill { }
-      .marker-group:hover { transform: scale(1.08); }
-      .chart-element { opacity: 0; animation: chartFadeIn 0.6s ease forwards; }
-      @keyframes chartFadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+      .chart-axis-label { font-size: 9px; font-weight: 600; fill: #94a3b8; font-family: Inter, system-ui, sans-serif; letter-spacing: 0.14em; text-transform: uppercase; }
+      .chart-year-label { font-size: 10px; fill: #94a3b8; font-weight: 500; font-family: Inter, system-ui, sans-serif; }
+      .chart-annotation { font-size: 11px; font-weight: 700; fill: #0A1C60; font-family: Inter, system-ui, sans-serif; letter-spacing: 0.08em; text-transform: uppercase; }
+      .demand-line { stroke-width: 2.5; }
+      .capacity-line { stroke-width: 2.5; }
+      .marker-group { cursor: pointer; }
+      .marker-group:hover { transform: scale(1.06); }
+      .chart-element { opacity: 0; animation: chartFadeIn 0.5s ease forwards; }
+      @keyframes chartFadeIn { from { opacity: 0; } to { opacity: 1; } }
       .axis-element { animation-delay: 0s; }
-      .line-element { animation-delay: 0.2s; }
-      .gap-element { animation-delay: 0.4s; }
-      .marker-element { animation-delay: 0.6s; }
-      .label-element { animation-delay: 0.8s; }
+      .line-element { animation-delay: 0.15s; }
+      .gap-element { animation-delay: 0.3s; }
+      .marker-element { animation-delay: 0.5s; }
+      .label-element { animation-delay: 0.65s; }
 
       :root{
         --bg-main:
@@ -669,7 +666,7 @@
 
       const STAT_CARDS = [
         { id:'card0', stat:'3\u00d7', title:'The workload is compounding', body:'The average enterprise now manages 3x more delivery platforms than five years ago. Every new platform multiplies packaging work against every existing application.', bullets:['More platforms without more headcount','Every app rebuilt per environment','Work compounds with each adoption cycle'], source:'Forrester, 2024', icon:'layers' },
-        { id:'card1', stat:'5 days', title:'Your risk is compounding quietly', body:'The average time to exploit a new vulnerability has dropped from 32 days to just 5. Your patching cycle was designed for a world that no longer exists. Every application running a different version across a different environment is an exposure window - and the window is shrinking faster than most teams can close it.', bullets:['Patching cycles built for monthly cadence can\'t keep pace with 5-day exploit windows','Every platform running a different app version multiplies audit surface','Compliance evidence built manually after the fact doesn\'t survive scrutiny'], source:'Mandiant, 2025', icon:'shield' },
+        { id:'card1', stat:'5 days', title:'Your risk is compounding quietly', body:'Time to exploit a new vulnerability has dropped from 32 days to 5. Your patching cycle was built for a world that no longer exists.', bullets:['Monthly patching can\'t keep pace with 5-day exploit windows','Different app versions per platform multiply audit surface','Manual compliance evidence doesn\'t survive scrutiny'], source:'Mandiant, 2025', icon:'shield' },
         { id:'card2', stat:'51%', title:'Your best people are trapped', body:'51% of all IT operations effort is reactive - fixing what\'s broken, not building what\'s next. Your engineers are stuck packaging and firefighting instead of strategic work.', bullets:['Senior engineers stuck on repetitive tasks','Tribal knowledge creates single points of failure','Strategic projects wait for capacity that never opens'], source:'Grand View Research, 2025', icon:'user-x' },
         { id:'card3', stat:'70%', title:'Your roadmap is stalling', body:'McKinsey found 70% of digital transformations fail. Not because of bad strategy - because of execution capacity. When app delivery consumes your team, your modernization roadmap doesn\'t move.', bullets:['AI and migration pilots delayed by capacity','Security patching crowds out planned work','Leadership pushes harder but the team is maxed'], source:'McKinsey & Company', icon:'alert-triangle' },
       ];
@@ -1362,7 +1359,7 @@
             <div class="section-card p-6">
               <div class="grid grid-cols-1 lg:grid-cols-[1fr_240px] gap-4 items-start">
                 <div class="chart-container relative">
-                  <svg id="capacity-gap-chart" viewBox="0 0 800 360"></svg>
+                  <svg id="capacity-gap-chart" viewBox="0 0 800 340"></svg>
                 </div>
                 <div class="w-full bg-white/70 backdrop-blur-lg rounded-2xl shadow-md p-4 border border-slate-200">
                   <h3 class="text-lg font-medium mb-4">Modern IT Challenges</h3>
@@ -1382,28 +1379,28 @@
         const svg = document.getElementById('capacity-gap-chart');
         if (!svg) return;
         svg.innerHTML = '';
-        svg.setAttribute('viewBox', '0 0 800 360');
-        const width = 680, height = 270, margin = {left: 65, bottom: 40, top: 25, right: 55};
+        svg.setAttribute('viewBox', '0 0 800 340');
+        const width = 700, height = 260, margin = {left: 50, bottom: 38, top: 20, right: 30};
         const xScale = t => margin.left + t * width;
         const yScale = v => margin.top + height - v * height;
         const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
         defs.innerHTML = `
-          <linearGradient id="demandGradient" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#f87171"/><stop offset="100%" stop-color="#dc2626"/></linearGradient>
-          <linearGradient id="capacityGradient" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#0A1C60"/><stop offset="100%" stop-color="#0070F3"/></linearGradient>
-          <linearGradient id="gapGradient" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(239,68,68,0.14)"/><stop offset="100%" stop-color="rgba(10,28,96,0.06)"/></linearGradient>
-          <linearGradient id="capFillGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(10,28,96,0.06)"/><stop offset="100%" stop-color="rgba(10,28,96,0.01)"/></linearGradient>
+          <linearGradient id="demandGradient" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#0070F3"/><stop offset="100%" stop-color="#0A1C60"/></linearGradient>
+          <linearGradient id="capacityGradient" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#94a3b8"/><stop offset="100%" stop-color="#64748b"/></linearGradient>
+          <linearGradient id="gapGradient" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(0,112,243,0.10)"/><stop offset="100%" stop-color="rgba(0,112,243,0.02)"/></linearGradient>
+          <linearGradient id="capFillGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(148,163,184,0.06)"/><stop offset="100%" stop-color="rgba(148,163,184,0.01)"/></linearGradient>
         `;
         svg.appendChild(defs);
         const gridG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-        for (let i = 1; i <= 4; i++) { const y = margin.top + (height / 4) * i; gridG.innerHTML += '<line x1="' + margin.left + '" y1="' + y + '" x2="' + (margin.left + width) + '" y2="' + y + '" stroke="#f1f5f9" stroke-width="1"/>'; }
+        for (let i = 1; i <= 3; i++) { const y = margin.top + (height / 4) * i; gridG.innerHTML += '<line x1="' + margin.left + '" y1="' + y + '" x2="' + (margin.left + width) + '" y2="' + y + '" stroke="#f1f5f9" stroke-width="0.5"/>'; }
         svg.appendChild(gridG);
         const xAxis = document.createElementNS('http://www.w3.org/2000/svg', 'g');
         xAxis.classList.add('axis-element', 'chart-element');
-        xAxis.innerHTML = `<line x1="${margin.left}" y1="${margin.top + height}" x2="${margin.left + width}" y2="${margin.top + height}" stroke="#e2e8f0" stroke-width="1"/><text x="${margin.left + width / 2}" y="${margin.top + height + 36}" text-anchor="middle" class="chart-axis-label">${STATE.chartConfig.xAxis}</text>${STATE.years.map((year, i) => { const x = xScale(i / 3); return `<line x1="${x}" y1="${margin.top + height}" x2="${x}" y2="${margin.top + height + 5}" stroke="#cbd5e1" stroke-width="1"/><text x="${x}" y="${margin.top + height + 20}" text-anchor="middle" class="chart-year-label chart-element">${year}</text>`; }).join('')}`;
+        xAxis.innerHTML = `<line x1="${margin.left}" y1="${margin.top + height}" x2="${margin.left + width}" y2="${margin.top + height}" stroke="#e2e8f0" stroke-width="0.5"/><text x="${margin.left + width / 2}" y="${margin.top + height + 32}" text-anchor="middle" class="chart-axis-label">${STATE.chartConfig.xAxis}</text>${STATE.years.map((year, i) => { const x = xScale(i / 3); return `<text x="${x}" y="${margin.top + height + 16}" text-anchor="middle" class="chart-year-label chart-element">${year}</text>`; }).join('')}`;
         svg.appendChild(xAxis);
         const yAxis = document.createElementNS('http://www.w3.org/2000/svg', 'g');
         yAxis.classList.add('axis-element', 'chart-element');
-        yAxis.innerHTML = `<line x1="${margin.left}" y1="${margin.top}" x2="${margin.left}" y2="${margin.top + height}" stroke="#e2e8f0" stroke-width="1"/><text x="${margin.left - 16}" y="${margin.top + height / 2}" text-anchor="middle" class="chart-axis-label" transform="rotate(-90, ${margin.left - 16}, ${margin.top + height / 2})">${STATE.chartConfig.yAxis}</text>`;
+        yAxis.innerHTML = `<text x="${margin.left - 12}" y="${margin.top + height / 2}" text-anchor="middle" class="chart-axis-label" transform="rotate(-90, ${margin.left - 12}, ${margin.top + height / 2})">${STATE.chartConfig.yAxis}</text>`;
         svg.appendChild(yAxis);
         const exp = STATE.currentDemandExponent;
         const slope = STATE.currentCapacitySlope;
@@ -1424,21 +1421,18 @@
         demandLine.setAttribute('d', demandPath); demandLine.setAttribute('stroke', 'url(#demandGradient)'); demandLine.setAttribute('fill', 'none'); demandLine.classList.add('demand-line', 'line-element', 'chart-element'); svg.appendChild(demandLine);
         const gapLabel = document.createElementNS('http://www.w3.org/2000/svg', 'g');
         gapLabel.classList.add('label-element', 'chart-element');
-        const glX = xScale(0.48), glY = yScale(0.48);
-        gapLabel.innerHTML = `<rect x="${glX - 70}" y="${glY - 12}" width="140" height="24" rx="12" fill="rgba(10,28,96,0.06)"/><text x="${glX}" y="${glY + 4}" text-anchor="middle" class="chart-annotation">${STATE.chartConfig.center}</text>`;
+        const glX = xScale(0.45), glY = yScale(0.46);
+        gapLabel.innerHTML = `<text x="${glX}" y="${glY + 4}" text-anchor="middle" class="chart-annotation">${STATE.chartConfig.center}</text>`;
         svg.appendChild(gapLabel);
         STATE.drivers.forEach(d => {
           if (d.markerYear && (d.state === 'normal' || d.state === 'accelerating')) {
             const t = (d.markerYear - 2025) / 3; const dem = Math.pow(t, exp); const x = xScale(t); const y = yScale(dem);
             const isHot = d.id && STATE.highlightDriverId === d.id;
-            const r = isHot ? 6 : 5;
-            const dotShadow = isHot ? 'filter: drop-shadow(0 3px 8px rgba(239,68,68,0.4));' : '';
+            const r = isHot ? 5 : 4;
             const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
             g.classList.add('marker-group', 'marker-element', 'chart-element');
             g.setAttribute('role', 'button'); g.setAttribute('tabindex', '0'); g.setAttribute('aria-label', `Learn more about ${d.label}`);
-            const lblW = d.label.length * 5 + 14;
-            const lblY = y - 16;
-            g.innerHTML = `<title>${d.short}</title><circle cx="${x}" cy="${y}" r="18" fill="transparent" stroke="none"/><circle cx="${x}" cy="${y}" r="${r}" fill="#ef4444" stroke="white" stroke-width="2" style="${dotShadow}"/><rect x="${x - lblW/2}" y="${lblY - 8}" width="${lblW}" height="18" rx="9" fill="#0A1C60" opacity="0.85"/><text x="${x}" y="${lblY + 4}" text-anchor="middle" font-size="8" font-weight="600" fill="white" font-family="Inter, system-ui, sans-serif" class="label-element chart-element">${d.label}</text>`;
+            g.innerHTML = `<title>${d.short}</title><circle cx="${x}" cy="${y}" r="16" fill="transparent" stroke="none"/><circle cx="${x}" cy="${y}" r="${r}" fill="#0070F3" stroke="white" stroke-width="2"/><text x="${x}" y="${y - 12}" text-anchor="middle" font-size="8" font-weight="600" fill="#0A1C60" font-family="Inter, system-ui, sans-serif" class="label-element chart-element">${d.label}</text>`;
             g.addEventListener('click', () => openInsight(d));
             g.addEventListener('keydown', e => { if (e.key === 'Enter') openInsight(d); });
             svg.appendChild(g);
@@ -1448,11 +1442,11 @@
           const t = (STATE.tippingPointYear - 2025) / 3; const x = xScale(t);
           const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
           line.setAttribute('x1', x); line.setAttribute('y1', yScale(0)); line.setAttribute('x2', x); line.setAttribute('y2', yScale(1));
-          line.setAttribute('stroke', '#ef4444'); line.setAttribute('stroke-width', '1.5'); line.setAttribute('stroke-dasharray', '8 4'); line.setAttribute('opacity', '0.6');
+          line.setAttribute('stroke', '#0A1C60'); line.setAttribute('stroke-width', '1'); line.setAttribute('stroke-dasharray', '6 4'); line.setAttribute('opacity', '0.3');
           line.classList.add('line-element', 'chart-element'); svg.appendChild(line);
           const lblG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
           lblG.classList.add('label-element', 'chart-element');
-          lblG.innerHTML = `<rect x="${x + 6}" y="${yScale(1) - 16}" width="130" height="22" rx="11" fill="#0A1C60" opacity="0.9"/><text x="${x + 71}" y="${yScale(1) - 1}" text-anchor="middle" font-size="9" font-weight="600" fill="white" font-family="Inter, system-ui, sans-serif">Operational Breaking Point</text>`;
+          lblG.innerHTML = `<text x="${x + 8}" y="${yScale(1) - 4}" font-size="9" font-weight="600" fill="#0A1C60" font-family="Inter, system-ui, sans-serif" opacity="0.7">Operational Breaking Point</text>`;
           svg.appendChild(lblG);
           const hit = document.createElementNS('http://www.w3.org/2000/svg', 'g');
           hit.setAttribute('role', 'button'); hit.setAttribute('tabindex', '0'); hit.setAttribute('aria-label', 'Learn more about Projected Tipping Point');
