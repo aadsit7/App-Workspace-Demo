@@ -123,9 +123,9 @@
       @keyframes chartFadeIn { from { opacity: 0; } to { opacity: 1; } }
       .line-element { animation-delay: 0.15s; }
       .gap-element { animation-delay: 0.3s; }
-      @keyframes analystCycle { 0%,3% { opacity: 0; } 5%,15% { opacity: 1; } 18%,100% { opacity: 0; } }
-      .analyst-ticker { position: relative; min-width: 200px; height: 32px; flex-shrink: 0; }
-      .analyst-item { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: flex-end; justify-content: center; opacity: 0; animation: analystCycle 25s ease infinite; }
+      @keyframes analystCycle { 0%,4% { opacity: 0; } 8%,16% { opacity: 1; } 20%,100% { opacity: 0; } }
+      .analyst-ticker { position: relative; display: inline-block; min-width: 120px; height: 1.2em; vertical-align: baseline; }
+      .analyst-item { position: absolute; left: 0; top: 0; white-space: nowrap; opacity: 0; animation: analystCycle 25s ease infinite; font-size: inherit; font-weight: 600; color: #0070F3; }
       .analyst-item:nth-child(2) { animation-delay: 5s; }
       .analyst-item:nth-child(3) { animation-delay: 10s; }
       .analyst-item:nth-child(4) { animation-delay: 15s; }
@@ -1338,15 +1338,8 @@
       function renderProblems(){
         return `
           <section id="panel-problems" class="space-y-4">
-            <div class="flex items-start justify-between gap-4 mb-1">
-              <h2 class="text-lg font-semibold text-[#0A1C60]">The application layer is now the #1 primary constraint in modern IT.</h2>
-              <div class="analyst-ticker hidden sm:block">
-                <div class="analyst-item"><div class="text-[10px] font-bold text-[#0A1C60]">Forrester</div><div class="text-[9px] text-[#64748b]">The app layer is the new bottleneck</div></div>
-                <div class="analyst-item"><div class="text-[10px] font-bold text-[#0A1C60]">Gartner</div><div class="text-[9px] text-[#64748b]">60% won't execute their digital strategy</div></div>
-                <div class="analyst-item"><div class="text-[10px] font-bold text-[#0A1C60]">McKinsey & Company</div><div class="text-[9px] text-[#64748b]">70% of transformations fail on execution</div></div>
-                <div class="analyst-item"><div class="text-[10px] font-bold text-[#0A1C60]">Mandiant</div><div class="text-[9px] text-[#64748b]">Exploit windows have dropped to 5 days</div></div>
-                <div class="analyst-item"><div class="text-[10px] font-bold text-[#0A1C60]">Grand View Research</div><div class="text-[9px] text-[#64748b]">51% of IT ops effort is reactive</div></div>
-              </div>
+            <div class="mb-1">
+              <h2 class="text-lg font-semibold text-[#0A1C60]">The application layer is now the #1 primary constraint in modern IT. <span class="analyst-ticker"><span class="analyst-item">- Forrester</span><span class="analyst-item">- Gartner</span><span class="analyst-item">- McKinsey</span><span class="analyst-item">- Mandiant</span><span class="analyst-item">- Grand View Research</span></span></h2>
             </div>
             <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
               ${STAT_CARDS.map(card => {
