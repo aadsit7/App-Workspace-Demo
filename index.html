@@ -483,16 +483,16 @@
             analyst: "The organizations that succeed with AI, cloud, and platform modernization over the next two to three years will be the ones that solved application delivery first. Everyone else hits a capacity wall — and strategy doesn't fix a capacity problem."
           },
           recast: {
-            intro: "Application Workspace changes how apps are delivered — to the user, not the device.",
+            intro: "Application Workspace sits on top of your existing tools and gives you one place to package, deliver, update, and manage every app across every environment.",
             bullets: [
-              "Applications Are Tied to the User = Apps follow the user across platforms. Assigned by user identity, not device or location.",
-              "Define Once, Deliver Everywhere = Applications are defined a single time. Delivered consistently across platforms. No repackaging or extra configuration required.",
-              "Support is Simplified = IT uses a single support model across all delivery methods.",
-              "New platforms can be integrated without rework = Backend updates don't affect user-facing experience.",
-              "Consistent User Experience = Users see the same apps and interfaces every time. Reduces user confusion and support demand.",
-              "Central management of application delivery = Ensures design consistency across environments. Reduces fragmentation and configuration drift."
+              "Define once, deliver everywhere = Stop rebuilding the same app for every platform. Define it once — Application Workspace delivers it to Intune, SCCM, Citrix, AVD, and macOS automatically.",
+              "8,000+ apps ready to go = Most of your catalog deploys without any packaging work. The Setup Store has 8,000+ pre-tested apps — your team only packages what's unique to your org.",
+              "Self-service replaces tickets = Users get approved apps in seconds from a catalog — no tickets, no wait. IT controls the catalog. Users control the timing.",
+              "Patches land everywhere at once = Security updates deploy across every environment simultaneously through a staged pipeline. No per-platform rebuilds. No version drift.",
+              "Nothing gets ripped out = Works with what you already run — Intune, SCCM, Citrix, AVD, Nerdio, macOS. It's the layer that makes them work together.",
+              "Your team gets time back = Engineers stop rebuilding and firefighting. That capacity goes back to the projects stuck in your backlog."
             ],
-            analyst: "Leading IT organizations are shifting from device-centric management to user-centric delivery models to reduce operational friction and keep pace with constant platform change."
+            analyst: "The organizations pulling ahead aren't adding headcount — they're adding a layer that eliminates per-platform rework and redirects capacity toward what matters next."
           }
         },
         defaultsCurrentState() {
@@ -516,16 +516,16 @@
               analyst: "The organizations that succeed with AI, cloud, and platform modernization over the next two to three years will be the ones that solved application delivery first. Everyone else hits a capacity wall — and strategy doesn't fix a capacity problem."
             },
             recast: {
-              intro: "Application Workspace changes how apps are delivered — to the user, not the device.",
+              intro: "Application Workspace sits on top of your existing tools and gives you one place to package, deliver, update, and manage every app across every environment.",
               bullets: [
-                "Applications Are Tied to the User = Apps follow the user across platforms. Assigned by user identity, not device or location.",
-                "Define Once, Deliver Everywhere = Applications are defined a single time. Delivered consistently across platforms. No repackaging or extra configuration required.",
-                "Support is Simplified = IT uses a single support model across all delivery methods.",
-                "New platforms can be integrated without rework = Backend updates don't affect user-facing experience.",
-                "Consistent User Experience = Users see the same apps and interfaces every time. Reduces user confusion and support demand.",
-                "Central management of application delivery = Ensures design consistency across environments. Reduces fragmentation and configuration drift."
+                "Define once, deliver everywhere = Stop rebuilding the same app for every platform. Define it once — Application Workspace delivers it to Intune, SCCM, Citrix, AVD, and macOS automatically.",
+                "8,000+ apps ready to go = Most of your catalog deploys without any packaging work. The Setup Store has 8,000+ pre-tested apps — your team only packages what's unique to your org.",
+                "Self-service replaces tickets = Users get approved apps in seconds from a catalog — no tickets, no wait. IT controls the catalog. Users control the timing.",
+                "Patches land everywhere at once = Security updates deploy across every environment simultaneously through a staged pipeline. No per-platform rebuilds. No version drift.",
+                "Nothing gets ripped out = Works with what you already run — Intune, SCCM, Citrix, AVD, Nerdio, macOS. It's the layer that makes them work together.",
+                "Your team gets time back = Engineers stop rebuilding and firefighting. That capacity goes back to the projects stuck in your backlog."
               ],
-              analyst: "Leading IT organizations are shifting from device-centric management to user-centric delivery models to reduce operational friction and keep pace with constant platform change."
+              analyst: "The organizations pulling ahead aren't adding headcount — they're adding a layer that eliminates per-platform rework and redirects capacity toward what matters next."
             }
           }));
         },
@@ -1490,7 +1490,7 @@
               <div class="${isRecast ? 'px-6 py-4 overflow-y-auto' : 'p-8'} bg-white/35 backdrop-blur-lg" style="${isRecast ? 'flex:1;min-height:0' : ''}">
                 ${isRecast ? `
                   <p class="text-sm leading-relaxed text-[#4A5568] mb-3">${data.intro}</p>
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">${data.bullets.map(b=>`<div class="bg-white/70 backdrop-blur-lg p-2.5 rounded-lg shadow-sm flex items-start gap-2"><i data-lucide="check-circle" class="w-4 h-4 text-[#0070F3] flex-shrink-0 mt-0.5"></i><p class="text-xs leading-relaxed text-[#4A5568]">${b}</p></div>`).join('')}</div>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">${data.bullets.map(b=>{const parts=b.split(' = ');const hasTitle=parts.length>1;return '<div class="bg-white/70 backdrop-blur-lg p-2.5 rounded-lg shadow-sm flex items-start gap-2 hover:shadow-md transition-shadow">'+'<div class="w-4 h-4 flex-shrink-0 mt-0.5"><i data-lucide="check-circle" class="w-4 h-4 text-[#0070F3]"></i></div>'+'<div>'+(hasTitle?'<div class="text-xs font-semibold text-[#0A1C60] mb-0.5">'+parts[0]+'</div>':'')+'<p class="text-xs leading-relaxed text-[#4A5568]">'+(hasTitle?parts.slice(1).join(' = '):b)+'</p></div></div>';}).join('')}</div>
                   <div class="bg-white/70 backdrop-blur-lg p-2.5 rounded-lg shadow-sm flex items-start gap-2 mb-4"><i data-lucide="lightbulb" class="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5"></i><p class="text-xs italic text-[#4A5568]">${data.analyst}</p></div>
                   <div class="rounded-xl border border-slate-200 bg-white/80 p-4">
                     <div class="text-sm font-semibold text-[#0A1C60] mb-3 text-center">How It Fits Together</div>
