@@ -1379,10 +1379,11 @@
                 </div>
               </div>
             </div>
-            <div class="flex justify-end mt-3">
-              <button type="button" data-action="open-ai-agent" class="inline-flex items-center gap-2 text-white px-4 py-2.5 text-sm font-semibold rounded-full shadow-lg hover:opacity-90 transition" style="background:linear-gradient(135deg,#0070F3,#0A1C60)"><i data-lucide="message-circle-question" class="w-4 h-4"></i> Ask a Question</button>
-            </div>
           </section>
+        `;
+      }
+
+      function renderCapacityGapChart(){
         const svg = document.getElementById('capacity-gap-chart');
         if (!svg) return;
         svg.innerHTML = '';
@@ -2315,12 +2316,8 @@
               ${STATE.solutionViewMultiTenant ? renderMultiTenantView() : ''}
             </div>
 
-            <div class="flex items-center justify-between mt-3">
-              <button type="button" data-action="open-ai-agent" class="inline-flex items-center gap-2 text-white px-4 py-2.5 text-sm font-semibold rounded-full shadow-lg hover:opacity-90 transition" style="background:linear-gradient(135deg,#0070F3,#0A1C60)"><i data-lucide="message-circle-question" class="w-4 h-4"></i> Ask a Question</button>
-              <div class="flex items-center gap-3">
-                <div class="text-xs italic text-[#64748b]">See what this means across your organization</div>
-                <button type="button" data-action="advance" data-next="roi" class="bg-[#0070F3] text-white w-8 h-8 rounded-full hover:bg-[#005AD0] inline-flex items-center justify-center" title="Business Impact"><i data-lucide="arrow-right" class="w-4 h-4"></i></button>
-              </div>
+            <div class="flex flex-col items-end gap-2 mt-2">
+              <button type="button" class="bg-[#0070F3] text-white px-5 py-2.5 text-sm font-semibold rounded-full hover:bg-[#005AD0]" data-action="advance" data-next="roi">See Business Impact</button>
             </div>
           </section>
         `;
@@ -2758,21 +2755,17 @@
             </div>
           </div>
 
-          <!-- BEAT 3: Here's what it means -->
-          <div class="rounded-2xl dash-animate mt-4 p-5" style="background:linear-gradient(135deg,#0A1C60 0%,#0070F3 100%)">
-            <div class="flex items-start gap-6">
-              <div class="flex-shrink-0 text-center">
-                <div class="text-[9px] font-semibold text-blue-200 uppercase tracking-widest mb-1">Capacity returned</div>
-                <div class="text-4xl font-bold text-white leading-none">${num(r.strategicHours)}</div>
-                <div class="text-[10px] text-blue-200 mt-1">hrs / yr</div>
-                <div class="text-[10px] font-semibold text-white mt-0.5">${r.fteCapacity} FTE</div>
-              </div>
-              <div class="flex-1">
-                <div class="text-sm font-semibold text-white mb-2.5">This is what closes the capacity gap. Your team gets back to the roadmap.</div>
-                <div class="flex flex-wrap gap-2">
-                  ${['AI and Copilot rollouts','Cloud and endpoint migrations','Compliance and security posture','Automation and self-service','Pilot programs and modernization'].map(t => '<div class="px-3 py-1 rounded-full bg-white/15 text-[10px] font-semibold text-white">'+t+'</div>').join('')}
-                </div>
-              </div>
+          <!-- BEAT 3: Here's what it means -  THE CLIMAX -->
+          <div class="rounded-2xl dash-animate mt-4 p-6" style="background:linear-gradient(135deg,#0A1C60 0%,#0070F3 100%)">
+            <div class="text-center mb-5">
+              <div class="text-[10px] font-semibold text-blue-200 uppercase tracking-widest mb-3">Where the capacity goes</div>
+              <div class="text-5xl font-bold text-white leading-none">${num(r.strategicHours)}</div>
+              <div class="text-sm text-blue-200 mt-2">hours / year returned to strategic work</div>
+              <div class="text-sm font-semibold text-white mt-1">${r.fteCapacity} FTE-equivalents - reallocated, not eliminated</div>
+            </div>
+            <div class="text-sm text-blue-100 text-center mb-4 max-w-lg mx-auto leading-relaxed">The capacity gap you saw earlier -  between what your team is asked to deliver and what they can actually get to -  this is what closes it. Your existing engineers can focus on the projects that are actually on the roadmap. You may be able to defer open reqs instead of hiring.</div>
+            <div class="flex flex-wrap justify-center gap-3 mb-2">
+              ${['AI and Copilot rollouts','Cloud and endpoint migrations','Compliance and security posture','Automation and self-service','Pilot programs and modernization'].map(t => '<div class="px-3 py-1.5 rounded-full bg-white/15 text-[11px] font-semibold text-white">'+t+'</div>').join('')}
             </div>
           </div>
 
