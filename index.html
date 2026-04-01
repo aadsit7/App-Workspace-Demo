@@ -399,7 +399,7 @@
       .cinema-scenario-caption { font-size: 13px; font-weight: 600; color: #475569; text-align: center; padding: 2px 0 6px; }
       .cinema-working-badge { display: flex; align-items: center; justify-content: center; gap: 5px; padding: 4px 12px; font-size: 10px; font-weight: 600; color: #059669; background: rgba(240,253,244,0.9); border: 1px solid #a7f3d0; border-radius: 9999px; backdrop-filter: blur(4px); margin: 4px auto 0; width: fit-content; }
       .flip-card { perspective: 1000px; cursor: pointer; height: 90px; transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
-      .flip-card.flipped { height: 180px; }
+      .flip-card.flipped { height: 240px; }
       .flip-card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; }
       .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
       .flip-card-front, .flip-card-back { position: absolute; inset: 0; backface-visibility: hidden; border-radius: var(--radius); border: 1px solid var(--border-subtle); overflow: hidden; }
@@ -646,10 +646,10 @@
       ];
 
       const STAT_CARDS = [
-        { id:'card0', title:'The workload is compounding', body:'The average enterprise now manages 3x more delivery platforms than five years ago. Every new platform multiplies packaging work against every existing application.', bullets:['More platforms without more headcount','Every app rebuilt per environment','Work compounds with each adoption cycle'], source:'Forrester, 2024', icon:'layers' },
-        { id:'card1', title:'The model doesn\'t scale', body:'Gartner predicts that by 2026, the lack of digital skills will prevent 60% of organizations from executing their digital strategies. The per-platform model requires specialist skills that don\'t scale with headcount.', bullets:['Specialist knowledge can\'t be cloned','Per-platform logic rebuilt every cycle','Hiring can\'t keep pace with platform growth'], source:'Gartner, 2024', icon:'trending-up' },
-        { id:'card2', title:'Your best people are trapped', body:'51% of all IT operations effort is reactive - fixing what\'s broken, not building what\'s next. Your engineers are stuck packaging and firefighting instead of strategic work.', bullets:['Senior engineers stuck on repetitive tasks','Tribal knowledge creates single points of failure','Strategic projects wait for capacity that never opens'], source:'Grand View Research, 2025', icon:'user-x' },
-        { id:'card3', title:'Your roadmap is stalling', body:'McKinsey found 70% of digital transformations fail. Not because of bad strategy - because of execution capacity. When app delivery consumes your team, your modernization roadmap doesn\'t move.', bullets:['AI and migration pilots delayed by capacity','Security patching crowds out planned work','Leadership pushes harder but the team is maxed'], source:'McKinsey & Company', icon:'alert-triangle' },
+        { id:'card0', stat:'3\u00d7', title:'The workload is compounding', body:'The average enterprise now manages 3x more delivery platforms than five years ago. Every new platform multiplies packaging work against every existing application.', bullets:['More platforms without more headcount','Every app rebuilt per environment','Work compounds with each adoption cycle'], source:'Forrester, 2024', icon:'layers' },
+        { id:'card1', stat:'60%', title:'The model doesn\'t scale', body:'Gartner predicts that by 2026, the lack of digital skills will prevent 60% of organizations from executing their digital strategies. The per-platform model requires specialist skills that don\'t scale with headcount.', bullets:['Specialist knowledge can\'t be cloned','Per-platform logic rebuilt every cycle','Hiring can\'t keep pace with platform growth'], source:'Gartner, 2024', icon:'trending-up' },
+        { id:'card2', stat:'51%', title:'Your best people are trapped', body:'51% of all IT operations effort is reactive - fixing what\'s broken, not building what\'s next. Your engineers are stuck packaging and firefighting instead of strategic work.', bullets:['Senior engineers stuck on repetitive tasks','Tribal knowledge creates single points of failure','Strategic projects wait for capacity that never opens'], source:'Grand View Research, 2025', icon:'user-x' },
+        { id:'card3', stat:'70%', title:'Your roadmap is stalling', body:'McKinsey found 70% of digital transformations fail. Not because of bad strategy - because of execution capacity. When app delivery consumes your team, your modernization roadmap doesn\'t move.', bullets:['AI and migration pilots delayed by capacity','Security patching crowds out planned work','Leadership pushes harder but the team is maxed'], source:'McKinsey & Company', icon:'alert-triangle' },
       ];
 
       const DEVICE_OPTIONS = [
@@ -1314,16 +1314,28 @@
               <h2 class="text-lg font-semibold text-[#0A1C60]">The application layer is now the #1 primary constraint in modern IT.</h2>
             </div>
             <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-              ${STAT_CARDS.map(card => `
-                <div class="section-card p-4 rounded-2xl border-2 border-[#0070F3]/20 hover:border-[#0070F3]/40 transition-colors">
-                  <div class="text-[11px] font-bold uppercase tracking-wide text-[#0070F3] mb-2">${card.title}</div>
-                  <p class="text-xs leading-relaxed text-[#475569] mb-3">${card.body}</p>
-                  <ul class="space-y-1.5 mb-3">
-                    ${card.bullets.map(b => '<li class="flex items-start gap-1.5 text-[11px] text-[#64748b]"><span class="text-[#0070F3] mt-0.5 flex-shrink-0">&#x2022;</span>'+b+'</li>').join('')}
-                  </ul>
-                  <div class="text-[9px] text-[#94a3b8] italic">${card.source}</div>
-                </div>
-              `).join('')}
+              ${STAT_CARDS.map(card => {
+                const isFlipped = STATE.flippedCards[card.id];
+                return '<div class="flip-card '+(isFlipped ? 'flipped' : '')+'" data-action="flip-card" data-card-id="'+card.id+'" role="button" tabindex="0" aria-label="'+card.title+'">'
+                  +'<div class="flip-card-inner">'
+                    +'<div class="flip-card-front section-card">'
+                      +'<i data-lucide="'+card.icon+'" class="w-4 h-4 text-[#0070F3] flex-shrink-0"></i>'
+                      +'<div class="flip-card-stat">'+card.stat+'</div>'
+                      +'<div class="flip-card-tap">tap to reveal</div>'
+                    +'</div>'
+                    +'<div class="flip-card-back">'
+                      +'<div>'
+                        +'<div class="text-[10px] font-bold uppercase tracking-wide text-[#0070F3] mb-1">'+card.title+'</div>'
+                        +'<p class="text-[10px] leading-relaxed text-[#475569] mb-1.5">'+card.body+'</p>'
+                        +'<ul class="space-y-1">'
+                          +card.bullets.map(function(b){return '<li class="flex items-start gap-1 text-[9px] text-[#64748b]"><span class="text-[#0070F3] flex-shrink-0">\u2022</span>'+b+'</li>';}).join('')
+                        +'</ul>'
+                      +'</div>'
+                      +'<div class="text-[8px] text-[#94a3b8] italic">'+card.source+'</div>'
+                    +'</div>'
+                  +'</div>'
+                +'</div>';
+              }).join('')}
             </div>
             <div class="section-card p-6">
               <div class="grid grid-cols-1 lg:grid-cols-[1fr_240px] gap-4 items-start">
