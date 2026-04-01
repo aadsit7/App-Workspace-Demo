@@ -1442,7 +1442,9 @@
             g.classList.add('marker-group','marker-element','chart-element');
             g.setAttribute('role','button'); g.setAttribute('tabindex','0'); g.setAttribute('aria-label','Learn more about '+d.label);
             const lblW = d.label.length * 6 + 18;
-            g.innerHTML = '<title>'+d.short+'</title><circle cx="'+x+'" cy="'+y+'" r="18" fill="transparent" stroke="none"/><circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="#ef4444" stroke="white" stroke-width="2.5"/><rect x="'+(x+14)+'" y="'+(y-11)+'" width="'+lblW+'" height="22" rx="11" fill="#0A1C60" opacity="0.9"/><text x="'+(x+14+lblW/2)+'" y="'+(y+4)+'" text-anchor="middle" font-size="10" font-weight="600" fill="white" font-family="Inter, system-ui, sans-serif" class="label-element chart-element">'+d.label+'</text>';
+            const flipLeft = (x + 14 + lblW) > (margin.left + width + 40);
+            const lblX = flipLeft ? (x - 14 - lblW) : (x + 14);
+            g.innerHTML = '<title>'+d.short+'</title><circle cx="'+x+'" cy="'+y+'" r="18" fill="transparent" stroke="none"/><circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="#ef4444" stroke="white" stroke-width="2.5"/><rect x="'+lblX+'" y="'+(y-11)+'" width="'+lblW+'" height="22" rx="11" fill="#0A1C60" opacity="0.9"/><text x="'+(lblX+lblW/2)+'" y="'+(y+4)+'" text-anchor="middle" font-size="10" font-weight="600" fill="white" font-family="Inter, system-ui, sans-serif" class="label-element chart-element">'+d.label+'</text>';
             g.addEventListener('click', function(){ openInsight(d); });
             g.addEventListener('keydown', function(e){ if(e.key==='Enter') openInsight(d); });
             svg.appendChild(g);
