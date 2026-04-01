@@ -2178,21 +2178,6 @@
                 </div>
               </div>
 
-              <!-- Scenario pills -->
-              <div class="flex flex-wrap gap-2 mt-2">
-                ${SCENARIOS.map((s, i) => `
-                  <div class="scenario-pill ${i === sc ? 'active-scenario' : (i < sc ? 'done-scenario' : '')}">
-                    ${i < sc ? '<i data-lucide="check" class="w-3 h-3"></i>' : '<span class="w-3 h-3 grid place-items-center" style="font-size:9px">' + (i+1) + '</span>'}
-                    <span>${s.label}</span>
-                  </div>
-                `).join('')}
-              </div>
-
-              ${scenario ? `
-                <div class="text-xs text-[#475569] mt-2 px-1 leading-relaxed" style="border-left:3px solid #0070F3;padding-left:10px">
-                  <strong>${scenario.subtitle}:</strong> ${scenario.scenarioDesc}
-                </div>
-              ` : ''}
             </div>
 
             <!-- ZONE B: Main content (dynamic columns) -->
