@@ -1385,7 +1385,7 @@
         if (!svg) return;
         svg.innerHTML = '';
         svg.setAttribute('viewBox', '0 0 800 420');
-        const width = 700, height = 310, margin = {left: 55, bottom: 50, top: 35, right: 45};
+        const width = 650, height = 310, margin = {left: 55, bottom: 50, top: 35, right: 95};
         const xScale = t => margin.left + t * width;
         const yScale = v => margin.top + height - v * height;
         const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
@@ -1536,7 +1536,7 @@
         if (!STATE.showAnalystModal) return '';
         return `
           <div class="fixed inset-0 z-50 flex items-center justify-center modal-overlay" data-action="close-analyst-modal">
-            <div class="w-full max-w-2xl mx-4 rounded-2xl overflow-hidden modal-content glass" onclick="event.stopPropagation()">
+            <div class="w-full max-w-2xl mx-4 rounded-2xl overflow-hidden modal-content glass" onclick="if(!event.target.closest('[data-action]'))event.stopPropagation()">
               <div class="bg-white/40 backdrop-blur-lg px-6 py-4 flex items-center justify-between" style="border-bottom:1px solid var(--border-subtle)">
                 <div class="flex items-center gap-3"><i data-lucide="quote" class="w-6 h-6 text-[#0070F3]"></i><h2 class="text-xl font-bold tracking-tight text-[#0A1C60]">What the analysts are saying</h2></div>
                 <button type="button" class="text-slate-500 hover:text-slate-700 focus-ring p-2" data-action="close-analyst-modal"><i data-lucide="x" class="w-5 h-5"></i></button>
