@@ -2919,8 +2919,9 @@
           if (action === 'reset-sliders') { resetSliders(); return; }
         });
 
+        let _roiDebounce = null;
         root.addEventListener('input', (e) => {
-          if (e.target?.id === 'roi-employees') { const n = cleanNum(e.target.value); if (n > 0) { deriveFromEmployees(n); calculateImpact(); render(); } return; }
+          if (e.target?.id === 'roi-employees') { const n = cleanNum(e.target.value); if (n > 0) { deriveFromEmployees(n); calculateImpact(); clearTimeout(_roiDebounce); _roiDebounce = setTimeout(() => render(), 600); } return; }
           if (e.target?.id === 'roi-users') { STATE.calcInputs.users = cleanNum(e.target.value); return; }
           if (e.target?.id === 'roi-endpoints') { STATE.calcInputs.endpoints = cleanNum(e.target.value); return; }
           if (e.target?.id === 'roi-envs') { STATE.calcInputs.envs = cleanNum(e.target.value); return; }
