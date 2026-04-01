@@ -105,24 +105,30 @@
       @keyframes metricsAppear { to { opacity: 1; transform: translateY(0); } }
       .interactive-node { transition: opacity 0.3s, transform 0.3s; }
       .interactive-node:hover { opacity: 0.9; transform: scale(1.05); }
-      .chart-container { width: 100%; position: relative; aspect-ratio: 800 / 320; background: #ffffff; border-radius: 16px; overflow: hidden; }
+      .chart-container { width: 100%; position: relative; aspect-ratio: 800 / 340; background: linear-gradient(180deg, #f0f4f8 0%, #ffffff 60%); border-radius: 16px; overflow: hidden; padding: 16px 16px 8px 16px; }
       #capacity-gap-chart { width: 100%; height: 100%; position: absolute; inset: 0; }
-      .demand-line { stroke-width: 2.5; stroke-linecap: round; }
-      .capacity-line { stroke-width: 2; stroke-linecap: round; stroke-dasharray: 8 6; }
+      .demand-line { stroke-width: 3.5; stroke-linecap: round; filter: drop-shadow(0 2px 6px rgba(0,112,243,0.3)); }
+      .capacity-line { stroke-width: 2; stroke-linecap: round; stroke-dasharray: 10 6; }
       .chart-overlay { position: absolute; inset: 0; pointer-events: none; }
-      .chart-y-label { position: absolute; left: 8px; top: 50%; transform: rotate(-90deg) translateX(-50%); transform-origin: 0 0; font-size: 9px; font-weight: 600; color: #94a3b8; letter-spacing: 0.14em; text-transform: uppercase; white-space: nowrap; }
-      .chart-x-label { position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); font-size: 9px; font-weight: 600; color: #94a3b8; letter-spacing: 0.14em; text-transform: uppercase; }
-      .chart-year { position: absolute; bottom: 18px; transform: translateX(-50%); font-size: 11px; font-weight: 500; color: #94a3b8; }
-      .chart-gap-label { position: absolute; left: 50%; top: 50%; transform: translate(-60%, -30%); font-size: 12px; font-weight: 700; color: #0A1C60; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.5; }
-      .chart-driver { position: absolute; transform: translateX(-50%); pointer-events: auto; cursor: pointer; }
-      .chart-driver-dot { width: 8px; height: 8px; border-radius: 50%; background: #0070F3; border: 2px solid white; box-shadow: 0 1px 4px rgba(0,112,243,0.3); margin: 0 auto 4px; }
-      .chart-driver-text { font-size: 9px; font-weight: 600; color: #0A1C60; text-align: center; white-space: nowrap; background: rgba(255,255,255,0.9); padding: 1px 6px; border-radius: 4px; }
-      .chart-tipping { position: absolute; top: 0; bottom: 32px; border-right: 1.5px dashed rgba(10,28,96,0.2); }
-      .chart-tipping-label { position: absolute; top: 4px; left: 8px; font-size: 9px; font-weight: 600; color: #0A1C60; opacity: 0.6; white-space: nowrap; }
-      .chart-element { opacity: 0; animation: chartFadeIn 0.5s ease forwards; }
+      .chart-y-label { position: absolute; left: 6px; top: 45%; transform: rotate(-90deg) translateX(-50%); transform-origin: 0 0; font-size: 11px; font-weight: 700; color: #64748b; letter-spacing: 0.1em; text-transform: uppercase; white-space: nowrap; }
+      .chart-x-label { position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%); font-size: 11px; font-weight: 700; color: #64748b; letter-spacing: 0.1em; text-transform: uppercase; }
+      .chart-year { position: absolute; bottom: 16px; transform: translateX(-50%); font-size: 13px; font-weight: 600; color: #475569; }
+      .chart-gap-label { position: absolute; font-size: 15px; font-weight: 800; color: #0A1C60; letter-spacing: 0.05em; text-transform: uppercase; text-shadow: 0 1px 2px rgba(255,255,255,0.8); }
+      .chart-driver { position: absolute; transform: translateX(-50%); pointer-events: auto; cursor: pointer; transition: transform 0.15s ease; }
+      .chart-driver:hover { transform: translateX(-50%) scale(1.1); }
+      .chart-driver-dot { width: 10px; height: 10px; border-radius: 50%; background: #0070F3; border: 2.5px solid white; box-shadow: 0 2px 8px rgba(0,112,243,0.4); margin: 0 auto 5px; }
+      .chart-driver-text { font-size: 10px; font-weight: 700; color: white; text-align: center; white-space: nowrap; background: #0A1C60; padding: 3px 10px; border-radius: 10px; box-shadow: 0 2px 6px rgba(10,28,96,0.2); }
+      .chart-tipping { position: absolute; top: 0; bottom: 28px; border-right: 2.5px dashed #ef4444; }
+      .chart-tipping-label { position: absolute; top: 8px; left: 10px; font-size: 11px; font-weight: 700; color: #ef4444; white-space: nowrap; text-shadow: 0 1px 2px rgba(255,255,255,0.9); }
+      .chart-legend { position: absolute; top: 12px; right: 16px; display: flex; gap: 16px; pointer-events: none; }
+      .chart-legend-item { display: flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 600; color: #64748b; }
+      .chart-legend-line { width: 20px; height: 3px; border-radius: 2px; }
+      .chart-legend-dash { width: 20px; height: 0; border-top: 2px dashed #94a3b8; }
+      .chart-curve-label { position: absolute; font-size: 11px; font-weight: 700; white-space: nowrap; }
+      .chart-element { opacity: 0; animation: chartFadeIn 0.6s ease forwards; }
       @keyframes chartFadeIn { from { opacity: 0; } to { opacity: 1; } }
-      .line-element { animation-delay: 0.15s; }
-      .gap-element { animation-delay: 0.3s; }
+      .line-element { animation-delay: 0.2s; }
+      .gap-element { animation-delay: 0.4s; }
       .analyst-trigger { cursor: pointer; border-bottom: 2px dashed #0070F3; padding-bottom: 1px; }
 
       :root{
@@ -1385,16 +1391,14 @@
         if (!container) return;
         const svg = document.getElementById('capacity-gap-chart');
         if (!svg) return;
-        // Remove old overlay
         const oldOverlay = container.querySelector('.chart-overlay');
         if (oldOverlay) oldOverlay.remove();
-        // SVG: curves only
         svg.innerHTML = '';
         svg.setAttribute('viewBox', '0 0 100 100');
         svg.setAttribute('preserveAspectRatio', 'none');
         const exp = STATE.currentDemandExponent;
         const slope = STATE.currentCapacitySlope;
-        const pad = {l: 8, r: 2, t: 5, b: 12};
+        const pad = {l: 6, r: 2, t: 4, b: 10};
         const toX = t => pad.l + t * (100 - pad.l - pad.r);
         const toY = v => (100 - pad.b) - v * (100 - pad.t - pad.b);
         let demandPath = 'M ' + toX(0) + ' ' + toY(0);
@@ -1402,28 +1406,48 @@
         const dPts = [], cPts = [];
         for (let i = 0; i <= 100; i++) { const t = i / 100; const dem = Math.pow(t, exp); const cap = 0.3 + slope * t; demandPath += ' L ' + toX(t) + ' ' + toY(dem); capacityPath += ' L ' + toX(t) + ' ' + toY(cap); dPts.push({x: toX(t), y: toY(dem)}); cPts.push({x: toX(t), y: toY(cap)}); }
         const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
-        defs.innerHTML = '<linearGradient id="demGrad" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#0070F3" stop-opacity="0.6"/><stop offset="100%" stop-color="#0A1C60"/></linearGradient><linearGradient id="gapGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(0,112,243,0.12)"/><stop offset="100%" stop-color="rgba(0,112,243,0.01)"/></linearGradient>';
+        defs.innerHTML = '<linearGradient id="demGrad" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#0070F3"/><stop offset="100%" stop-color="#0A1C60"/></linearGradient>'
+          + '<linearGradient id="gapGrad" x1="1" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(239,68,68,0.22)"/><stop offset="40%" stop-color="rgba(251,146,60,0.12)"/><stop offset="100%" stop-color="rgba(0,112,243,0.03)"/></linearGradient>'
+          + '<linearGradient id="demAreaGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(0,112,243,0.15)"/><stop offset="100%" stop-color="rgba(0,112,243,0.01)"/></linearGradient>';
         svg.appendChild(defs);
-        // Gap fill
+        // Gap fill between curves — dramatic gradient
         const gapD = dPts.map((p,i) => (i===0?'M':'L')+' '+p.x+' '+p.y).join(' ') + cPts.slice().reverse().map(p => ' L '+p.x+' '+p.y).join('') + ' Z';
         const gapEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         gapEl.setAttribute('d', gapD); gapEl.setAttribute('fill', 'url(#gapGrad)'); gapEl.classList.add('gap-element', 'chart-element'); svg.appendChild(gapEl);
-        // Capacity line (dashed)
+        // Area under demand curve — blue glow
+        const demAreaD = demandPath + ' L ' + toX(1) + ' ' + toY(0) + ' L ' + toX(0) + ' ' + toY(0) + ' Z';
+        const demArea = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        demArea.setAttribute('d', demAreaD); demArea.setAttribute('fill', 'url(#demAreaGrad)'); demArea.classList.add('gap-element', 'chart-element'); svg.appendChild(demArea);
+        // Capacity line
         const capLine = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        capLine.setAttribute('d', capacityPath); capLine.setAttribute('stroke', '#cbd5e1'); capLine.setAttribute('fill', 'none'); capLine.classList.add('capacity-line', 'line-element', 'chart-element'); svg.appendChild(capLine);
+        capLine.setAttribute('d', capacityPath); capLine.setAttribute('stroke', '#94a3b8'); capLine.setAttribute('fill', 'none'); capLine.classList.add('capacity-line', 'line-element', 'chart-element'); svg.appendChild(capLine);
         // Demand line
         const demLine = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         demLine.setAttribute('d', demandPath); demLine.setAttribute('stroke', 'url(#demGrad)'); demLine.setAttribute('fill', 'none'); demLine.classList.add('demand-line', 'line-element', 'chart-element'); svg.appendChild(demLine);
         // HTML overlay
         const overlay = document.createElement('div');
         overlay.className = 'chart-overlay';
-        let overlayHTML = '<div class="chart-y-label">' + STATE.chartConfig.yAxis + '</div>';
-        overlayHTML += '<div class="chart-x-label">' + STATE.chartConfig.xAxis + '</div>';
-        overlayHTML += '<div class="chart-gap-label">' + STATE.chartConfig.center + '</div>';
+        let h = '';
+        // Legend
+        h += '<div class="chart-legend"><div class="chart-legend-item"><div class="chart-legend-line" style="background:linear-gradient(90deg,#0070F3,#0A1C60)"></div>Demand on IT</div><div class="chart-legend-item"><div class="chart-legend-dash"></div>IT Capacity</div></div>';
+        // Axis labels
+        h += '<div class="chart-y-label">' + STATE.chartConfig.yAxis + '</div>';
+        h += '<div class="chart-x-label">' + STATE.chartConfig.xAxis + '</div>';
+        // Gap label — positioned in the widest part of the gap (right side)
+        const gapXPct = pad.l + 0.65 * (100 - pad.l - pad.r);
+        const demAtGap = Math.pow(0.65, exp);
+        const capAtGap = 0.3 + slope * 0.65;
+        const gapMidY = pad.t + (1 - (demAtGap + capAtGap) / 2) * (100 - pad.t - pad.b);
+        h += '<div class="chart-gap-label" style="left:' + gapXPct + '%;top:' + gapMidY + '%;transform:translate(-50%,-50%)">' + STATE.chartConfig.center + '</div>';
+        // Curve labels
+        const demEndY = pad.t + (1 - Math.pow(0.85, exp)) * (100 - pad.t - pad.b);
+        h += '<div class="chart-curve-label" style="left:' + (pad.l + 0.85 * (100 - pad.l - pad.r)) + '%;top:' + (demEndY - 4) + '%;color:#0A1C60">Demand</div>';
+        const capEndY = pad.t + (1 - (0.3 + slope * 0.85)) * (100 - pad.t - pad.b);
+        h += '<div class="chart-curve-label" style="left:' + (pad.l + 0.85 * (100 - pad.l - pad.r)) + '%;top:' + (capEndY + 2) + '%;color:#94a3b8">Capacity</div>';
         // Year labels
         STATE.years.forEach(function(year, i) {
           const pct = pad.l + (i / 3) * (100 - pad.l - pad.r);
-          overlayHTML += '<div class="chart-year" style="left:' + pct + '%">' + year + '</div>';
+          h += '<div class="chart-year" style="left:' + pct + '%">' + year + '</div>';
         });
         // Driver markers
         STATE.drivers.forEach(function(d) {
@@ -1432,17 +1456,16 @@
             const dem = Math.pow(t, exp);
             const xPct = pad.l + t * (100 - pad.l - pad.r);
             const yPct = pad.t + (1 - dem) * (100 - pad.t - pad.b);
-            overlayHTML += '<div class="chart-driver" style="left:' + xPct + '%;top:' + yPct + '%" data-action="open-insight-driver" data-driver-id="' + d.id + '"><div class="chart-driver-dot"></div><div class="chart-driver-text">' + d.label + '</div></div>';
+            h += '<div class="chart-driver" style="left:' + xPct + '%;top:' + yPct + '%" data-action="open-insight-driver" data-driver-id="' + d.id + '"><div class="chart-driver-dot"></div><div class="chart-driver-text">' + d.label + '</div></div>';
           }
         });
         // Tipping point
         if (STATE.showTippingPoint) {
           const tPct = pad.l + ((STATE.tippingPointYear - 2025) / 3) * (100 - pad.l - pad.r);
-          overlayHTML += '<div class="chart-tipping" style="left:' + tPct + '%"><div class="chart-tipping-label">Operational Breaking Point</div></div>';
+          h += '<div class="chart-tipping" style="left:' + tPct + '%"><div class="chart-tipping-label">Operational Breaking Point</div></div>';
         }
-        overlay.innerHTML = overlayHTML;
+        overlay.innerHTML = h;
         container.appendChild(overlay);
-        // Wire driver clicks
         overlay.querySelectorAll('[data-action="open-insight-driver"]').forEach(function(el) {
           const dId = el.getAttribute('data-driver-id');
           const driver = STATE.drivers.find(function(d) { return d.id === dId; });
