@@ -646,10 +646,10 @@
       ];
 
       const STAT_CARDS = [
-        { id:'card0', stat:'5\u20136', hint:'Platforms your team manages today', title:'You\'ve already optimized within each one', body:'Better tools, tighter processes, stronger automation - your team has done that work. That\'s not the problem. The problem is that managing each platform separately has a structural ceiling.', source:'Forrester, 2024', icon:'shield-check' },
-        { id:'card1', stat:'3\u00d7', hint:'How workload scales per platform', title:'Every new platform multiplies - it doesn\'t add', body:'When the business adopts AVD, or macOS, or W365 - that multiplies against your entire app catalog. 150 apps across 5 platforms isn\'t 150 tasks. It\'s 750.', source:'Gartner, 2024', icon:'trending-up' },
-        { id:'card2', stat:'51%', hint:'Of IT operations effort is reactive', title:'The constraint is invisible because your team absorbs it', body:'Your best people compensate - they rebuild, work around, carry knowledge in their heads. Leadership sees output, not the cost of producing it. Until someone leaves.', source:'Grand View Research, 2025', icon:'user-x' },
-        { id:'card3', stat:'70%', hint:'Of transformations that fail on execution', title:'What got you here won\'t get you through what\'s next', body:'Platform sprawl, AI adoption, and tightening security windows are converging - not sequentially, simultaneously. The coping mechanisms that worked are about to become the vulnerability.', source:'McKinsey & Company', icon:'alert-triangle' },
+        { id:'card0', title:'The workload is compounding', body:'The average enterprise now manages 3x more delivery platforms than five years ago. Every new platform multiplies packaging work against every existing application.', bullets:['More platforms without more headcount','Every app rebuilt per environment','Work compounds with each adoption cycle'], source:'Forrester, 2024', icon:'layers' },
+        { id:'card1', title:'The model doesn\'t scale', body:'Gartner predicts that by 2026, the lack of digital skills will prevent 60% of organizations from executing their digital strategies. The per-platform model requires specialist skills that don\'t scale with headcount.', bullets:['Specialist knowledge can\'t be cloned','Per-platform logic rebuilt every cycle','Hiring can\'t keep pace with platform growth'], source:'Gartner, 2024', icon:'trending-up' },
+        { id:'card2', title:'Your best people are trapped', body:'51% of all IT operations effort is reactive - fixing what\'s broken, not building what\'s next. Your engineers are stuck packaging and firefighting instead of strategic work.', bullets:['Senior engineers stuck on repetitive tasks','Tribal knowledge creates single points of failure','Strategic projects wait for capacity that never opens'], source:'Grand View Research, 2025', icon:'user-x' },
+        { id:'card3', title:'Your roadmap is stalling', body:'McKinsey found 70% of digital transformations fail. Not because of bad strategy - because of execution capacity. When app delivery consumes your team, your modernization roadmap doesn\'t move.', bullets:['AI and migration pilots delayed by capacity','Security patching crowds out planned work','Leadership pushes harder but the team is maxed'], source:'McKinsey & Company', icon:'alert-triangle' },
       ];
 
       const DEVICE_OPTIONS = [
@@ -1314,25 +1314,16 @@
               <h2 class="text-lg font-semibold text-[#0A1C60]">The application layer is now the #1 primary constraint in modern IT.</h2>
             </div>
             <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-              ${STAT_CARDS.map(card => {
-                const isFlipped = STATE.flippedCards[card.id];
-                return '<div class="flip-card '+(isFlipped ? 'flipped' : '')+'" data-action="flip-card" data-card-id="'+card.id+'" role="button" tabindex="0" aria-label="'+card.title+'">'
-                  +'<div class="flip-card-inner">'
-                    +'<div class="flip-card-front section-card">'
-                      +'<i data-lucide="'+card.icon+'" class="w-4 h-4 text-[#0070F3] flex-shrink-0"></i>'
-                      +'<div class="flip-card-stat">'+card.stat+'</div>'
-                      +'<div class="flip-card-tap">tap to reveal</div>'
-                    +'</div>'
-                    +'<div class="flip-card-back">'
-                      +'<div>'
-                        +'<div class="text-[11px] font-bold uppercase tracking-wide text-[#0070F3] mb-1.5">'+card.title+'</div>'
-                        +'<p class="text-xs leading-relaxed text-[#475569]">'+card.body+'</p>'
-                      +'</div>'
-                      +'<div class="text-[9px] text-[#94a3b8] mt-2">'+card.source+'</div>'
-                    +'</div>'
-                  +'</div>'
-                +'</div>';
-              }).join('')}
+              ${STAT_CARDS.map(card => `
+                <div class="section-card p-4 rounded-2xl border-2 border-[#0070F3]/20 hover:border-[#0070F3]/40 transition-colors">
+                  <div class="text-[11px] font-bold uppercase tracking-wide text-[#0070F3] mb-2">${card.title}</div>
+                  <p class="text-xs leading-relaxed text-[#475569] mb-3">${card.body}</p>
+                  <ul class="space-y-1.5 mb-3">
+                    ${card.bullets.map(b => '<li class="flex items-start gap-1.5 text-[11px] text-[#64748b]"><span class="text-[#0070F3] mt-0.5 flex-shrink-0">&#x2022;</span>'+b+'</li>').join('')}
+                  </ul>
+                  <div class="text-[9px] text-[#94a3b8] italic">${card.source}</div>
+                </div>
+              `).join('')}
             </div>
             <div class="section-card p-6">
               <div class="grid grid-cols-1 lg:grid-cols-[1fr_240px] gap-4 items-start">
