@@ -2586,14 +2586,14 @@
       function deriveFromEmployees(n){
         const ci = STATE.calcInputs;
         ci.users = n;
-        ci.endpoints = Math.round(n * 1.2);
-        ci.envs = 3;
-        ci.apps = n > 10000 ? 200 : n > 3000 ? 150 : 100;
-        ci.customApps = 30;
-        ci.monthlyTickets = Math.round(n * 0.12);
-        ci.avgTicketMins = 18;
-        ci.pkgHours = ci.apps > 150 ? 100 : 80;
-        ci.patchHours = 60;
+        if (n <= 200) { ci.endpoints = n; ci.envs = 1; ci.apps = 25; ci.customApps = 2; ci.monthlyTickets = Math.round(n * 0.05); ci.avgTicketMins = 12; ci.pkgHours = 8; ci.patchHours = 5; }
+        else if (n <= 500) { ci.endpoints = Math.round(n * 1.1); ci.envs = 2; ci.apps = 50; ci.customApps = 5; ci.monthlyTickets = Math.round(n * 0.08); ci.avgTicketMins = 15; ci.pkgHours = 20; ci.patchHours = 15; }
+        else if (n <= 1000) { ci.endpoints = Math.round(n * 1.15); ci.envs = 2; ci.apps = 75; ci.customApps = 10; ci.monthlyTickets = Math.round(n * 0.10); ci.avgTicketMins = 15; ci.pkgHours = 35; ci.patchHours = 25; }
+        else if (n <= 3000) { ci.endpoints = Math.round(n * 1.2); ci.envs = 3; ci.apps = 100; ci.customApps = 15; ci.monthlyTickets = Math.round(n * 0.10); ci.avgTicketMins = 18; ci.pkgHours = 50; ci.patchHours = 35; }
+        else if (n <= 5000) { ci.endpoints = Math.round(n * 1.2); ci.envs = 3; ci.apps = 150; ci.customApps = 25; ci.monthlyTickets = Math.round(n * 0.12); ci.avgTicketMins = 18; ci.pkgHours = 80; ci.patchHours = 60; }
+        else if (n <= 10000) { ci.endpoints = Math.round(n * 1.25); ci.envs = 4; ci.apps = 175; ci.customApps = 30; ci.monthlyTickets = Math.round(n * 0.12); ci.avgTicketMins = 18; ci.pkgHours = 100; ci.patchHours = 70; }
+        else if (n <= 25000) { ci.endpoints = Math.round(n * 1.3); ci.envs = 5; ci.apps = 200; ci.customApps = 40; ci.monthlyTickets = Math.round(n * 0.12); ci.avgTicketMins = 20; ci.pkgHours = 130; ci.patchHours = 90; }
+        else { ci.endpoints = Math.round(n * 1.3); ci.envs = 6; ci.apps = 250; ci.customApps = 50; ci.monthlyTickets = Math.round(n * 0.12); ci.avgTicketMins = 20; ci.pkgHours = 160; ci.patchHours = 110; }
       }
 
       function renderROI(){
@@ -2655,7 +2655,7 @@
             </div>
 
             <!-- ROI DASHBOARD -->
-            ${r ? '<div id="impact-results">' + renderCalcResult() + '</div>' : ''}
+            ${ci.users <= 200 ? '<div class="section-card p-6 rounded-2xl text-center"><i data-lucide="info" class="w-8 h-8 text-slate-300 mx-auto mb-3"></i><div class="text-sm font-semibold text-[#0A1C60] mb-2">Not the right fit for this size</div><div class="text-xs text-[#64748b] max-w-md mx-auto leading-relaxed">Organizations under 200 employees typically don\'t face the multi-platform complexity that Application Workspace addresses. For smaller teams, the per-platform model usually works fine.</div></div>' : (r ? '<div id="impact-results">' + renderCalcResult() + '</div>' : '')}
 
             <div class="text-[10px] text-center text-slate-400 mt-1">Estimated business impact based on employee count and configurable assumptions.</div>
 
