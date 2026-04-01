@@ -997,6 +997,7 @@
                 <div class="text-lg font-bold text-[#0A1C60] mb-1">Click → It just works</div>
                 <div class="text-xs text-[#4A5568]">First access, backend migration, security patch — completely different scenarios. The user experience was identical every time.</div>
                 <div class="text-[10px] text-slate-500 mt-2 leading-relaxed">Application Workspace packages, delivers, configures, updates, and routes apps — across every platform, every environment, every change. Define once. Deliver everywhere. No rework.</div>
+                <div class="text-xs font-semibold text-[#0A1C60] mt-3">Four different scenarios. Zero tickets created. Zero per-platform rebuilds. That's the capacity your team gets back.</div>
               </div>
             ` : ''}
           </div>
@@ -1281,7 +1282,7 @@
                 ${STATE.activeTab==='problems'
                   ? ''
                   : STATE.activeTab==='solution'
-                    ? 'What actually happens when a user clicks an app? This is the core differentiator.'
+                    ? 'The current model multiplies work per platform. Here\'s what it looks like when that stops.'
                     : 'Application Workspace helps IT keep applications running smoothly as platforms change \u2014 without creating more work'}
               </p>
             </div>
@@ -1620,9 +1621,12 @@
                   <div class="space-y-3">${data.bullets.map(b=>{const parts=b.split(' = ');const hasTitle=parts.length>1;return '<div class="bg-white/70 backdrop-blur-lg p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow">'+(hasTitle?'<div class="text-sm font-bold text-[#0A1C60] mb-1">'+parts[0]+'</div>':'')+'<p class="text-sm leading-relaxed text-[#64748b]">'+(hasTitle?parts.slice(1).join(' = '):b)+'</p></div>';}).join('')}</div>
                   <div class="mt-5 bg-white/70 backdrop-blur-lg p-4 rounded-xl shadow-sm flex items-start gap-3"><i data-lucide="lightbulb" class="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5"></i><p class="text-sm italic text-[#64748b]">${data.analyst}</p></div>
                 `}
-                <div class="mt-4 flex items-center justify-between w-full">
+                <div class="mt-4 flex flex-col items-center gap-3 w-full">
+                  ${!next ? '<div class="text-xs italic text-[#64748b]">You\'ve seen why the model breaks. Now see what replaces it.</div>' : ''}
+                  <div class="flex items-center justify-between w-full">
                   ${prev ? `<button type="button" class="re-secondary inline-flex items-center gap-2" data-action="why-nav" data-to="${prev}"><i data-lucide="arrow-left" class="w-4 h-4"></i> Back</button>` : '<div></div>'}
                   ${next ? `<button type="button" class="re-primary inline-flex items-center gap-2" data-action="why-nav" data-to="${next}">Next <i data-lucide="arrow-right" class="w-4 h-4"></i></button>` : `<button type="button" class="re-primary inline-flex items-center gap-2" data-action="advance" data-next="solution">See Approach <i data-lucide="arrow-right" class="w-4 h-4"></i></button>`}
+                  </div>
                 </div>
               </div>
             </div>
@@ -2290,7 +2294,8 @@
               ${STATE.solutionViewMultiTenant ? renderMultiTenantView() : ''}
             </div>
 
-            <div class="flex justify-end mt-2">
+            <div class="flex flex-col items-end gap-2 mt-2">
+              <div class="text-xs italic text-[#64748b]">You've seen what changes for one user on one device. Now see what it means across your entire organization.</div>
               <button type="button" class="bg-[#0070F3] text-white px-5 py-2.5 text-sm font-semibold rounded-full hover:bg-[#005AD0]" data-action="advance" data-next="roi">See Business Impact</button>
             </div>
           </section>
@@ -2604,6 +2609,11 @@
         return `
           <section id="panel-roi" class="space-y-4">
 
+            <!-- BRIDGE CARD -->
+            <div class="section-card px-5 py-3 rounded-xl border-l-4 border-[#0070F3]">
+              <div class="text-xs text-[#475569] leading-relaxed">What you just saw — self-service delivery, automatic patching, zero per-platform rebuilds — eliminates hours of repetitive work per app, per update, per environment. Enter your employee count to see what that adds up to.</div>
+            </div>
+
             <!-- EMPLOYEE COUNT INPUT — HERO -->
             <div class="section-card p-6 rounded-2xl">
               <div class="flex items-center justify-between gap-4">
@@ -2728,7 +2738,7 @@
               <div class="text-sm text-blue-200 mt-2">hours / year returned to strategic work</div>
               <div class="text-sm font-semibold text-white mt-1">${r.fteCapacity} FTE-equivalents - reallocated, not eliminated</div>
             </div>
-            <div class="text-sm text-blue-100 text-center mb-4 max-w-lg mx-auto leading-relaxed">Your existing engineers can focus on the projects that are actually on the roadmap. You may be able to defer open reqs instead of hiring.</div>
+            <div class="text-sm text-blue-100 text-center mb-4 max-w-lg mx-auto leading-relaxed">The capacity gap you saw earlier — between what your team is asked to deliver and what they can actually get to — this is what closes it. Your existing engineers can focus on the projects that are actually on the roadmap. You may be able to defer open reqs instead of hiring.</div>
             <div class="flex flex-wrap justify-center gap-3 mb-2">
               ${['AI and Copilot rollouts','Cloud and endpoint migrations','Compliance and security posture','Automation and self-service','Pilot programs and modernization'].map(t => '<div class="px-3 py-1.5 rounded-full bg-white/15 text-[11px] font-semibold text-white">'+t+'</div>').join('')}
             </div>
@@ -2739,7 +2749,7 @@
             <div class="section-card p-5 rounded-2xl border-t-4 border-emerald-500">
               <div class="text-[9px] font-semibold text-emerald-600 uppercase tracking-wider mb-3">Capacity Recovered</div>
               <div class="text-3xl font-bold text-[#0A1C60] leading-none mb-2">${num(r.totalHoursYear)} hrs</div>
-              <div class="text-[10px] text-[#64748b] leading-relaxed">Reallocated, not eliminated. Dollar equivalent: ${fmtDollars(r.totalRecoveredAnnual)}/yr.</div>
+              <div class="text-[10px] text-[#64748b] leading-relaxed">${num(r.totalHoursYear)} hours returned to the work that's actually on your roadmap. Dollar equivalent: ${fmtDollars(r.totalRecoveredAnnual)}/yr.</div>
             </div>
             <div class="section-card p-5 rounded-2xl border-t-4 border-[#0070F3]">
               <div class="text-[9px] font-semibold text-[#0070F3] uppercase tracking-wider mb-3">Time to Value</div>
@@ -2863,8 +2873,8 @@
           if (node) { const id = node.dataset.id; STATE.activePopover = STATE.activePopover === id ? null : id; render(); return; }
           if (!action) return;
 
-          if (action === 'switch-tab') { STATE.activeTab = act.getAttribute('data-tab'); STATE.visitedCards = []; STATE.activePopover = null; STATE.calcResult = null; STATE.openWhyModal = null; STATE.insightContent = null; STATE.flowStep = -1; STATE.flowRunning = false; STATE.flowPaused = false; STATE.flowScenarioIdx = -1; STATE.flowPhase = 'idle'; STATE.flowAppOpened = false; STATE._firstOpenDone = false; STATE.showAdminView = false; STATE.showAutopilot = false; STATE.autopilotStep = -1; STATE.autopilotAppCount = 0; clearFlowTimers(); render(); return; }
-          if (action === 'advance') { STATE.activeTab = act.getAttribute('data-next'); STATE.openWhyModal = null; render(); return; }
+          if (action === 'switch-tab') { STATE.activeTab = act.getAttribute('data-tab'); STATE.visitedCards = []; STATE.activePopover = null; STATE.openWhyModal = null; STATE.insightContent = null; STATE.flowStep = -1; STATE.flowRunning = false; STATE.flowPaused = false; STATE.flowScenarioIdx = -1; STATE.flowPhase = 'idle'; STATE.flowAppOpened = false; STATE._firstOpenDone = false; STATE.showAdminView = false; STATE.showAutopilot = false; STATE.autopilotStep = -1; STATE.autopilotAppCount = 0; clearFlowTimers(); render(); return; }
+          if (action === 'advance') { STATE.activeTab = act.getAttribute('data-next'); STATE.openWhyModal = null; if (STATE.activeTab === 'roi') { calculateImpact(); } render(); return; }
           if (action === 'toggle-solution-view') {
             const view = act.getAttribute('data-view');
             if (view === 'user') STATE.solutionViewUser = !STATE.solutionViewUser;
