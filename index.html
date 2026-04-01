@@ -105,7 +105,7 @@
       @keyframes metricsAppear { to { opacity: 1; transform: translateY(0); } }
       .interactive-node { transition: opacity 0.3s, transform 0.3s; }
       .interactive-node:hover { opacity: 0.9; transform: scale(1.05); }
-      .chart-container { width: 100%; height: auto; aspect-ratio: 800 / 380; background: #ffffff; border-radius: 16px; padding: 12px; }
+      .chart-container { width: 100%; height: auto; aspect-ratio: 800 / 360; background: #ffffff; border-radius: 16px; padding: 8px 12px; }
       #capacity-gap-chart { width: 100%; height: 100%; }
       .chart-text { font-size: 11px; font-weight: 500; fill: #64748b; letter-spacing: 0.01em; font-family: Inter, system-ui, sans-serif; }
       .chart-axis { stroke: #e2e8f0; stroke-width: 1; }
@@ -404,7 +404,7 @@
       .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
       .flip-card-front, .flip-card-back { position: absolute; inset: 0; backface-visibility: hidden; border-radius: var(--radius); border: 1px solid var(--border-subtle); overflow: hidden; }
       .flip-card-front { background: white; display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 10px; padding: 0 16px; }
-      .flip-card-back { background: linear-gradient(135deg, #0A1C60 0%, #0070F3 100%); color: white; transform: rotateY(180deg); padding: 18px; display: flex; flex-direction: column; justify-content: space-between; }
+      .flip-card-back { background: #ffffff; color: #0A1C60; transform: rotateY(180deg); padding: 20px; display: flex; flex-direction: column; justify-content: space-between; border: 2px solid #0070F3; }
       .flip-card-stat { font-size: 28px; font-weight: 800; background: linear-gradient(135deg, #0070F3, #0A1C60); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1; }
       .flip-card-tap { font-size: 8px; color: #cbd5e1; opacity: 0; animation: fadeIn 1s ease 2s forwards; }
       @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -1325,21 +1325,21 @@
                     +'</div>'
                     +'<div class="flip-card-back">'
                       +'<div>'
-                        +'<div class="text-xs font-bold uppercase tracking-wide text-blue-200 mb-1">'+card.title+'</div>'
-                        +'<p class="text-xs leading-relaxed text-white/90">'+card.body+'</p>'
+                        +'<div class="text-[11px] font-bold uppercase tracking-wide text-[#0070F3] mb-1.5">'+card.title+'</div>'
+                        +'<p class="text-xs leading-relaxed text-[#475569]">'+card.body+'</p>'
                       +'</div>'
-                      +'<div class="text-[9px] text-blue-300/60 mt-2">'+card.source+'</div>'
+                      +'<div class="text-[9px] text-[#94a3b8] mt-2">'+card.source+'</div>'
                     +'</div>'
                   +'</div>'
                 +'</div>';
               }).join('')}
             </div>
             <div class="section-card p-6">
-              <div class="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-6 items-start">
+              <div class="grid grid-cols-1 lg:grid-cols-[1fr_240px] gap-4 items-start">
                 <div class="chart-container relative">
-                  <svg id="capacity-gap-chart" viewBox="0 0 800 420"></svg>
+                  <svg id="capacity-gap-chart" viewBox="0 0 800 360"></svg>
                 </div>
-                <div class="w-full lg:w-64 bg-white/70 backdrop-blur-lg rounded-2xl shadow-md p-5 border border-slate-200">
+                <div class="w-full bg-white/70 backdrop-blur-lg rounded-2xl shadow-md p-4 border border-slate-200">
                   <h3 class="text-lg font-medium mb-4">Modern IT Challenges</h3>
                   <div class="grid grid-cols-1 gap-4 items-stretch">
                     ${calloutDropdown('change','alert-triangle','Why Change','bg-slate-50')}
@@ -1357,8 +1357,8 @@
         const svg = document.getElementById('capacity-gap-chart');
         if (!svg) return;
         svg.innerHTML = '';
-        svg.setAttribute('viewBox', '0 0 800 380');
-        const width = 690, height = 280, margin = {left: 60, bottom: 45, top: 30, right: 50};
+        svg.setAttribute('viewBox', '0 0 800 360');
+        const width = 680, height = 270, margin = {left: 65, bottom: 40, top: 25, right: 55};
         const xScale = t => margin.left + t * width;
         const yScale = v => margin.top + height - v * height;
         const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
@@ -1411,8 +1411,9 @@
             const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
             g.classList.add('marker-group', 'marker-element', 'chart-element');
             g.setAttribute('role', 'button'); g.setAttribute('tabindex', '0'); g.setAttribute('aria-label', `Learn more about ${d.label}`);
-            const lblW = d.label.length * 5.8 + 16;
-            g.innerHTML = `<title>${d.short}</title><circle cx="${x}" cy="${y}" r="18" fill="transparent" stroke="none"/><circle cx="${x}" cy="${y}" r="${r}" fill="#ef4444" stroke="white" stroke-width="2.5" style="${dotShadow}"/><rect x="${x + 12}" y="${y - 11}" width="${lblW}" height="22" rx="11" fill="#0A1C60" opacity="0.9"/><text x="${x + 12 + lblW/2}" y="${y + 3}" text-anchor="middle" font-size="9" font-weight="600" fill="white" font-family="Inter, system-ui, sans-serif" class="label-element chart-element">${d.label}</text>`;
+            const lblW = d.label.length * 5 + 14;
+            const lblY = y - 16;
+            g.innerHTML = `<title>${d.short}</title><circle cx="${x}" cy="${y}" r="18" fill="transparent" stroke="none"/><circle cx="${x}" cy="${y}" r="${r}" fill="#ef4444" stroke="white" stroke-width="2" style="${dotShadow}"/><rect x="${x - lblW/2}" y="${lblY - 8}" width="${lblW}" height="18" rx="9" fill="#0A1C60" opacity="0.85"/><text x="${x}" y="${lblY + 4}" text-anchor="middle" font-size="8" font-weight="600" fill="white" font-family="Inter, system-ui, sans-serif" class="label-element chart-element">${d.label}</text>`;
             g.addEventListener('click', () => openInsight(d));
             g.addEventListener('keydown', e => { if (e.key === 'Enter') openInsight(d); });
             svg.appendChild(g);
