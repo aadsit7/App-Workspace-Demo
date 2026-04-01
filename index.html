@@ -105,27 +105,25 @@
       @keyframes metricsAppear { to { opacity: 1; transform: translateY(0); } }
       .interactive-node { transition: opacity 0.3s, transform 0.3s; }
       .interactive-node:hover { opacity: 0.9; transform: scale(1.05); }
-      .chart-container { width: 100%; height: auto; aspect-ratio: 800 / 420; background: linear-gradient(180deg, #fafbfd 0%, #ffffff 100%); border-radius: 12px; border: 1px solid #e2e8f0; padding: 8px; box-shadow: inset 0 1px 2px rgba(0,0,0,0.03); }
+      .chart-container { width: 100%; height: auto; aspect-ratio: 800 / 380; background: #ffffff; border-radius: 16px; padding: 12px; }
       #capacity-gap-chart { width: 100%; height: 100%; }
-      .chart-text { font-size: 12px; font-weight: 600; fill: #334155; letter-spacing: 0.01em; font-family: Inter, system-ui, sans-serif; }
+      .chart-text { font-size: 11px; font-weight: 500; fill: #64748b; letter-spacing: 0.01em; font-family: Inter, system-ui, sans-serif; }
       .chart-axis { stroke: #e2e8f0; stroke-width: 1; }
-      .chart-axis-label { font-size: 12px; font-weight: 700; fill: #0A1C60; font-family: Inter, system-ui, sans-serif; letter-spacing: 0.04em; }
-      .chart-year-label { font-size: 12px; fill: #64748b; font-weight: 600; }
-      @media (max-width: 640px) { .chart-year-label { font-size: 10px; } }
-      .chart-annotation { font-size: 13px; font-weight: 600; fill: #94a3b8; font-family: Inter, system-ui, sans-serif; letter-spacing: 0.04em; text-transform: uppercase; }
-      .demand-line { stroke-width: 2.5; filter: drop-shadow(0 2px 4px rgba(239,68,68,0.2)); }
-      .capacity-line { stroke-width: 2.5; filter: drop-shadow(0 2px 4px rgba(10,28,96,0.12)); }
+      .chart-axis-label { font-size: 10px; font-weight: 600; fill: #94a3b8; font-family: Inter, system-ui, sans-serif; letter-spacing: 0.12em; text-transform: uppercase; }
+      .chart-year-label { font-size: 11px; fill: #94a3b8; font-weight: 500; }
+      @media (max-width: 640px) { .chart-year-label { font-size: 9px; } }
+      .chart-annotation { font-size: 13px; font-weight: 700; fill: #0A1C60; font-family: Inter, system-ui, sans-serif; letter-spacing: 0.06em; text-transform: uppercase; }
+      .demand-line { stroke-width: 3; filter: drop-shadow(0 3px 8px rgba(239,68,68,0.25)); }
+      .capacity-line { stroke-width: 3; filter: drop-shadow(0 3px 8px rgba(10,28,96,0.18)); }
       .gap-fill { }
-      .marker-group:hover { transform: scale(1.1); transition: transform 0.2s ease; }
-      .marker-group:hover circle { animation: pulse 1.5s infinite; }
-      @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
-      .chart-element { opacity: 0; animation: fadeIn 0.5s forwards; }
-      @keyframes fadeIn { to { opacity: 1; } }
+      .marker-group:hover { transform: scale(1.08); }
+      .chart-element { opacity: 0; animation: chartFadeIn 0.6s ease forwards; }
+      @keyframes chartFadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
       .axis-element { animation-delay: 0s; }
-      .line-element { animation-delay: 0.3s; }
-      .gap-element { animation-delay: 0.6s; }
-      .marker-element { animation-delay: 0.9s; }
-      .label-element { animation-delay: 1.2s; }
+      .line-element { animation-delay: 0.2s; }
+      .gap-element { animation-delay: 0.4s; }
+      .marker-element { animation-delay: 0.6s; }
+      .label-element { animation-delay: 0.8s; }
 
       :root{
         --bg-main:
@@ -1359,28 +1357,28 @@
         const svg = document.getElementById('capacity-gap-chart');
         if (!svg) return;
         svg.innerHTML = '';
-        svg.setAttribute('viewBox', '0 0 800 420');
-        const width = 700, height = 310, margin = {left: 55, bottom: 50, top: 40, right: 50};
+        svg.setAttribute('viewBox', '0 0 800 380');
+        const width = 690, height = 280, margin = {left: 60, bottom: 45, top: 30, right: 50};
         const xScale = t => margin.left + t * width;
         const yScale = v => margin.top + height - v * height;
         const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
         defs.innerHTML = `
           <linearGradient id="demandGradient" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#f87171"/><stop offset="100%" stop-color="#dc2626"/></linearGradient>
           <linearGradient id="capacityGradient" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#0A1C60"/><stop offset="100%" stop-color="#0070F3"/></linearGradient>
-          <linearGradient id="gapGradient" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(239,68,68,0.08)"/><stop offset="100%" stop-color="rgba(10,28,96,0.04)"/></linearGradient>
-          <linearGradient id="capFillGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(10,28,96,0.08)"/><stop offset="100%" stop-color="rgba(10,28,96,0.02)"/></linearGradient>
+          <linearGradient id="gapGradient" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(239,68,68,0.14)"/><stop offset="100%" stop-color="rgba(10,28,96,0.06)"/></linearGradient>
+          <linearGradient id="capFillGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(10,28,96,0.06)"/><stop offset="100%" stop-color="rgba(10,28,96,0.01)"/></linearGradient>
         `;
         svg.appendChild(defs);
         const gridG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-        for (let i = 0; i <= 4; i++) { const y = margin.top + (height / 4) * i; gridG.innerHTML += '<line x1="' + margin.left + '" y1="' + y + '" x2="' + (margin.left + width) + '" y2="' + y + '" stroke="#f1f5f9" stroke-width="1" stroke-dasharray="4 4"/>'; }
+        for (let i = 1; i <= 4; i++) { const y = margin.top + (height / 4) * i; gridG.innerHTML += '<line x1="' + margin.left + '" y1="' + y + '" x2="' + (margin.left + width) + '" y2="' + y + '" stroke="#f1f5f9" stroke-width="1"/>'; }
         svg.appendChild(gridG);
         const xAxis = document.createElementNS('http://www.w3.org/2000/svg', 'g');
         xAxis.classList.add('axis-element', 'chart-element');
-        xAxis.innerHTML = `<line x1="${margin.left}" y1="${margin.top + height}" x2="${margin.left + width}" y2="${margin.top + height}" class="chart-axis"/><text x="${margin.left + width / 2}" y="${margin.top + height + 38}" text-anchor="middle" class="chart-axis-label">${STATE.chartConfig.xAxis}</text>${STATE.years.map((year, i) => { const x = xScale(i / 3); return `<line x1="${x}" y1="${margin.top + height}" x2="${x}" y2="${margin.top + height + 6}" class="chart-axis"/><text x="${x}" y="${margin.top + height + 22}" text-anchor="middle" class="chart-year-label chart-element">${year}</text>`; }).join('')}`;
+        xAxis.innerHTML = `<line x1="${margin.left}" y1="${margin.top + height}" x2="${margin.left + width}" y2="${margin.top + height}" stroke="#e2e8f0" stroke-width="1"/><text x="${margin.left + width / 2}" y="${margin.top + height + 36}" text-anchor="middle" class="chart-axis-label">${STATE.chartConfig.xAxis}</text>${STATE.years.map((year, i) => { const x = xScale(i / 3); return `<line x1="${x}" y1="${margin.top + height}" x2="${x}" y2="${margin.top + height + 5}" stroke="#cbd5e1" stroke-width="1"/><text x="${x}" y="${margin.top + height + 20}" text-anchor="middle" class="chart-year-label chart-element">${year}</text>`; }).join('')}`;
         svg.appendChild(xAxis);
         const yAxis = document.createElementNS('http://www.w3.org/2000/svg', 'g');
         yAxis.classList.add('axis-element', 'chart-element');
-        yAxis.innerHTML = `<line x1="${margin.left}" y1="${margin.top}" x2="${margin.left}" y2="${margin.top + height}" class="chart-axis"/><text x="${margin.left - 14}" y="${margin.top + height / 2}" text-anchor="middle" class="chart-axis-label" transform="rotate(-90, ${margin.left - 14}, ${margin.top + height / 2})">${STATE.chartConfig.yAxis}</text>`;
+        yAxis.innerHTML = `<line x1="${margin.left}" y1="${margin.top}" x2="${margin.left}" y2="${margin.top + height}" stroke="#e2e8f0" stroke-width="1"/><text x="${margin.left - 16}" y="${margin.top + height / 2}" text-anchor="middle" class="chart-axis-label" transform="rotate(-90, ${margin.left - 16}, ${margin.top + height / 2})">${STATE.chartConfig.yAxis}</text>`;
         svg.appendChild(yAxis);
         const exp = STATE.currentDemandExponent;
         const slope = STATE.currentCapacitySlope;
@@ -1389,29 +1387,32 @@
         const demandPoints = [];
         const capacityPoints = [];
         for (let i = 0; i <= 100; i++) { const t = i / 100; const dem = Math.pow(t, exp); const cap = 0.3 + slope * t; demandPath += ` L ${xScale(t)} ${yScale(dem)}`; capacityPath += ` L ${xScale(t)} ${yScale(cap)}`; demandPoints.push({x: xScale(t), y: yScale(dem)}); capacityPoints.push({x: xScale(t), y: yScale(cap)}); }
-        const demandLine = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        demandLine.setAttribute('d', demandPath); demandLine.setAttribute('stroke', 'url(#demandGradient)'); demandLine.setAttribute('fill', 'none'); demandLine.classList.add('demand-line', 'line-element', 'chart-element'); svg.appendChild(demandLine);
-        const capacityLine = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        capacityLine.setAttribute('d', capacityPath); capacityLine.setAttribute('stroke', 'url(#capacityGradient)'); capacityLine.setAttribute('fill', 'none'); capacityLine.classList.add('capacity-line', 'line-element', 'chart-element'); svg.appendChild(capacityLine);
         const capAreaPath = capacityPath + ` L ${xScale(1)} ${yScale(0)} L ${xScale(0)} ${yScale(0)} Z`;
         const capArea = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         capArea.setAttribute('d', capAreaPath); capArea.setAttribute('fill', 'url(#capFillGrad)'); capArea.classList.add('gap-element', 'chart-element'); svg.appendChild(capArea);
         const gapPath = demandPoints.map(p => `L ${p.x} ${p.y}`).join(' ') + capacityPoints.slice().reverse().map(p => `L ${p.x} ${p.y}`).join(' ') + 'Z';
         const gap = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         gap.setAttribute('d', `M ${demandPoints[0].x} ${demandPoints[0].y} ` + gapPath); gap.setAttribute('fill', 'url(#gapGradient)'); gap.classList.add('gap-fill', 'gap-element', 'chart-element'); svg.appendChild(gap);
-        const gapLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        gapLabel.setAttribute('x', xScale(0.5)); gapLabel.setAttribute('y', yScale(0.5)); gapLabel.setAttribute('text-anchor', 'middle'); gapLabel.classList.add('chart-annotation', 'label-element', 'chart-element'); gapLabel.textContent = STATE.chartConfig.center; svg.appendChild(gapLabel);
+        const capacityLine = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        capacityLine.setAttribute('d', capacityPath); capacityLine.setAttribute('stroke', 'url(#capacityGradient)'); capacityLine.setAttribute('fill', 'none'); capacityLine.classList.add('capacity-line', 'line-element', 'chart-element'); svg.appendChild(capacityLine);
+        const demandLine = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        demandLine.setAttribute('d', demandPath); demandLine.setAttribute('stroke', 'url(#demandGradient)'); demandLine.setAttribute('fill', 'none'); demandLine.classList.add('demand-line', 'line-element', 'chart-element'); svg.appendChild(demandLine);
+        const gapLabel = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        gapLabel.classList.add('label-element', 'chart-element');
+        const glX = xScale(0.48), glY = yScale(0.48);
+        gapLabel.innerHTML = `<rect x="${glX - 70}" y="${glY - 12}" width="140" height="24" rx="12" fill="rgba(10,28,96,0.06)"/><text x="${glX}" y="${glY + 4}" text-anchor="middle" class="chart-annotation">${STATE.chartConfig.center}</text>`;
+        svg.appendChild(gapLabel);
         STATE.drivers.forEach(d => {
           if (d.markerYear && (d.state === 'normal' || d.state === 'accelerating')) {
             const t = (d.markerYear - 2025) / 3; const dem = Math.pow(t, exp); const x = xScale(t); const y = yScale(dem);
             const isHot = d.id && STATE.highlightDriverId === d.id;
-            const emphasis = isHot ? 7 : (d.state === 'accelerating' ? 6 : 5);
-            const dotColor = d.state === 'accelerating' ? '#ef4444' : '#ef4444';
-            const dotFilter = isHot ? 'filter: drop-shadow(0 3px 8px rgba(239,68,68,0.35));' : '';
+            const r = isHot ? 6 : 5;
+            const dotShadow = isHot ? 'filter: drop-shadow(0 3px 8px rgba(239,68,68,0.4));' : '';
             const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
             g.classList.add('marker-group', 'marker-element', 'chart-element');
             g.setAttribute('role', 'button'); g.setAttribute('tabindex', '0'); g.setAttribute('aria-label', `Learn more about ${d.label}`);
-            g.innerHTML = `<title>${d.short}</title><circle cx="${x}" cy="${y}" r="18" fill="transparent" stroke="none"/><circle cx="${x}" cy="${y}" r="${emphasis}" fill="${dotColor}" stroke="white" stroke-width="2" style="${dotFilter}"/><text x="${x + 10}" y="${y - 2}" class="chart-text label-element chart-element" font-size="11" font-weight="700" fill="#334155">${d.label}</text>`;
+            const lblW = d.label.length * 5.8 + 16;
+            g.innerHTML = `<title>${d.short}</title><circle cx="${x}" cy="${y}" r="18" fill="transparent" stroke="none"/><circle cx="${x}" cy="${y}" r="${r}" fill="#ef4444" stroke="white" stroke-width="2.5" style="${dotShadow}"/><rect x="${x + 12}" y="${y - 11}" width="${lblW}" height="22" rx="11" fill="#0A1C60" opacity="0.9"/><text x="${x + 12 + lblW/2}" y="${y + 3}" text-anchor="middle" font-size="9" font-weight="600" fill="white" font-family="Inter, system-ui, sans-serif" class="label-element chart-element">${d.label}</text>`;
             g.addEventListener('click', () => openInsight(d));
             g.addEventListener('keydown', e => { if (e.key === 'Enter') openInsight(d); });
             svg.appendChild(g);
@@ -1421,17 +1422,15 @@
           const t = (STATE.tippingPointYear - 2025) / 3; const x = xScale(t);
           const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
           line.setAttribute('x1', x); line.setAttribute('y1', yScale(0)); line.setAttribute('x2', x); line.setAttribute('y2', yScale(1));
-          line.setAttribute('stroke', '#ef4444'); line.setAttribute('stroke-width', '1.5'); line.setAttribute('stroke-dasharray', '6 4');
+          line.setAttribute('stroke', '#ef4444'); line.setAttribute('stroke-width', '1.5'); line.setAttribute('stroke-dasharray', '8 4'); line.setAttribute('opacity', '0.6');
           line.classList.add('line-element', 'chart-element'); svg.appendChild(line);
-          const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-          label.setAttribute('x', x + 8); label.setAttribute('y', yScale(1) - 6); label.setAttribute('font-size', '11'); label.setAttribute('font-weight', '700'); label.setAttribute('fill', '#0A1C60'); label.setAttribute('font-family', 'Inter, system-ui, sans-serif');
-          label.classList.add('chart-text', 'label-element', 'chart-element'); label.textContent = 'IT Inflection Point'; svg.appendChild(label);
-          const ann = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-          ann.setAttribute('x', x + 8); ann.setAttribute('y', yScale(0.8) + 5); ann.setAttribute('fill', '#ef4444'); ann.setAttribute('font-size', '10'); ann.setAttribute('font-weight', '600'); ann.setAttribute('font-family', 'Inter, system-ui, sans-serif');
-          ann.classList.add('chart-text', 'label-element', 'chart-element'); ann.textContent = STATE.chartConfig.tipping; svg.appendChild(ann);
+          const lblG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+          lblG.classList.add('label-element', 'chart-element');
+          lblG.innerHTML = `<rect x="${x + 6}" y="${yScale(1) - 16}" width="130" height="22" rx="11" fill="#0A1C60" opacity="0.9"/><text x="${x + 71}" y="${yScale(1) - 1}" text-anchor="middle" font-size="9" font-weight="600" fill="white" font-family="Inter, system-ui, sans-serif">Operational Breaking Point</text>`;
+          svg.appendChild(lblG);
           const hit = document.createElementNS('http://www.w3.org/2000/svg', 'g');
           hit.setAttribute('role', 'button'); hit.setAttribute('tabindex', '0'); hit.setAttribute('aria-label', 'Learn more about Projected Tipping Point');
-          hit.innerHTML = `<rect x="${x - 10}" y="${yScale(1) - 20}" width="20" height="${height}" fill="transparent"/>`;
+          hit.innerHTML = `<rect x="${x - 10}" y="${yScale(1) - 20}" width="150" height="${height + 20}" fill="transparent"/>`;
           hit.addEventListener('click', () => openInsight(STATE.tippingPoint));
           hit.addEventListener('keydown', e => { if (e.key === 'Enter') openInsight(STATE.tippingPoint); });
           svg.appendChild(hit);
