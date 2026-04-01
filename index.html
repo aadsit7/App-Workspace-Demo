@@ -408,6 +408,15 @@
       .flip-card-stat { font-size: 28px; font-weight: 800; background: linear-gradient(135deg, #0070F3, #0A1C60); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1; }
       .flip-card-tap { font-size: 8px; color: #cbd5e1; opacity: 0; animation: fadeIn 1s ease 2s forwards; }
       @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+      .logo-ticker-wrap { overflow: hidden; position: relative; }
+      .logo-ticker-wrap::before, .logo-ticker-wrap::after { content: ''; position: absolute; top: 0; bottom: 0; width: 40px; z-index: 1; pointer-events: none; }
+      .logo-ticker-wrap::before { left: 0; background: linear-gradient(90deg, white 0%, transparent 100%); }
+      .logo-ticker-wrap::after { right: 0; background: linear-gradient(270deg, white 0%, transparent 100%); }
+      .logo-ticker { display: flex; gap: 24px; animation: tickerScroll 35s linear infinite; width: max-content; }
+      .logo-ticker:hover { animation-play-state: paused; }
+      @keyframes tickerScroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+      .logo-pill { display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 9999px; border: 1px solid #e2e8f0; background: #f8fafc; font-size: 10px; font-weight: 500; color: #475569; white-space: nowrap; flex-shrink: 0; }
+      .logo-sector { font-size: 9px; font-weight: 700; color: #0070F3; text-transform: uppercase; letter-spacing: 0.08em; white-space: nowrap; flex-shrink: 0; padding: 4px 8px; }
     </style>
   </head>
 
@@ -643,6 +652,18 @@
         { id: 'crowdstrike', letter: 'CS', color: '#D61F26', name: 'CrowdStrike' },
         { id: 'box', letter: 'BX', color: '#0061D5', name: 'Box' },
         { id: 'defender', letter: 'MD', color: '#0067B8', name: 'Defender' },
+      ];
+
+      const TRUST_LOGOS = [
+        {sector:'Financial Services',names:['Citibank','American Express','Fifth Third Bank','Navy Federal Credit Union','Edward Jones','Franklin Templeton','T. Rowe Price','LPL Financial','Ally','TIAA','Neuberger Berman']},
+        {sector:'Healthcare',names:['Johns Hopkins','Intermountain Health','Texas Children\'s Hospital','St. Jude Children\'s Research Hospital','Humana','UVA Health System','Sanford Health','Roswell Park Cancer Institute']},
+        {sector:'Retail & Consumer',names:['Costco','Whole Foods Market','Barnes & Noble','Crocs','Ralph Lauren','Discount Tire','BJ\'s Wholesale Club']},
+        {sector:'Technology & Manufacturing',names:['Micron Technology','Keysight Technologies','Lam Research','Stryker Corporation','Hubbell Incorporated','Garmin','Crestron Electronics','Dexcom']},
+        {sector:'Energy & Utilities',names:['Duke Energy','Xcel Energy','Constellation Energy','CPS Energy','Southern Company','Enterprise Products']},
+        {sector:'Defense & Government',names:['Northrop Grumman','Raytheon','General Dynamics','FEMA','US Patent & Trademark Office','The Supreme Court of the United States','Amtrak']},
+        {sector:'Food & Agriculture',names:['General Mills','Cargill','Tillamook County Creamery','Ferrara Candy Company']},
+        {sector:'Transportation & Logistics',names:['Union Pacific Railroad','Holland America Group','Princess Cruises','Gulfstream Aerospace']},
+        {sector:'Professional Services',names:['Jones Day','Latham & Watkins','Cooley LLP','Davis Polk & Wardwell']},
       ];
 
       const STAT_CARDS = [
@@ -2455,6 +2476,15 @@
         `;
       }
 
+      function renderLogoTicker(){
+        const items = TRUST_LOGOS.flatMap(s => [
+          '<span class="logo-sector">'+s.sector+'</span>',
+          ...s.names.map(n => '<span class="logo-pill">'+n+'</span>')
+        ]);
+        const strip = items.join('');
+        return '<div class="mt-4 pt-3 border-t border-slate-100"><div class="text-[9px] font-semibold text-[#0A1C60] uppercase tracking-wider mb-2">Trusted across industries</div><div class="logo-ticker-wrap"><div class="logo-ticker">'+strip+strip+'</div></div></div>';
+      }
+
       function compactCard(card){
         const expanded = STATE.openCards[card.id];
         const visited = STATE.visitedCards.includes(card.id);
@@ -2475,13 +2505,14 @@
                 <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 flex-shrink-0 transition-transform duration-200 ${expanded ? 'rotate-180' : ''}" aria-hidden="true"></i>
               </div>
             </button>
-            <div id="${contentId}" class="overflow-hidden" style="max-height:${expanded?'1000px':'0'};opacity:${expanded?'1':'0'};transition:max-height 250ms cubic-bezier(.2,.8,.2,1),opacity 200ms ease">
+            <div id="${contentId}" class="overflow-hidden" style="max-height:${expanded?'1200px':'0'};opacity:${expanded?'1':'0'};transition:max-height 250ms cubic-bezier(.2,.8,.2,1),opacity 200ms ease">
               <div class="px-4 pb-4 pt-1 border-t border-slate-100">
                 <ul class="list-none space-y-2 text-[13px] leading-[1.5] text-[#4A5568]">
                   ${card.bullets.map(b=>`<li class="flex items-start gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-[#0070F3] flex-shrink-0 mt-0.5"></i><span>${b}</span></li>`).join('')}
                 </ul>
                 ${card.timeline && onboardingMiniTimelineEnabled && expanded ? renderMiniTimeline() : ''}
                 <p class="mt-3 text-[12px] italic text-[#64748b] border-l-2 border-[#0070F3] pl-3">${card.closer}</p>
+                ${card.id === 'trust' && expanded ? renderLogoTicker() : ''}
               </div>
             </div>
           </div>
