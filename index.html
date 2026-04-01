@@ -2152,6 +2152,11 @@
         return `
           <section id="panel-solution" class="space-y-3">
 
+            <!-- ZONE C: Solution cards (horizontal) -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3" style="align-items:start">
+              ${NEW_CARDS.map(card => compactCard(card)).join('')}
+            </div>
+
             <!-- ZONE A: Control strip -->
             <div class="section-card p-3">
               <div class="flex flex-wrap items-center justify-between gap-3">
@@ -2176,11 +2181,6 @@
               ${STATE.solutionViewUser ? renderUserView() : ''}
               ${STATE.solutionViewAdmin ? renderAdminConsole() : ''}
               ${STATE.solutionViewMultiTenant ? renderMultiTenantView() : ''}
-            </div>
-
-            <!-- ZONE C: Solution cards (horizontal) -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3" style="align-items:start">
-              ${NEW_CARDS.map(card => compactCard(card)).join('')}
             </div>
 
             <div class="flex justify-end mt-2">
