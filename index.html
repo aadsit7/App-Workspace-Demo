@@ -105,22 +105,31 @@
       @keyframes metricsAppear { to { opacity: 1; transform: translateY(0); } }
       .interactive-node { transition: opacity 0.3s, transform 0.3s; }
       .interactive-node:hover { opacity: 0.9; transform: scale(1.05); }
-      .chart-container { width: 100%; height: auto; aspect-ratio: 800 / 340; background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%); border-radius: 16px; padding: 0; overflow: hidden; }
-      #capacity-gap-chart { width: 100%; height: 100%; }
-      .chart-axis-label { font-size: 9px; font-weight: 600; fill: #94a3b8; font-family: Inter, system-ui, sans-serif; letter-spacing: 0.14em; text-transform: uppercase; }
-      .chart-year-label { font-size: 10px; fill: #94a3b8; font-weight: 500; font-family: Inter, system-ui, sans-serif; }
-      .chart-annotation { font-size: 11px; font-weight: 700; fill: #0A1C60; font-family: Inter, system-ui, sans-serif; letter-spacing: 0.08em; text-transform: uppercase; }
-      .demand-line { stroke-width: 2.5; }
-      .capacity-line { stroke-width: 2.5; }
-      .marker-group { cursor: pointer; }
-      .marker-group:hover { transform: scale(1.06); }
+      .chart-container { width: 100%; position: relative; aspect-ratio: 800 / 320; background: #ffffff; border-radius: 16px; overflow: hidden; }
+      #capacity-gap-chart { width: 100%; height: 100%; position: absolute; inset: 0; }
+      .demand-line { stroke-width: 2.5; stroke-linecap: round; }
+      .capacity-line { stroke-width: 2; stroke-linecap: round; stroke-dasharray: 8 6; }
+      .chart-overlay { position: absolute; inset: 0; pointer-events: none; }
+      .chart-y-label { position: absolute; left: 8px; top: 50%; transform: rotate(-90deg) translateX(-50%); transform-origin: 0 0; font-size: 9px; font-weight: 600; color: #94a3b8; letter-spacing: 0.14em; text-transform: uppercase; white-space: nowrap; }
+      .chart-x-label { position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); font-size: 9px; font-weight: 600; color: #94a3b8; letter-spacing: 0.14em; text-transform: uppercase; }
+      .chart-year { position: absolute; bottom: 18px; transform: translateX(-50%); font-size: 11px; font-weight: 500; color: #94a3b8; }
+      .chart-gap-label { position: absolute; left: 50%; top: 50%; transform: translate(-60%, -30%); font-size: 12px; font-weight: 700; color: #0A1C60; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.5; }
+      .chart-driver { position: absolute; transform: translateX(-50%); pointer-events: auto; cursor: pointer; }
+      .chart-driver-dot { width: 8px; height: 8px; border-radius: 50%; background: #0070F3; border: 2px solid white; box-shadow: 0 1px 4px rgba(0,112,243,0.3); margin: 0 auto 4px; }
+      .chart-driver-text { font-size: 9px; font-weight: 600; color: #0A1C60; text-align: center; white-space: nowrap; background: rgba(255,255,255,0.9); padding: 1px 6px; border-radius: 4px; }
+      .chart-tipping { position: absolute; top: 0; bottom: 32px; border-right: 1.5px dashed rgba(10,28,96,0.2); }
+      .chart-tipping-label { position: absolute; top: 4px; left: 8px; font-size: 9px; font-weight: 600; color: #0A1C60; opacity: 0.6; white-space: nowrap; }
       .chart-element { opacity: 0; animation: chartFadeIn 0.5s ease forwards; }
       @keyframes chartFadeIn { from { opacity: 0; } to { opacity: 1; } }
-      .axis-element { animation-delay: 0s; }
       .line-element { animation-delay: 0.15s; }
       .gap-element { animation-delay: 0.3s; }
-      .marker-element { animation-delay: 0.5s; }
-      .label-element { animation-delay: 0.65s; }
+      @keyframes analystCycle { 0%,3% { opacity: 0; } 5%,15% { opacity: 1; } 18%,100% { opacity: 0; } }
+      .analyst-ticker { position: relative; min-width: 200px; height: 32px; flex-shrink: 0; }
+      .analyst-item { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: flex-end; justify-content: center; opacity: 0; animation: analystCycle 25s ease infinite; }
+      .analyst-item:nth-child(2) { animation-delay: 5s; }
+      .analyst-item:nth-child(3) { animation-delay: 10s; }
+      .analyst-item:nth-child(4) { animation-delay: 15s; }
+      .analyst-item:nth-child(5) { animation-delay: 20s; }
 
       :root{
         --bg-main:
@@ -1329,8 +1338,15 @@
       function renderProblems(){
         return `
           <section id="panel-problems" class="space-y-4">
-            <div class="mb-1">
+            <div class="flex items-start justify-between gap-4 mb-1">
               <h2 class="text-lg font-semibold text-[#0A1C60]">The application layer is now the #1 primary constraint in modern IT.</h2>
+              <div class="analyst-ticker hidden sm:block">
+                <div class="analyst-item"><div class="text-[10px] font-bold text-[#0A1C60]">Forrester</div><div class="text-[9px] text-[#64748b]">The app layer is the new bottleneck</div></div>
+                <div class="analyst-item"><div class="text-[10px] font-bold text-[#0A1C60]">Gartner</div><div class="text-[9px] text-[#64748b]">60% won't execute their digital strategy</div></div>
+                <div class="analyst-item"><div class="text-[10px] font-bold text-[#0A1C60]">McKinsey & Company</div><div class="text-[9px] text-[#64748b]">70% of transformations fail on execution</div></div>
+                <div class="analyst-item"><div class="text-[10px] font-bold text-[#0A1C60]">Mandiant</div><div class="text-[9px] text-[#64748b]">Exploit windows have dropped to 5 days</div></div>
+                <div class="analyst-item"><div class="text-[10px] font-bold text-[#0A1C60]">Grand View Research</div><div class="text-[9px] text-[#64748b]">51% of IT ops effort is reactive</div></div>
+              </div>
             </div>
             <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
               ${STAT_CARDS.map(card => {
@@ -1376,85 +1392,73 @@
       }
 
       function renderCapacityGapChart(){
+        const container = document.querySelector('.chart-container');
+        if (!container) return;
         const svg = document.getElementById('capacity-gap-chart');
         if (!svg) return;
+        // Remove old overlay
+        const oldOverlay = container.querySelector('.chart-overlay');
+        if (oldOverlay) oldOverlay.remove();
+        // SVG: curves only
         svg.innerHTML = '';
-        svg.setAttribute('viewBox', '0 0 800 340');
-        const width = 700, height = 260, margin = {left: 50, bottom: 38, top: 20, right: 30};
-        const xScale = t => margin.left + t * width;
-        const yScale = v => margin.top + height - v * height;
-        const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
-        defs.innerHTML = `
-          <linearGradient id="demandGradient" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#0070F3"/><stop offset="100%" stop-color="#0A1C60"/></linearGradient>
-          <linearGradient id="capacityGradient" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#94a3b8"/><stop offset="100%" stop-color="#64748b"/></linearGradient>
-          <linearGradient id="gapGradient" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(0,112,243,0.10)"/><stop offset="100%" stop-color="rgba(0,112,243,0.02)"/></linearGradient>
-          <linearGradient id="capFillGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(148,163,184,0.06)"/><stop offset="100%" stop-color="rgba(148,163,184,0.01)"/></linearGradient>
-        `;
-        svg.appendChild(defs);
-        const gridG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-        for (let i = 1; i <= 3; i++) { const y = margin.top + (height / 4) * i; gridG.innerHTML += '<line x1="' + margin.left + '" y1="' + y + '" x2="' + (margin.left + width) + '" y2="' + y + '" stroke="#f1f5f9" stroke-width="0.5"/>'; }
-        svg.appendChild(gridG);
-        const xAxis = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-        xAxis.classList.add('axis-element', 'chart-element');
-        xAxis.innerHTML = `<line x1="${margin.left}" y1="${margin.top + height}" x2="${margin.left + width}" y2="${margin.top + height}" stroke="#e2e8f0" stroke-width="0.5"/><text x="${margin.left + width / 2}" y="${margin.top + height + 32}" text-anchor="middle" class="chart-axis-label">${STATE.chartConfig.xAxis}</text>${STATE.years.map((year, i) => { const x = xScale(i / 3); return `<text x="${x}" y="${margin.top + height + 16}" text-anchor="middle" class="chart-year-label chart-element">${year}</text>`; }).join('')}`;
-        svg.appendChild(xAxis);
-        const yAxis = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-        yAxis.classList.add('axis-element', 'chart-element');
-        yAxis.innerHTML = `<text x="${margin.left - 12}" y="${margin.top + height / 2}" text-anchor="middle" class="chart-axis-label" transform="rotate(-90, ${margin.left - 12}, ${margin.top + height / 2})">${STATE.chartConfig.yAxis}</text>`;
-        svg.appendChild(yAxis);
+        svg.setAttribute('viewBox', '0 0 100 100');
+        svg.setAttribute('preserveAspectRatio', 'none');
         const exp = STATE.currentDemandExponent;
         const slope = STATE.currentCapacitySlope;
-        let demandPath = `M ${xScale(0)} ${yScale(0)}`;
-        let capacityPath = `M ${xScale(0)} ${yScale(0.3)}`;
-        const demandPoints = [];
-        const capacityPoints = [];
-        for (let i = 0; i <= 100; i++) { const t = i / 100; const dem = Math.pow(t, exp); const cap = 0.3 + slope * t; demandPath += ` L ${xScale(t)} ${yScale(dem)}`; capacityPath += ` L ${xScale(t)} ${yScale(cap)}`; demandPoints.push({x: xScale(t), y: yScale(dem)}); capacityPoints.push({x: xScale(t), y: yScale(cap)}); }
-        const capAreaPath = capacityPath + ` L ${xScale(1)} ${yScale(0)} L ${xScale(0)} ${yScale(0)} Z`;
-        const capArea = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        capArea.setAttribute('d', capAreaPath); capArea.setAttribute('fill', 'url(#capFillGrad)'); capArea.classList.add('gap-element', 'chart-element'); svg.appendChild(capArea);
-        const gapPath = demandPoints.map(p => `L ${p.x} ${p.y}`).join(' ') + capacityPoints.slice().reverse().map(p => `L ${p.x} ${p.y}`).join(' ') + 'Z';
-        const gap = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        gap.setAttribute('d', `M ${demandPoints[0].x} ${demandPoints[0].y} ` + gapPath); gap.setAttribute('fill', 'url(#gapGradient)'); gap.classList.add('gap-fill', 'gap-element', 'chart-element'); svg.appendChild(gap);
-        const capacityLine = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        capacityLine.setAttribute('d', capacityPath); capacityLine.setAttribute('stroke', 'url(#capacityGradient)'); capacityLine.setAttribute('fill', 'none'); capacityLine.classList.add('capacity-line', 'line-element', 'chart-element'); svg.appendChild(capacityLine);
-        const demandLine = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        demandLine.setAttribute('d', demandPath); demandLine.setAttribute('stroke', 'url(#demandGradient)'); demandLine.setAttribute('fill', 'none'); demandLine.classList.add('demand-line', 'line-element', 'chart-element'); svg.appendChild(demandLine);
-        const gapLabel = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-        gapLabel.classList.add('label-element', 'chart-element');
-        const glX = xScale(0.45), glY = yScale(0.46);
-        gapLabel.innerHTML = `<text x="${glX}" y="${glY + 4}" text-anchor="middle" class="chart-annotation">${STATE.chartConfig.center}</text>`;
-        svg.appendChild(gapLabel);
-        STATE.drivers.forEach(d => {
+        const pad = {l: 8, r: 2, t: 5, b: 12};
+        const toX = t => pad.l + t * (100 - pad.l - pad.r);
+        const toY = v => (100 - pad.b) - v * (100 - pad.t - pad.b);
+        let demandPath = 'M ' + toX(0) + ' ' + toY(0);
+        let capacityPath = 'M ' + toX(0) + ' ' + toY(0.3);
+        const dPts = [], cPts = [];
+        for (let i = 0; i <= 100; i++) { const t = i / 100; const dem = Math.pow(t, exp); const cap = 0.3 + slope * t; demandPath += ' L ' + toX(t) + ' ' + toY(dem); capacityPath += ' L ' + toX(t) + ' ' + toY(cap); dPts.push({x: toX(t), y: toY(dem)}); cPts.push({x: toX(t), y: toY(cap)}); }
+        const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+        defs.innerHTML = '<linearGradient id="demGrad" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#0070F3" stop-opacity="0.6"/><stop offset="100%" stop-color="#0A1C60"/></linearGradient><linearGradient id="gapGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(0,112,243,0.12)"/><stop offset="100%" stop-color="rgba(0,112,243,0.01)"/></linearGradient>';
+        svg.appendChild(defs);
+        // Gap fill
+        const gapD = dPts.map((p,i) => (i===0?'M':'L')+' '+p.x+' '+p.y).join(' ') + cPts.slice().reverse().map(p => ' L '+p.x+' '+p.y).join('') + ' Z';
+        const gapEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        gapEl.setAttribute('d', gapD); gapEl.setAttribute('fill', 'url(#gapGrad)'); gapEl.classList.add('gap-element', 'chart-element'); svg.appendChild(gapEl);
+        // Capacity line (dashed)
+        const capLine = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        capLine.setAttribute('d', capacityPath); capLine.setAttribute('stroke', '#cbd5e1'); capLine.setAttribute('fill', 'none'); capLine.classList.add('capacity-line', 'line-element', 'chart-element'); svg.appendChild(capLine);
+        // Demand line
+        const demLine = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        demLine.setAttribute('d', demandPath); demLine.setAttribute('stroke', 'url(#demGrad)'); demLine.setAttribute('fill', 'none'); demLine.classList.add('demand-line', 'line-element', 'chart-element'); svg.appendChild(demLine);
+        // HTML overlay
+        const overlay = document.createElement('div');
+        overlay.className = 'chart-overlay';
+        let overlayHTML = '<div class="chart-y-label">' + STATE.chartConfig.yAxis + '</div>';
+        overlayHTML += '<div class="chart-x-label">' + STATE.chartConfig.xAxis + '</div>';
+        overlayHTML += '<div class="chart-gap-label">' + STATE.chartConfig.center + '</div>';
+        // Year labels
+        STATE.years.forEach(function(year, i) {
+          const pct = pad.l + (i / 3) * (100 - pad.l - pad.r);
+          overlayHTML += '<div class="chart-year" style="left:' + pct + '%">' + year + '</div>';
+        });
+        // Driver markers
+        STATE.drivers.forEach(function(d) {
           if (d.markerYear && (d.state === 'normal' || d.state === 'accelerating')) {
-            const t = (d.markerYear - 2025) / 3; const dem = Math.pow(t, exp); const x = xScale(t); const y = yScale(dem);
-            const isHot = d.id && STATE.highlightDriverId === d.id;
-            const r = isHot ? 5 : 4;
-            const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-            g.classList.add('marker-group', 'marker-element', 'chart-element');
-            g.setAttribute('role', 'button'); g.setAttribute('tabindex', '0'); g.setAttribute('aria-label', `Learn more about ${d.label}`);
-            g.innerHTML = `<title>${d.short}</title><circle cx="${x}" cy="${y}" r="16" fill="transparent" stroke="none"/><circle cx="${x}" cy="${y}" r="${r}" fill="#0070F3" stroke="white" stroke-width="2"/><text x="${x}" y="${y - 12}" text-anchor="middle" font-size="8" font-weight="600" fill="#0A1C60" font-family="Inter, system-ui, sans-serif" class="label-element chart-element">${d.label}</text>`;
-            g.addEventListener('click', () => openInsight(d));
-            g.addEventListener('keydown', e => { if (e.key === 'Enter') openInsight(d); });
-            svg.appendChild(g);
+            const t = (d.markerYear - 2025) / 3;
+            const dem = Math.pow(t, exp);
+            const xPct = pad.l + t * (100 - pad.l - pad.r);
+            const yPct = pad.t + (1 - dem) * (100 - pad.t - pad.b);
+            overlayHTML += '<div class="chart-driver" style="left:' + xPct + '%;top:' + yPct + '%" data-action="open-insight-driver" data-driver-id="' + d.id + '"><div class="chart-driver-dot"></div><div class="chart-driver-text">' + d.label + '</div></div>';
           }
         });
+        // Tipping point
         if (STATE.showTippingPoint) {
-          const t = (STATE.tippingPointYear - 2025) / 3; const x = xScale(t);
-          const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-          line.setAttribute('x1', x); line.setAttribute('y1', yScale(0)); line.setAttribute('x2', x); line.setAttribute('y2', yScale(1));
-          line.setAttribute('stroke', '#0A1C60'); line.setAttribute('stroke-width', '1'); line.setAttribute('stroke-dasharray', '6 4'); line.setAttribute('opacity', '0.3');
-          line.classList.add('line-element', 'chart-element'); svg.appendChild(line);
-          const lblG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-          lblG.classList.add('label-element', 'chart-element');
-          lblG.innerHTML = `<text x="${x + 8}" y="${yScale(1) - 4}" font-size="9" font-weight="600" fill="#0A1C60" font-family="Inter, system-ui, sans-serif" opacity="0.7">Operational Breaking Point</text>`;
-          svg.appendChild(lblG);
-          const hit = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-          hit.setAttribute('role', 'button'); hit.setAttribute('tabindex', '0'); hit.setAttribute('aria-label', 'Learn more about Projected Tipping Point');
-          hit.innerHTML = `<rect x="${x - 10}" y="${yScale(1) - 20}" width="150" height="${height + 20}" fill="transparent"/>`;
-          hit.addEventListener('click', () => openInsight(STATE.tippingPoint));
-          hit.addEventListener('keydown', e => { if (e.key === 'Enter') openInsight(STATE.tippingPoint); });
-          svg.appendChild(hit);
+          const tPct = pad.l + ((STATE.tippingPointYear - 2025) / 3) * (100 - pad.l - pad.r);
+          overlayHTML += '<div class="chart-tipping" style="left:' + tPct + '%"><div class="chart-tipping-label">Operational Breaking Point</div></div>';
         }
+        overlay.innerHTML = overlayHTML;
+        container.appendChild(overlay);
+        // Wire driver clicks
+        overlay.querySelectorAll('[data-action="open-insight-driver"]').forEach(function(el) {
+          const dId = el.getAttribute('data-driver-id');
+          const driver = STATE.drivers.find(function(d) { return d.id === dId; });
+          if (driver) { el.addEventListener('click', function() { openInsight(driver); }); }
+        });
       }
 
       function updateCurves(){
