@@ -1379,11 +1379,10 @@
                 </div>
               </div>
             </div>
+            <div class="flex justify-end mt-3">
+              <button type="button" data-action="open-ai-agent" class="inline-flex items-center gap-2 text-white px-4 py-2.5 text-sm font-semibold rounded-full shadow-lg hover:opacity-90 transition" style="background:linear-gradient(135deg,#0070F3,#0A1C60)"><i data-lucide="message-circle-question" class="w-4 h-4"></i> Ask a Question</button>
+            </div>
           </section>
-        `;
-      }
-
-      function renderCapacityGapChart(){
         const svg = document.getElementById('capacity-gap-chart');
         if (!svg) return;
         svg.innerHTML = '';
@@ -2316,8 +2315,12 @@
               ${STATE.solutionViewMultiTenant ? renderMultiTenantView() : ''}
             </div>
 
-            <div class="flex flex-col items-end gap-2 mt-2">
-              <button type="button" class="bg-[#0070F3] text-white px-5 py-2.5 text-sm font-semibold rounded-full hover:bg-[#005AD0]" data-action="advance" data-next="roi">See Business Impact</button>
+            <div class="flex items-center justify-between mt-3">
+              <button type="button" data-action="open-ai-agent" class="inline-flex items-center gap-2 text-white px-4 py-2.5 text-sm font-semibold rounded-full shadow-lg hover:opacity-90 transition" style="background:linear-gradient(135deg,#0070F3,#0A1C60)"><i data-lucide="message-circle-question" class="w-4 h-4"></i> Ask a Question</button>
+              <div class="flex items-center gap-3">
+                <div class="text-xs italic text-[#64748b]">See what this means across your organization</div>
+                <button type="button" data-action="advance" data-next="roi" class="bg-[#0070F3] text-white w-8 h-8 rounded-full hover:bg-[#005AD0] inline-flex items-center justify-center" title="Business Impact"><i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+              </div>
             </div>
           </section>
         `;
