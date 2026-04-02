@@ -1536,7 +1536,8 @@
         const closing = c.closing || '';
         const isPlatformMult = c.id === 'too_many_tools';
         const isTippingPoint = c.title === 'Inflection Point';
-        const modalWidth = isPlatformMult ? 'max-w-6xl' : 'max-w-4xl';
+        const isChangeVelocity = c.id === 'constant_updates';
+        const modalWidth = isPlatformMult ? 'max-w-6xl' : isChangeVelocity ? 'max-w-5xl' : 'max-w-4xl';
         const modalStyle = isPlatformMult ? 'max-height:95vh;display:flex;flex-direction:column' : '';
         const bodyStyle = isPlatformMult ? 'flex:1;min-height:0;overflow-y:auto' : '';
         return `
@@ -1547,7 +1548,7 @@
                 <button type="button" class="text-slate-500 hover:text-slate-700 focus-ring p-2" data-action="close-insight-modal" aria-label="Close"><i data-lucide="x" class="w-6 h-6"></i></button>
               </div>
               <div class="${isPlatformMult ? 'px-6 py-4' : 'p-8'} bg-white/35 backdrop-blur-lg" style="${bodyStyle}">
-                ${isPlatformMult ? renderPlatformSiloDiagram(intro) : isTippingPoint ? `
+                ${isPlatformMult ? renderPlatformSiloDiagram(intro) : isChangeVelocity ? renderChangeVelocityChart() : isTippingPoint ? `
                 <div class="flex items-center gap-2 mb-4"><i data-lucide="quote" class="w-5 h-5 text-slate-400"></i><span class="text-sm font-bold text-[#0A1C60]">What Analysts Are Saying</span></div>
                 <div class="space-y-3">
                   <div class="flex items-start gap-4 p-4 rounded-xl bg-white/70 backdrop-blur-lg shadow-sm hover:shadow-md transition-shadow"><div class="text-sm font-bold min-w-[120px] flex-shrink-0" style="color:#0070F3">Gartner, 2025</div><div class="text-sm text-[#475569] italic">"By 2027, organizations that fail to modernize application delivery will spend 40% more on operational overhead than those that do."</div></div>
@@ -1661,6 +1662,108 @@
               <p class="text-[11px] italic text-[#4A5568]"><i data-lucide="quote" class="w-3.5 h-3.5 inline text-slate-300 mr-1"></i>The ceiling is structural, not operational. Your team isn&rsquo;t underperforming &mdash; the per-platform model was built for two platforms. Most organizations now manage five or six.</p>
             </div>
 
+          </div>
+        `;
+      }
+
+      function renderChangeVelocityChart(){
+        // Stacked area chart: 5 workload layers growing over 2015-2026, flat capacity line
+        // Chart dimensions: viewBox 700x320, margin left 40, right 10, top 10, bottom 35
+        const W = 700, H = 320, ml = 45, mr = 10, mt = 10, mb = 40;
+        const cw = W - ml - mr, ch = H - mt - mb;
+        // X positions for years 2015-2026 (12 points)
+        const years = [2015,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025,2026];
+        const x = years.map((y,i) => ml + (i / (years.length - 1)) * cw);
+        const yP = v => mt + ch - v * ch; // value 0-1 to y pixel
+
+        // 5 layers (values at each year, stacked from bottom). Each value is the layer's own height (not cumulative).
+        // Layer 1: Platform management (steady base)
+        const L1 = [0.08,0.09,0.10,0.11,0.13,0.15,0.17,0.19,0.21,0.23,0.25,0.27];
+        // Layer 2: Packaging workload (grows from 2018+)
+        const L2 = [0.04,0.04,0.05,0.06,0.08,0.10,0.13,0.16,0.19,0.22,0.24,0.26];
+        // Layer 3: Security & compliance (accelerates from 2019+)
+        const L3 = [0.02,0.02,0.03,0.03,0.04,0.07,0.09,0.11,0.13,0.15,0.17,0.19];
+        // Layer 4: Migration projects (spikes from 2020+)
+        const L4 = [0.01,0.01,0.01,0.02,0.02,0.04,0.06,0.09,0.11,0.13,0.14,0.15];
+        // Layer 5: New tool adoption (adds from 2021+)
+        const L5 = [0.00,0.00,0.01,0.01,0.01,0.02,0.04,0.06,0.08,0.10,0.12,0.13];
+
+        // Cumulative stacks
+        const S1 = L1.map(v => v);
+        const S2 = L1.map((v,i) => v + L2[i]);
+        const S3 = L1.map((v,i) => v + L2[i] + L3[i]);
+        const S4 = L1.map((v,i) => v + L2[i] + L3[i] + L4[i]);
+        const S5 = L1.map((v,i) => v + L2[i] + L3[i] + L4[i] + L5[i]);
+
+        // Build area path between two stacks (bottom, top)
+        function areaPath(bot, top) {
+          let d = 'M ' + x[0] + ' ' + yP(top[0]);
+          for (let i = 1; i < x.length; i++) d += ' L ' + x[i] + ' ' + yP(top[i]);
+          for (let i = x.length - 1; i >= 0; i--) d += ' L ' + x[i] + ' ' + yP(bot[i]);
+          return d + ' Z';
+        }
+        const zero = years.map(() => 0);
+
+        const colors = [
+          {fill:'rgba(26,107,138,0.8)', stroke:'#1a6b8a', label:'Platform management'},
+          {fill:'rgba(45,138,94,0.8)', stroke:'#2d8a5e', label:'Packaging workload'},
+          {fill:'rgba(184,134,11,0.75)', stroke:'#b8860b', label:'Security & compliance'},
+          {fill:'rgba(158,74,90,0.75)', stroke:'#9e4a5a', label:'Migration projects'},
+          {fill:'rgba(124,90,166,0.7)', stroke:'#7c5aa6', label:'New tool adoption'},
+        ];
+        const stacks = [[zero,S1],[S1,S2],[S2,S3],[S3,S4],[S4,S5]];
+
+        // Milestones (year index, label, detail)
+        const milestones = [
+          {yi:4, year:2019, label:'AVD launches', detail:'Azure Virtual Desktop goes GA. IT adds virtual desktop app delivery \u2014 golden images, host pools, session management. Platform count: 3+.', dotColor:'#7c5aa6'},
+          {yi:5, year:2020, label:'COVID / remote shift', detail:'Remote work explodes. Every app must work from anywhere. VPN, cloud apps, BYOD support all multiply the packaging and testing workload.', dotColor:'#9e4a5a'},
+          {yi:7, year:2022, label:'W365 + Intune co-mgmt', detail:'Windows 365 and Intune co-management go mainstream. IT adds cloud PC delivery alongside SCCM and Citrix. Platform count: 4+. Every app now requires testing across all environments.', dotColor:'#2d8a5e'},
+        ];
+
+        // Capacity line at 0.22 (flat)
+        const capY = 0.22;
+
+        return `
+          <div class="rounded-xl border border-slate-200 bg-white/80 p-4">
+            <svg viewBox="0 0 ${W} ${H}" class="w-full" style="max-height:360px" aria-label="Stacked area chart showing IT workload growth from 2015 to 2026">
+              <defs>
+                <clipPath id="cv-clip"><rect x="${ml}" y="${mt}" width="${cw}" height="${ch}"/></clipPath>
+              </defs>
+              <!-- Background -->
+              <rect x="${ml}" y="${mt}" width="${cw}" height="${ch}" fill="#f9fafb" rx="4"/>
+              <!-- Grid lines -->
+              ${[0.2,0.4,0.6,0.8].map(v => `<line x1="${ml}" y1="${yP(v)}" x2="${ml+cw}" y2="${yP(v)}" stroke="#e5e7eb" stroke-width="0.5"/>`).join('')}
+              <!-- Stacked areas (clip to chart area) -->
+              <g clip-path="url(#cv-clip)">
+                ${stacks.map(([bot,top],i) => `<path d="${areaPath(bot,top)}" fill="${colors[i].fill}" stroke="${colors[i].stroke}" stroke-width="1.5"/>`).join('')}
+              </g>
+              <!-- Capacity line (dashed red) -->
+              <line x1="${ml}" y1="${yP(capY)}" x2="${ml+cw}" y2="${yP(capY)}" stroke="#dc2626" stroke-width="2.5" stroke-dasharray="8 5" opacity="0.7"/>
+              <text x="${ml+4}" y="${yP(capY)-6}" font-size="9" fill="#dc2626" font-weight="600" font-family="Inter, system-ui, sans-serif">IT capacity (headcount)</text>
+              <!-- Milestone dots -->
+              ${milestones.map(m => {
+                const mx = x[m.yi];
+                const my = yP(S5[m.yi]);
+                return `<circle cx="${mx}" cy="${my}" r="5" fill="${m.dotColor}" stroke="white" stroke-width="2.5"/>
+                  <text x="${mx+8}" y="${my+3}" font-size="8" fill="#64748b" font-weight="600" font-family="Inter, system-ui, sans-serif">${m.label}</text>`;
+              }).join('')}
+              <!-- X axis labels -->
+              ${years.filter((y,i) => i % 2 === 0).map((y,i) => `<text x="${x[i*2]}" y="${mt+ch+20}" text-anchor="middle" font-size="10" fill="#94a3b8" font-weight="500" font-family="Inter, system-ui, sans-serif">${y}</text>`).join('')}
+              <!-- Y axis label -->
+              <text x="14" y="${mt + ch/2}" text-anchor="middle" font-size="9" fill="#94a3b8" font-weight="600" font-family="Inter, system-ui, sans-serif" transform="rotate(-90,14,${mt+ch/2})">WORKLOAD</text>
+            </svg>
+
+            <!-- Milestone detail card -->
+            <div class="mt-3 bg-slate-50 border border-slate-200 rounded-lg p-3">
+              <div class="text-xs font-bold text-[#0A1C60] mb-1">2022 &mdash; W365 + Intune co-management goes mainstream</div>
+              <div class="text-[11px] text-[#64748b] leading-relaxed">IT adds cloud PC delivery alongside existing SCCM, Citrix, and Intune. Platform count: 4+. Every app now requires testing across all environments.</div>
+            </div>
+
+            <!-- Legend -->
+            <div class="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 mt-3">
+              ${colors.map(c => `<div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-sm" style="background:${c.stroke}"></div><span class="text-[10px] text-slate-500 font-medium">${c.label}</span></div>`).join('')}
+              <div class="flex items-center gap-1.5"><span class="inline-block w-5 border-t-2 border-dashed border-red-500"></span><span class="text-[10px] text-slate-500 font-medium">IT capacity (headcount)</span></div>
+            </div>
           </div>
         `;
       }
