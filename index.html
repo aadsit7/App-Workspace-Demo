@@ -516,20 +516,20 @@
         showTippingPoint: false,
         currentState: {
           change: {
-            intro: "Your team isn't underperforming. They're hitting the structural ceiling of a delivery model that was built for two platforms. Most organizations now manage five or six.",
+            intro: "",
             bullets: [
-              "Per-platform = per-problem = Every app is packaged, tested, and maintained separately for each environment. Five platforms means five times the work - per app.",
-              "It compounds, not levels off = Every new migration, security mandate, or tool adoption fans out across every platform. The workload multiplies.",
-              "The team isn't the bottleneck - the model is = Most organizations have already optimized within the current approach. The ceiling is structural, not operational."
+              "The challenge has changed. = Hardware is stable, networks are solid \u2014 but apps keep IT teams running in circles.",
+              "The volume and pace are overwhelming. = You can\u2019t keep thousands of apps current and secure with the same tools and headcount you\u2019ve always had.",
+              "Big plans keep getting delayed. = You want to move from Citrix to AVD, shift from SCCM to Intune, Windows on ARM Pilots, AI Projects \u2014 but app readiness keeps blocking progress."
             ],
             analyst: "The organizations pulling ahead aren't working harder - they're changing the model. (Forrester, Gartner, McKinsey)"
           },
           now: {
-            intro: "This has been building for years - but 2026 is where the math stops working for most teams.",
+            intro: "",
             bullets: [
-              "Three forces hitting at once = Platform sprawl, AI adoption pressure, and continuous security patching - any one is absorbable. Together, they break the model.",
-              "Your workarounds are now your risk = Tribal knowledge, manual rebuilds, heroic effort - they don't scale, don't transfer, and create single points of failure.",
-              "The window is narrowing = Organizations that fix app delivery now absorb the next wave. The ones that wait spend the next three years reacting."
+              "The math doesn\u2019t add up. = Most IT teams haven\u2019t doubled in size, but the workload has. Teams are being asked to manage twice as much with the same hands.",
+              "People work everywhere now. = Apps have to follow them \u2014 securely \u2014 no matter what device or network they\u2019re on.",
+              "Falling behind has consequences. = Every delayed update is another open door for attackers and another roadblock for your users."
             ],
             analyst: "Everyone else hits a capacity wall - and strategy doesn't fix a capacity problem. (Gartner, 2024)"
           },
@@ -549,20 +549,20 @@
         defaultsCurrentState() {
           return JSON.parse(JSON.stringify({
             change: {
-              intro: "Your team isn't underperforming. They're hitting the structural ceiling of a delivery model that was built for two platforms. Most organizations now manage five or six.",
+              intro: "",
               bullets: [
-                "Per-platform = per-problem = Every app is packaged, tested, and maintained separately for each environment. Five platforms means five times the work - per app.",
-                "It compounds, not levels off = Every new migration, security mandate, or tool adoption fans out across every platform. The workload multiplies.",
-                "The team isn't the bottleneck - the model is = Most organizations have already optimized within the current approach. The ceiling is structural, not operational."
+                "The challenge has changed. = Hardware is stable, networks are solid \u2014 but apps keep IT teams running in circles.",
+                "The volume and pace are overwhelming. = You can\u2019t keep thousands of apps current and secure with the same tools and headcount you\u2019ve always had.",
+                "Big plans keep getting delayed. = You want to move from Citrix to AVD, shift from SCCM to Intune, Windows on ARM Pilots, AI Projects \u2014 but app readiness keeps blocking progress."
               ],
               analyst: "The organizations pulling ahead aren't working harder - they're changing the model. (Forrester, Gartner, McKinsey)"
             },
             now: {
-              intro: "This has been building for years - but 2026 is where the math stops working for most teams.",
+              intro: "",
               bullets: [
-                "Three forces hitting at once = Platform sprawl, AI adoption pressure, and continuous security patching - any one is absorbable. Together, they break the model.",
-                "Your workarounds are now your risk = Tribal knowledge, manual rebuilds, heroic effort - they don't scale, don't transfer, and create single points of failure.",
-                "The window is narrowing = Organizations that fix app delivery now absorb the next wave. The ones that wait spend the next three years reacting."
+                "The math doesn\u2019t add up. = Most IT teams haven\u2019t doubled in size, but the workload has. Teams are being asked to manage twice as much with the same hands.",
+                "People work everywhere now. = Apps have to follow them \u2014 securely \u2014 no matter what device or network they\u2019re on.",
+                "Falling behind has consequences. = Every delayed update is another open door for attackers and another roadblock for your users."
               ],
               analyst: "Everyone else hits a capacity wall - and strategy doesn't fix a capacity problem. (Gartner, 2024)"
             },
@@ -1777,7 +1777,7 @@
         if(!STATE.openWhyModal) return '';
         const id = STATE.openWhyModal;
         const iconMap = { change: 'alert-triangle', now: 'clock-4', recast: 'sparkles' };
-        const labelMap = { change: 'Why Change', now: 'Why Now', recast: 'Why Recast' };
+        const labelMap = { change: 'Why Change \u2014 Apps Have Become the Hardest Part of IT', now: 'Why Now \u2014 The Pace Has Outrun the People', recast: 'Why Recast' };
         const data = STATE.currentState[id];
         const currentIdx = whyOrder.indexOf(id);
         const prev = currentIdx > 0 ? whyOrder[currentIdx - 1] : null;
