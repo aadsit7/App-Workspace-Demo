@@ -300,26 +300,22 @@
       .ob-laptop { opacity: 0; transform: perspective(800px) rotateY(-15deg) scale(0.92); transition: opacity 0.6s ease, transform 0.6s ease; }
       .ob-laptop.ob-visible { opacity: 1; transform: perspective(800px) rotateY(0deg) scale(1); }
       .ob-laptop-r { transition-delay: 0.15s; }
-      .ob-screen-content { padding: 8px; min-height: 140px; position: relative; background: #f8fafc; }
-      .ob-taskbar { display: flex; align-items: center; justify-content: space-between; padding: 4px 10px; background: #e2e8f0; border-top: 1px solid #cbd5e1; font-size: 8px; color: #64748b; }
-      .ob-screen-header { padding: 6px 8px; font-size: 9px; font-weight: 700; display: flex; align-items: center; gap: 4px; border-bottom: 1px solid #e2e8f0; }
-      .ob-install-row { display: flex; align-items: center; gap: 6px; padding: 4px 8px; font-size: 9px; font-weight: 600; border-radius: 6px; background: #f1f5f9; margin-bottom: 3px; }
-      .ob-install-row.ob-row-done { background: #ecfdf5; }
-      .ob-install-row.ob-row-fail { background: #fef2f2; }
-      .ob-install-row.ob-row-active { background: #eff6ff; }
-      .ob-prog-track { flex: 1; height: 4px; background: #e2e8f0; border-radius: 2px; overflow: hidden; }
-      .ob-prog-fill { height: 100%; border-radius: 2px; transition: width 0.5s ease; }
-      .ob-prog-green { background: linear-gradient(90deg, #10b981, #34d399); }
-      .ob-prog-blue { background: linear-gradient(90deg, #0070F3, #38bdf8); }
-      .ob-prog-red { background: linear-gradient(90deg, #f59e0b, #ef4444); }
-      .ob-timeout-warn { display: flex; align-items: center; gap: 4px; padding: 5px 8px; border-radius: 6px; background: #fef3c7; border: 1px solid #fbbf24; font-size: 9px; font-weight: 600; color: #92400e; margin-top: 6px; }
-      .ob-success-banner { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 12px; border-radius: 8px; background: linear-gradient(135deg, #ecfdf5, #d1fae5); border: 1.5px solid #10b981; font-size: 10px; font-weight: 700; color: #065f46; margin-top: 6px; }
-      .ob-app-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 3px; }
-      .ob-app-cell { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; padding: 4px 2px; border-radius: 5px; font-size: 7px; font-weight: 600; background: #f1f5f9; border: 1px solid #e2e8f0; color: #94a3b8; transition: all 0.3s ease; min-height: 36px; }
-      .ob-app-cell.ob-cell-done { background: #ecfdf5; border-color: #86efac; color: #065f46; }
-      .ob-app-cell.ob-cell-active { background: #eff6ff; border-color: #93c5fd; color: #0A1C60; }
-      .ob-app-cell.ob-cell-fail { background: #fef2f2; border-color: #fca5a5; color: #991b1b; }
-      .ob-counter { font-size: 20px; font-weight: 800; letter-spacing: -1px; transition: color 0.3s ease; }
+      .ob-screen-content { min-height: 180px; position: relative; background: #f8fafc; overflow: hidden; }
+      .ob-taskbar { display: flex; align-items: center; justify-content: space-between; padding: 4px 10px; background: rgba(255,255,255,0.85); backdrop-filter: blur(8px); border-top: 1px solid rgba(203,213,225,0.5); font-size: 8px; color: #64748b; }
+      .ob-oobe { background: linear-gradient(135deg, #0078D4, #106EBE); min-height: 180px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+      .ob-desktop { background: linear-gradient(135deg, #e0e7ff 0%, #dbeafe 40%, #eff6ff 100%); min-height: 180px; display: flex; flex-direction: column; position: relative; }
+      .ob-desktop-icons { flex: 1; padding: 10px 12px; display: flex; flex-wrap: wrap; gap: 8px; align-content: start; }
+      .ob-desktop-icon { display: flex; flex-direction: column; align-items: center; gap: 2px; width: 40px; }
+      .ob-desktop-icon .ob-icon-sq { width: 30px; height: 30px; border-radius: 7px; display: grid; place-items: center; font-size: 11px; font-weight: 800; color: white; box-shadow: 0 1px 4px rgba(0,0,0,0.15); }
+      .ob-desktop-icon .ob-icon-label { font-size: 7px; color: #334155; text-align: center; line-height: 1.1; }
+      .ob-placeholder-icon .ob-icon-sq { background: rgba(148,163,184,0.25); border: 1.5px dashed #94a3b8; color: #94a3b8; font-size: 10px; font-weight: 700; box-shadow: none; }
+      .ob-toast { position: absolute; bottom: 6px; right: 6px; left: 6px; padding: 5px 8px; border-radius: 6px; font-size: 8px; font-weight: 600; display: flex; align-items: center; gap: 4px; backdrop-filter: blur(4px); }
+      .ob-toast-warn { background: rgba(254,243,199,0.95); border: 1px solid #fbbf24; color: #92400e; }
+      .ob-toast-error { background: rgba(254,226,226,0.95); border: 1px solid #fca5a5; color: #991b1b; }
+      .ob-toast-info { background: rgba(219,234,254,0.95); border: 1px solid #93c5fd; color: #1e40af; }
+      .ob-toast-success { background: rgba(209,250,229,0.95); border: 1px solid #86efac; color: #065f46; }
+      .ob-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.3); backdrop-filter: blur(2px); }
+      .ob-overlay-card { background: white; border-radius: 10px; padding: 12px 16px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
       @keyframes finalGlow { 0% { box-shadow: 0 0 0 0 rgba(16,185,129,0); } 50% { box-shadow: 0 0 30px 10px rgba(16,185,129,0.15); } 100% { box-shadow: 0 0 0 0 rgba(16,185,129,0); } }
       .final-glow { animation: finalGlow 2s ease-in-out; }
       .cfg-item { display: flex; align-items: center; gap: 5px; padding: 3px 7px; border-radius: 5px; font-size: 10px; color: #475569; background: white; border: 1px solid #e2e8f0; transition: all 0.3s ease; opacity: 0; transform: translateX(-6px); }
@@ -2363,41 +2359,13 @@
       ];
       const DR_ZONES_LIST = ['Zone A','Zone B','Zone C'];
 
-      // Intune side: only 5 apps (practical limit during Autopilot)
-      const OB_INTUNE_APPS = [
-        {id:'security', label:'Security Agent', icon:'shield'},
-        {id:'vpn', label:'VPN Client', icon:'lock'},
-        {id:'m365', label:'Microsoft 365', icon:'file-text'},
-        {id:'teams', label:'Teams', icon:'message-circle'},
-        {id:'lob', label:'LOB App', icon:'briefcase'},
+      // Default Windows desktop icons (Intune side)
+      const OB_WIN_ICONS = [
+        {l:'E',c:'#0078D4',n:'Edge'},{l:'\ud83d\udcc1',c:'#F0C75E',n:'Files'},{l:'\u2699',c:'#555',n:'Settings'},{l:'\ud83d\uddd1',c:'#777',n:'Recycle'}
       ];
-      // AW side: 25 apps sequenced via agent
-      const OB_APPS = [
-        {id:'security', label:'Security', icon:'shield'},
-        {id:'vpn', label:'VPN', icon:'lock'},
-        {id:'m365', label:'M365', icon:'file-text'},
-        {id:'teams', label:'Teams', icon:'message-circle'},
-        {id:'outlook', label:'Outlook', icon:'mail'},
-        {id:'onedrive', label:'OneDrive', icon:'cloud'},
-        {id:'sharepoint', label:'SharePt', icon:'share-2'},
-        {id:'chrome', label:'Chrome', icon:'globe'},
-        {id:'adobe', label:'Acrobat', icon:'book-open'},
-        {id:'zoom', label:'Zoom', icon:'video'},
-        {id:'slack', label:'Slack', icon:'hash'},
-        {id:'servicenow', label:'SvcNow', icon:'headphones'},
-        {id:'sap', label:'SAP', icon:'database'},
-        {id:'powerbi', label:'PowerBI', icon:'bar-chart-3'},
-        {id:'autocad', label:'CAD', icon:'pen-tool'},
-        {id:'endpoint', label:'EPP', icon:'shield-check'},
-        {id:'bitlocker', label:'BitLock', icon:'key'},
-        {id:'crowdstrike', label:'Falcon', icon:'eye'},
-        {id:'cisco', label:'Cisco', icon:'wifi'},
-        {id:'printer', label:'Printer', icon:'printer'},
-        {id:'7zip', label:'7-Zip', icon:'archive'},
-        {id:'notepad', label:'Npp', icon:'edit-3'},
-        {id:'vscode', label:'VSCode', icon:'code'},
-        {id:'java', label:'Java', icon:'coffee'},
-        {id:'dotnet', label:'.NET', icon:'cpu'},
+      // Intune managed apps that slowly trickle in
+      const OB_INTUNE_SLOW = [
+        {l:'S',c:'#0070F3',n:'Security'},{l:'V',c:'#6366f1',n:'VPN'}
       ];
 
       function renderMultiTenantView(){
@@ -2659,43 +2627,9 @@
           return order.indexOf(p) >= order.indexOf(target);
         };
 
-        // LEFT (Intune): per-app progress — painfully slow, inline widths
-        function leftProg(i){
-          if (past('result')) return i === 0 ? 65 : i === 1 ? 20 : 0;
-          if (past('deploying')) return i === 0 ? 35 : i === 1 ? 8 : 0;
-          return 0;
-        }
-        function leftStatus(i){
-          if (!past('deploying')) return 'waiting';
-          if (past('result')) return i < 2 ? 'stalled' : 'fail';
-          return i === 0 ? 'active' : i === 1 ? 'active' : 'waiting';
-        }
-
-        // RIGHT (AW): 25 apps — all cascade to done during deploying
-        function rightCellState(i){
-          if (past('result')) return 'ob-cell-done';
-          if (past('deploying')) return 'ob-cell-done';
-          if (past('diverge')) return i < 3 ? 'ob-cell-active' : '';
-          return '';
-        }
-
+        // Elapsed times
         const leftElapsed = past('result') ? '60+ min' : past('deploying') ? '45 min' : past('diverge') ? '30 min' : past('autopilot') ? '15 min' : '2 min';
         const rightElapsed = past('result') ? '18 min' : past('deploying') ? '12 min' : past('diverge') ? '10 min' : past('autopilot') ? '8 min' : '2 min';
-
-        const rightCount = past('result') ? 25 : past('deploying') ? 25 : past('diverge') ? 3 : 0;
-
-        // Screen headers — no animations, just text
-        const leftHeader = past('result') ? '<span class="text-red-600"><i data-lucide="alert-triangle" class="w-3 h-3 inline"></i> Installation stalled</span>'
-          : past('deploying') ? '<span class="text-amber-600"><i data-lucide="clock" class="w-3 h-3 inline"></i> Waiting for applications...</span>'
-          : past('diverge') ? '<span class="text-slate-500"><i data-lucide="clock" class="w-3 h-3 inline"></i> Waiting for applications...</span>'
-          : past('autopilot') ? '<span class="text-blue-600"><i data-lucide="shield" class="w-3 h-3 inline"></i> Windows Autopilot enrolling...</span>'
-          : '<span class="text-slate-500"><i data-lucide="monitor" class="w-3 h-3 inline"></i> Preparing device...</span>';
-
-        const rightHeader = past('result') ? '<span class="text-emerald-600"><i data-lucide="check-circle" class="w-3 h-3 inline"></i> All 25 apps ready!</span>'
-          : past('deploying') ? '<span class="text-blue-600"><i data-lucide="zap" class="w-3 h-3 inline"></i> Sequencing 25 installs...</span>'
-          : past('diverge') ? '<span class="text-blue-600"><i data-lucide="cpu" class="w-3 h-3 inline"></i> AW Agent active...</span>'
-          : past('autopilot') ? '<span class="text-blue-600"><i data-lucide="shield" class="w-3 h-3 inline"></i> Autopilot + AW Agent installing...</span>'
-          : '<span class="text-slate-500"><i data-lucide="monitor" class="w-3 h-3 inline"></i> Preparing device...</span>';
 
         // Timeline steps (3 per side)
         const leftSteps = [
@@ -2709,39 +2643,70 @@
           {label:'User productive immediately', state: past('result') ? 'ob-done' : ''},
         ];
 
-        // Intune install rows (5 apps with progress bars)
-        function renderIntuneRows(){
-          return OB_INTUNE_APPS.map((a, i) => {
-            const prog = leftProg(i);
-            const st = leftStatus(i);
-            const rc = st === 'stalled' ? 'ob-row-fail' : st === 'fail' ? 'ob-row-fail' : st === 'active' ? 'ob-row-active' : '';
-            const fillColor = st === 'fail' || st === 'stalled' ? 'ob-prog-red' : 'ob-prog-blue';
-            const icon = st === 'stalled' ? '<i data-lucide="loader" class="w-3 h-3 text-amber-500 flex-shrink-0"></i>'
-              : st === 'fail' ? '<i data-lucide="x-circle" class="w-3 h-3 text-red-500 flex-shrink-0"></i>'
-              : st === 'active' ? '<i data-lucide="loader" class="w-3 h-3 text-blue-500 ob-pulse flex-shrink-0"></i>'
-              : '<i data-lucide="clock" class="w-3 h-3 text-slate-300 flex-shrink-0"></i>';
-            return `<div class="ob-install-row ${rc}">
-              <i data-lucide="${a.icon}" class="w-3 h-3 flex-shrink-0" style="opacity:${st === 'waiting' ? '0.4' : '1'}"></i>
-              <span class="flex-1 truncate" style="min-width:0;color:${st === 'waiting' ? '#94a3b8' : st === 'fail' || st === 'stalled' ? '#991b1b' : '#0A1C60'}">${a.label}</span>
-              <div class="ob-prog-track" style="max-width:55px">
-                <div class="ob-prog-fill ${fillColor}" style="width:${prog}%"></div>
+        // ===== LEFT DEVICE SCREEN (Intune Only) =====
+        function leftScreen(){
+          if (!past('diverge')) {
+            // OOBE / Autopilot enrollment screen
+            const prog = past('autopilot') ? 70 : 20;
+            const label = past('autopilot') ? 'Enrolling with Intune...' : 'Setting up your device...';
+            return `<div class="ob-oobe">
+              <i data-lucide="cloud-cog" class="w-6 h-6 text-white mb-2" style="opacity:0.8"></i>
+              <div class="spinner mx-auto mb-2" style="width:18px;height:18px;border-width:2px;border-color:rgba(255,255,255,0.3);border-top-color:white"></div>
+              <div class="text-[10px] text-white font-semibold">${label}</div>
+              <div class="text-[8px] text-blue-200 mt-0.5">Windows Autopilot</div>
+              <div class="mt-3 w-full max-w-[140px] h-1.5 rounded-full overflow-hidden" style="background:rgba(255,255,255,0.2)">
+                <div class="h-full rounded-full bg-white" style="width:${prog}%;transition:width 0.6s ease"></div>
               </div>
-              ${icon}
             </div>`;
-          }).join('');
+          }
+          // Windows Desktop — mostly empty
+          const showSlow = past('deploying') ? OB_INTUNE_SLOW : [];
+          const placeholders = past('deploying') ? [{n:'M365'},{n:'Teams'},{n:'LOB'}] : [];
+          return `<div class="ob-desktop">
+            <div class="ob-desktop-icons">
+              ${OB_WIN_ICONS.map(ic => `<div class="ob-desktop-icon"><div class="ob-icon-sq" style="background:${ic.c}">${ic.l}</div><div class="ob-icon-label">${ic.n}</div></div>`).join('')}
+              ${showSlow.map(ic => `<div class="ob-desktop-icon"><div class="ob-icon-sq" style="background:${ic.c}">${ic.l}</div><div class="ob-icon-label">${ic.n}</div></div>`).join('')}
+              ${placeholders.map(ic => `<div class="ob-desktop-icon ob-placeholder-icon"><div class="ob-icon-sq">?</div><div class="ob-icon-label" style="color:#94a3b8">${ic.n}</div></div>`).join('')}
+            </div>
+            ${past('deploying') && !past('result') ? `<div class="ob-toast ob-toast-warn"><i data-lucide="clock" class="w-3 h-3 flex-shrink-0"></i> Software Center: Installing... (45 min)</div>` : ''}
+            ${past('result') && !past('done') ? `<div class="ob-toast ob-toast-error"><i data-lucide="x-circle" class="w-3 h-3 flex-shrink-0"></i> 3 apps failed to install</div>` : ''}
+            ${past('done') ? `<div class="ob-overlay"><div class="ob-overlay-card"><i data-lucide="phone-call" class="w-5 h-5 text-red-500 mx-auto mb-1"></i><div class="text-[10px] font-bold text-red-600">Calling IT Help Desk...</div><div class="text-[8px] text-slate-400">"My apps aren't installed"</div></div></div>` : ''}
+          </div>`;
         }
 
-        // AW 25-app grid
-        function renderAwGrid(){
-          return OB_APPS.map((a, i) => {
-            const cellState = rightCellState(i);
-            const isDone = cellState === 'ob-cell-done';
-            const delay = past('deploying') ? (i * 0.06) : 0;
-            return `<div class="ob-app-cell ${cellState}" style="transition-delay:${delay}s">
-              <i data-lucide="${isDone ? 'check' : a.icon}" class="w-3 h-3" style="color:${isDone ? '#10b981' : cellState === 'ob-cell-active' ? '#0070F3' : '#cbd5e1'}"></i>
-              <span style="line-height:1">${a.label}</span>
+        // ===== RIGHT DEVICE SCREEN (With AW) =====
+        function rightScreen(){
+          if (!past('diverge')) {
+            // OOBE / Autopilot + AW Agent enrollment
+            const prog = past('autopilot') ? 90 : 20;
+            const label = past('autopilot') ? 'Enrolling + installing AW Agent...' : 'Setting up your device...';
+            return `<div class="ob-oobe">
+              <i data-lucide="cloud-cog" class="w-6 h-6 text-white mb-2" style="opacity:0.8"></i>
+              <div class="spinner mx-auto mb-2" style="width:18px;height:18px;border-width:2px;border-color:rgba(255,255,255,0.3);border-top-color:white"></div>
+              <div class="text-[10px] text-white font-semibold">${label}</div>
+              <div class="text-[8px] text-blue-200 mt-0.5">Windows Autopilot + Application Workspace</div>
+              <div class="mt-3 w-full max-w-[140px] h-1.5 rounded-full overflow-hidden" style="background:rgba(255,255,255,0.2)">
+                <div class="h-full rounded-full" style="width:${prog}%;transition:width 0.6s ease;background:linear-gradient(90deg,white,#86efac)"></div>
+              </div>
             </div>`;
-          }).join('');
+          }
+          // Windows Desktop with cascading apps
+          const showApps = past('deploying');
+          const allDone = past('result');
+          return `<div class="ob-desktop">
+            <div class="ob-desktop-icons">
+              ${OB_WIN_ICONS.map(ic => `<div class="ob-desktop-icon"><div class="ob-icon-sq" style="background:${ic.c}">${ic.l}</div><div class="ob-icon-label">${ic.n}</div></div>`).join('')}
+              ${showApps ? `<div style="width:100%;display:flex;flex-wrap:wrap;gap:4px;margin-top:2px">
+                ${AP_APPS.map((app, i) => `<div class="ap-cascade-icon ${showApps ? 'visible' : ''}" style="--d:${allDone ? '0s' : (i * 0.05) + 's'}"><div class="ap-app-sq" style="background:${app.c};width:24px;height:24px;border-radius:5px;display:grid;place-items:center;font-size:8px;font-weight:800;color:white">${app.l}</div></div>`).join('')}
+              </div>` : ''}
+              ${!showApps ? `<div style="width:100%;margin-top:8px;text-align:center">
+                <div class="text-[9px] text-blue-600 font-semibold"><i data-lucide="zap" class="w-3 h-3 inline"></i> AW Agent: Sequencing 25 apps...</div>
+              </div>` : ''}
+            </div>
+            ${past('deploying') && !past('result') ? `<div class="ob-toast ob-toast-info"><i data-lucide="zap" class="w-3 h-3 flex-shrink-0"></i> AW Agent: Delivering ${AP_APPS.length} apps...</div>` : ''}
+            ${past('result') && !past('done') ? `<div class="ob-toast ob-toast-success"><i data-lucide="check-circle" class="w-3 h-3 flex-shrink-0"></i> All ${AP_APPS.length} apps installed!</div>` : ''}
+            ${past('done') ? `<div class="ob-overlay" style="background:rgba(16,185,129,0.1);backdrop-filter:none"><div class="ob-overlay-card" style="border:1.5px solid #10b981"><i data-lucide="user-check" class="w-5 h-5 text-emerald-500 mx-auto mb-1"></i><div class="text-[10px] font-bold text-emerald-700">Sarah is already productive</div><div class="text-[8px] text-slate-400">All apps ready in under 20 min</div></div></div>` : ''}
+          </div>`;
         }
 
         return `
@@ -2761,9 +2726,9 @@
 
             ${!past('setup') ? `
               <div class="text-center py-6 text-sm text-slate-400">
-                <i data-lucide="user-plus" class="w-8 h-8 mx-auto mb-2 text-slate-300"></i>
+                <i data-lucide="laptop" class="w-8 h-8 mx-auto mb-2 text-slate-300"></i>
                 <div>Press <strong>Auto</strong> or <strong>Step</strong> to compare onboarding approaches</div>
-                <div class="text-[10px] text-slate-300 mt-1">Intune-only (5 apps) vs. Application Workspace (25 apps) \u2014 same new hire, different experience</div>
+                <div class="text-[10px] text-slate-300 mt-1">Same new hire, same Autopilot \u2014 one gets 2 apps, the other gets 25</div>
               </div>
             ` : `
 
@@ -2777,62 +2742,38 @@
                       <div class="w-6 h-6 rounded-md grid place-items-center" style="background:#ef4444"><i data-lucide="monitor" class="w-3.5 h-3.5 text-white"></i></div>
                       <div>
                         <div class="text-[11px] font-bold text-[#0A1C60]">Intune Only</div>
-                        <div class="text-[8px] text-slate-400">Traditional Autopilot \u2014 5 apps max</div>
+                        <div class="text-[8px] text-slate-400">Traditional Autopilot</div>
                       </div>
                     </div>
                     ${past('result') ? '<span class="text-[10px] font-bold text-red-500 px-2 py-0.5 rounded-full bg-red-50 border border-red-200">3+ hours</span>' : past('diverge') ? '<span class="text-[9px] text-red-400 ob-pulse font-semibold">Waiting...</span>' : ''}
                   </div>
 
-                  <!-- LAPTOP MOCKUP (transition-based, no keyframes) -->
                   <div class="device-frame ob-laptop ${past('setup') ? 'ob-visible' : ''}" style="margin-bottom:8px">
                     <div class="device-screen">
                       <div class="device-titlebar">
                         <div class="device-dot device-dot-r"></div>
                         <div class="device-dot device-dot-y"></div>
                         <div class="device-dot device-dot-g"></div>
-                        <span class="device-titlebar-text">${past('deploying') ? 'Software Center \u2014 Installing...' : 'Windows Setup \u2014 Intune'}</span>
+                        <span class="device-titlebar-text">${past('diverge') ? 'Desktop \u2014 ' + leftElapsed : 'Windows Autopilot'}</span>
                       </div>
                       <div class="ob-screen-content">
-                        <div class="ob-screen-header">${leftHeader}</div>
-                        <div style="padding:6px 0">
-                          ${past('diverge') ? renderIntuneRows() : `
-                            <div class="flex items-center justify-center" style="min-height:80px">
-                              <div class="text-center text-[9px] text-slate-400">
-                                <i data-lucide="loader" class="w-5 h-5 mx-auto mb-1 text-blue-400 ob-pulse"></i>
-                                <div>${past('autopilot') ? 'Enrolling device...' : 'Starting up...'}</div>
-                              </div>
-                            </div>
-                          `}
-                          ${past('deploying') && !past('result') ? `
-                            <div class="ob-timeout-warn">
-                              <i data-lucide="alert-triangle" class="w-3 h-3 flex-shrink-0"></i>
-                              <span>Installation taking longer than expected...</span>
-                            </div>
-                          ` : ''}
-                          ${past('result') ? `
-                            <div class="ob-timeout-warn" style="background:#fef2f2;border-color:#fca5a5;color:#991b1b">
-                              <i data-lucide="phone-call" class="w-3 h-3 flex-shrink-0"></i>
-                              <span>User opening help desk ticket...</span>
-                            </div>
-                          ` : ''}
-                        </div>
+                        ${leftScreen()}
                       </div>
-                      <div class="ob-taskbar">
-                        <span>\u23f1 Elapsed: ${leftElapsed}</span>
-                        <span style="font-size:7px;color:#94a3b8">5 apps attempted</span>
-                        ${past('result') ? '<span style="color:#ef4444;font-weight:700">TIMEOUT</span>' : '<span style="color:#64748b"><i data-lucide="loader" class="w-3 h-3 inline ob-pulse"></i></span>'}
-                      </div>
+                      ${past('diverge') ? `<div class="ob-taskbar">
+                        <span>\u23f1 ${leftElapsed}</span>
+                        <span style="font-size:7px;color:#94a3b8">${past('result') ? '2 of 5 apps' : past('deploying') ? 'Installing...' : 'Waiting...'}</span>
+                        ${past('result') ? '<span style="color:#ef4444;font-weight:700">\u26a0 FAILED</span>' : '<span style="color:#64748b"><i data-lucide="loader" class="w-3 h-3 inline ob-pulse"></i></span>'}
+                      </div>` : ''}
                     </div>
                   </div>
 
-                  <!-- Timeline -->
                   <div class="space-y-1">
                     ${leftSteps.map(s => `<div class="ob-step ${s.state}"><div class="ob-dot"></div><span>${s.label}</span></div>`).join('')}
                   </div>
                   ${past('result') ? `
                     <div class="mt-2 p-2 rounded-lg bg-red-50 border border-red-200 text-[9px] text-red-600 flex items-start gap-1.5">
                       <i data-lucide="alert-triangle" class="w-3.5 h-3.5 flex-shrink-0 mt-0.5"></i>
-                      <span>60+ min wait. 3 apps failed. No sequencing. Help desk ticket opened.</span>
+                      <span>60+ min wait. 3 apps failed silently. No install sequencing. Help desk ticket opened.</span>
                     </div>
                   ` : ''}
                 </div>
@@ -2844,59 +2785,31 @@
                       <div class="w-6 h-6 rounded-md grid place-items-center" style="background:linear-gradient(135deg,#0070F3,#10b981)"><i data-lucide="zap" class="w-3.5 h-3.5 text-white"></i></div>
                       <div>
                         <div class="text-[11px] font-bold text-[#0A1C60]">With Application Workspace</div>
-                        <div class="text-[8px] text-slate-400">Autopilot + AW Agent \u2014 25 apps sequenced</div>
+                        <div class="text-[8px] text-slate-400">Autopilot + AW Agent</div>
                       </div>
                     </div>
                     ${past('result') ? '<span class="text-[10px] font-bold text-emerald-600 px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200">\u223c20 min</span>' : past('diverge') ? '<span class="text-[9px] text-emerald-500 font-semibold">Deploying...</span>' : ''}
                   </div>
 
-                  <!-- LAPTOP MOCKUP (transition-based) -->
                   <div class="device-frame ob-laptop ob-laptop-r ${past('setup') ? 'ob-visible' : ''}" style="margin-bottom:8px">
                     <div class="device-screen">
                       <div class="device-titlebar">
                         <div class="device-dot device-dot-r"></div>
                         <div class="device-dot device-dot-y"></div>
                         <div class="device-dot device-dot-g"></div>
-                        <span class="device-titlebar-text">${past('deploying') ? 'Application Workspace \u2014 Deploying' : 'Application Workspace \u2014 Agent'}</span>
+                        <span class="device-titlebar-text">${past('diverge') ? 'Desktop \u2014 ' + rightElapsed : 'Windows Autopilot + AW Agent'}</span>
                       </div>
                       <div class="ob-screen-content">
-                        <div class="ob-screen-header">${rightHeader}</div>
-                        <div style="padding:6px 0">
-                          ${past('diverge') ? `
-                            <!-- Counter -->
-                            <div class="flex items-center justify-between mb-2 px-1">
-                              <span class="ob-counter" style="color:${past('result') ? '#10b981' : '#0070F3'}">${rightCount}/25</span>
-                              <span class="text-[8px] font-bold uppercase tracking-wider ${past('result') ? 'text-emerald-600' : 'text-blue-500'}">${past('result') ? 'All installed' : 'Installing...'}</span>
-                            </div>
-                            <!-- 5x5 grid -->
-                            <div class="ob-app-grid">
-                              ${renderAwGrid()}
-                            </div>
-                            ${past('result') ? `
-                              <div class="ob-success-banner mt-2">
-                                <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
-                                All 25 apps installed, sequenced & configured!
-                              </div>
-                            ` : ''}
-                          ` : `
-                            <div class="flex items-center justify-center" style="min-height:80px">
-                              <div class="text-center text-[9px] text-slate-400">
-                                <i data-lucide="zap" class="w-5 h-5 mx-auto mb-1 text-blue-400 ob-pulse"></i>
-                                <div>${past('autopilot') ? 'Enrolling + installing AW Agent...' : 'Starting up...'}</div>
-                              </div>
-                            </div>
-                          `}
-                        </div>
+                        ${rightScreen()}
                       </div>
-                      <div class="ob-taskbar">
-                        <span>\u23f1 Elapsed: ${rightElapsed}</span>
-                        <span style="font-size:7px;color:#10b981;font-weight:600">25 apps via agent</span>
+                      ${past('diverge') ? `<div class="ob-taskbar">
+                        <span>\u23f1 ${rightElapsed}</span>
+                        <span style="font-size:7px;color:#10b981;font-weight:600">${past('result') ? '25/25 apps' : past('deploying') ? 'Delivering 25 apps...' : 'AW Agent active'}</span>
                         ${past('result') ? '<span style="color:#10b981;font-weight:700">\u2713 DONE</span>' : '<span style="color:#0070F3"><i data-lucide="zap" class="w-3 h-3 inline"></i></span>'}
-                      </div>
+                      </div>` : ''}
                     </div>
                   </div>
 
-                  <!-- Timeline -->
                   <div class="space-y-1">
                     ${rightSteps.map(s => `<div class="ob-step ${s.state}"><div class="ob-dot"></div><span>${s.label}</span></div>`).join('')}
                   </div>
@@ -2914,8 +2827,8 @@
               ${past('done') ? `
                 <div class="flex flex-wrap justify-center gap-3 mt-3">
                   <div class="ob-callout ob-show text-[#0A1C60] flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-50 border border-slate-200"><i data-lucide="timer" class="w-3.5 h-3.5"></i> 3+ hours \u2192 20 minutes</div>
-                  <div class="ob-callout ob-show text-emerald-700 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200" style="transition-delay:0.15s"><i data-lucide="layers" class="w-3.5 h-3.5"></i> 5 apps vs 25 apps \u2014 same time window</div>
-                  <div class="ob-callout ob-show text-[#0070F3] flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-50 border border-blue-200" style="transition-delay:0.3s"><i data-lucide="phone-off" class="w-3.5 h-3.5"></i> Zero \u201cwhere are my apps?\u201d calls</div>
+                  <div class="ob-callout ob-show text-emerald-700 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200" style="transition-delay:0.15s"><i data-lucide="layers" class="w-3.5 h-3.5"></i> 2 apps vs 25 apps \u2014 same Autopilot</div>
+                  <div class="ob-callout ob-show text-[#0070F3] flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-50 border border-blue-200" style="transition-delay:0.3s"><i data-lucide="phone-off" class="w-3.5 h-3.5"></i> Zero help desk calls</div>
                 </div>
               ` : ''}
 
@@ -2929,11 +2842,11 @@
         const queue = [];
         queue.push({ delay: 1000, fn(){ STATE.obPhase = 'setup'; render(); } });
         queue.push({ delay: 2000, fn(){ STATE.obPhase = 'autopilot'; render(); } });
-        queue.push({ delay: 1500, fn(){ STATE.obPhase = 'diverge'; render(); } });
+        queue.push({ delay: 2000, fn(){ STATE.obPhase = 'diverge'; render(); } });
         queue.push({ delay: 2500, fn(){ STATE.obPhase = 'deploying'; render(); } });
-        queue.push({ delay: 3000, fn(){ STATE.obPhase = 'result'; render(); } });
+        queue.push({ delay: 3500, fn(){ STATE.obPhase = 'result'; render(); } });
         queue.push({ delay: 2500, fn(){ STATE.obPhase = 'done'; render(); } });
-        queue.push({ delay: 2000, fn(){ STATE.obRunning = false; STATE.obPaused = false; render(); } });
+        queue.push({ delay: 2500, fn(){ STATE.obRunning = false; STATE.obPaused = false; render(); } });
         return queue;
       }
 
