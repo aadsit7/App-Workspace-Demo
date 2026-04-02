@@ -1548,17 +1548,11 @@
               </div>
               <div class="${isPlatformMult ? 'px-6 py-4' : 'p-8'} bg-white/35 backdrop-blur-lg" style="${bodyStyle}">
                 ${isPlatformMult ? renderPlatformSiloDiagram(intro) : isTippingPoint ? `
-                <div class="space-y-4">
-                  ${bullets.map(b=>`<div class="bg-white/70 backdrop-blur-lg p-4 rounded-lg shadow-sm flex items-start gap-3 hover:shadow-md transition-shadow"><i data-lucide="alert-triangle" class="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5"></i><p class="text-base leading-relaxed text-[#4A5568]">${b}</p></div>`).join('')}
-                </div>
-                ${closing ? `<div class="mt-4 bg-white/70 backdrop-blur-lg p-4 rounded-lg shadow-sm flex items-start gap-3"><i data-lucide="sparkles" class="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5"></i><p class="text-base italic text-[#4A5568]">${closing}</p></div>` : ''}
-                <div class="mt-6">
-                  <div class="flex items-center gap-2 mb-4"><i data-lucide="quote" class="w-5 h-5 text-slate-400"></i><span class="text-sm font-bold text-[#0A1C60]">What Analysts Are Saying</span></div>
-                  <div class="space-y-3">
-                    <div class="flex items-start gap-4 p-4 rounded-xl bg-white/70 backdrop-blur-lg shadow-sm hover:shadow-md transition-shadow"><div class="text-sm font-bold min-w-[120px] flex-shrink-0" style="color:#0070F3">Gartner, 2025</div><div class="text-sm text-[#475569] italic">"By 2027, organizations that fail to modernize application delivery will spend 40% more on operational overhead than those that do."</div></div>
-                    <div class="flex items-start gap-4 p-4 rounded-xl bg-white/70 backdrop-blur-lg shadow-sm hover:shadow-md transition-shadow"><div class="text-sm font-bold min-w-[120px] flex-shrink-0" style="color:#006B3F">Forrester, 2025</div><div class="text-sm text-[#475569] italic">"Application complexity has overtaken infrastructure as the primary bottleneck in IT operations. The breaking point is not a staffing issue — it's architectural."</div></div>
-                    <div class="flex items-start gap-4 p-4 rounded-xl bg-white/70 backdrop-blur-lg shadow-sm hover:shadow-md transition-shadow"><div class="text-sm font-bold min-w-[120px] flex-shrink-0" style="color:#D4213D">IDC, 2025</div><div class="text-sm text-[#475569] italic">"Application sprawl across hybrid environments is now the leading driver of unplanned IT work, consuming up to 60% of IT operations capacity."</div></div>
-                  </div>
+                <div class="flex items-center gap-2 mb-4"><i data-lucide="quote" class="w-5 h-5 text-slate-400"></i><span class="text-sm font-bold text-[#0A1C60]">What Analysts Are Saying</span></div>
+                <div class="space-y-3">
+                  <div class="flex items-start gap-4 p-4 rounded-xl bg-white/70 backdrop-blur-lg shadow-sm hover:shadow-md transition-shadow"><div class="text-sm font-bold min-w-[120px] flex-shrink-0" style="color:#0070F3">Gartner, 2025</div><div class="text-sm text-[#475569] italic">"By 2027, organizations that fail to modernize application delivery will spend 40% more on operational overhead than those that do."</div></div>
+                  <div class="flex items-start gap-4 p-4 rounded-xl bg-white/70 backdrop-blur-lg shadow-sm hover:shadow-md transition-shadow"><div class="text-sm font-bold min-w-[120px] flex-shrink-0" style="color:#006B3F">Forrester, 2025</div><div class="text-sm text-[#475569] italic">"Application complexity has overtaken infrastructure as the primary bottleneck in IT operations. The breaking point is not a staffing issue — it's architectural."</div></div>
+                  <div class="flex items-start gap-4 p-4 rounded-xl bg-white/70 backdrop-blur-lg shadow-sm hover:shadow-md transition-shadow"><div class="text-sm font-bold min-w-[120px] flex-shrink-0" style="color:#D4213D">IDC, 2025</div><div class="text-sm text-[#475569] italic">"Application sprawl across hybrid environments is now the leading driver of unplanned IT work, consuming up to 60% of IT operations capacity."</div></div>
                 </div>
                 ` : `
                 ${intro ? `<p class="text-base leading-relaxed text-[#4A5568] mb-4">${intro}</p>` : ''}
