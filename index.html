@@ -297,6 +297,27 @@
       .ob-step.ob-fail .ob-dot { background: #ef4444; }
       @keyframes obPulse { 0%,100% { opacity: 0.4; } 50% { opacity: 1; } }
       .ob-pulse { animation: obPulse 1.5s ease-in-out infinite; }
+      .ob-screen-content { padding: 10px; min-height: 160px; position: relative; background: #f8fafc; }
+      .ob-taskbar { display: flex; align-items: center; justify-content: space-between; padding: 4px 10px; background: #e2e8f0; border-top: 1px solid #cbd5e1; font-size: 8px; color: #64748b; }
+      .ob-install-row { display: flex; align-items: center; gap: 6px; padding: 5px 8px; font-size: 9px; font-weight: 600; border-radius: 6px; background: #f1f5f9; margin-bottom: 4px; transition: background 0.4s ease; }
+      .ob-install-row.ob-row-done { background: #ecfdf5; }
+      .ob-install-row.ob-row-fail { background: #fef2f2; }
+      .ob-install-row.ob-row-active { background: #eff6ff; }
+      .ob-prog-track { flex: 1; height: 5px; background: #e2e8f0; border-radius: 3px; overflow: hidden; }
+      .ob-prog-fill { height: 100%; border-radius: 3px; width: 0%; transition: width var(--speed, 1.5s) ease; }
+      .ob-prog-fill.ob-filling { width: var(--prog, 0%); }
+      .ob-prog-green { background: linear-gradient(90deg, #10b981, #34d399); }
+      .ob-prog-blue { background: linear-gradient(90deg, #0070F3, #38bdf8); }
+      .ob-prog-red { background: linear-gradient(90deg, #f59e0b, #ef4444); }
+      .ob-timeout-warn { display: flex; align-items: center; gap: 4px; padding: 5px 8px; border-radius: 6px; background: #fef3c7; border: 1px solid #fbbf24; font-size: 9px; font-weight: 600; color: #92400e; animation: obPulse 2s ease-in-out infinite; margin-top: 6px; }
+      .ob-success-banner { display: flex; align-items: center; justify-content: center; gap: 4px; padding: 6px 10px; border-radius: 6px; background: #ecfdf5; border: 1px solid #10b981; font-size: 10px; font-weight: 700; color: #065f46; margin-top: 6px; opacity: 0; transform: scale(0.95); transition: opacity 0.5s ease, transform 0.5s ease; }
+      .ob-success-banner.ob-show { opacity: 1; transform: scale(1); }
+      @keyframes obSpinUp { 0% { transform: perspective(800px) rotateY(-30deg) scale(0.85); opacity: 0; } 60% { transform: perspective(800px) rotateY(5deg) scale(1.02); opacity: 1; } 100% { transform: perspective(800px) rotateY(0deg) scale(1); opacity: 1; } }
+      .ob-laptop-enter { animation: obSpinUp 0.7s ease-out forwards; }
+      .ob-laptop-enter-delay { animation: obSpinUp 0.7s ease-out 0.2s forwards; opacity: 0; }
+      @keyframes obSpinSlow { to { transform: rotate(360deg); } }
+      .ob-spin-slow { animation: obSpinSlow 3s linear infinite; display: inline-flex; }
+      .ob-screen-header { padding: 6px 8px; font-size: 9px; font-weight: 700; display: flex; align-items: center; gap: 4px; border-bottom: 1px solid #e2e8f0; }
       @keyframes finalGlow { 0% { box-shadow: 0 0 0 0 rgba(16,185,129,0); } 50% { box-shadow: 0 0 30px 10px rgba(16,185,129,0.15); } 100% { box-shadow: 0 0 0 0 rgba(16,185,129,0); } }
       .final-glow { animation: finalGlow 2s ease-in-out; }
       .cfg-item { display: flex; align-items: center; gap: 5px; padding: 3px 7px; border-radius: 5px; font-size: 10px; color: #475569; background: white; border: 1px solid #e2e8f0; transition: all 0.3s ease; opacity: 0; transform: translateX(-6px); }
@@ -504,6 +525,7 @@
         obPaused: false,
         obQueue: [],
         obQueueIdx: 0,
+        obSubPhase: 0,
         showLabels: false,
         showSolutionCards: true,
         openWhy: null,
@@ -2602,29 +2624,70 @@
       /* ========== ONBOARDING VIEW ========== */
       function renderOnboardingView(){
         const p = STATE.obPhase;
+        const sub = STATE.obSubPhase;
         const past = (target) => {
           const order = ['idle','setup','autopilot','diverge','deploying','result','done'];
           return order.indexOf(p) >= order.indexOf(target);
         };
 
-        // Left side (Intune only) app states per phase
-        function leftAppState(appIdx){
-          if (!past('deploying')) return 'ob-waiting';
-          if (past('result')) return appIdx < 3 ? 'ob-installed' : 'ob-failed';
-          // During deploying: first 2 installed, rest waiting
-          return appIdx < 2 ? 'ob-installed' : appIdx === 2 ? 'ob-active ob-pulse' : 'ob-waiting';
-        }
-        // Right side (AW) app states per phase
-        function rightAppState(appIdx){
-          if (!past('deploying')) return 'ob-waiting';
-          if (past('result')) return 'ob-installed';
-          // During deploying: sequential install
-          return appIdx < 4 ? 'ob-installed' : 'ob-active ob-pulse';
+        // LEFT (Intune): per-app progress — painfully slow
+        function leftAppProgress(appIdx){
+          if (!past('deploying')) return { prog: 0, status: 'waiting' };
+          if (past('result')) {
+            if (appIdx === 0) return { prog: 65, status: 'stalled' };
+            if (appIdx === 1) return { prog: 20, status: 'stalled' };
+            if (appIdx === 2) return { prog: 5, status: 'fail' };
+            return { prog: 0, status: 'fail' };
+          }
+          // During deploying sub-phases: barely moves
+          if (appIdx === 0) return { prog: Math.min(sub * 8, 40), status: 'active' };
+          if (appIdx === 1 && sub >= 3) return { prog: Math.min((sub - 2) * 5, 15), status: 'active' };
+          return { prog: 0, status: 'waiting' };
         }
 
-        function stepIcon(state){ return state === 'ob-done' ? 'check' : state === 'ob-active' ? 'loader' : state === 'ob-fail' ? 'x' : 'circle'; }
+        // RIGHT (AW): per-app progress — rapid cascade
+        function rightAppProgress(appIdx){
+          if (!past('deploying')) return { prog: 0, status: 'waiting' };
+          if (past('result')) return { prog: 100, status: 'done' };
+          // During deploying: app N completes at subPhase N+1
+          if (sub > appIdx) return { prog: 100, status: 'done' };
+          if (sub === appIdx) return { prog: 70, status: 'active' };
+          return { prog: 0, status: 'waiting' };
+        }
 
-        // Left timeline steps
+        function statusIcon(status) {
+          if (status === 'done') return '<i data-lucide="check-circle" class="w-3 h-3 text-emerald-500 flex-shrink-0"></i>';
+          if (status === 'active') return '<i data-lucide="loader" class="w-3 h-3 text-blue-500 ob-pulse flex-shrink-0"></i>';
+          if (status === 'fail') return '<i data-lucide="x-circle" class="w-3 h-3 text-red-500 flex-shrink-0"></i>';
+          if (status === 'stalled') return '<span class="ob-spin-slow"><i data-lucide="loader" class="w-3 h-3 text-amber-500 flex-shrink-0"></i></span>';
+          return '<i data-lucide="clock" class="w-3 h-3 text-slate-300 flex-shrink-0"></i>';
+        }
+
+        function rowClass(status) {
+          if (status === 'done') return 'ob-row-done';
+          if (status === 'fail' || status === 'stalled') return 'ob-row-fail';
+          if (status === 'active') return 'ob-row-active';
+          return '';
+        }
+
+        // Elapsed times
+        const leftElapsed = past('result') ? '60+ min' : past('deploying') ? '45 min' : past('diverge') ? '30 min' : past('autopilot') ? '15 min' : '2 min';
+        const rightElapsed = past('result') ? '18 min' : past('deploying') ? '15 min' : past('diverge') ? '10 min' : past('autopilot') ? '8 min' : '2 min';
+
+        // Screen header text
+        const leftScreenHeader = past('result') ? '<span class="text-red-600"><i data-lucide="alert-triangle" class="w-3 h-3 inline"></i> Installation stalled</span>'
+          : past('deploying') ? '<span class="text-amber-600"><i data-lucide="loader" class="w-3 h-3 inline ob-spin-slow"></i> Waiting for applications...</span>'
+          : past('diverge') ? '<span class="text-slate-500"><i data-lucide="clock" class="w-3 h-3 inline"></i> Waiting for applications...</span>'
+          : past('autopilot') ? '<span class="text-blue-600"><i data-lucide="shield" class="w-3 h-3 inline"></i> Windows Autopilot enrolling...</span>'
+          : '<span class="text-slate-500"><i data-lucide="monitor" class="w-3 h-3 inline"></i> Preparing device...</span>';
+
+        const rightScreenHeader = past('result') ? '<span class="text-emerald-600"><i data-lucide="check-circle" class="w-3 h-3 inline"></i> All apps ready!</span>'
+          : past('deploying') ? '<span class="text-blue-600"><i data-lucide="zap" class="w-3 h-3 inline"></i> Sequencing installs...</span>'
+          : past('diverge') ? '<span class="text-blue-600"><i data-lucide="cpu" class="w-3 h-3 inline"></i> AW Agent active...</span>'
+          : past('autopilot') ? '<span class="text-blue-600"><i data-lucide="shield" class="w-3 h-3 inline"></i> Autopilot + AW Agent installing...</span>'
+          : '<span class="text-slate-500"><i data-lucide="monitor" class="w-3 h-3 inline"></i> Preparing device...</span>';
+
+        // Timeline steps
         const leftSteps = [
           {label:'Autopilot enrollment', state: past('autopilot') ? 'ob-done' : past('setup') ? 'ob-active' : ''},
           {label:'Desktop appears', state: past('diverge') ? 'ob-done' : past('autopilot') ? 'ob-active' : ''},
@@ -2632,7 +2695,6 @@
           {label:'Apps trickle in randomly', state: past('result') ? 'ob-fail' : past('deploying') ? 'ob-active' : ''},
           {label:'User calls help desk', state: past('result') ? 'ob-fail' : ''},
         ];
-        // Right timeline steps
         const rightSteps = [
           {label:'Autopilot + AW Agent installs', state: past('autopilot') ? 'ob-done' : past('setup') ? 'ob-active' : ''},
           {label:'First sign-in triggers agent', state: past('diverge') ? 'ob-done' : past('autopilot') ? 'ob-active' : ''},
@@ -2640,6 +2702,23 @@
           {label:'All apps sequenced & configured', state: past('result') ? 'ob-done' : past('deploying') ? 'ob-active' : ''},
           {label:'User productive immediately', state: past('result') ? 'ob-done' : ''},
         ];
+
+        function renderInstallRows(side) {
+          return OB_APPS.map((a, i) => {
+            const info = side === 'left' ? leftAppProgress(i) : rightAppProgress(i);
+            const fillClass = side === 'left' ? (info.status === 'fail' || info.status === 'stalled' ? 'ob-prog-red' : 'ob-prog-blue') : 'ob-prog-green';
+            const speed = side === 'left' ? '2.5s' : '0.4s';
+            return `
+              <div class="ob-install-row ${rowClass(info.status)}">
+                <i data-lucide="${a.icon}" class="w-3 h-3 flex-shrink-0" style="opacity:${info.status === 'waiting' ? '0.4' : '1'}"></i>
+                <span class="flex-1 truncate" style="min-width:0;color:${info.status === 'waiting' ? '#94a3b8' : info.status === 'done' ? '#065f46' : info.status === 'fail' || info.status === 'stalled' ? '#991b1b' : '#0A1C60'}">${a.label}</span>
+                <div class="ob-prog-track" style="max-width:60px">
+                  <div class="ob-prog-fill ${fillClass} ${info.prog > 0 ? 'ob-filling' : ''}" style="--prog:${info.prog}%;--speed:${speed}"></div>
+                </div>
+                ${statusIcon(info.status)}
+              </div>`;
+          }).join('');
+        }
 
         return `
           <div class="section-card p-4">
@@ -2664,7 +2743,7 @@
               </div>
             ` : `
 
-              <!-- SIDE-BY-SIDE COMPARISON -->
+              <!-- SIDE-BY-SIDE LAPTOP COMPARISON -->
               <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
 
                 <!-- LEFT: Intune Only -->
@@ -2680,21 +2759,43 @@
                     ${past('result') ? '<span class="text-[10px] font-bold text-red-500 px-2 py-0.5 rounded-full bg-red-50 border border-red-200">3+ hours</span>' : past('diverge') ? '<span class="text-[9px] text-red-400 ob-pulse font-semibold">Waiting...</span>' : ''}
                   </div>
 
-                  <!-- Timeline steps -->
-                  <div class="space-y-1 mb-3">
-                    ${leftSteps.map(s => s.state ? `<div class="ob-step ${s.state}"><div class="ob-dot"></div><span>${s.label}</span></div>` : `<div class="ob-step"><div class="ob-dot"></div><span>${s.label}</span></div>`).join('')}
+                  <!-- LAPTOP MOCKUP -->
+                  <div class="device-frame ob-laptop-enter" style="margin-bottom:8px">
+                    <div class="device-screen">
+                      <div class="device-titlebar">
+                        <div class="device-dot device-dot-r"></div>
+                        <div class="device-dot device-dot-y"></div>
+                        <div class="device-dot device-dot-g"></div>
+                        <span class="device-titlebar-text">${past('deploying') ? 'Software Center \u2014 Installing...' : 'Windows Setup \u2014 Intune'}</span>
+                      </div>
+                      <div class="ob-screen-content">
+                        <div class="ob-screen-header">${leftScreenHeader}</div>
+                        <div style="padding:6px 0">
+                          ${renderInstallRows('left')}
+                          ${past('deploying') && !past('result') ? `
+                            <div class="ob-timeout-warn">
+                              <i data-lucide="alert-triangle" class="w-3 h-3 flex-shrink-0"></i>
+                              <span>Installation taking longer than expected...</span>
+                            </div>
+                          ` : ''}
+                          ${past('result') ? `
+                            <div class="ob-timeout-warn" style="background:#fef2f2;border-color:#fca5a5;color:#991b1b">
+                              <i data-lucide="phone-call" class="w-3 h-3 flex-shrink-0"></i>
+                              <span>User opening help desk ticket...</span>
+                            </div>
+                          ` : ''}
+                        </div>
+                      </div>
+                      <div class="ob-taskbar">
+                        <span>\u23f1 Elapsed: ${leftElapsed}</span>
+                        ${!past('result') ? '<span class="ob-spin-slow"><i data-lucide="loader" class="w-3 h-3"></i></span>' : '<span style="color:#ef4444;font-weight:700">TIMEOUT</span>'}
+                      </div>
+                    </div>
                   </div>
 
-                  <!-- Apps -->
-                  <div class="text-[8px] font-bold uppercase tracking-widest text-slate-400 mb-1">Applications</div>
+                  <!-- Timeline steps -->
                   <div class="space-y-1">
-                    ${OB_APPS.map((a, i) => `
-                      <div class="ob-app ${leftAppState(i)}" style="transition-delay:${i * 0.08}s">
-                        <i data-lucide="${a.icon}" class="w-3 h-3 flex-shrink-0"></i>
-                        <span class="flex-1">${a.label}</span>
-                        ${leftAppState(i).includes('installed') ? '<i data-lucide="check" class="w-3 h-3 text-emerald-500"></i>' : leftAppState(i).includes('failed') ? '<i data-lucide="x" class="w-3 h-3 text-red-500"></i>' : leftAppState(i).includes('active') ? '<i data-lucide="loader" class="w-3 h-3 text-blue-500 ob-pulse"></i>' : '<i data-lucide="clock" class="w-3 h-3"></i>'}
-                      </div>
-                    `).join('')}
+                    ${leftSteps.map(s => s.state ? `<div class="ob-step ${s.state}"><div class="ob-dot"></div><span>${s.label}</span></div>` : `<div class="ob-step"><div class="ob-dot"></div><span>${s.label}</span></div>`).join('')}
                   </div>
 
                   ${past('result') ? `
@@ -2706,7 +2807,7 @@
                 </div>
 
                 <!-- RIGHT: With Application Workspace -->
-                <div class="ob-device ob-right ${past('setup') ? 'ob-visible' : 'ob-hidden'}" style="transition-delay:0.15s">
+                <div class="ob-device ob-right ${past('setup') ? 'ob-visible' : 'ob-hidden'}">
                   <div class="flex items-center justify-between mb-2">
                     <div class="flex items-center gap-2">
                       <div class="w-6 h-6 rounded-md grid place-items-center" style="background:linear-gradient(135deg,#0070F3,#10b981)"><i data-lucide="zap" class="w-3.5 h-3.5 text-white"></i></div>
@@ -2715,24 +2816,40 @@
                         <div class="text-[8px] text-slate-400">Autopilot + AW Agent</div>
                       </div>
                     </div>
-                    ${past('result') ? '<span class="text-[10px] font-bold text-emerald-600 px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200">~20 min</span>' : past('diverge') ? '<span class="text-[9px] text-emerald-500 font-semibold">Deploying...</span>' : ''}
+                    ${past('result') ? '<span class="text-[10px] font-bold text-emerald-600 px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200">\u223c20 min</span>' : past('diverge') ? '<span class="text-[9px] text-emerald-500 font-semibold">Deploying...</span>' : ''}
+                  </div>
+
+                  <!-- LAPTOP MOCKUP -->
+                  <div class="device-frame ob-laptop-enter-delay" style="margin-bottom:8px">
+                    <div class="device-screen">
+                      <div class="device-titlebar">
+                        <div class="device-dot device-dot-r"></div>
+                        <div class="device-dot device-dot-y"></div>
+                        <div class="device-dot device-dot-g"></div>
+                        <span class="device-titlebar-text">${past('deploying') ? 'Application Workspace \u2014 Deploying' : 'Application Workspace \u2014 Agent'}</span>
+                      </div>
+                      <div class="ob-screen-content">
+                        <div class="ob-screen-header">${rightScreenHeader}</div>
+                        <div style="padding:6px 0">
+                          ${renderInstallRows('right')}
+                          ${past('result') ? `
+                            <div class="ob-success-banner ob-show">
+                              <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                              All 5 apps installed & configured!
+                            </div>
+                          ` : ''}
+                        </div>
+                      </div>
+                      <div class="ob-taskbar">
+                        <span>\u23f1 Elapsed: ${rightElapsed}</span>
+                        ${past('result') ? '<span style="color:#10b981;font-weight:700">\u2713 COMPLETE</span>' : '<span style="color:#0070F3"><i data-lucide="zap" class="w-3 h-3 inline"></i></span>'}
+                      </div>
+                    </div>
                   </div>
 
                   <!-- Timeline steps -->
-                  <div class="space-y-1 mb-3">
-                    ${rightSteps.map(s => s.state ? `<div class="ob-step ${s.state}"><div class="ob-dot"></div><span>${s.label}</span></div>` : `<div class="ob-step"><div class="ob-dot"></div><span>${s.label}</span></div>`).join('')}
-                  </div>
-
-                  <!-- Apps -->
-                  <div class="text-[8px] font-bold uppercase tracking-widest text-slate-400 mb-1">Applications <span class="text-emerald-500">(sequenced)</span></div>
                   <div class="space-y-1">
-                    ${OB_APPS.map((a, i) => `
-                      <div class="ob-app ${rightAppState(i)}" style="transition-delay:${i * 0.08}s">
-                        <i data-lucide="${a.icon}" class="w-3 h-3 flex-shrink-0"></i>
-                        <span class="flex-1">${a.label}</span>
-                        ${rightAppState(i).includes('installed') ? '<i data-lucide="check" class="w-3 h-3 text-emerald-500"></i>' : rightAppState(i).includes('active') ? '<i data-lucide="loader" class="w-3 h-3 text-blue-500 ob-pulse"></i>' : '<i data-lucide="clock" class="w-3 h-3"></i>'}
-                      </div>
-                    `).join('')}
+                    ${rightSteps.map(s => s.state ? `<div class="ob-step ${s.state}"><div class="ob-dot"></div><span>${s.label}</span></div>` : `<div class="ob-step"><div class="ob-dot"></div><span>${s.label}</span></div>`).join('')}
                   </div>
 
                   ${past('result') ? `
@@ -2761,12 +2878,18 @@
 
       /* ========== OB ANIMATION ENGINE ========== */
       function buildObQueue(){
-        const phases = ['setup','autopilot','diverge','deploying','result','done'];
-        const delays = [800, 1500, 1200, 2000, 1500, 1500];
         const queue = [];
-        phases.forEach((phase, i) => {
-          queue.push({ delay: delays[i], fn(){ STATE.obPhase = phase; render(); } });
-        });
+        queue.push({ delay: 800, fn(){ STATE.obPhase = 'setup'; STATE.obSubPhase = 0; render(); } });
+        queue.push({ delay: 1500, fn(){ STATE.obPhase = 'autopilot'; render(); } });
+        queue.push({ delay: 1200, fn(){ STATE.obPhase = 'diverge'; render(); } });
+        // Deploying: 5 sub-phases, one per app on AW side
+        queue.push({ delay: 600, fn(){ STATE.obPhase = 'deploying'; STATE.obSubPhase = 1; render(); } });
+        queue.push({ delay: 500, fn(){ STATE.obSubPhase = 2; render(); } });
+        queue.push({ delay: 500, fn(){ STATE.obSubPhase = 3; render(); } });
+        queue.push({ delay: 500, fn(){ STATE.obSubPhase = 4; render(); } });
+        queue.push({ delay: 500, fn(){ STATE.obSubPhase = 5; render(); } });
+        queue.push({ delay: 1000, fn(){ STATE.obPhase = 'result'; render(); } });
+        queue.push({ delay: 1500, fn(){ STATE.obPhase = 'done'; render(); } });
         queue.push({ delay: 2000, fn(){ STATE.obRunning = false; STATE.obPaused = false; render(); } });
         return queue;
       }
@@ -2817,6 +2940,7 @@
         STATE.obPaused = false;
         STATE.obQueue = [];
         STATE.obQueueIdx = 0;
+        STATE.obSubPhase = 0;
         render();
       }
 
@@ -3616,7 +3740,7 @@
           if (node) { const id = node.dataset.id; STATE.activePopover = STATE.activePopover === id ? null : id; render(); return; }
           if (!action) return;
 
-          if (action === 'switch-tab') { STATE.activeTab = act.getAttribute('data-tab'); STATE.visitedCards = []; STATE.activePopover = null; STATE.openWhyModal = null; STATE.insightContent = null; STATE.flowStep = -1; STATE.flowRunning = false; STATE.flowPaused = false; STATE.flowScenarioIdx = -1; STATE.flowPhase = 'idle'; STATE.flowAppOpened = false; STATE._firstOpenDone = false; STATE.showAdminView = false; STATE.showAutopilot = false; STATE.autopilotStep = -1; STATE.autopilotAppCount = 0; STATE.drPhase = 'idle'; STATE.drRunning = false; STATE.drPaused = false; STATE.drQueue = []; STATE.drQueueIdx = 0; STATE.obPhase = 'idle'; STATE.obRunning = false; STATE.obPaused = false; STATE.obQueue = []; STATE.obQueueIdx = 0; clearFlowTimers(); render(); return; }
+          if (action === 'switch-tab') { STATE.activeTab = act.getAttribute('data-tab'); STATE.visitedCards = []; STATE.activePopover = null; STATE.openWhyModal = null; STATE.insightContent = null; STATE.flowStep = -1; STATE.flowRunning = false; STATE.flowPaused = false; STATE.flowScenarioIdx = -1; STATE.flowPhase = 'idle'; STATE.flowAppOpened = false; STATE._firstOpenDone = false; STATE.showAdminView = false; STATE.showAutopilot = false; STATE.autopilotStep = -1; STATE.autopilotAppCount = 0; STATE.drPhase = 'idle'; STATE.drRunning = false; STATE.drPaused = false; STATE.drQueue = []; STATE.drQueueIdx = 0; STATE.obPhase = 'idle'; STATE.obRunning = false; STATE.obPaused = false; STATE.obQueue = []; STATE.obQueueIdx = 0; STATE.obSubPhase = 0; clearFlowTimers(); render(); return; }
           if (action === 'advance') { STATE.activeTab = act.getAttribute('data-next'); STATE.openWhyModal = null; if (STATE.activeTab === 'roi') { calculateImpact(); } render(); return; }
           if (action === 'toggle-solution-view') {
             const view = act.getAttribute('data-view');
