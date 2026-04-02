@@ -3081,10 +3081,10 @@
                 <div class="flex items-center gap-2">
                   <span class="text-[11px] text-slate-400 font-medium hidden sm:inline">Select a view:</span>
                   <button type="button" data-action="toggle-solution-view" data-view="user" class="view-toggle ${STATE.solutionViewUser ? 'active' : ''}"><i data-lucide="monitor-smartphone" class="w-3.5 h-3.5"></i> User Experience</button>
-                  <button type="button" data-action="toggle-solution-view" data-view="onboarding" class="view-toggle ${STATE.solutionViewOnboarding ? 'active' : ''}"><i data-lucide="user-plus" class="w-3.5 h-3.5"></i> Onboarding</button>
                   <button type="button" data-action="toggle-solution-view" data-view="admin" class="view-toggle ${STATE.solutionViewAdmin ? 'active' : ''}"><i data-lucide="settings-2" class="w-3.5 h-3.5"></i> Admin Console</button>
-                  <button type="button" data-action="toggle-solution-view" data-view="multitenant" class="view-toggle ${STATE.solutionViewMultiTenant ? 'active' : ''}"><i data-lucide="building-2" class="w-3.5 h-3.5"></i> Multi-Tenant</button>
+                  <button type="button" data-action="toggle-solution-view" data-view="onboarding" class="view-toggle ${STATE.solutionViewOnboarding ? 'active' : ''}"><i data-lucide="user-plus" class="w-3.5 h-3.5"></i> Onboarding</button>
                   <button type="button" data-action="toggle-solution-view" data-view="dashboard" class="view-toggle ${STATE.solutionViewDashboard ? 'active' : ''}"><i data-lucide="bar-chart-3" class="w-3.5 h-3.5"></i> Dashboard & Reporting</button>
+                  <button type="button" data-action="toggle-solution-view" data-view="multitenant" class="view-toggle ${STATE.solutionViewMultiTenant ? 'active' : ''}"><i data-lucide="building-2" class="w-3.5 h-3.5"></i> Multi-Tenant</button>
                 </div>
                 ${(STATE.solutionViewUser || STATE.solutionViewAdmin || STATE.solutionViewMultiTenant || STATE.solutionViewDashboard || STATE.solutionViewOnboarding) ? `
                 <!-- Flow controls -->
@@ -3100,10 +3100,10 @@
             <!-- ZONE B: Main content (dynamic columns) -->
             <div class="grid grid-cols-1 ${multiCol ? 'lg:grid-cols-2' : ''} gap-3">
               ${STATE.solutionViewUser ? renderUserView() : ''}
-              ${STATE.solutionViewOnboarding ? renderOnboardingView() : ''}
               ${STATE.solutionViewAdmin ? renderAdminConsole() : ''}
-              ${STATE.solutionViewMultiTenant ? renderMultiTenantView() : ''}
+              ${STATE.solutionViewOnboarding ? renderOnboardingView() : ''}
               ${STATE.solutionViewDashboard ? renderDashboardView() : ''}
+              ${STATE.solutionViewMultiTenant ? renderMultiTenantView() : ''}
             </div>
 
             <div class="flex flex-col items-end gap-2 mt-2">
