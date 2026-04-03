@@ -3945,22 +3945,21 @@
         const buf = STATE.editBuffers;
         const toLines = arr => arr.join('\n');
         const ensure = v => v ?? '';
-        const editTabs = [ {id: 'change', label: 'Why Change'}, {id: 'now', label: 'Why Now'}, {id: 'recast', label: 'Why Recast'} ];
+        const editTabs = [ {id: 'change', label: 'Why Change'}, {id: 'now', label: 'Why Now'} ];
         return `
           <div role="dialog" aria-modal="true" aria-labelledby="cs-editor-title" class="fixed inset-0 z-50 flex items-center justify-center modal-overlay overflow-auto p-4 md:p-8">
             <div class="w-[95vw] h-[95vh] rounded-2xl shadow-2xl p-8 overflow-y-auto glass">
               <div class="flex items-center justify-between">
-                <h2 id="cs-editor-title" class="text-xl font-semibold tracking-normal">Edit Current State</h2>
+                <h2 id="cs-editor-title" class="text-xl font-semibold tracking-normal">Edit Narrative</h2>
                 <button type="button" class="bg-transparent text-[#0A1C60] p-2 focus-ring rounded" data-action="close-modal" aria-label="Close"><i data-lucide="x" class="w-4 h-4"></i></button>
               </div>
-              <p class="mt-1 text-sm text-[#4A5568]">Edit the introduction, bullets (one per line, max 4), and analyst trend for each section.</p>
+              <p class="mt-1 text-sm text-[#4A5568]">Edit the bullet cards and analyst insight for each section. Format: <strong>Title = Description</strong> (one per line).</p>
               <div role="tablist" aria-label="Edit sections" class="flex w-full flex-wrap gap-2 rounded bg-white/60 backdrop-blur-lg p-1 ring-1 ring-slate-200 mt-4">
                 ${editTabs.map(t=>`<button type="button" class="${cx('inline-flex items-center gap-2 px-3.5 py-1.5 text-sm focus-ring transition', STATE.editTab===t.id ? 'bg-[#0070F3] text-white hover:bg-[#005AD0] rounded' : 'text-[#0A1C60] hover:bg-slate-100 rounded')}" data-action="switch-edit-tab" data-tab="${t.id}" aria-selected="${STATE.editTab===t.id}"><span>${t.label}</span></button>`).join('')}
               </div>
               <div class="mt-4">
                 ${STATE.editTab === 'change' ? editorSection('change','Why Change', ensure(buf.change.intro) || STATE.currentState.change.intro, ensure(buf.change.bullets) || toLines(STATE.currentState.change.bullets), ensure(buf.change.analyst) || STATE.currentState.change.analyst) : ''}
                 ${STATE.editTab === 'now' ? editorSection('now','Why Now', ensure(buf.now.intro) || STATE.currentState.now.intro, ensure(buf.now.bullets) || toLines(STATE.currentState.now.bullets), ensure(buf.now.analyst) || STATE.currentState.now.analyst) : ''}
-                ${STATE.editTab === 'recast' ? editorSection('recast','Why Recast', ensure(buf.recast.intro) || STATE.currentState.recast.intro, ensure(buf.recast.bullets) || toLines(STATE.currentState.recast.bullets), ensure(buf.recast.analyst) || STATE.currentState.recast.analyst) : ''}
               </div>
               <div class="mt-5 flex flex-wrap gap-2">
                 <button id="btnSaveCurrentState" type="button" data-action="save-currentstate" class="inline-flex items-center gap-2 bg-[#0070F3] text-white px-4 py-2 text-sm font-semibold focus-ring rounded hover:bg-[#005AD0]"><i data-lucide="save" class="w-4 h-4"></i> Save</button>
@@ -3978,7 +3977,43 @@
       }
 
       function editorSection(key,label,introValue,bulletsValue,analystValue){
-        return `<div class="flex flex-col gap-4"><span class="text-sm font-semibold">${label}</span><label class="flex flex-col gap-1"><span class="text-xs text-[#4A5568]">Introduction</span><textarea id="${key}Intro" data-action="edit-buffer" data-key="${key}" data-subkey="intro" class="min-h-[80px] rounded-[2px] border border-slate-200 bg-white p-3 text-sm leading-5 focus-ring" rows="2">${introValue}</textarea></label><label class="flex flex-col gap-1"><div class="flex items-center gap-2 text-xs text-[#4A5568]"><i data-lucide="check-circle" class="w-4 h-4 text-[#0070F3]"></i>Bullets (one per line, max 4)</div><textarea id="${key}Bullets" data-action="edit-buffer" data-key="${key}" data-subkey="bullets" class="min-h-[160px] rounded-[2px] border border-slate-200 bg-white p-3 text-sm leading-5 focus-ring" rows="6">${bulletsValue}</textarea></label><label class="flex flex-col gap-1"><span class="text-xs text-[#4A5568]">Analyst Trend</span><textarea id="${key}Analyst" data-action="edit-buffer" data-key="${key}" data-subkey="analyst" class="min-h-[80px] rounded-[2px] border border-slate-200 bg-white p-3 text-sm leading-5 focus-ring" rows="2">${analystValue}</textarea></label></div>`;
+        const iconMap = { change: 'alert-triangle', now: 'clock-4' };
+        const labelMap = { change: 'Why Change \u2014 Apps Have Become the Hardest Part of IT', now: 'Why Now \u2014 The Pace Has Outrun the People' };
+        const bullets = (bulletsValue || '').split('\n').filter(l => l.trim());
+        // Preview the cards exactly like renderWhyModal
+        const previewCards = bullets.map(b => {
+          const parts = b.split(' = ');
+          const hasTitle = parts.length > 1;
+          return '<div class="bg-white/70 backdrop-blur-lg p-4 rounded-xl shadow-sm border-l-4 border-[#0070F3]"><div class="flex items-start gap-3"><i data-lucide="check-circle" class="w-5 h-5 text-[#0070F3] flex-shrink-0 mt-0.5"></i><div>'+(hasTitle?'<div class="text-sm font-bold text-[#0A1C60] mb-1">'+parts[0]+'</div>':'')+'<p class="text-sm leading-relaxed text-[#64748b]">'+(hasTitle?parts.slice(1).join(' = '):b)+'</p></div></div></div>';
+        }).join('');
+        return `
+          <div class="flex flex-col gap-5">
+            <!-- Header matching Why modal -->
+            <div class="flex items-center gap-3 pb-3 border-b border-slate-200">
+              <i data-lucide="${iconMap[key] || 'edit-3'}" class="w-6 h-6 text-[#0A1C60]"></i>
+              <span class="text-lg font-bold text-[#0A1C60]">${labelMap[key] || label}</span>
+            </div>
+
+            <!-- Live preview -->
+            <div class="space-y-3">
+              ${previewCards}
+              ${analystValue ? '<div class="bg-white/70 backdrop-blur-lg p-4 rounded-xl shadow-sm flex items-start gap-3 border-l-4 border-amber-400"><i data-lucide="lightbulb" class="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5"></i><p class="text-sm italic text-[#64748b]">'+analystValue+'</p></div>' : ''}
+            </div>
+
+            <!-- Editable fields -->
+            <div class="mt-2 p-4 rounded-xl bg-slate-50 border border-slate-200">
+              <div class="text-[10px] font-semibold text-[#0A1C60] uppercase tracking-wide mb-3">Edit Content</div>
+              <label class="flex flex-col gap-1 mb-3">
+                <div class="flex items-center gap-2 text-xs text-[#4A5568]"><i data-lucide="check-circle" class="w-3.5 h-3.5 text-[#0070F3]"></i> Bullet cards <span class="text-[10px] text-slate-400">(one per line, format: Title = Description)</span></div>
+                <textarea id="${key}Bullets" data-action="edit-buffer" data-key="${key}" data-subkey="bullets" class="min-h-[140px] rounded-lg border border-slate-200 bg-white p-3 text-sm leading-6 focus-ring" rows="5">${bulletsValue}</textarea>
+              </label>
+              <label class="flex flex-col gap-1">
+                <div class="flex items-center gap-2 text-xs text-[#4A5568]"><i data-lucide="lightbulb" class="w-3.5 h-3.5 text-amber-400"></i> Analyst insight</div>
+                <textarea id="${key}Analyst" data-action="edit-buffer" data-key="${key}" data-subkey="analyst" class="min-h-[60px] rounded-lg border border-slate-200 bg-white p-3 text-sm leading-5 focus-ring" rows="2">${analystValue}</textarea>
+              </label>
+              <input type="hidden" id="${key}Intro" data-action="edit-buffer" data-key="${key}" data-subkey="intro" value="${introValue}">
+            </div>
+          </div>`;
       }
 
       function parseLines(s, max=4){ return (s || '').split('\n').map(l => l.trim()).filter(Boolean).slice(0, max); }
@@ -4131,7 +4166,7 @@
             STATE.modalOpen = false; STATE.activeTab = 'problems'; render(); return;
           }
 
-          if (action === 'reset-currentstate-defaults') { clearDraft(); STATE.chartConfig = STATE.defaultsChartConfig(); STATE.drivers = STATE.defaultsDrivers(); STATE.currentState = STATE.defaultsCurrentState(); STATE.editChartBuffer = null; STATE.drivers.forEach(d => d.state = 'accelerating'); STATE.showTippingPoint = true; updateCurves(); STATE.currentDemandExponent = STATE.targetDemandExponent; STATE.currentCapacitySlope = STATE.targetCapacitySlope; render(); return; }
+          if (action === 'reset-currentstate-defaults') { clearDraft(); const defaults = STATE.defaultsCurrentState(); STATE.currentState.change = defaults.change; STATE.currentState.now = defaults.now; STATE.editBuffers = { change: { intro: '', bullets: '', analyst: '' }, now: { intro: '', bullets: '', analyst: '' }, recast: { intro: '', bullets: '', analyst: '' } }; render(); return; }
           if (action === 'reset-sliders') { resetSliders(); return; }
         });
 
