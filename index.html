@@ -3996,8 +3996,8 @@
           if (node) { const id = node.dataset.id; STATE.activePopover = STATE.activePopover === id ? null : id; render(); return; }
           if (!action) return;
 
-          if (action === 'switch-tab') { STATE.activeTab = act.getAttribute('data-tab'); STATE.visitedCards = []; STATE.activePopover = null; STATE.openWhyModal = null; STATE.insightContent = null; STATE.flowStep = -1; STATE.flowRunning = false; STATE.flowPaused = false; STATE.flowScenarioIdx = -1; STATE.flowPhase = 'idle'; STATE.flowAppOpened = false; STATE._firstOpenDone = false; STATE.showAdminView = false; STATE.showAutopilot = false; STATE.autopilotStep = -1; STATE.autopilotAppCount = 0; STATE.drPhase = 'idle'; STATE.drRunning = false; STATE.drPaused = false; STATE.drQueue = []; STATE.drQueueIdx = 0; STATE.obPhase = 'idle'; STATE.obRunning = false; STATE.obPaused = false; STATE.obQueue = []; STATE.obQueueIdx = 0; clearFlowTimers(); render(); return; }
-          if (action === 'advance') { STATE.activeTab = act.getAttribute('data-next'); STATE.openWhyModal = null; if (STATE.activeTab === 'roi') { calculateImpact(); } render(); return; }
+          if (action === 'switch-tab') { STATE.activeTab = act.getAttribute('data-tab'); STATE.visitedCards = []; STATE.activePopover = null; if (STATE.openWhyModal && STATE._savedDriverStates) { STATE.drivers.forEach((d, i) => { d.state = STATE._savedDriverStates[i]; }); STATE.showTippingPoint = STATE._savedTippingPoint; STATE.recastMode = STATE._savedRecastMode; STATE.targetDemandExponent = STATE._savedDemandExp; STATE.targetCapacitySlope = STATE._savedCapSlope; STATE._savedDriverStates = null; updateCurves(); } STATE.openWhyModal = null; STATE.insightContent = null; STATE.flowStep = -1; STATE.flowRunning = false; STATE.flowPaused = false; STATE.flowScenarioIdx = -1; STATE.flowPhase = 'idle'; STATE.flowAppOpened = false; STATE._firstOpenDone = false; STATE.showAdminView = false; STATE.showAutopilot = false; STATE.autopilotStep = -1; STATE.autopilotAppCount = 0; STATE.drPhase = 'idle'; STATE.drRunning = false; STATE.drPaused = false; STATE.drQueue = []; STATE.drQueueIdx = 0; STATE.obPhase = 'idle'; STATE.obRunning = false; STATE.obPaused = false; STATE.obQueue = []; STATE.obQueueIdx = 0; clearFlowTimers(); render(); return; }
+          if (action === 'advance') { STATE.activeTab = act.getAttribute('data-next'); if (STATE.openWhyModal && STATE._savedDriverStates) { STATE.drivers.forEach((d, i) => { d.state = STATE._savedDriverStates[i]; }); STATE.showTippingPoint = STATE._savedTippingPoint; STATE.recastMode = STATE._savedRecastMode; STATE.targetDemandExponent = STATE._savedDemandExp; STATE.targetCapacitySlope = STATE._savedCapSlope; STATE._savedDriverStates = null; updateCurves(); } STATE.openWhyModal = null; if (STATE.activeTab === 'roi') { calculateImpact(); } render(); return; }
           if (action === 'toggle-solution-view') {
             const view = act.getAttribute('data-view');
             if (view === 'user') STATE.solutionViewUser = !STATE.solutionViewUser;
@@ -4020,7 +4020,20 @@
           if (action === 'reset-ob') { resetOb(); return; }
           if (action === 'pause-ob') { if (STATE.obPaused) { STATE.obPaused = false; render(); runObQueue(); } else { STATE.obPaused = true; STATE.flowTimers.timeouts.forEach(id => clearTimeout(id)); STATE.flowTimers.timeouts = []; render(); } return; }
           if (action === 'close-modal') { STATE.modalOpen = false; render(); return; }
-          if (action === 'close-why-modal') { STATE.openWhyModal = null; render(); return; }
+          if (action === 'close-why-modal') {
+            STATE.openWhyModal = null;
+            // Restore chart state from before the modal was opened
+            if (STATE._savedDriverStates) {
+              STATE.drivers.forEach((d, i) => { d.state = STATE._savedDriverStates[i]; });
+              STATE.showTippingPoint = STATE._savedTippingPoint;
+              STATE.recastMode = STATE._savedRecastMode;
+              STATE.targetDemandExponent = STATE._savedDemandExp;
+              STATE.targetCapacitySlope = STATE._savedCapSlope;
+              STATE._savedDriverStates = null;
+              updateCurves(); requestAnimationFrame(animateCurves);
+            }
+            render(); return;
+          }
           if (action === 'open-analyst-modal') { STATE.showAnalystModal = true; render(); return; }
           if (action === 'close-analyst-modal') { STATE.showAnalystModal = false; render(); return; }
           if (action === 'open-ai-agent') { STATE.showAIAgent = true; render(); return; }
@@ -4030,6 +4043,12 @@
 
           if (action === 'open-why-modal') {
             const id = act.getAttribute('data-why');
+            // Save current chart state before temporarily changing it for the modal
+            STATE._savedDriverStates = STATE.drivers.map(d => d.state);
+            STATE._savedTippingPoint = STATE.showTippingPoint;
+            STATE._savedRecastMode = STATE.recastMode;
+            STATE._savedDemandExp = STATE.targetDemandExponent;
+            STATE._savedCapSlope = STATE.targetCapacitySlope;
             STATE.recastMode = false; STATE.drivers.forEach(d => d.state = 'off'); STATE.showTippingPoint = false;
             if (id === 'change') { STATE.drivers.forEach(d => { if (['more_apps','constant_updates','too_many_tools','manual_rework'].includes(d.id)) d.state = 'normal'; }); }
             else if (id === 'now') { STATE.drivers.forEach(d => { if (['more_apps','constant_updates','too_many_tools','manual_rework','security_compliance'].includes(d.id)) d.state = 'accelerating'; }); STATE.showTippingPoint = true; }
@@ -4164,7 +4183,7 @@
       deriveFromEmployees(STATE.calcInputs.users);
       calculateImpact();
       document.addEventListener('DOMContentLoaded', render);
-      document.addEventListener('keydown',(e)=>{ if(e.key==='Escape' && (STATE.modalOpen || STATE.openWhyModal || STATE.insightContent || STATE.showAnalystModal || STATE.showAIAgent)){ STATE.modalOpen=false; STATE.openWhyModal=null; STATE.insightContent=null; STATE.highlightDriverId=null; STATE.showAnalystModal=false; STATE.showAIAgent=false; render(); } });
+      document.addEventListener('keydown',(e)=>{ if(e.key==='Escape' && (STATE.modalOpen || STATE.openWhyModal || STATE.insightContent || STATE.showAnalystModal || STATE.showAIAgent)){ if (STATE.openWhyModal && STATE._savedDriverStates) { STATE.drivers.forEach((d, i) => { d.state = STATE._savedDriverStates[i]; }); STATE.showTippingPoint = STATE._savedTippingPoint; STATE.recastMode = STATE._savedRecastMode; STATE.targetDemandExponent = STATE._savedDemandExp; STATE.targetCapacitySlope = STATE._savedCapSlope; STATE._savedDriverStates = null; updateCurves(); requestAnimationFrame(animateCurves); } STATE.modalOpen=false; STATE.openWhyModal=null; STATE.insightContent=null; STATE.highlightDriverId=null; STATE.showAnalystModal=false; STATE.showAIAgent=false; render(); } });
     </script>
   </body>
 </html>
