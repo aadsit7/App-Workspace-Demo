@@ -4100,12 +4100,15 @@
               now: { intro: (formData.now.intro || '').trim() || fallback.now.intro, bullets: parseLines(formData.now.bullets) || fallback.now.bullets, analyst: (formData.now.analyst || '').trim() || fallback.now.analyst },
               recast: { intro: (formData.recast.intro || '').trim() || fallback.recast.intro, bullets: parseLines(formData.recast.bullets) || fallback.recast.bullets, analyst: (formData.recast.analyst || '').trim() || fallback.recast.analyst }
             };
-            const raw = STATE.editChartBuffer || readChartFieldsRaw();
             const pick = (v, keep) => (typeof v === 'string' && v.trim()) ? v.trim() : keep;
-            const fallbackChart = STATE.defaultsChartConfig(); const cfg = raw?.chartConfig || {};
-            STATE.chartConfig = { yAxis: pick(cfg.yAxis, STATE.chartConfig.yAxis || fallbackChart.yAxis), xAxis: pick(cfg.xAxis, STATE.chartConfig.xAxis || fallbackChart.xAxis), center: pick(cfg.center, STATE.chartConfig.center || fallbackChart.center), footer: pick(cfg.footer, STATE.chartConfig.footer || fallbackChart.footer), tipping: pick(cfg.tipping, STATE.chartConfig.tipping || fallbackChart.tipping) };
-            const fallbackDrivers = STATE.defaultsDrivers(); const dRaw = raw?.drivers || [];
-            STATE.drivers.forEach((d, i) => { d.label = pick(dRaw[i]?.label, d.label || fallbackDrivers[i].label); const bulletsRaw = dRaw[i]?.bullets; if (typeof bulletsRaw === 'string') { const b = parseLines(bulletsRaw, 3); d.bullets = b.length === 3 ? b : (d.bullets || fallbackDrivers[i].bullets); } else { d.bullets = d.bullets || fallbackDrivers[i].bullets; } });
+            // Only apply chart/driver changes if the user actually edited the chart tab
+            if (STATE.editChartBuffer) {
+              const cfg = STATE.editChartBuffer.chartConfig || {};
+              const fallbackChart = STATE.defaultsChartConfig();
+              STATE.chartConfig = { yAxis: pick(cfg.yAxis, STATE.chartConfig.yAxis || fallbackChart.yAxis), xAxis: pick(cfg.xAxis, STATE.chartConfig.xAxis || fallbackChart.xAxis), center: pick(cfg.center, STATE.chartConfig.center || fallbackChart.center), footer: pick(cfg.footer, STATE.chartConfig.footer || fallbackChart.footer), tipping: pick(cfg.tipping, STATE.chartConfig.tipping || fallbackChart.tipping) };
+              const fallbackDrivers = STATE.defaultsDrivers(); const dRaw = STATE.editChartBuffer.drivers || [];
+              STATE.drivers.forEach((d, i) => { d.label = pick(dRaw[i]?.label, d.label || fallbackDrivers[i].label); const bulletsRaw = dRaw[i]?.bullets; if (typeof bulletsRaw === 'string') { const b = parseLines(bulletsRaw, 3); d.bullets = b.length === 3 ? b : (d.bullets || fallbackDrivers[i].bullets); } else { d.bullets = d.bullets || fallbackDrivers[i].bullets; } });
+            }
             saveDraft({ ...formData, chartConfig: { ...STATE.chartConfig }, drivers: STATE.drivers.map(d => ({ label: d.label, bullets: d.bullets.join('\n') })) });
             STATE.modalOpen = false; STATE.activeTab = 'problems'; render(); return;
           }
