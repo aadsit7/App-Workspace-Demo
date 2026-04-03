@@ -11,6 +11,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://unpkg.com">
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
 
 
     <style>
@@ -657,6 +658,8 @@
         calcResult: null,
         showAssumptions: false,
         editingAssumptions: false,
+        pdfCompanyInput: false,
+        pdfCompanyName: '',
         qualified: false,
         flowStep: -1,
         flowRunning: false,
@@ -3412,6 +3415,229 @@
         else { ci.endpoints = Math.round(n * 1.3); ci.envs = 6; ci.apps = 250; ci.customApps = 50; ci.monthlyTickets = Math.round(n * 0.12); ci.avgTicketMins = 20; ci.pkgHours = 160; ci.patchHours = 110; }
       }
 
+      function generatePDF(companyName){
+        if (!window.jspdf) { alert('PDF library not loaded. Please refresh and try again.'); return; }
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ unit: 'pt', format: 'letter' });
+        const W = 612, H = 792, ML = 43, MR = 43, CW = W - ML - MR;
+        const r = STATE.calcResult, ci = STATE.calcInputs, sc = STATE.calcScenario, a = ROI_ASSUMPTIONS[sc];
+        const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        // Brand colors
+        const PB = [0,0,204], AC = [0,191,255], DT = [26,26,46], MG = [74,74,90], LG = [240,240,246];
+        const GR = [15,122,63], RR = [204,34,34], CO = [224,112,80], MB = [170,187,238], DB = [34,34,221];
+
+        function setC(c){ doc.setTextColor(c[0],c[1],c[2]); }
+        function setF(c){ doc.setFillColor(c[0],c[1],c[2]); }
+        function setD(c){ doc.setDrawColor(c[0],c[1],c[2]); }
+
+        function drawHeader(pg){
+          setF(PB); doc.rect(0, 0, W, 52, 'F');
+          // Recast wordmark
+          doc.setFont('Helvetica','bold'); doc.setFontSize(16); setC([255,255,255]); doc.text('Recast', ML, 32);
+          const rw = doc.getTextWidth('Recast');
+          doc.setFont('Helvetica','normal'); doc.setFontSize(8); setC(AC); doc.text('Software', ML + rw + 3, 32);
+          // Decorative +
+          doc.setFont('Helvetica','normal'); doc.setFontSize(12); setC(DB); doc.text('+', 180, 14); doc.text('+', 420, 40);
+          // Right side
+          doc.setFont('Helvetica','bold'); doc.setFontSize(10); setC([255,255,255]); doc.text('Prepared for ' + companyName, W - MR, 18, { align: 'right' });
+          doc.setFont('Helvetica','normal'); doc.setFontSize(7.5); setC(MB); doc.text('Executive Impact Summary', W - MR, 28, { align: 'right' });
+          doc.setFontSize(7); doc.text(today, W - MR, 37, { align: 'right' });
+        }
+
+        function drawFooter(pg){
+          setF(PB); doc.rect(0, H - 18, W, 18, 'F');
+          doc.setFont('Helvetica','normal'); doc.setFontSize(6.5); setC(MB);
+          doc.text('Recast Software  |  Business Impact Summary  |  Confidential', ML, H - 6);
+          doc.text('Page ' + pg + ' of 2', W - MR, H - 6, { align: 'right' });
+        }
+
+        function sectionBar(y, text){
+          setF(LG); doc.rect(ML, y, CW, 18, 'F');
+          doc.setFont('Helvetica','bold'); doc.setFontSize(9); setC(PB); doc.text(text, ML + 8, y + 12);
+          return y + 18;
+        }
+
+        function bullet(y, text){
+          setF(AC); doc.circle(ML + 4, y + 3, 2.5, 'F');
+          doc.setFont('Helvetica','normal'); doc.setFontSize(8); setC(MG); doc.text(text, ML + 14, y + 6);
+          return y + 14;
+        }
+
+        // ============ PAGE 1 ============
+        drawHeader(1);
+        let y = 62;
+
+        // Section 1: The Challenge
+        y = sectionBar(y, 'THE CHALLENGE AT ' + companyName.toUpperCase());
+        y += 8;
+        doc.setFont('Helvetica','bold'); doc.setFontSize(10); setC(DT);
+        doc.text('The application layer is now the #1 constraint in modern IT.', ML, y + 10);
+        y += 18;
+        setD(CO); doc.setLineWidth(0.5); doc.line(ML, y, ML + CW * 0.6, y);
+        y += 12;
+
+        // 4 stat callouts
+        const stats = [{v:'3\u00d7',l:'Platform multiplication'},{v:'5 days',l:'Exploit window'},{v:'51%',l:'Reactive IT work'},{v:'70%',l:'Transformations fail'}];
+        const sw = CW / 4;
+        stats.forEach((s, i) => {
+          const cx = ML + sw * i + sw / 2;
+          doc.setFont('Helvetica','bold'); doc.setFontSize(16); setC(PB); doc.text(s.v, cx, y + 12, { align: 'center' });
+          doc.setFont('Helvetica','normal'); doc.setFontSize(7); setC(MG); doc.text(s.l, cx, y + 22, { align: 'center' });
+        });
+        y += 36;
+
+        // Section 2: What's Driving It
+        y = sectionBar(y, "WHAT'S DRIVING IT");
+        y += 8;
+        const drivers = [
+          'App Portfolio Growth \u2014 Every new app multiplies work across every platform',
+          'Continuous Change Velocity \u2014 Updates are constant, not occasional',
+          'Platform Multiplication \u2014 Same app rebuilt per environment (Intune, SCCM, Citrix, AVD, macOS)',
+          'Rework & Technical Debt \u2014 Manual rebuilds and one-off fixes compound into permanent drag',
+          'Security & Compliance Pressure \u2014 Higher urgency, tighter windows, zero tolerance'
+        ];
+        drivers.forEach(d => { y = bullet(y, d); });
+        y += 10;
+
+        // Section 3: The Recast Approach
+        y = sectionBar(y, 'THE RECAST APPROACH FOR ' + companyName.toUpperCase());
+        y += 8;
+        doc.setFont('Helvetica','bold'); doc.setFontSize(9); setC(DT);
+        doc.text('Application Workspace \u2014 Define once. Deliver everywhere.', ML, y + 8);
+        y += 16;
+        doc.setFont('Helvetica','normal'); doc.setFontSize(8); setC(MG);
+        const descLines = doc.splitTextToSize('One workspace to package, deliver, update, and retire apps across Intune, SCCM, Citrix, AVD, and macOS. 8,000+ pre-tested enterprise apps. Automated patching. Self-service catalog. Identity-based access.', CW - 10);
+        doc.text(descLines, ML, y + 6);
+        y += descLines.length * 10 + 8;
+
+        // Platform stats
+        const pstats = [{v:'8,000+',l:'Pre-Tested Apps'},{v:'5',l:'Delivery Paths'},{v:'1',l:'Definition'}];
+        const psw = CW / 3;
+        pstats.forEach((s, i) => {
+          const cx = ML + psw * i + psw / 2;
+          doc.setFont('Helvetica','bold'); doc.setFontSize(12); setC(PB); doc.text(s.v, cx, y + 10, { align: 'center' });
+          doc.setFont('Helvetica','normal'); doc.setFontSize(7); setC(MG); doc.text(s.l, cx, y + 20, { align: 'center' });
+        });
+        y += 30;
+
+        // Capability tags
+        doc.setFont('Helvetica','normal'); doc.setFontSize(7.5); setC(MG);
+        doc.text('Custom Packaging  \u00b7  Multi-Tenant  \u00b7  Multi-Device  \u00b7  Auto-Patching  \u00b7  Identity Access  \u00b7  Self-Service  \u00b7  CVE Patching  \u00b7  Governance', ML, y + 8);
+        y += 18;
+
+        // Callout box
+        setF([246,248,255]); doc.rect(ML, y, CW, 28, 'F');
+        setD(AC); doc.setLineWidth(2); doc.line(ML, y, ML, y + 28);
+        doc.setLineWidth(0.5);
+        doc.setFont('Helvetica','italic'); doc.setFontSize(8); setC(DT);
+        doc.text('Works with ' + companyName + "'s existing tools. No rip-and-replace. Additive to your current environment.", ML + 10, y + 17);
+        y += 38;
+
+        // Section 4: Time to Value
+        const tvItems = [{v:'4-6 weeks',l:'Time to production',c:GR},{v:'Zero',l:'Platform risk',c:GR},{v:'60M+',l:'Endpoints proven',c:PB}];
+        const tvw = CW / 3;
+        tvItems.forEach((t, i) => {
+          const cx = ML + tvw * i + tvw / 2;
+          doc.setFont('Helvetica','bold'); doc.setFontSize(11); setC(t.c); doc.text(t.v, cx, y + 12, { align: 'center' });
+          doc.setFont('Helvetica','normal'); doc.setFontSize(7); setC(MG); doc.text(t.l, cx, y + 22, { align: 'center' });
+        });
+
+        drawFooter(1);
+
+        // ============ PAGE 2 ============
+        doc.addPage('letter', 'portrait');
+        drawHeader(2);
+        y = 62;
+
+        // Section 5: Estimated Impact
+        y = sectionBar(y, 'ESTIMATED IMPACT FOR ' + companyName.toUpperCase());
+        y += 4;
+        // Scenario badge
+        setF(AC); doc.roundedRect(ML, y, 80, 14, 3, 3, 'F');
+        doc.setFont('Helvetica','bold'); doc.setFontSize(7); setC([255,255,255]); doc.text(a.label + ' Scenario', ML + 40, y + 10, { align: 'center' });
+        y += 22;
+
+        // 3 hero metrics
+        const heroes = [
+          {v: num(r.totalHoursYear), l: 'hours / year recovered', c: PB},
+          {v: String(r.fteCapacity), l: 'FTE-equivalents recoverable', c: PB},
+          {v: num(r.strategicHours), l: 'strategic hours returned / year', c: GR}
+        ];
+        const hw = CW / 3;
+        heroes.forEach((h, i) => {
+          const cx = ML + hw * i + hw / 2;
+          doc.setFont('Helvetica','bold'); doc.setFontSize(22); setC(h.c); doc.text(h.v, cx, y + 16, { align: 'center' });
+          doc.setFont('Helvetica','normal'); doc.setFontSize(8); setC(MG); doc.text(h.l, cx, y + 28, { align: 'center' });
+        });
+        y += 42;
+
+        // Section 6: Where It Comes From
+        y = sectionBar(y, 'WHERE IT COMES FROM');
+        y += 10;
+
+        const bars = [
+          {label:'Support & tickets', hrs: r.ticketHoursReturned, pct: Math.round(a.ticketReduction*100), detail: num(r.ticketsAvoided)+' tickets avoided per month', color: GR},
+          {label:'Packaging', hrs: r.pkgHoursReturned, pct: Math.round(a.pkgReduction*100), detail: Math.round(a.pkgReduction*100)+'% reduction across '+ci.envs+' environments', color: PB},
+          {label:'Patching', hrs: r.patchHoursReturned, pct: Math.round(a.patchReduction*100), detail: 'Staged pipeline replaces per-platform rebuilds', color: AC}
+        ];
+        bars.forEach(b => {
+          doc.setFont('Helvetica','bold'); doc.setFontSize(8.5); setC(DT); doc.text(b.label, ML, y + 8);
+          // Bar background
+          const barX = ML + 120, barW = CW - 240, barH = 8;
+          setF([230,230,236]); doc.rect(barX, y + 2, barW, barH, 'F');
+          // Bar fill
+          setF(b.color); doc.rect(barX, y + 2, barW * (b.pct / 100), barH, 'F');
+          // Hours label
+          doc.setFont('Helvetica','bold'); doc.setFontSize(8.5); setC(b.color); doc.text(num(b.hrs)+' hrs/mo returned', W - MR, y + 8, { align: 'right' });
+          y += 14;
+          doc.setFont('Helvetica','normal'); doc.setFontSize(7); setC(MG); doc.text(b.detail, ML + 120, y + 2);
+          y += 14;
+        });
+        y += 8;
+
+        // Section 7: CLIMAX - Blue block
+        const blockH = 90;
+        setF(PB); doc.rect(ML, y, CW, blockH, 'F');
+        doc.setFont('Helvetica','normal'); doc.setFontSize(7); setC(MB);
+        doc.text('WHERE ' + companyName.toUpperCase() + "'S CAPACITY GOES", ML + CW/2, y + 16, { align: 'center' });
+        doc.setFont('Helvetica','bold'); doc.setFontSize(28); setC([255,255,255]);
+        doc.text(num(r.strategicHours), ML + CW/2, y + 46, { align: 'center' });
+        doc.setFont('Helvetica','normal'); doc.setFontSize(9); setC([180,200,255]);
+        doc.text('hours / year returned to strategic work', ML + CW/2, y + 60, { align: 'center' });
+        doc.setFont('Helvetica','bold'); doc.setFontSize(9); setC([255,255,255]);
+        doc.text(r.fteCapacity + ' FTE-equivalents \u2014 reallocated, not eliminated', ML + CW/2, y + 74, { align: 'center' });
+        y += blockH + 8;
+
+        // Strategic allocation tags
+        doc.setFont('Helvetica','normal'); doc.setFontSize(7.5); setC(MG);
+        doc.text('AI & Copilot rollouts  \u00b7  Cloud & endpoint migrations  \u00b7  Compliance & security  \u00b7  Automation & self-service  \u00b7  Pilot programs', ML + CW/2, y + 8, { align: 'center' });
+        y += 22;
+
+        // Section 8: Dollar equivalent
+        setD([230,230,236]); doc.setLineWidth(1); doc.rect(ML, y, CW, 24, 'S');
+        doc.setFont('Helvetica','bold'); doc.setFontSize(10); setC(GR);
+        doc.text('Annual capacity value: ' + fmtDollars(r.totalRecoveredAnnual), ML + 12, y + 15);
+        doc.setFont('Helvetica','normal'); doc.setFontSize(8); setC(RR);
+        doc.text('Monthly cost of waiting: ' + fmtDollars(r.monthlyCostOfWaiting), W - MR - 12, y + 15, { align: 'right' });
+        y += 36;
+
+        // Section 9: Assumptions
+        setD(CO); doc.setLineWidth(0.5); doc.line(ML, y, ML + CW * 0.4, y);
+        y += 10;
+        doc.setFont('Helvetica','normal'); doc.setFontSize(7); setC(MG);
+        doc.text('Prepared for ' + companyName + '  \u00b7  Based on ' + num(ci.users) + ' employees  \u00b7  ' + ci.envs + ' environments  \u00b7  ' + ci.apps + ' active apps  \u00b7  ' + a.label + ' scenario', ML, y + 4);
+        y += 12;
+        doc.setFontSize(6.5);
+        doc.text('Ticket reduction: ' + Math.round(a.ticketReduction*100) + '%  \u00b7  Packaging reduction: ' + Math.round(a.pkgReduction*100) + '%  \u00b7  Patching reduction: ' + Math.round(a.patchReduction*100) + '%  \u00b7  Strategic reallocation: ' + Math.round(a.strategicRealloc*100) + '%', ML, y + 4);
+        y += 10;
+        doc.text('Generated from Recast Software Business Impact Model  \u00b7  ' + today, ML, y + 4);
+
+        drawFooter(2);
+
+        doc.save('Recast-Impact-Summary-' + companyName.replace(/[^a-zA-Z0-9]/g, '-') + '.pdf');
+      }
+
       function renderROI(){
         const r = STATE.calcResult;
         const ci = STATE.calcInputs;
@@ -3493,9 +3719,21 @@
                 <button type="button" data-action="open-currentstate-editor" class="inline-flex items-center gap-2 bg-transparent text-gray-500 border-2 border-gray-300 px-5 py-2.5 text-sm font-medium focus-ring rounded-full hover:text-[#0070F3] hover:border-[#0070F3] transition">
                   <i data-lucide="edit-3" class="w-4 h-4"></i> Edit Current State
                 </button>
-                ${r ? `<button type="button" data-action="copy-results" class="inline-flex items-center gap-2 bg-transparent text-gray-500 border-2 border-gray-300 px-5 py-2.5 text-sm font-medium focus-ring rounded-full hover:text-[#0070F3] hover:border-[#0070F3] transition ${STATE.copied ? '!border-emerald-400 !text-emerald-600' : ''}">
-                  <i data-lucide="${STATE.copied ? 'check' : 'copy'}" class="w-4 h-4"></i> ${STATE.copied ? 'Copied!' : 'Copy Results'}
-                </button>` : ''}
+                ${r ? (STATE.pdfCompanyInput ? `
+                  <div class="flex items-center gap-3" style="animation:dashSlideUp 0.3s ease forwards">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0000CC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 18 15 15"/></svg>
+                    <input type="text" id="pdf-company-input" placeholder="Enter company name" value="${STATE.pdfCompanyName}" style="width:280px;padding:10px 14px;border:2px solid #e2e8f0;border-radius:10px;font-size:15px;font-weight:600;color:#0A1C60;outline:none;transition:border-color 0.2s,box-shadow 0.2s" onfocus="this.style.borderColor='#0070F3';this.style.boxShadow='0 0 0 3px rgba(0,112,243,0.1)'" onblur="this.style.borderColor='#e2e8f0';this.style.boxShadow='none'">
+                    <button type="button" data-action="submit-pdf-company" style="width:38px;height:38px;border-radius:50%;background:#0000CC;border:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:background 0.2s;flex-shrink:0" onmouseover="this.style.background='#0000AA'" onmouseout="this.style.background='#0000CC'">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                    </button>
+                    <span data-action="cancel-pdf-input" style="color:#94a3b8;font-size:12px;cursor:pointer;margin-left:4px">\u2715</span>
+                  </div>
+                ` : `
+                  <button type="button" data-action="open-pdf-input" class="inline-flex items-center gap-2 text-white px-7 py-2.5 text-sm font-semibold rounded-full transition" style="background:#0000CC" onmouseover="this.style.background='#0000AA'" onmouseout="this.style.background='#0000CC'">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 18 15 15"/></svg>
+                    Download Executive Summary
+                  </button>
+                `) : ''}
               </div>
               <button type="button" data-action="open-ai-agent" class="inline-flex items-center gap-2 text-white px-4 py-2.5 text-sm font-semibold rounded-full shadow-lg hover:opacity-90 transition" style="background:linear-gradient(135deg,#0070F3,#0A1C60)">
                 <i data-lucide="message-circle-question" class="w-4 h-4"></i> Ask a Question
@@ -3778,42 +4016,9 @@
           }
           if (action === 'reset-autopilot') { clearFlowTimers(); STATE.autopilotStep = -1; STATE.autopilotAppCount = 0; render(); return; }
 
-          if (action === 'copy-results') {
-            const r = STATE.calcResult;
-            if (!r) return;
-            const a = ROI_ASSUMPTIONS[STATE.calcScenario];
-            const ci = STATE.calcInputs;
-
-            const plainText = `BUSINESS IMPACT SUMMARY (${ROI_ASSUMPTIONS[STATE.calcScenario].label} Scenario)\n\nCAPACITY LOCKED TODAY\n  Hours consumed / month:     ${num(r.totalHoursMonth)}\n  FTE-equivalents tied up:    ${r.fteCapacity}\n  Environments managed:       ${ci.envs}\n\nWHAT CHANGES\n  Support hours/mo:           ${num(r.currentSupportHours)} \u2192 ${num(Math.round(r.currentSupportHours - r.ticketHoursReturned))}  (-${Math.round(a.ticketReduction * 100)}%)\n  Tickets/mo:                 ${num(ci.monthlyTickets)} \u2192 ${num(ci.monthlyTickets - r.ticketsAvoided)}  (-${Math.round(a.ticketReduction * 100)}%)\n  Packaging hours/mo:         ${num(ci.pkgHours)} \u2192 ${num(Math.round(ci.pkgHours - r.pkgHoursReturned))}  (-${Math.round(a.pkgReduction * 100)}%)\n  Patching hours/mo:          ${num(ci.patchHours)} \u2192 ${num(Math.round(ci.patchHours - r.patchHoursReturned))}  (-${Math.round(a.patchReduction * 100)}%)\n\nCAPACITY RECOVERED\n  Hours returned / year:      ${num(r.totalHoursYear)}\n  FTE-equivalents:            ${r.fteCapacity}\n  Strategic hours unlocked:   ${num(r.strategicHours)} / year\n  Dollar equivalent:          ${fmtDollars(r.totalRecoveredAnnual)} / year\n\nTIME TO VALUE:                4-6 weeks\nPLATFORM RISK:                Zero disruption to existing systems\n\nEstimated impact. Generated by Recast Software Business Impact Model.`;
-
-            try {
-              navigator.clipboard.writeText(plainText).then(function() {
-                STATE.copied = true; render();
-                setTimeout(function() { STATE.copied = false; render(); }, 2500);
-              }).catch(function() {
-                const ta = document.createElement('textarea');
-                ta.value = plainText;
-                ta.style.cssText = 'position:fixed;left:-9999px;top:-9999px;';
-                document.body.appendChild(ta);
-                ta.select();
-                document.execCommand('copy');
-                document.body.removeChild(ta);
-                STATE.copied = true; render();
-                setTimeout(function() { STATE.copied = false; render(); }, 2500);
-              });
-            } catch(e) {
-              const ta = document.createElement('textarea');
-              ta.value = plainText;
-              ta.style.cssText = 'position:fixed;left:-9999px;top:-9999px;';
-              document.body.appendChild(ta);
-              ta.select();
-              document.execCommand('copy');
-              document.body.removeChild(ta);
-              STATE.copied = true; render();
-              setTimeout(function() { STATE.copied = false; render(); }, 2500);
-            }
-            return;
-          }
+          if (action === 'open-pdf-input') { STATE.pdfCompanyInput = true; render(); setTimeout(() => { const el = document.getElementById('pdf-company-input'); if (el) el.focus(); }, 50); return; }
+          if (action === 'cancel-pdf-input') { STATE.pdfCompanyInput = false; render(); return; }
+          if (action === 'submit-pdf-company') { const input = document.getElementById('pdf-company-input'); const name = (input?.value || '').trim() || 'Your Organization'; STATE.pdfCompanyName = name; generatePDF(name); STATE.pdfCompanyInput = false; render(); return; }
 
           if (action === 'open-currentstate-editor') {
             STATE.modalOpen = true; STATE.editTab = 'change';
@@ -3866,6 +4071,8 @@
           if (buf) { const key = buf.getAttribute('data-key'); const sub = buf.getAttribute('data-subkey'); if (STATE.editBuffers?.[key]) STATE.editBuffers[key][sub] = e.target.value; }
           if (STATE.modalOpen && STATE.editTab === 'chart') { STATE.editChartBuffer = readChartFieldsRaw(); }
         });
+        const pdfInput = document.getElementById('pdf-company-input');
+        if (pdfInput) { pdfInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); const name = (pdfInput.value || '').trim() || 'Your Organization'; STATE.pdfCompanyName = name; generatePDF(name); STATE.pdfCompanyInput = false; render(); } }); }
       }
 
       let accordionKeyboardBound = false;
