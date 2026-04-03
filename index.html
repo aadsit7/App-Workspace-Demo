@@ -3457,6 +3457,11 @@
         const GAP = 14, COLW = (CW - GAP) / 2, LX = ML, RX = ML + COLW + GAP;
         const FS = 6.5, BFS = 6.5, HH = 13;
 
+        function sectionBar(y, text){
+          setF(LG); doc.rect(ML, y, CW, 18, 'F');
+          doc.setFont('Helvetica','bold'); doc.setFontSize(9); setC(PB); doc.text(text, ML + 8, y + 12);
+          return y + 18;
+        }
         function colBar(x, y, w, text){
           setF(PB); doc.rect(x, y, w, HH, 'F');
           doc.setFont('Helvetica','bold'); doc.setFontSize(7); setC([255,255,255]); doc.text(text, x + 5, y + 9);
