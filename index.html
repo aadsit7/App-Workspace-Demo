@@ -3945,7 +3945,7 @@
         const buf = STATE.editBuffers;
         const toLines = arr => arr.join('\n');
         const ensure = v => v ?? '';
-        const editTabs = [ {id: 'change', label: 'Why Change'}, {id: 'now', label: 'Why Now'}, {id: 'recast', label: 'Why Recast'}, {id: 'chart', label: 'Chart Config'} ];
+        const editTabs = [ {id: 'change', label: 'Why Change'}, {id: 'now', label: 'Why Now'}, {id: 'recast', label: 'Why Recast'} ];
         return `
           <div role="dialog" aria-modal="true" aria-labelledby="cs-editor-title" class="fixed inset-0 z-50 flex items-center justify-center modal-overlay overflow-auto p-4 md:p-8">
             <div class="w-[95vw] h-[95vh] rounded-2xl shadow-2xl p-8 overflow-y-auto glass">
@@ -3961,7 +3961,6 @@
                 ${STATE.editTab === 'change' ? editorSection('change','Why Change', ensure(buf.change.intro) || STATE.currentState.change.intro, ensure(buf.change.bullets) || toLines(STATE.currentState.change.bullets), ensure(buf.change.analyst) || STATE.currentState.change.analyst) : ''}
                 ${STATE.editTab === 'now' ? editorSection('now','Why Now', ensure(buf.now.intro) || STATE.currentState.now.intro, ensure(buf.now.bullets) || toLines(STATE.currentState.now.bullets), ensure(buf.now.analyst) || STATE.currentState.now.analyst) : ''}
                 ${STATE.editTab === 'recast' ? editorSection('recast','Why Recast', ensure(buf.recast.intro) || STATE.currentState.recast.intro, ensure(buf.recast.bullets) || toLines(STATE.currentState.recast.bullets), ensure(buf.recast.analyst) || STATE.currentState.recast.analyst) : ''}
-                ${STATE.editTab === 'chart' ? editorSectionChart() : ''}
               </div>
               <div class="mt-5 flex flex-wrap gap-2">
                 <button id="btnSaveCurrentState" type="button" data-action="save-currentstate" class="inline-flex items-center gap-2 bg-[#0070F3] text-white px-4 py-2 text-sm font-semibold focus-ring rounded hover:bg-[#005AD0]"><i data-lucide="save" class="w-4 h-4"></i> Save</button>
