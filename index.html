@@ -4148,21 +4148,17 @@
 
           if (action === 'save-currentstate') {
             const fallback = STATE.defaultsCurrentState(); const formData = readFields();
-            STATE.currentState = {
-              change: { intro: (formData.change.intro || '').trim() || fallback.change.intro, bullets: parseLines(formData.change.bullets) || fallback.change.bullets, analyst: (formData.change.analyst || '').trim() || fallback.change.analyst },
-              now: { intro: (formData.now.intro || '').trim() || fallback.now.intro, bullets: parseLines(formData.now.bullets) || fallback.now.bullets, analyst: (formData.now.analyst || '').trim() || fallback.now.analyst },
-              recast: { intro: (formData.recast.intro || '').trim() || fallback.recast.intro, bullets: parseLines(formData.recast.bullets) || fallback.recast.bullets, analyst: (formData.recast.analyst || '').trim() || fallback.recast.analyst }
-            };
-            const pick = (v, keep) => (typeof v === 'string' && v.trim()) ? v.trim() : keep;
-            // Only apply chart/driver changes if the user actually edited the chart tab
-            if (STATE.editChartBuffer) {
-              const cfg = STATE.editChartBuffer.chartConfig || {};
-              const fallbackChart = STATE.defaultsChartConfig();
-              STATE.chartConfig = { yAxis: pick(cfg.yAxis, STATE.chartConfig.yAxis || fallbackChart.yAxis), xAxis: pick(cfg.xAxis, STATE.chartConfig.xAxis || fallbackChart.xAxis), center: pick(cfg.center, STATE.chartConfig.center || fallbackChart.center), footer: pick(cfg.footer, STATE.chartConfig.footer || fallbackChart.footer), tipping: pick(cfg.tipping, STATE.chartConfig.tipping || fallbackChart.tipping) };
-              const fallbackDrivers = STATE.defaultsDrivers(); const dRaw = STATE.editChartBuffer.drivers || [];
-              STATE.drivers.forEach((d, i) => { d.label = pick(dRaw[i]?.label, d.label || fallbackDrivers[i].label); const bulletsRaw = dRaw[i]?.bullets; if (typeof bulletsRaw === 'string') { const b = parseLines(bulletsRaw, 3); d.bullets = b.length === 3 ? b : (d.bullets || fallbackDrivers[i].bullets); } else { d.bullets = d.bullets || fallbackDrivers[i].bullets; } });
+            const activeKey = STATE.editTab;
+            // Only update the section the user is currently editing — leave others untouched
+            if (activeKey === 'change' || activeKey === 'now') {
+              const fd = formData[activeKey]; const fb = fallback[activeKey];
+              STATE.currentState[activeKey] = {
+                intro: (fd.intro || '').trim() || fb.intro,
+                bullets: parseLines(fd.bullets) || fb.bullets,
+                analyst: (fd.analyst || '').trim() || fb.analyst
+              };
             }
-            saveDraft({ ...formData, chartConfig: { ...STATE.chartConfig }, drivers: STATE.drivers.map(d => ({ label: d.label, bullets: d.bullets.join('\n') })) });
+            saveDraft({ change: { intro: '', bullets: STATE.currentState.change.bullets.join('\n'), analyst: STATE.currentState.change.analyst }, now: { intro: '', bullets: STATE.currentState.now.bullets.join('\n'), analyst: STATE.currentState.now.analyst }, recast: { intro: STATE.currentState.recast.intro, bullets: STATE.currentState.recast.bullets.join('\n'), analyst: STATE.currentState.recast.analyst }, chartConfig: { ...STATE.chartConfig }, drivers: STATE.drivers.map(d => ({ label: d.label, bullets: d.bullets.join('\n') })) });
             STATE.modalOpen = false; STATE.activeTab = 'problems'; render(); return;
           }
 
