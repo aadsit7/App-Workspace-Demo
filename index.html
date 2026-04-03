@@ -4131,7 +4131,7 @@
             STATE.modalOpen = false; STATE.activeTab = 'problems'; render(); return;
           }
 
-          if (action === 'reset-currentstate-defaults') { clearDraft(); STATE.chartConfig = STATE.defaultsChartConfig(); STATE.drivers = STATE.defaultsDrivers(); STATE.currentState = STATE.defaultsCurrentState(); STATE.editChartBuffer = null; render(); return; }
+          if (action === 'reset-currentstate-defaults') { clearDraft(); STATE.chartConfig = STATE.defaultsChartConfig(); STATE.drivers = STATE.defaultsDrivers(); STATE.currentState = STATE.defaultsCurrentState(); STATE.editChartBuffer = null; STATE.drivers.forEach(d => d.state = 'accelerating'); STATE.showTippingPoint = true; updateCurves(); STATE.currentDemandExponent = STATE.targetDemandExponent; STATE.currentCapacitySlope = STATE.targetCapacitySlope; render(); return; }
           if (action === 'reset-sliders') { resetSliders(); return; }
         });
 
