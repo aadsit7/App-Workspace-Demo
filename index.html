@@ -3417,6 +3417,7 @@
 
       function generatePDF(companyName){
         if (!window.jspdf) { alert('PDF library not loaded. Please refresh and try again.'); return; }
+        try {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF({ unit: 'pt', format: 'letter' });
         const W = 612, H = 792, ML = 43, MR = 43, CW = W - ML - MR;
@@ -3468,37 +3469,36 @@
         }
         function blt(x, y, w, boldText, normalText){
           setF([0,180,80]); doc.circle(x + 4, y + 3, 2, 'F');
-          const bx = x + 11;
-          const maxW = w - 14;
+          const bx = x + 11, maxW = w - 14;
+          doc.setFontSize(BFS);
           if (boldText) {
-            doc.setFont('Helvetica','bold'); doc.setFontSize(BFS); setC(DT);
-            doc.text(boldText, bx, y + 5);
-            const bw = doc.getTextWidth(boldText);
-            doc.setFont('Helvetica','normal'); doc.setFontSize(BFS); setC(MG);
-            const rest = doc.splitTextToSize(normalText, maxW - bw - 2);
-            if (rest.length <= 1) {
-              doc.text(' ' + normalText, bx + bw, y + 5);
+            doc.setFont('Helvetica','bold'); setC(DT);
+            const bw = doc.getTextWidth(boldText + ' ');
+            doc.setFont('Helvetica','normal'); setC(MG);
+            const restLines = doc.splitTextToSize(normalText, maxW - bw);
+            if (restLines.length <= 1) {
+              doc.setFont('Helvetica','bold'); setC(DT); doc.text(boldText, bx, y + 5);
+              doc.setFont('Helvetica','normal'); setC(MG); doc.text(' ' + normalText, bx + bw - doc.getTextWidth(' '), y + 5);
               return y + 10;
-            } else {
-              const full = doc.splitTextToSize(boldText + ' ' + normalText, maxW);
-              doc.setFont('Helvetica','normal'); setC(MG);
-              // Redraw: first line has bold prefix
-              for (let li = 0; li < full.length; li++) {
-                if (li === 0) {
-                  doc.setFont('Helvetica','bold'); setC(DT); doc.text(boldText, bx, y + 5);
-                  doc.setFont('Helvetica','normal'); setC(MG); doc.text(full[0].substring(boldText.length), bx + doc.getTextWidth(boldText), y + 5);
-                } else {
-                  doc.text(full[li], bx, y + 5 + li * 8);
-                }
-              }
-              return y + full.length * 8 + 2;
             }
-          } else {
-            doc.setFont('Helvetica','normal'); doc.setFontSize(BFS); setC(MG);
-            const lines = doc.splitTextToSize(normalText, maxW);
-            doc.text(lines, bx, y + 5);
-            return y + lines.length * 8 + 2;
+            // Multi-line: bold on first line, rest wraps as normal
+            doc.setFont('Helvetica','bold'); setC(DT); doc.text(boldText, bx, y + 5);
+            doc.setFont('Helvetica','normal'); setC(MG);
+            const allLines = doc.splitTextToSize(normalText, maxW);
+            const firstFit = doc.splitTextToSize(normalText, maxW - bw);
+            doc.text(firstFit[0], bx + bw, y + 5);
+            const remaining = normalText.substring(firstFit[0].length).trim();
+            if (remaining) {
+              const wrapLines = doc.splitTextToSize(remaining, maxW);
+              for (let i = 0; i < wrapLines.length; i++) { doc.text(wrapLines[i], bx, y + 5 + (i + 1) * 8); }
+              return y + (wrapLines.length + 1) * 8 + 2;
+            }
+            return y + 10;
           }
+          doc.setFont('Helvetica','normal'); setC(MG);
+          const lines = doc.splitTextToSize(normalText, maxW);
+          doc.text(lines, bx, y + 5);
+          return y + lines.length * 8 + 2;
         }
         function callout(x, y, w, text){
           setF([240,245,255]); doc.rect(x, y, w, 14, 'F');
@@ -3693,6 +3693,7 @@
         drawFooter(2);
 
         doc.save('Recast-Impact-Summary-' + companyName.replace(/[^a-zA-Z0-9]/g, '-') + '.pdf');
+        } catch(err) { console.error('PDF generation error:', err); alert('PDF error: ' + err.message); }
       }
 
       function renderROI(){
