@@ -1003,39 +1003,215 @@
       .border-blue-200, .border-indigo-200 { border-color: var(--r-divider) !important; }
 
       /* ───── Logo ticker gradient masks use white — keep */
-      /* ───── Mobile polish ───── */
+      /* ═════════════════════════════════════════════════════════════
+         MOBILE — comprehensive overhaul for <= 900px
+         Goal: every tab usable with a single vertical scroll, no overflow.
+         ═════════════════════════════════════════════════════════════ */
       html, body { overflow-x: hidden; }
-      @media (max-width: 768px) {
+
+      @media (max-width: 900px) {
+        /* Unlock the scroll-free shell — mobile uses normal document scroll */
+        html, body { overflow-x: hidden; overflow-y: auto; height: auto; }
+        body > #app { height: auto; display: block; }
+        body > #app > main.mx-auto {
+          overflow: visible;
+          height: auto;
+          padding-top: 12px !important;
+          padding-bottom: 24px !important;
+        }
+        body > #app > main.mx-auto > section {
+          padding: 0 14px !important;
+          max-width: 100% !important;
+        }
+
+        /* ── Hero ─────────────────────────────────────── */
         header.relative::before, header.relative::after { display: none; }
         header.relative > div:first-child {
-          padding-top: 28px !important;
-          padding-bottom: 16px !important;
+          padding: 20px 14px 14px !important;
         }
-        header.relative h1 { font-size: 30px !important; }
-        header.relative p { font-size: 14px !important; margin-top: 8px !important; }
-        header.relative [role="tablist"] button {
+        .recast-eyebrow-row { margin-bottom: 10px !important; gap: 10px !important; }
+        .recast-eyebrow-mark { width: 30px !important; height: 30px !important; }
+        .recast-eyebrow-mark svg { width: 16px !important; height: 16px !important; }
+        .recast-eyebrow-label { font-size: 13px !important; }
+        header.relative h1 {
+          font-size: 26px !important;
+          line-height: 1.15 !important;
+          max-width: none !important;
+        }
+        header.relative h1::after { width: 36px !important; height: 2px !important; margin-top: 10px !important; }
+        header.relative p {
+          font-size: 13px !important;
+          line-height: 1.5 !important;
+          margin-top: 10px !important;
+          max-width: none !important;
+        }
+
+        /* ── Tabs — horizontal scroll rail ────────────── */
+        header.relative > div:last-child { padding: 0 !important; }
+        .recast-tabs {
+          padding: 0 14px !important;
+          margin-top: 14px !important;
+          border-top: 1px solid rgba(255,255,255,0.15) !important;
+          -webkit-overflow-scrolling: touch;
+        }
+        .recast-tab {
           padding: 12px 14px !important;
           font-size: 13px !important;
+          gap: 6px !important;
         }
-        header.relative [role="tablist"] button i { width: 14px !important; height: 14px !important; }
-        main.mx-auto {
-          padding-left: 16px !important;
-          padding-right: 16px !important;
+        .recast-tab svg, .recast-tab i { width: 14px !important; height: 14px !important; }
+
+        /* ── Sections / cards ─────────────────────────── */
+        #panel-problems.space-y-4 > * + *,
+        #panel-solution.space-y-3 > * + *,
+        #panel-roi.space-y-4 > * + * { margin-top: 10px !important; }
+        .section-card { padding: 14px !important; border-radius: 6px !important; }
+        .section-card.p-6, .section-card.p-8 { padding: 14px !important; }
+        .section-card h2, .section-card h3 { font-size: 15px !important; margin-bottom: 6px !important; }
+        .sub-card, .sub-card.p-6, .sub-card.p-4 { padding: 10px !important; }
+
+        /* ── Universal: collapse desktop grid/flex layouts ── */
+        main.mx-auto .grid.grid-cols-2,
+        main.mx-auto .grid.grid-cols-3,
+        main.mx-auto .grid.grid-cols-4,
+        main.mx-auto .md\:grid-cols-2,
+        main.mx-auto .md\:grid-cols-3,
+        main.mx-auto .md\:grid-cols-4,
+        main.mx-auto .lg\:grid-cols-2,
+        main.mx-auto .lg\:grid-cols-3,
+        main.mx-auto .lg\:grid-cols-4 {
+          grid-template-columns: 1fr !important;
+          gap: 10px !important;
         }
-        .section-card { padding: 16px !important; }
-        .section-card.p-6, .section-card.p-8 { padding: 20px !important; }
-        /* Large chart — let it scroll within its card rather than overflow viewport */
-        .chart-container { overflow-x: auto; }
-        #capacity-gap-chart { min-width: 600px; }
-        /* Catalog grid: 3 cols on phone */
-        .catalog-grid { grid-template-columns: repeat(3, 1fr) !important; }
-        /* PDF / wide form rows stack */
-        .roi-form-row { flex-direction: column !important; gap: 12px !important; }
-        input[type="number"], input[type="text"] { max-width: 100% !important; }
-        .flip-card { height: auto !important; min-height: 90px; }
-        /* Wide device frames: let them scroll horizontally within a container */
-        #deviceFrame, #ap-device-frame { max-width: 100% !important; }
-        .ap-cascade-grid { grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)) !important; }
+        main.mx-auto .flex.gap-4,
+        main.mx-auto .flex.gap-6,
+        main.mx-auto .flex.gap-8 {
+          flex-wrap: wrap !important;
+          gap: 10px !important;
+        }
+        /* Any flex row with explicit widths should stack */
+        main.mx-auto .flex.flex-row:not(.no-mobile-stack) {
+          flex-direction: column !important;
+          align-items: stretch !important;
+        }
+
+        /* ── Capacity gap chart — scale to fit viewport ── */
+        .chart-container { overflow: visible !important; max-height: 260px !important; aspect-ratio: auto !important; }
+        #capacity-gap-chart { min-width: 0 !important; width: 100% !important; max-height: 260px !important; height: 260px !important; }
+        #capacity-gap-chart svg { width: 100% !important; height: 100% !important; }
+        /* Driver pills row */
+        .driver-pills, .drivers-row { flex-wrap: wrap !important; gap: 6px !important; }
+        .driver-pill, .driver-pills button { font-size: 11px !important; padding: 6px 8px !important; }
+
+        /* ── Device frames (Admin View, Multi-tenant, Onboarding etc) ── */
+        .device-frame,
+        #deviceFrame, #ap-device-frame, #mt-device-frame, #ob-device-frame, #dr-device-frame {
+          max-width: 100% !important;
+          width: 100% !important;
+          max-height: none !important;
+          transform: none !important;
+          border-radius: 8px !important;
+        }
+        .device-frame .device-header { padding: 6px 10px !important; font-size: 11px !important; }
+        .device-frame .sidebar,
+        .device-frame [class*="sidebar"] {
+          display: none !important;
+        }
+        .device-frame .main-content,
+        .device-frame [class*="main-content"] {
+          width: 100% !important;
+          padding: 12px !important;
+        }
+        /* Fallback: collapse any inner two-column split inside device frames */
+        .device-frame .grid-cols-\[200px_1fr\],
+        .device-frame .grid-cols-\[240px_1fr\],
+        .device-frame .grid-cols-\[260px_1fr\] {
+          grid-template-columns: 1fr !important;
+        }
+
+        /* ── Catalog / tile grids ─────────────────────── */
+        .catalog-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
+        .catalog-grid .tile, .catalog-grid > * { padding: 8px !important; font-size: 12px !important; }
+        .ap-cascade-grid { grid-template-columns: repeat(4, 1fr) !important; gap: 4px !important; }
+
+        /* ── Flip cards ───────────────────────────────── */
+        .flip-card { height: auto !important; min-height: 80px !important; }
+        .flip-card-inner, .flip-card-front, .flip-card-back { position: relative !important; height: auto !important; min-height: 80px !important; }
+
+        /* ── ROI form ─────────────────────────────────── */
+        .roi-form-row,
+        .roi-grid,
+        #panel-roi .grid {
+          grid-template-columns: 1fr !important;
+          gap: 12px !important;
+        }
+        #panel-roi input[type="number"],
+        #panel-roi input[type="text"],
+        #panel-roi input[type="range"] {
+          max-width: 100% !important;
+          width: 100% !important;
+        }
+        /* ROI output tiles — 2 per row, not 4 */
+        #panel-roi .roi-outputs,
+        #panel-roi .grid.grid-cols-4 { grid-template-columns: repeat(2, 1fr) !important; }
+
+        /* ── Tables ───────────────────────────────────── */
+        table { font-size: 12px !important; }
+        table th, table td { padding: 6px 8px !important; }
+        .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+        /* ── Modals ──────────────────────────────────── */
+        .modal-overlay { padding: 12px !important; }
+        .modal-overlay > div,
+        .modal-overlay .modal-card {
+          width: 100% !important;
+          max-width: 100% !important;
+          max-height: 90vh !important;
+          padding: 16px !important;
+          margin: 0 !important;
+          border-radius: 8px !important;
+          overflow-y: auto !important;
+        }
+
+        /* ── Controls row (play/pause buttons) wraps ── */
+        .controls-row, .demo-controls, .flow-controls {
+          flex-wrap: wrap !important;
+          gap: 6px !important;
+        }
+
+        /* ── Buttons / inputs: bigger hit targets ─────── */
+        button, .btn { min-height: 40px; padding: 8px 14px !important; font-size: 13px !important; }
+        button svg, button i[data-lucide] { width: 14px !important; height: 14px !important; }
+        input, select, textarea { min-height: 40px; font-size: 14px !important; }
+
+        /* ── Typography scale-down ────────────────────── */
+        .text-3xl, .text-4xl, .text-5xl { font-size: 22px !important; }
+        .text-2xl { font-size: 18px !important; }
+        .text-xl { font-size: 16px !important; }
+        .text-lg { font-size: 15px !important; }
+
+        /* ── Spacing tightening ───────────────────────── */
+        .space-y-6 > * + *, .space-y-8 > * + * { margin-top: 12px !important; }
+        .gap-6, .gap-8 { gap: 10px !important; }
+        .p-6, .p-8 { padding: 14px !important; }
+        .py-6, .py-8 { padding-top: 14px !important; padding-bottom: 14px !important; }
+
+        /* ── Kill any desktop-only fixed widths ───────── */
+        [style*="width: 1000px"], [style*="width: 960px"], [style*="width: 900px"],
+        [style*="min-width: 800px"], [style*="min-width: 900px"] {
+          width: 100% !important;
+          min-width: 0 !important;
+        }
+      }
+
+      /* Extra-small phones */
+      @media (max-width: 480px) {
+        header.relative h1 { font-size: 22px !important; }
+        .recast-eyebrow-label { font-size: 12px !important; }
+        .catalog-grid { grid-template-columns: 1fr !important; }
+        .ap-cascade-grid { grid-template-columns: repeat(3, 1fr) !important; }
+        #panel-roi .roi-outputs,
+        #panel-roi .grid.grid-cols-4 { grid-template-columns: 1fr !important; }
       }
 
       /* ───── Scroll-free shell: hero + tabs pinned, panel gets remaining viewport ───── */
@@ -1052,11 +1228,20 @@
         max-width: none !important;
         width: 100% !important;
       }
+      /* ═════════════════════════════════════════════════════════════
+         DESKTOP LAYOUT — unified width and alignment
+         ═════════════════════════════════════════════════════════════ */
+
+      /* Unified max-width for hero content AND main panel so they align vertically */
+      header.relative .max-w-6xl,
       body > #app > main.mx-auto > section {
-        max-width: 1400px;
-        margin: 0 auto;
-        padding: 0 20px;
+        max-width: 1240px !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        padding-left: 32px !important;
+        padding-right: 32px !important;
       }
+      body > #app > main.mx-auto { padding-left: 0 !important; padding-right: 0 !important; }
 
       /* Compact hero + topnav so the panel gets most of the viewport */
       .recast-topnav { padding: 8px 0 !important; }
@@ -1091,18 +1276,106 @@
       #capacity-gap-chart { max-height: 280px; }
       .chart-container { aspect-ratio: auto; max-height: 280px; }
 
+      /* ═════════════════════════════════════════════════════════════
+         DESKTOP TIGHTENING (>= 901px) — Problems tab density
+         ═════════════════════════════════════════════════════════════ */
+      @media (min-width: 901px) {
+        /* Stat cards: shorter, tighter, no gradient fills */
+        .flip-card { height: 72px !important; }
+        .flip-card.flipped { height: 200px !important; }
+        .flip-card-front {
+          padding: 0 14px !important;
+          gap: 12px !important;
+          justify-content: flex-start !important;
+        }
+        .flip-card-stat {
+          font-size: 24px !important;
+          font-weight: 700 !important;
+          background: none !important;
+          -webkit-text-fill-color: var(--r-blue) !important;
+          color: var(--r-blue) !important;
+        }
+        .flip-card-tap {
+          font-size: 10px !important;
+          color: #94a3b8 !important;
+          margin-left: auto !important;
+          letter-spacing: 0.04em !important;
+          text-transform: uppercase !important;
+        }
+        .flip-card-front i[data-lucide] {
+          width: 18px !important;
+          height: 18px !important;
+          color: var(--r-blue-bright) !important;
+        }
+
+        /* Panel heading — remove the redundant h2 indent */
+        #panel-problems > .mb-1 { margin-bottom: 0 !important; padding-bottom: 0 !important; }
+        #panel-problems > .mb-1 h2 { font-size: 14px !important; font-weight: 600 !important; color: var(--r-ink-2) !important; text-transform: uppercase; letter-spacing: 0.08em; }
+
+        /* Chart section card: widen the left column, trim the right callout rail */
+        #panel-problems > .section-card { padding: 18px !important; }
+        #panel-problems > .section-card > .grid {
+          grid-template-columns: 1fr 260px !important;
+          gap: 20px !important;
+          align-items: stretch !important;
+        }
+        #panel-problems .chart-container {
+          max-height: none !important;
+          aspect-ratio: auto !important;
+          height: 100% !important;
+          min-height: 340px !important;
+          padding: 0 !important;
+        }
+        #capacity-gap-chart {
+          max-height: none !important;
+          height: 100% !important;
+          width: 100% !important;
+        }
+
+        /* Modern IT Challenges rail — clean card, no backdrop blur */
+        #panel-problems > .section-card > .grid > div:last-child {
+          background: var(--r-quote-bg) !important;
+          backdrop-filter: none !important;
+          -webkit-backdrop-filter: none !important;
+          border: 1px solid var(--r-divider) !important;
+          border-radius: 6px !important;
+          box-shadow: none !important;
+          padding: 16px !important;
+        }
+        #panel-problems > .section-card > .grid > div:last-child > h3 {
+          font-size: 13px !important;
+          font-weight: 700 !important;
+          text-transform: uppercase;
+          letter-spacing: 0.08em;
+          color: var(--r-ink-2) !important;
+          margin-bottom: 12px !important;
+          padding-bottom: 10px;
+          border-bottom: 1px solid var(--r-divider);
+        }
+        #panel-problems > .section-card > .grid > div:last-child > .grid { gap: 8px !important; }
+
+        /* Edit pencil: inline it to the right of the h2, not orphaned below */
+        #panel-problems > .mt-3 {
+          margin-top: 0 !important;
+          position: absolute;
+          top: 8px;
+          right: 32px;
+          z-index: 2;
+        }
+        #panel-problems { position: relative; }
+        #panel-problems > .mt-3 button {
+          width: 32px !important;
+          height: 32px !important;
+          min-height: 32px !important;
+          padding: 0 !important;
+        }
+      }
+
       /* Device frames / demos: cap heights */
       .device-frame { max-height: 52vh; }
 
       /* Modals still overlay fullscreen */
       .modal-overlay { position: fixed !important; inset: 0 !important; z-index: 100; }
-
-      @media (max-width: 900px) {
-        html, body { overflow: auto; }
-        body > #app { height: auto; display: block; }
-        body > #app > main.mx-auto { overflow-y: visible; height: auto; }
-        .device-frame { max-height: none; }
-      }
     </style>
   </head>
 
