@@ -485,6 +485,429 @@
       .logo-name { font-size: 13px; font-weight: 700; color: #334155; white-space: nowrap; flex-shrink: 0; letter-spacing: -0.02em; opacity: 0.7; }
       .logo-name:hover { opacity: 1; }
       .logo-divider { width: 1px; height: 16px; background: #e2e8f0; flex-shrink: 0; }
+
+      /* ══════════════════════════════════════════════════════════════
+         RECAST SOFTWARE BRAND OVERRIDE — applied on top of legacy styles
+         Primary blue #0000CC, Accent cyan #00BFFF, flat surfaces, Inter
+         ══════════════════════════════════════════════════════════════ */
+      :root {
+        /* Recast tokens */
+        --r-blue: #0000CC;
+        --r-blue-hover: #1A1AE0;
+        --r-cyan: #00BFFF;
+        --r-cyan-hover: #33CCFF;
+        --r-decorator: #2222DD;
+        --r-ink: #1A1A2E;
+        --r-ink-2: #4A4A5A;
+        --r-muted-blue: #AABBEE;
+        --r-surface: #FFFFFF;
+        --r-surface-2: #F0F0F6;
+        --r-surface-3: #FAFAFE;
+        --r-quote-bg: #F6F8FF;
+        --r-divider: #DDDDEE;
+        --r-red: #CC2222;
+        --r-green: #0F7A3F;
+        --r-amber: #CC8800;
+
+        /* Remap legacy shadow tokens to Recast's subtle register */
+        --shadow-card: 0 1px 2px rgba(26,26,46,0.06);
+        --shadow-hover: 0 2px 8px rgba(26,26,46,0.10);
+        --shadow-elevated: 0 8px 24px rgba(26,26,46,0.12);
+        --re-green: var(--r-green);
+
+        /* Flatter background — drop the radial blobs */
+        --bg-main: #FAFAFE;
+      }
+
+      html, body {
+        background: var(--bg-main) !important;
+        background-attachment: initial !important;
+        color: var(--r-ink) !important;
+        font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif !important;
+        -webkit-font-smoothing: antialiased;
+      }
+      body { letter-spacing: -0.005em; }
+
+      /* ───── Color remap: #0070F3 (brand accent) → Recast primary blue
+         (used for CTAs, borders, brand text). Uses attribute selectors
+         to target remaining inline styles without hand-editing each.  */
+      [style*="#0070F3"] { /* will be overridden per-property below */ }
+      [style*="color:#0070F3"], [style*="color: #0070F3"] { color: var(--r-blue) !important; }
+      [style*="background:#0070F3"], [style*="background: #0070F3"],
+      [style*="background-color:#0070F3"], [style*="background-color: #0070F3"] { background-color: var(--r-cyan) !important; }
+      [style*="border-color:#0070F3"], [style*="border-color: #0070F3"] { border-color: var(--r-blue) !important; }
+
+      /* #0A1C60 (navy headline) → Recast primary blue */
+      [style*="color:#0A1C60"], [style*="color: #0A1C60"] { color: var(--r-blue) !important; }
+      [style*="background:#0A1C60"], [style*="background: #0A1C60"],
+      [style*="background-color:#0A1C60"] { background-color: var(--r-blue) !important; }
+      [style*="border-color:#0A1C60"] { border-color: var(--r-blue) !important; }
+
+      /* Tailwind arbitrary values used throughout */
+      .text-\[\#0070F3\] { color: var(--r-blue) !important; }
+      .bg-\[\#0070F3\]   { background-color: var(--r-cyan) !important; }
+      .hover\:bg-\[\#005AD0\]:hover { background-color: var(--r-cyan-hover) !important; }
+      .border-\[\#0070F3\] { border-color: var(--r-blue) !important; }
+      .ring-\[\#0070F3\]   { --tw-ring-color: var(--r-blue) !important; }
+
+      .text-\[\#0A1C60\] { color: var(--r-blue) !important; }
+      .bg-\[\#0A1C60\]   { background-color: var(--r-blue) !important; }
+      .border-\[\#0A1C60\] { border-color: var(--r-blue) !important; }
+
+      .text-\[\#4A5568\], .text-\[\#4B5563\], .text-\[\#64748B\], .text-\[\#475569\] { color: var(--r-ink-2) !important; }
+      .text-\[\#334155\] { color: var(--r-ink) !important; }
+
+      /* Class-driven legacy rules — override with Recast tokens */
+      .re-primary {
+        background: var(--r-cyan) !important;
+        color: #fff !important;
+        border-radius: 6px !important;
+        padding: 10px 20px !important;
+        font-weight: 600 !important;
+        box-shadow: none !important;
+      }
+      .re-primary:hover { background: var(--r-cyan-hover) !important; transform: translateY(-1px) !important; }
+      .re-secondary {
+        background: transparent !important;
+        color: var(--r-blue) !important;
+        border: 1.5px solid var(--r-blue) !important;
+        border-radius: 6px !important;
+        padding: 10px 20px !important;
+        font-weight: 600 !important;
+      }
+      .re-secondary:hover {
+        background: var(--r-quote-bg) !important;
+        color: var(--r-blue) !important;
+        border-color: var(--r-blue) !important;
+      }
+
+      /* ───── Section cards: flat, subtle, Recast */
+      .section-card {
+        background: var(--r-surface) !important;
+        border: 1px solid var(--r-divider) !important;
+        border-radius: 8px !important;
+        box-shadow: var(--shadow-card) !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+      }
+      .section-card:hover { box-shadow: var(--shadow-hover) !important; }
+
+      .glass, .glass-soft {
+        background: var(--r-surface) !important;
+        border: 1px solid var(--r-divider) !important;
+        box-shadow: var(--shadow-card) !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+      }
+
+      .sub-card {
+        border-radius: 6px !important;
+        background: var(--r-surface-3) !important;
+        border: 1px solid var(--r-divider) !important;
+      }
+
+      /* ───── Header / hero ───── */
+      header.relative {
+        background: var(--r-blue);
+        color: #fff;
+        position: relative;
+        margin-bottom: 0;
+      }
+      /* Decorative + marks scattered on blue header */
+      header.relative::before,
+      header.relative::after {
+        content: "+ + + +";
+        position: absolute;
+        color: var(--r-decorator);
+        font-weight: 700;
+        font-size: 18px;
+        letter-spacing: 18px;
+        opacity: 0.8;
+        pointer-events: none;
+        z-index: 0;
+      }
+      header.relative::before { top: 18px; right: 32px; }
+      header.relative::after  { top: 60px; right: 140px; letter-spacing: 24px; font-size: 14px; opacity: 0.5; }
+
+      /* Ensure hero inner wrappers sit above decorative marks */
+      header.relative > div { position: relative; z-index: 1; }
+
+      /* Give the hero proper top/bottom breathing room + room for the tab rail */
+      header.relative > div:first-child {
+        padding-top: 40px !important;
+        padding-bottom: 20px !important;
+      }
+      header.relative > div:last-child {
+        padding-bottom: 0 !important;
+      }
+
+      header.relative h1 {
+        color: #fff !important;
+        font-weight: 700 !important;
+        letter-spacing: -0.02em !important;
+        line-height: 1.1 !important;
+        margin: 0 !important;
+        font-size: 48px !important;
+      }
+      header.relative h1 span:first-child { color: var(--r-cyan) !important; }
+      header.relative h1 span:nth-child(2) { color: #fff !important; }
+      header.relative p {
+        color: var(--r-muted-blue) !important;
+        font-size: 17px !important;
+        line-height: 1.55 !important;
+        margin-top: 12px !important;
+      }
+
+      /* Tab bar — clean underline rail at the bottom of the hero */
+      .recast-tabs {
+        display: flex;
+        align-items: stretch;
+        gap: 0;
+        border-top: 1px solid rgba(255,255,255,0.15);
+        overflow-x: auto;
+        scrollbar-width: none;
+      }
+      .recast-tabs::-webkit-scrollbar { display: none; }
+      .recast-tab {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: rgba(255,255,255,0.72);
+        font-weight: 600;
+        font-size: 14px;
+        padding: 16px 22px;
+        background: transparent;
+        border: 0;
+        border-bottom: 3px solid transparent;
+        margin-bottom: -1px;
+        white-space: nowrap;
+        flex-shrink: 0;
+        cursor: pointer;
+        transition: color 150ms, border-color 150ms, background 150ms;
+      }
+      .recast-tab:hover { color: #fff; background: rgba(255,255,255,0.06); }
+      .recast-tab.is-active {
+        color: #fff;
+        border-bottom-color: var(--r-cyan);
+      }
+
+      /* Kill the old tablist flex-wrap/rounding rule from header */
+      header.relative [role="tablist"] {
+        background: transparent !important;
+        border: 0 !important;
+        border-top: 1px solid rgba(255,255,255,0.15) !important;
+        border-radius: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        backdrop-filter: none !important;
+        gap: 0 !important;
+        flex-wrap: nowrap !important;
+        overflow-x: auto;
+      }
+      header.relative [role="tablist"]::-webkit-scrollbar { display: none; }
+      header.relative [role="tablist"] button {
+        color: rgba(255,255,255,0.72) !important;
+        font-weight: 600 !important;
+        font-size: 14px !important;
+        padding: 16px 20px !important;
+        border-radius: 0 !important;
+        background: transparent !important;
+        border-bottom: 3px solid transparent !important;
+        margin-bottom: -1px;
+        transition: color 150ms, border-color 150ms, background 150ms !important;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+      header.relative [role="tablist"] button[aria-selected="true"],
+      header.relative [role="tablist"] button.bg-\[\#0070F3\] {
+        color: #fff !important;
+        background: transparent !important;
+        background-color: transparent !important;
+        border-bottom-color: var(--r-cyan) !important;
+        border-radius: 0 !important;
+      }
+      header.relative [role="tablist"] button[aria-selected="false"]:hover {
+        color: #fff !important;
+        background: rgba(255,255,255,0.06) !important;
+      }
+
+      main.mx-auto { padding-top: 32px; }
+
+      /* ───── Typography polish ───── */
+      h2, .text-lg, .text-xl, .text-2xl {
+        letter-spacing: -0.015em;
+      }
+      /* Headings that used the old navy → primary blue */
+      h2.text-\[\#0A1C60\], h3.text-\[\#0A1C60\],
+      h2.text-\[\#0070F3\], h3.text-\[\#0070F3\] { color: var(--r-blue) !important; }
+
+      /* ───── Buttons / interactive surfaces ───── */
+      button, [role="button"] { font-family: inherit; }
+
+      .catalog-get-btn {
+        background: var(--r-cyan) !important;
+        border-radius: 999px !important;
+      }
+
+      /* Analyst trigger dashed underline */
+      .analyst-trigger { border-bottom-color: var(--r-cyan) !important; }
+
+      /* Status/accent utilities from legacy rules */
+      .user-status.loading { color: var(--r-blue) !important; }
+      .spinner { border-top-color: var(--r-blue) !important; }
+      .click-ring { border-color: var(--r-cyan) !important; }
+      .bts-label-engine {
+        color: var(--r-blue) !important;
+        background: var(--r-quote-bg) !important;
+        border-color: var(--r-divider) !important;
+      }
+      .path-row.active-path,
+      .scenario-pill.active-scenario,
+      .view-toggle.active,
+      .admin-row.row-active,
+      .mt-app-pill.mt-custom,
+      .ob-app.ob-active,
+      .admin-highlight {
+        border-color: var(--r-blue) !important;
+        background: var(--r-quote-bg) !important;
+        color: var(--r-blue) !important;
+      }
+
+      .mt-secondary, .dr-panel {
+        border-color: var(--r-blue) !important;
+        color: var(--r-blue) !important;
+      }
+      .dr-metric.dr-lit {
+        border-color: var(--r-blue) !important;
+        background: var(--r-quote-bg) !important;
+        color: var(--r-blue) !important;
+      }
+      .dr-bar { background: var(--r-blue) !important; }
+
+      .ob-step.ob-active .ob-dot,
+      .ap-step.ap-active .ap-dot,
+      .phase-dot.active {
+        background: var(--r-blue) !important;
+        box-shadow: 0 0 0 3px rgba(0,0,204,0.18) !important;
+      }
+      .phase-dot.done { background: var(--r-green) !important; }
+      .dtap-stage.dtap-current {
+        border-color: var(--r-blue) !important;
+        color: var(--r-blue) !important;
+      }
+      .ap-counter { color: var(--r-blue) !important; }
+
+      /* Gradient fills that used old blue → flatten to Recast blue */
+      .ap-device-header.workspace,
+      .platform-bar-mini,
+      .dr-global-badge {
+        background: var(--r-blue) !important;
+      }
+      .dash-metric .metric-value,
+      .flip-card-stat {
+        background: none !important;
+        -webkit-background-clip: initial !important;
+        -webkit-text-fill-color: var(--r-blue) !important;
+        color: var(--r-blue) !important;
+      }
+      .flip-card-back {
+        color: var(--r-blue) !important;
+        border-color: var(--r-blue) !important;
+      }
+      .orch-connector, .upd-bar, .mt-sync-line, .dr-feed-line, .dr-arrow-line {
+        background: linear-gradient(to right, var(--r-blue), var(--r-green)) !important;
+      }
+      .cinema-progress-fill {
+        background: linear-gradient(90deg, var(--r-blue), var(--r-green)) !important;
+      }
+      .cinema-caption .typing-cursor { background: var(--r-blue) !important; }
+
+      /* Flow bar / keyframes tint */
+      @keyframes tilePulse {
+        0% { transform: scale(0.7); background: #e5e7eb; opacity: 0.4; }
+        60% { transform: scale(1); background: var(--r-blue); opacity: 1; }
+        100% { background: #e5e7eb; opacity: 0.9; }
+      }
+      .dash-metric:hover {
+        border-color: var(--r-blue) !important;
+        box-shadow: 0 4px 20px rgba(0,0,204,0.08) !important;
+      }
+
+      /* ROI number inputs */
+      input[type="number"], input[type="text"] {
+        border-color: var(--r-divider) !important;
+      }
+      input[type="number"]:focus, input[type="text"]:focus {
+        border-color: var(--r-blue) !important;
+        outline: 2px solid rgba(0,0,204,0.15) !important;
+        outline-offset: 0 !important;
+      }
+      #roi-employees { color: var(--r-blue) !important; }
+
+      /* Focus ring */
+      .focus-ring:focus-visible {
+        outline: 2px solid var(--r-cyan) !important;
+        outline-offset: 2px !important;
+      }
+
+      /* ───── Modal chrome ───── */
+      .modal-overlay { background: rgba(26,26,46,0.55) !important; }
+      .modal-content {
+        border-radius: 8px !important;
+        box-shadow: 0 20px 60px rgba(26,26,46,0.30) !important;
+      }
+
+      /* ───── Chart colors ───── */
+      .chart-annotation { fill: var(--r-blue) !important; }
+
+      /* ───── Tweak a few tailwind blue/indigo utilities to Recast palette ───── */
+      .text-blue-200, .text-blue-300 { color: var(--r-muted-blue) !important; }
+      .text-blue-600, .text-blue-700, .text-blue-800 { color: var(--r-blue) !important; }
+      .bg-blue-50, .bg-indigo-50 { background-color: var(--r-quote-bg) !important; }
+      .bg-blue-100 { background-color: var(--r-surface-2) !important; }
+      .bg-blue-400 { background-color: var(--r-cyan) !important; }
+      .border-blue-200, .border-indigo-200 { border-color: var(--r-divider) !important; }
+
+      /* ───── Logo ticker gradient masks use white — keep */
+      /* ───── Mobile polish ───── */
+      html, body { overflow-x: hidden; }
+      @media (max-width: 768px) {
+        header.relative::before, header.relative::after { display: none; }
+        header.relative > div:first-child {
+          padding-top: 28px !important;
+          padding-bottom: 16px !important;
+        }
+        header.relative h1 { font-size: 30px !important; }
+        header.relative p { font-size: 14px !important; margin-top: 8px !important; }
+        header.relative [role="tablist"] button {
+          padding: 12px 14px !important;
+          font-size: 13px !important;
+        }
+        header.relative [role="tablist"] button i { width: 14px !important; height: 14px !important; }
+        main.mx-auto {
+          padding-left: 16px !important;
+          padding-right: 16px !important;
+        }
+        .section-card { padding: 16px !important; }
+        .section-card.p-6, .section-card.p-8 { padding: 20px !important; }
+        /* Large chart — let it scroll within its card rather than overflow viewport */
+        .chart-container { overflow-x: auto; }
+        #capacity-gap-chart { min-width: 600px; }
+        /* Catalog grid: 3 cols on phone */
+        .catalog-grid { grid-template-columns: repeat(3, 1fr) !important; }
+        /* PDF / wide form rows stack */
+        .roi-form-row { flex-direction: column !important; gap: 12px !important; }
+        input[type="number"], input[type="text"] { max-width: 100% !important; }
+        .flip-card { height: auto !important; min-height: 90px; }
+        /* Wide device frames: let them scroll horizontally within a container */
+        #deviceFrame, #ap-device-frame { max-width: 100% !important; }
+        .ap-cascade-grid { grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)) !important; }
+      }
+
+      /* ───── Print polish ───── */
+      @media print {
+        header.relative::before, header.relative::after { display: none; }
+      }
     </style>
   </head>
 
@@ -1369,11 +1792,10 @@
               </p>
             </div>
             <div class="relative mx-auto max-w-6xl px-4">
-              <div role="tablist" aria-label="Demo sections" class="flex w-full flex-wrap gap-2 rounded bg-white/60 backdrop-blur-lg p-1 ring-1 ring-slate-200">
+              <div role="tablist" aria-label="Demo sections" class="recast-tabs">
                 ${TABS.map(t=>`
                   <button type="button"
-                    class="${cx('inline-flex items-center gap-2 px-3.5 py-1.5 text-sm focus-ring transition',
-                      STATE.activeTab===t.id ? 'bg-[#0070F3] text-white hover:bg-[#005AD0] rounded' : 'text-[#0A1C60] hover:bg-slate-100 rounded')}"
+                    class="recast-tab ${STATE.activeTab===t.id ? 'is-active' : ''} focus-ring"
                     data-action="switch-tab" data-tab="${t.id}"
                     aria-controls="panel-${t.id}" aria-selected="${STATE.activeTab===t.id}">
                     <i data-lucide="${t.icon}" class="w-4 h-4"></i><span>${t.label}</span>
