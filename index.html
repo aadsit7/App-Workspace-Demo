@@ -1235,11 +1235,11 @@
       /* Unified max-width for hero content AND main panel so they align vertically */
       header.relative .max-w-6xl,
       body > #app > main.mx-auto > section {
-        max-width: 1240px !important;
+        max-width: 1440px !important;
         margin-left: auto !important;
         margin-right: auto !important;
-        padding-left: 32px !important;
-        padding-right: 32px !important;
+        padding-left: 40px !important;
+        padding-right: 40px !important;
       }
       body > #app > main.mx-auto { padding-left: 0 !important; padding-right: 0 !important; }
 
@@ -1280,57 +1280,95 @@
          DESKTOP TIGHTENING (>= 901px) — Problems tab density
          ═════════════════════════════════════════════════════════════ */
       @media (min-width: 901px) {
-        /* Stat cards: shorter, tighter, no gradient fills */
-        .flip-card { height: 72px !important; }
-        .flip-card.flipped { height: 200px !important; }
+        /* Simplify stat cards: no flipping, always show content */
+        .flip-card {
+          height: auto !important;
+          min-height: 84px !important;
+          perspective: none !important;
+          cursor: default !important;
+        }
+        .flip-card.flipped { height: auto !important; }
+        .flip-card-inner {
+          position: static !important;
+          transform: none !important;
+          transform-style: flat !important;
+          height: auto !important;
+        }
+        .flip-card.flipped .flip-card-inner { transform: none !important; }
         .flip-card-front {
-          padding: 0 14px !important;
-          gap: 12px !important;
-          justify-content: flex-start !important;
+          position: static !important;
+          inset: auto !important;
+          transform: none !important;
+          backface-visibility: visible !important;
+          height: auto !important;
+          display: flex !important;
+          flex-direction: column !important;
+          align-items: flex-start !important;
+          justify-content: center !important;
+          gap: 4px !important;
+          padding: 14px 16px !important;
+          background: #fff !important;
+          border: 1px solid var(--r-divider) !important;
+          border-radius: 6px !important;
         }
-        .flip-card-stat {
-          font-size: 24px !important;
-          font-weight: 700 !important;
-          background: none !important;
-          -webkit-text-fill-color: var(--r-blue) !important;
-          color: var(--r-blue) !important;
-        }
-        .flip-card-tap {
-          font-size: 10px !important;
-          color: #94a3b8 !important;
-          margin-left: auto !important;
-          letter-spacing: 0.04em !important;
-          text-transform: uppercase !important;
+        .flip-card-back {
+          display: none !important;
         }
         .flip-card-front i[data-lucide] {
           width: 18px !important;
           height: 18px !important;
           color: var(--r-blue-bright) !important;
+          margin-bottom: 2px !important;
+        }
+        .flip-card-stat {
+          font-size: 28px !important;
+          font-weight: 800 !important;
+          background: none !important;
+          -webkit-text-fill-color: var(--r-blue) !important;
+          color: var(--r-blue) !important;
+          letter-spacing: -0.02em !important;
+          line-height: 1 !important;
+        }
+        .flip-card-tap {
+          display: none !important;
         }
 
-        /* Panel heading — remove the redundant h2 indent */
+        /* Panel heading — turn into a small uppercase eyebrow */
         #panel-problems > .mb-1 { margin-bottom: 0 !important; padding-bottom: 0 !important; }
-        #panel-problems > .mb-1 h2 { font-size: 14px !important; font-weight: 600 !important; color: var(--r-ink-2) !important; text-transform: uppercase; letter-spacing: 0.08em; }
+        #panel-problems > .mb-1 h2 {
+          font-size: 12px !important;
+          font-weight: 700 !important;
+          color: var(--r-ink-2) !important;
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
+        }
 
         /* Chart section card: widen the left column, trim the right callout rail */
-        #panel-problems > .section-card { padding: 18px !important; }
+        #panel-problems > .section-card { padding: 22px !important; }
         #panel-problems > .section-card > .grid {
-          grid-template-columns: 1fr 260px !important;
-          gap: 20px !important;
+          grid-template-columns: 1fr 300px !important;
+          gap: 24px !important;
           align-items: stretch !important;
         }
         #panel-problems .chart-container {
           max-height: none !important;
           aspect-ratio: auto !important;
           height: 100% !important;
-          min-height: 340px !important;
+          min-height: 460px !important;
           padding: 0 !important;
         }
         #capacity-gap-chart {
           max-height: none !important;
           height: 100% !important;
           width: 100% !important;
+          min-height: 460px !important;
         }
+
+        /* Stat cards taller — match fuller visual scale */
+        .flip-card { min-height: 104px !important; }
+        .flip-card-front { padding: 18px 22px !important; gap: 6px !important; }
+        .flip-card-stat { font-size: 34px !important; }
+        .flip-card-front i[data-lucide] { width: 22px !important; height: 22px !important; }
 
         /* Modern IT Challenges rail — clean card, no backdrop blur */
         #panel-problems > .section-card > .grid > div:last-child {
@@ -1354,21 +1392,30 @@
         }
         #panel-problems > .section-card > .grid > div:last-child > .grid { gap: 8px !important; }
 
-        /* Edit pencil: inline it to the right of the h2, not orphaned below */
+        /* Edit pencil: tucked into the bottom-right corner, low-opacity until hover */
         #panel-problems > .mt-3 {
           margin-top: 0 !important;
           position: absolute;
-          top: 8px;
-          right: 32px;
+          bottom: 6px;
+          right: 10px;
           z-index: 2;
+          opacity: 0.25;
+          transition: opacity 160ms;
         }
+        #panel-problems > .mt-3:hover { opacity: 1; }
         #panel-problems { position: relative; }
         #panel-problems > .mt-3 button {
-          width: 32px !important;
-          height: 32px !important;
-          min-height: 32px !important;
+          width: 26px !important;
+          height: 26px !important;
+          min-height: 26px !important;
           padding: 0 !important;
+          border-width: 1px !important;
         }
+        #panel-problems > .mt-3 button svg { width: 12px !important; height: 12px !important; }
+
+        /* Panel wrapper gets slight vertical breathing room */
+        body > #app > main.mx-auto { padding-top: 20px !important; padding-bottom: 20px !important; }
+        #panel-problems.space-y-4 > * + * { margin-top: 16px !important; }
       }
 
       /* Device frames / demos: cap heights */
