@@ -904,9 +904,48 @@
         .ap-cascade-grid { grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)) !important; }
       }
 
-      /* ───── Print polish ───── */
-      @media print {
-        header.relative::before, header.relative::after { display: none; }
+      /* ───── Scroll-free shell: hero + tabs pinned, panel gets remaining viewport ───── */
+      html, body { height: 100%; overflow: hidden; }
+      body > #app { height: 100vh; display: flex; flex-direction: column; }
+      body > #app > header.relative { flex: 0 0 auto; }
+      body > #app > main.mx-auto {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-y: auto;
+        padding-top: 20px !important;
+        padding-bottom: 20px !important;
+        max-width: none !important;
+        width: 100% !important;
+      }
+      body > #app > main.mx-auto > section {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 0 16px;
+      }
+
+      /* Compact hero to reclaim vertical space */
+      header.relative > div:first-child {
+        padding-top: 20px !important;
+        padding-bottom: 12px !important;
+      }
+      header.relative h1 { font-size: 32px !important; }
+      header.relative p { font-size: 14px !important; margin-top: 6px !important; max-width: 60ch; }
+      .recast-tab { padding: 12px 18px !important; font-size: 13px !important; }
+
+      /* Tighter section spacing */
+      #panel-problems.space-y-4 > * + *,
+      #panel-roi.space-y-4 > * + * { margin-top: 12px !important; }
+      #panel-solution.space-y-3 > * + * { margin-top: 10px !important; }
+      .section-card.p-8 { padding: 20px !important; }
+      .section-card.p-6 { padding: 16px !important; }
+
+      /* Modals still work — they overlay the whole viewport */
+      .modal-overlay { position: fixed !important; inset: 0 !important; z-index: 100; }
+
+      @media (max-width: 900px) {
+        html, body { overflow: auto; }
+        body > #app { height: auto; display: block; }
+        body > #app > main.mx-auto { overflow-y: visible; height: auto; }
       }
     </style>
   </head>
