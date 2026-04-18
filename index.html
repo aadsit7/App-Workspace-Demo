@@ -1453,6 +1453,28 @@
         #panel-roi .bi-empty-title { font-size: 14px !important; }
         #panel-roi .bi-empty-body { font-size: 12px !important; }
         #panel-roi .bi-toosmall { padding: 12px 16px !important; }
+
+        /* ─── Recast Approach panel: compact spacing & density ─── */
+        #panel-solution { display: flex; flex-direction: column; gap: 8px; }
+        #panel-solution.space-y-3 > * + * { margin-top: 0 !important; }
+
+        /* Solution cards row: trim padding, smaller headings */
+        #panel-solution > .grid:first-child .section-card { padding: 12px !important; }
+
+        /* Centralized Platform strip: compact */
+        #panel-solution > .section-card { padding: 10px 14px !important; }
+        #panel-solution > .section-card .platform-bar { padding: 8px 12px !important; }
+        #panel-solution > .section-card .platform-stat-value { font-size: 13px !important; }
+        #panel-solution > .section-card .platform-stat-label { font-size: 9px !important; }
+        #panel-solution > .section-card .platform-cap { font-size: 10px !important; padding: 3px 8px !important; }
+        #panel-solution > .section-card .mt-2.text-\\[10px\\] { font-size: 9px !important; margin-top: 6px !important; }
+
+        /* Control strip: thinner */
+        #panel-solution .view-toggle { padding: 6px 10px !important; font-size: 11px !important; }
+
+        /* CTA row: less vertical whitespace */
+        #panel-solution > .flex.flex-col.items-end { margin-top: 4px !important; }
+        #panel-solution > .flex.flex-col.items-end > button { padding: 8px 18px !important; font-size: 13px !important; }
       }
 
       /* Device frames / demos: cap heights */
