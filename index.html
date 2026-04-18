@@ -1280,10 +1280,14 @@
          DESKTOP TIGHTENING (>= 901px) — Problems tab density
          ═════════════════════════════════════════════════════════════ */
       @media (min-width: 901px) {
+        /* Current State panel — fit in viewport without scrolling */
+        #panel-problems.cs-panel { display: flex; flex-direction: column; gap: 10px; }
+        #panel-problems.cs-panel > * + * { margin-top: 0 !important; }
+
         /* Simplify stat cards: no flipping, always show content */
         .flip-card {
           height: auto !important;
-          min-height: 84px !important;
+          min-height: 68px !important;
           perspective: none !important;
           cursor: default !important;
         }
@@ -1305,8 +1309,8 @@
           flex-direction: column !important;
           align-items: flex-start !important;
           justify-content: center !important;
-          gap: 4px !important;
-          padding: 14px 16px !important;
+          gap: 2px !important;
+          padding: 10px 14px !important;
           background: #fff !important;
           border: 1px solid var(--r-divider) !important;
           border-radius: 6px !important;
@@ -1315,13 +1319,13 @@
           display: none !important;
         }
         .flip-card-front i[data-lucide] {
-          width: 18px !important;
-          height: 18px !important;
+          width: 14px !important;
+          height: 14px !important;
           color: var(--r-blue-bright) !important;
-          margin-bottom: 2px !important;
+          margin-bottom: 0 !important;
         }
         .flip-card-stat {
-          font-size: 28px !important;
+          font-size: 22px !important;
           font-weight: 800 !important;
           background: none !important;
           -webkit-text-fill-color: var(--r-blue) !important;
@@ -1333,44 +1337,39 @@
           display: none !important;
         }
 
-        /* Panel heading — turn into a small uppercase eyebrow */
-        #panel-problems > .mb-1 { margin-bottom: 0 !important; padding-bottom: 0 !important; }
-        #panel-problems > .mb-1 h2 {
-          font-size: 12px !important;
+        /* Panel heading — compact inline row with edit button */
+        #panel-problems > .flex { margin-bottom: 0 !important; padding-bottom: 0 !important; }
+        #panel-problems > .flex h2 {
+          font-size: 11px !important;
           font-weight: 700 !important;
           color: var(--r-ink-2) !important;
           text-transform: uppercase;
           letter-spacing: 0.1em;
         }
 
-        /* Chart section card: widen the left column, trim the right callout rail */
-        #panel-problems > .section-card { padding: 22px !important; }
+        /* Chart section card: compact, chart capped to fit viewport */
+        #panel-problems > .section-card { padding: 14px 18px !important; }
         #panel-problems > .section-card > .grid {
-          grid-template-columns: 1fr 300px !important;
-          gap: 24px !important;
+          grid-template-columns: 1fr 260px !important;
+          gap: 18px !important;
           align-items: stretch !important;
         }
         #panel-problems .chart-container {
           max-height: none !important;
           aspect-ratio: auto !important;
           height: 100% !important;
-          min-height: 460px !important;
+          min-height: 0 !important;
           padding: 0 !important;
         }
         #capacity-gap-chart {
-          max-height: none !important;
-          height: 100% !important;
+          max-height: min(52vh, 420px) !important;
+          height: min(52vh, 420px) !important;
           width: 100% !important;
-          min-height: 460px !important;
+          min-height: 320px !important;
+          display: block;
         }
 
-        /* Stat cards taller — match fuller visual scale */
-        .flip-card { min-height: 104px !important; }
-        .flip-card-front { padding: 18px 22px !important; gap: 6px !important; }
-        .flip-card-stat { font-size: 34px !important; }
-        .flip-card-front i[data-lucide] { width: 22px !important; height: 22px !important; }
-
-        /* Modern IT Challenges rail — clean card, no backdrop blur */
+        /* Modern IT Challenges rail — clean card, compact */
         #panel-problems > .section-card > .grid > div:last-child {
           background: var(--r-quote-bg) !important;
           backdrop-filter: none !important;
@@ -1378,44 +1377,31 @@
           border: 1px solid var(--r-divider) !important;
           border-radius: 6px !important;
           box-shadow: none !important;
-          padding: 16px !important;
+          padding: 12px !important;
         }
         #panel-problems > .section-card > .grid > div:last-child > h3 {
-          font-size: 13px !important;
+          font-size: 11px !important;
           font-weight: 700 !important;
           text-transform: uppercase;
           letter-spacing: 0.08em;
           color: var(--r-ink-2) !important;
-          margin-bottom: 12px !important;
-          padding-bottom: 10px;
+          margin-bottom: 8px !important;
+          padding-bottom: 8px;
           border-bottom: 1px solid var(--r-divider);
         }
-        #panel-problems > .section-card > .grid > div:last-child > .grid { gap: 8px !important; }
-
-        /* Edit pencil: tucked into the bottom-right corner, low-opacity until hover */
-        #panel-problems > .mt-3 {
-          margin-top: 0 !important;
-          position: absolute;
-          bottom: 6px;
-          right: 10px;
-          z-index: 2;
-          opacity: 0.25;
-          transition: opacity 160ms;
+        #panel-problems > .section-card > .grid > div:last-child > .grid { gap: 6px !important; }
+        #panel-problems > .section-card > .grid > div:last-child .callout-dropdown,
+        #panel-problems > .section-card > .grid > div:last-child [data-action="toggle-callout"] {
+          padding: 8px 10px !important;
+          font-size: 13px !important;
         }
-        #panel-problems > .mt-3:hover { opacity: 1; }
-        #panel-problems { position: relative; }
-        #panel-problems > .mt-3 button {
-          width: 26px !important;
-          height: 26px !important;
-          min-height: 26px !important;
-          padding: 0 !important;
-          border-width: 1px !important;
-        }
-        #panel-problems > .mt-3 button svg { width: 12px !important; height: 12px !important; }
 
-        /* Panel wrapper gets slight vertical breathing room */
-        body > #app > main.mx-auto { padding-top: 20px !important; padding-bottom: 20px !important; }
-        #panel-problems.space-y-4 > * + * { margin-top: 16px !important; }
+        /* Edit pencil already inline — remove old absolute-position rules */
+        #panel-problems > .mt-3 { display: none !important; }
+
+        /* Panel wrapper: less vertical padding so everything fits */
+        body > #app > main.mx-auto { padding-top: 12px !important; padding-bottom: 12px !important; }
+        #panel-problems.space-y-4 > * + * { margin-top: 10px !important; }
       }
 
       /* Device frames / demos: cap heights */
@@ -1423,6 +1409,449 @@
 
       /* Modals still overlay fullscreen */
       .modal-overlay { position: fixed !important; inset: 0 !important; z-index: 100; }
+
+      /* ═════════════════════════════════════════════════════════════
+         BUSINESS IMPACT TAB — redesigned for clarity
+         ═════════════════════════════════════════════════════════════ */
+      .bi-input-card {
+        background: #fff;
+        border: 1px solid var(--r-divider);
+        border-radius: 8px;
+        padding: 20px 24px;
+        box-shadow: var(--shadow-card);
+      }
+      .bi-input-eyebrow {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--r-ink-2);
+        margin-bottom: 10px;
+      }
+      .bi-input-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .bi-input-field {
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+        flex: 1;
+        min-width: 260px;
+      }
+      .bi-input-label {
+        font-size: 16px;
+        font-weight: 500;
+        color: var(--r-ink);
+        white-space: nowrap;
+      }
+      .bi-input-employees {
+        width: 130px;
+        padding: 8px 12px;
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--r-blue);
+        border: 2px solid var(--r-divider);
+        border-radius: 4px;
+        outline: none;
+        transition: border-color 150ms, box-shadow 150ms;
+        appearance: textfield;
+        -moz-appearance: textfield;
+      }
+      .bi-input-employees:focus {
+        border-color: var(--r-blue-bright);
+        box-shadow: 0 0 0 3px rgba(42,127,255,0.12);
+      }
+      .bi-input-employees::-webkit-outer-spin-button,
+      .bi-input-employees::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+      .bi-input-unit {
+        font-size: 16px;
+        font-weight: 500;
+        color: var(--r-ink-2);
+      }
+      .bi-input-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--r-blue);
+        color: #fff;
+        padding: 12px 22px;
+        font-size: 14px;
+        font-weight: 700;
+        border: 0;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background 150ms;
+        white-space: nowrap;
+      }
+      .bi-input-cta:hover { background: var(--r-blue-hover); }
+      .bi-input-advanced {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: transparent;
+        color: var(--r-ink-2);
+        padding: 10px 14px;
+        font-size: 13px;
+        font-weight: 600;
+        border: 1px solid var(--r-divider);
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 150ms;
+      }
+      .bi-input-advanced:hover { color: var(--r-blue); border-color: var(--r-blue-bright); }
+
+      .bi-assumptions {
+        margin-top: 18px;
+        padding: 16px;
+        background: var(--r-surface-3);
+        border: 1px solid var(--r-divider);
+        border-radius: 6px;
+      }
+      .bi-assumptions-title {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--r-ink-2);
+        margin-bottom: 10px;
+      }
+      .bi-assumptions-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+      }
+      .bi-assumptions-grid.four { grid-template-columns: repeat(4, 1fr); }
+      .bi-rate { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--r-ink-2); }
+      .bi-rate input {
+        padding: 6px 8px;
+        border: 1px solid var(--r-divider);
+        border-radius: 4px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--r-ink);
+      }
+      .bi-assumptions-actions { display: flex; gap: 8px; margin-top: 12px; }
+      .bi-assumptions-save {
+        background: var(--r-blue);
+        color: #fff;
+        border: 0;
+        padding: 8px 14px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      .bi-assumptions-save:hover { background: var(--r-blue-hover); }
+      .bi-assumptions-close {
+        background: transparent;
+        border: 0;
+        padding: 8px 14px;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--r-ink-2);
+        cursor: pointer;
+      }
+
+      /* Empty state */
+      .bi-empty {
+        background: #fff;
+        border: 1px dashed var(--r-divider);
+        border-radius: 8px;
+        padding: 36px 20px;
+        text-align: center;
+      }
+      .bi-empty-visual {
+        display: inline-flex;
+        align-items: flex-end;
+        gap: 6px;
+        height: 64px;
+        margin-bottom: 14px;
+      }
+      .bi-empty-bar {
+        width: 22px;
+        background: var(--r-quote-bg);
+        border: 1px solid var(--r-muted-blue);
+        border-radius: 2px 2px 0 0;
+      }
+      .bi-empty-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--r-ink);
+        margin-bottom: 4px;
+      }
+      .bi-empty-body {
+        font-size: 13px;
+        color: var(--r-ink-2);
+        max-width: 440px;
+        margin: 0 auto;
+        line-height: 1.5;
+      }
+
+      /* Too-small state */
+      .bi-toosmall {
+        display: flex;
+        gap: 14px;
+        background: #fff;
+        border: 1px solid var(--r-divider);
+        border-left: 3px solid var(--r-amber);
+        border-radius: 6px;
+        padding: 16px 20px;
+      }
+      .bi-toosmall-icon { color: var(--r-amber); flex-shrink: 0; }
+      .bi-toosmall-title { font-size: 14px; font-weight: 700; color: var(--r-ink); margin-bottom: 4px; }
+      .bi-toosmall-body { font-size: 13px; color: var(--r-ink-2); line-height: 1.5; }
+
+      /* Hero metric block */
+      .bi-hero {
+        background: var(--r-blue);
+        color: #fff;
+        border-radius: 8px;
+        padding: 28px 32px;
+        display: grid;
+        grid-template-columns: 1fr 320px;
+        gap: 32px;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+      }
+      .bi-hero::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image:
+          radial-gradient(circle, var(--r-decorator) 1.5px, transparent 1.8px);
+        background-size: 14px 14px;
+        opacity: 0.4;
+        -webkit-mask-image: linear-gradient(90deg, transparent 0, transparent 70%, #000);
+                mask-image: linear-gradient(90deg, transparent 0, transparent 70%, #000);
+        pointer-events: none;
+      }
+      .bi-hero > * { position: relative; }
+      .bi-hero-eyebrow {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--r-muted-blue);
+        margin-bottom: 10px;
+      }
+      .bi-hero-number {
+        font-size: 72px;
+        font-weight: 800;
+        line-height: 1;
+        letter-spacing: -0.03em;
+        color: #fff;
+      }
+      .bi-hero-unit {
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--r-muted-blue);
+        margin-left: 10px;
+        letter-spacing: 0;
+      }
+      .bi-hero-sub {
+        margin-top: 12px;
+        font-size: 14px;
+        line-height: 1.55;
+        color: var(--r-muted-blue);
+        max-width: 46ch;
+      }
+      .bi-hero-sub strong { color: #fff; font-weight: 700; }
+      .bi-hero-secondary {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        border-left: 1px solid rgba(255,255,255,0.2);
+        padding-left: 24px;
+      }
+      .bi-hero-stat { }
+      .bi-hero-stat-value {
+        font-size: 22px;
+        font-weight: 700;
+        color: #fff;
+        line-height: 1.1;
+      }
+      .bi-hero-stat-label {
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--r-muted-blue);
+        margin-top: 2px;
+      }
+
+      /* Breakdown */
+      .bi-breakdown, .bi-reinvest {
+        background: #fff;
+        border: 1px solid var(--r-divider);
+        border-radius: 8px;
+        padding: 20px 24px;
+        box-shadow: var(--shadow-card);
+      }
+      .bi-section-head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 16px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--r-divider);
+      }
+      .bi-section-title {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--r-ink);
+      }
+      .bi-section-sub {
+        font-size: 12px;
+        color: var(--r-ink-2);
+      }
+      .bi-bars { display: flex; flex-direction: column; gap: 14px; }
+      .bi-bar-row {
+        display: grid;
+        grid-template-columns: 280px 1fr 130px;
+        gap: 16px;
+        align-items: center;
+      }
+      .bi-bar-label { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+      .bi-bar-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+      .bi-bar-name { font-size: 13px; font-weight: 700; color: var(--r-ink); }
+      .bi-bar-note { font-size: 11px; color: var(--r-ink-2); flex-basis: 100%; margin-left: 18px; }
+      .bi-bar-track {
+        height: 10px;
+        background: var(--r-surface-2);
+        border-radius: 5px;
+        overflow: hidden;
+      }
+      .bi-bar-fill {
+        height: 100%;
+        border-radius: 5px;
+        transition: width 700ms cubic-bezier(.2,.8,.2,1);
+      }
+      .bi-bar-value {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--r-ink);
+        text-align: right;
+      }
+      .bi-bar-value span {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--r-ink-2);
+        margin-left: 4px;
+      }
+
+      /* Reinvest tiles */
+      .bi-reinvest-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 10px;
+      }
+      .bi-reinvest-tile {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        padding: 14px;
+        background: var(--r-quote-bg);
+        border: 1px solid var(--r-divider);
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--r-ink);
+        line-height: 1.35;
+      }
+      .bi-reinvest-tile i[data-lucide] {
+        width: 18px;
+        height: 18px;
+        color: var(--r-blue-bright);
+      }
+
+      /* Action bar */
+      .bi-actionbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding-top: 4px;
+        flex-wrap: wrap;
+      }
+      .bi-action-primary {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--r-blue);
+        color: #fff;
+        padding: 10px 20px;
+        font-size: 13px;
+        font-weight: 700;
+        border: 0;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background 150ms;
+      }
+      .bi-action-primary:hover { background: var(--r-blue-hover); }
+      .bi-action-secondary {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: transparent;
+        color: var(--r-blue);
+        padding: 10px 18px;
+        font-size: 13px;
+        font-weight: 700;
+        border: 1.5px solid var(--r-blue);
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 150ms;
+      }
+      .bi-action-secondary:hover { background: var(--r-quote-bg); }
+      .bi-pdf-input {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: #fff;
+        border: 2px solid var(--r-blue);
+        border-radius: 4px;
+        padding: 6px 10px;
+      }
+      .bi-pdf-input input {
+        border: 0;
+        outline: none;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--r-ink);
+        width: 200px;
+      }
+      .bi-pdf-submit {
+        width: 28px; height: 28px;
+        border-radius: 4px;
+        background: var(--r-blue);
+        border: 0;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .bi-pdf-cancel { color: #94a3b8; font-size: 14px; cursor: pointer; padding: 0 4px; }
+
+      @media (max-width: 900px) {
+        .bi-hero { grid-template-columns: 1fr !important; padding: 20px !important; gap: 20px !important; }
+        .bi-hero-secondary { border-left: 0 !important; border-top: 1px solid rgba(255,255,255,0.2); padding-left: 0 !important; padding-top: 16px; flex-direction: row !important; flex-wrap: wrap; gap: 18px !important; }
+        .bi-hero-number { font-size: 52px !important; }
+        .bi-input-row { flex-direction: column; align-items: stretch !important; }
+        .bi-input-field { flex-wrap: wrap; }
+        .bi-input-cta, .bi-input-advanced { width: 100%; justify-content: center; }
+        .bi-assumptions-grid, .bi-assumptions-grid.four { grid-template-columns: repeat(2, 1fr) !important; }
+        .bi-bar-row { grid-template-columns: 1fr !important; gap: 6px !important; }
+        .bi-bar-value { text-align: left !important; }
+        .bi-reinvest-grid { grid-template-columns: repeat(2, 1fr) !important; }
+        .bi-actionbar { flex-direction: column; align-items: stretch; }
+        .bi-action-primary, .bi-action-secondary { width: 100%; justify-content: center; }
+      }
     </style>
   </head>
 
@@ -2358,11 +2787,12 @@
 
       function renderProblems(){
         return `
-          <section id="panel-problems" class="space-y-4">
-            <div class="mb-1">
-              <h2 class="text-lg font-semibold text-[#0A1C60]">The application layer is now the #1 primary constraint in modern <span class="analyst-trigger" data-action="open-analyst-modal">IT.</span></h2>
+          <section id="panel-problems" class="space-y-2 cs-panel">
+            <div class="flex items-center justify-between gap-3">
+              <h2 class="text-base font-semibold text-[#0A1C60]">The application layer is now the #1 primary constraint in modern <span class="analyst-trigger" data-action="open-analyst-modal">IT.</span></h2>
+              <button type="button" data-action="open-currentstate-editor" class="w-7 h-7 rounded-full border-2 border-gray-300 bg-transparent text-gray-400 inline-flex items-center justify-center hover:text-[#0070F3] hover:border-[#0070F3] transition flex-shrink-0" title="Edit Current State"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
             </div>
-            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <div class="grid grid-cols-2 gap-2 sm:grid-cols-4 cs-stats">
               ${STAT_CARDS.map(card => {
                 const isFlipped = STATE.flippedCards[card.id];
                 return '<div class="flip-card '+(isFlipped ? 'flipped' : '')+'" data-action="flip-card" data-card-id="'+card.id+'" role="button" tabindex="0" aria-label="'+card.title+'">'
@@ -2384,23 +2814,20 @@
                 +'</div>';
               }).join('')}
             </div>
-            <div class="section-card p-6">
-              <div class="grid grid-cols-1 lg:grid-cols-[1fr_240px] gap-4 items-start">
+            <div class="section-card cs-chart-card">
+              <div class="grid grid-cols-1 lg:grid-cols-[1fr_220px] gap-3 items-stretch">
                 <div class="chart-container relative">
-                  <svg id="capacity-gap-chart" viewBox="0 0 800 420"></svg>
+                  <svg id="capacity-gap-chart" viewBox="0 0 800 420" preserveAspectRatio="xMidYMid meet"></svg>
                 </div>
-                <div class="w-full bg-white/70 backdrop-blur-lg rounded-2xl shadow-md p-4 border border-slate-200">
-                  <h3 class="text-lg font-medium mb-4">Modern IT Challenges</h3>
-                  <div class="grid grid-cols-1 gap-4 items-stretch">
+                <div class="w-full bg-white/70 backdrop-blur-lg rounded-xl shadow-sm p-3 border border-slate-200 cs-challenges">
+                  <h3 class="text-xs font-semibold uppercase tracking-wide text-[#0A1C60] mb-2">Modern IT Challenges</h3>
+                  <div class="grid grid-cols-1 gap-2 items-stretch">
                     ${calloutDropdown('change','alert-triangle','Why Change','bg-slate-50')}
                     ${calloutDropdown('now','clock-4','Why Now','bg-slate-50', false, "")}
                     ${calloutDropdown('recast','sparkles','Why Recast','bg-slate-50', true)}
                   </div>
                 </div>
               </div>
-            </div>
-            <div class="mt-3">
-              <button type="button" data-action="open-currentstate-editor" class="w-9 h-9 rounded-full border-2 border-gray-300 bg-transparent text-gray-400 inline-flex items-center justify-center hover:text-[#0070F3] hover:border-[#0070F3] transition" title="Edit Current State"><i data-lucide="pencil" class="w-4 h-4"></i></button>
             </div>
           </section>
         `;
@@ -4596,99 +5023,104 @@
         const ci = STATE.calcInputs;
         const sc = STATE.calcScenario;
         const a = ROI_ASSUMPTIONS[sc];
+        const hasResult = r && ci.users > 200;
+        const tooSmall = r && ci.users <= 200;
         return `
           <section id="panel-roi" class="space-y-4">
 
-            <!-- BRIDGE CARD -->
-            <div class="section-card px-5 py-4 rounded-2xl" style="background:linear-gradient(135deg, #eff6ff 0%, #f8fafc 100%); border:1px solid #dbeafe">
-              <div class="flex items-center gap-2 mb-2">
-                <i data-lucide="sparkles" class="w-4 h-4 text-[#0070F3]"></i>
-                <span class="text-sm font-semibold text-[#0A1C60]">What you just saw eliminates hours of repetitive work</span>
-              </div>
-              <div class="flex flex-wrap gap-2 mb-2">
-                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-blue-200 text-[11px] font-semibold text-[#0A1C60] shadow-sm"><i data-lucide="shopping-bag" class="w-3 h-3 text-[#0070F3]"></i> Self-Service Delivery</span>
-                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-blue-200 text-[11px] font-semibold text-[#0A1C60] shadow-sm"><i data-lucide="bot" class="w-3 h-3 text-[#0070F3]"></i> Automatic Patching</span>
-                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-blue-200 text-[11px] font-semibold text-[#0A1C60] shadow-sm"><i data-lucide="repeat" class="w-3 h-3 text-[#0070F3]"></i> Zero Per-Platform Rebuilds</span>
-              </div>
-              <div class="text-xs text-[#64748b]">per app, per update, per environment. Enter your employee count below to see what that adds up to.</div>
-            </div>
-
-            <!-- EMPLOYEE COUNT INPUT -  HERO -->
-            <div class="section-card p-6 rounded-2xl">
-              <div class="flex items-center justify-between gap-4">
-                <div class="flex items-center gap-4 flex-1">
-                  <div class="h-12 w-12 rounded-xl grid place-items-center bg-gradient-to-br from-[#0070F3] to-[#0A1C60] flex-shrink-0"><i data-lucide="building-2" class="w-6 h-6 text-white"></i></div>
-                  <div class="flex-1">
-                    <div class="text-base font-semibold text-[#0A1C60] mb-1">How many employees?</div>
-                    <div class="flex items-center gap-3">
-                      <input type="number" id="roi-employees" placeholder="5000" value="${ci.users}" class="w-full max-w-[220px] px-4 py-3 text-2xl font-bold text-[#0A1C60] border-2 border-slate-200 rounded-xl focus:border-[#0070F3] focus:outline-none transition" style="appearance:textfield;-moz-appearance:textfield">
-                      <button type="button" data-action="calculate-impact" class="inline-flex items-center gap-2 bg-[#0070F3] text-white px-5 py-3 text-sm font-semibold rounded-xl hover:bg-[#005AD0] transition whitespace-nowrap"><i data-lucide="bar-chart-3" class="w-4 h-4"></i> Show Results</button>
-                    </div>
-                  </div>
-                </div>
-                <button type="button" data-action="toggle-assumptions" class="inline-flex items-center gap-1.5 px-3 py-2 text-xs text-slate-400 hover:text-[#0070F3] border border-slate-200 rounded-lg hover:border-[#0070F3] transition" title="Adjust assumptions"><i data-lucide="sliders" class="w-3.5 h-3.5"></i> Adjust</button>
+            <!-- STEP 1 — Input, always visible, compact -->
+            <div class="bi-input-card">
+              <div class="bi-input-eyebrow">Business Impact Calculator</div>
+              <div class="bi-input-row">
+                <label class="bi-input-field">
+                  <span class="bi-input-label">Your organization has</span>
+                  <input type="number" id="roi-employees" placeholder="5,000" value="${ci.users}" class="bi-input-employees">
+                  <span class="bi-input-unit">employees</span>
+                </label>
+                <button type="button" data-action="calculate-impact" class="bi-input-cta">
+                  ${hasResult || tooSmall ? 'Recalculate' : 'Calculate Impact'}
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+                <button type="button" data-action="toggle-assumptions" class="bi-input-advanced" title="Adjust assumptions">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+                  <span>${STATE.showAssumptions ? 'Hide assumptions' : 'Assumptions'}</span>
+                </button>
               </div>
 
               ${STATE.showAssumptions ? `
-                <div class="mt-4 p-4 rounded-lg bg-slate-50 border border-slate-200">
-                  <div class="flex items-center justify-between mb-3">
-                    <div class="text-[10px] font-semibold text-[#0A1C60] uppercase tracking-wide">Environment & Effort Assumptions</div>
-                  </div>
-                  <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
+                <div class="bi-assumptions">
+                  <div class="bi-assumptions-title">Environment & effort inputs</div>
+                  <div class="bi-assumptions-grid">
                     ${roiInput('roi-users','users','Managed users','End users in scope','5000',ci.users)}
                     ${roiInput('roi-endpoints','monitor','Endpoints','Devices in scope','6000',ci.endpoints)}
                     ${roiInput('roi-envs','layers','Environments','Intune, SCCM, VDI, Jamf, etc.','3',ci.envs)}
                     ${roiInput('roi-apps','layout-grid','Active apps','Apps actively managed','150',ci.apps)}
-                    ${roiInput('roi-custom','package','Custom / internal apps','Internally packaged or unique','30',ci.customApps)}
-                    ${roiInput('roi-tickets','ticket','Monthly app tickets','App-related support tickets/mo','600',ci.monthlyTickets)}
+                    ${roiInput('roi-custom','package','Custom / internal apps','Internally packaged','30',ci.customApps)}
+                    ${roiInput('roi-tickets','ticket','Monthly app tickets','App tickets/mo','600',ci.monthlyTickets)}
+                    ${roiInput('roi-ticketmins','clock','Avg ticket time (min)','Minutes per ticket','18',ci.avgTicketMins)}
+                    ${roiInput('roi-pkghrs','wrench','Packaging hrs/mo','Package + repackage','80',ci.pkgHours)}
+                    ${roiInput('roi-patchhrs','refresh-cw','Patching hrs/mo','Validate + deploy','60',ci.patchHours)}
                   </div>
-                  <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
-                    ${roiInput('roi-ticketmins','clock','Avg ticket time (min)','Minutes per app ticket','18',ci.avgTicketMins)}
-                    ${roiInput('roi-pkghrs','wrench','Packaging hours / mo','Package + repackage effort','80',ci.pkgHours)}
-                    ${roiInput('roi-patchhrs','refresh-cw','Patching hours / mo','Validate + deploy updates','60',ci.patchHours)}
+                  <div class="bi-assumptions-title" style="margin-top:16px">Reduction rates (%)</div>
+                  <div class="bi-assumptions-grid four">
+                    <label class="bi-rate"><span>Ticket reduction</span><input type="number" id="asn-ticket" min="0" max="100" value="${Math.round(a.ticketReduction * 100)}"></label>
+                    <label class="bi-rate"><span>Packaging reduction</span><input type="number" id="asn-pkg" min="0" max="100" value="${Math.round(a.pkgReduction * 100)}"></label>
+                    <label class="bi-rate"><span>Patching reduction</span><input type="number" id="asn-patch" min="0" max="100" value="${Math.round(a.patchReduction * 100)}"></label>
+                    <label class="bi-rate"><span>Strategic reallocation</span><input type="number" id="asn-strategic" min="0" max="100" value="${Math.round(a.strategicRealloc * 100)}"></label>
                   </div>
-                  <div class="text-[10px] font-semibold text-[#0A1C60] uppercase tracking-wide mb-2 mt-4">Reduction rates</div>
-                  <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs text-[#475569]">
-                    <label class="flex flex-col gap-1"><span>Ticket reduction %</span><input type="number" id="asn-ticket" min="0" max="100" value="${Math.round(a.ticketReduction * 100)}" class="w-full px-2 py-1 rounded border border-slate-300 text-xs font-semibold focus-ring"></label>
-                    <label class="flex flex-col gap-1"><span>Packaging reduction %</span><input type="number" id="asn-pkg" min="0" max="100" value="${Math.round(a.pkgReduction * 100)}" class="w-full px-2 py-1 rounded border border-slate-300 text-xs font-semibold focus-ring"></label>
-                    <label class="flex flex-col gap-1"><span>Patching reduction %</span><input type="number" id="asn-patch" min="0" max="100" value="${Math.round(a.patchReduction * 100)}" class="w-full px-2 py-1 rounded border border-slate-300 text-xs font-semibold focus-ring"></label>
-                    <label class="flex flex-col gap-1"><span>Strategic reallocation %</span><input type="number" id="asn-strategic" min="0" max="100" value="${Math.round(a.strategicRealloc * 100)}" class="w-full px-2 py-1 rounded border border-slate-300 text-xs font-semibold focus-ring"></label>
+                  <div class="bi-assumptions-actions">
+                    <button type="button" data-action="save-assumptions" class="bi-assumptions-save">Save &amp; Recalculate</button>
+                    <button type="button" data-action="toggle-assumptions" class="bi-assumptions-close">Close</button>
                   </div>
-                  <div class="flex items-center gap-2 mt-3">
-                    <button type="button" data-action="save-assumptions" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-semibold rounded-md bg-[#0070F3] text-white hover:bg-[#005AD0] transition"><i data-lucide="save" class="w-3 h-3"></i> Save & Recalculate</button>
-                    <button type="button" data-action="toggle-assumptions" class="px-3 py-1.5 text-[10px] font-semibold rounded-md text-slate-500 hover:text-slate-700 transition">Close</button>
-                  </div>
-                  <div class="text-[9px] text-slate-400 mt-2">All values are editable. Changes recalculate the impact below.</div>
                 </div>
               ` : ''}
             </div>
 
-            <!-- ROI DASHBOARD -->
-            ${ci.users <= 200 ? '<div class="section-card p-6 rounded-2xl text-center"><i data-lucide="info" class="w-8 h-8 text-slate-300 mx-auto mb-3"></i><div class="text-sm font-semibold text-[#0A1C60] mb-2">Not the right fit for this size</div><div class="text-xs text-[#64748b] max-w-md mx-auto leading-relaxed">Organizations under 200 employees typically don\'t face the multi-platform complexity that Application Workspace addresses. For smaller teams, the per-platform model usually works fine.</div></div>' : (r ? '<div id="impact-results">' + renderCalcResult() + '</div>' : '')}
+            <!-- STEP 2 — Results -->
+            ${tooSmall ? `
+              <div class="bi-toosmall">
+                <div class="bi-toosmall-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+                <div>
+                  <div class="bi-toosmall-title">Under 200 employees? You likely don't need this.</div>
+                  <div class="bi-toosmall-body">Organizations under 200 typically don't face the multi-platform complexity Application Workspace addresses. The per-platform model usually works fine at that scale.</div>
+                </div>
+              </div>
+            ` : hasResult ? `<div id="impact-results">${renderCalcResult()}</div>` : `
+              <div class="bi-empty">
+                <div class="bi-empty-visual">
+                  <div class="bi-empty-bar" style="height:22%"></div>
+                  <div class="bi-empty-bar" style="height:48%"></div>
+                  <div class="bi-empty-bar" style="height:72%"></div>
+                  <div class="bi-empty-bar" style="height:96%"></div>
+                </div>
+                <div class="bi-empty-title">Enter your employee count to see your impact</div>
+                <div class="bi-empty-body">We'll model hours returned, FTE capacity freed, and where it goes — calibrated to your environment in seconds.</div>
+              </div>
+            `}
 
-
-            <div class="flex items-center justify-between">
-              <div class="flex gap-3">
-                ${r ? (STATE.pdfCompanyInput ? `
-                  <div class="flex items-center gap-3" style="animation:dashSlideUp 0.3s ease forwards">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0000CC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 18 15 15"/></svg>
-                    <input type="text" id="pdf-company-input" placeholder="Enter company name" value="${STATE.pdfCompanyName}" style="width:280px;padding:10px 14px;border:2px solid #e2e8f0;border-radius:10px;font-size:15px;font-weight:600;color:#0A1C60;outline:none;transition:border-color 0.2s,box-shadow 0.2s" onfocus="this.style.borderColor='#0070F3';this.style.boxShadow='0 0 0 3px rgba(0,112,243,0.1)'" onblur="this.style.borderColor='#e2e8f0';this.style.boxShadow='none'">
-                    <button type="button" data-action="submit-pdf-company" style="width:38px;height:38px;border-radius:50%;background:#0000CC;border:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:background 0.2s;flex-shrink:0" onmouseover="this.style.background='#0000AA'" onmouseout="this.style.background='#0000CC'">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            ${hasResult ? `
+              <div class="bi-actionbar">
+                ${STATE.pdfCompanyInput ? `
+                  <div class="bi-pdf-input">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--r-blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    <input type="text" id="pdf-company-input" placeholder="Enter company name" value="${STATE.pdfCompanyName}">
+                    <button type="button" data-action="submit-pdf-company" class="bi-pdf-submit">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
                     </button>
-                    <span data-action="cancel-pdf-input" style="color:#94a3b8;font-size:12px;cursor:pointer;margin-left:4px">\u2715</span>
+                    <span data-action="cancel-pdf-input" class="bi-pdf-cancel">×</span>
                   </div>
                 ` : `
-                  <button type="button" data-action="open-pdf-input" class="inline-flex items-center gap-2 text-white px-7 py-2.5 text-sm font-semibold rounded-full transition" style="background:#0000CC" onmouseover="this.style.background='#0000AA'" onmouseout="this.style.background='#0000CC'">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 18 15 15"/></svg>
+                  <button type="button" data-action="open-pdf-input" class="bi-action-primary">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 18 15 15"/></svg>
                     Download Executive Summary
                   </button>
-                `) : ''}
+                `}
+                <button type="button" data-action="open-ai-agent" class="bi-action-secondary">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                  Ask a question
+                </button>
               </div>
-              <button type="button" data-action="open-ai-agent" class="inline-flex items-center gap-2 text-white px-4 py-2.5 text-sm font-semibold rounded-full shadow-lg hover:opacity-90 transition" style="background:linear-gradient(135deg,#0070F3,#0A1C60)">
-                <i data-lucide="message-circle-question" class="w-4 h-4"></i> Ask a Question
-              </button>
-            </div>
+            ` : ''}
           </section>
         `;
       }
@@ -4700,81 +5132,93 @@
         const supportPct = Math.round(a.ticketReduction * 100);
         const pkgPct = Math.round(a.pkgReduction * 100);
         const patchPct = Math.round(a.patchReduction * 100);
+        const total = r.ticketHoursReturned + r.pkgHoursReturned + r.patchHoursReturned;
+        const ticketShare = total ? Math.round((r.ticketHoursReturned / total) * 100) : 0;
+        const pkgShare = total ? Math.round((r.pkgHoursReturned / total) * 100) : 0;
+        const patchShare = 100 - ticketShare - pkgShare;
         return `
-          <!-- BEAT 1: Here's what we estimated -->
-          <div class="section-card p-6 rounded-2xl dash-animate">
-            <div class="text-[10px] font-semibold text-[#64748b] uppercase tracking-widest mb-4">Here's what we estimated</div>
-            <div class="grid grid-cols-3 gap-6">
-              <div class="text-center">
-                <div class="text-4xl font-bold text-[#0A1C60] leading-none">${num(r.totalHoursYear)}</div>
-                <div class="text-xs text-slate-400 mt-2">hours / year locked in routine work</div>
-              </div>
-              <div class="text-center">
-                <div class="text-4xl font-bold text-[#0A1C60] leading-none">${r.fteCapacity}</div>
-                <div class="text-xs text-slate-400 mt-2">FTE-equivalents recoverable</div>
-              </div>
-              <div class="text-center">
-                <div class="text-4xl font-bold text-[#0070F3] leading-none">${num(r.strategicHours)}</div>
-                <div class="text-xs text-slate-400 mt-2">strategic hours returned / year</div>
-              </div>
+          <!-- HERO METRIC — one clear takeaway -->
+          <div class="bi-hero dash-animate">
+            <div class="bi-hero-primary">
+              <div class="bi-hero-eyebrow">Estimated annual impact for ${num(ci.users)} employees</div>
+              <div class="bi-hero-number">${num(r.totalHoursYear)}<span class="bi-hero-unit">hours</span></div>
+              <div class="bi-hero-sub">returned to your team every year — the equivalent of <strong>${r.fteCapacity} full-time engineers</strong> freed from routine work.</div>
             </div>
-          </div>
-
-          <!-- BEAT 2: Here's where it comes from -->
-          <div class="section-card p-6 rounded-2xl dash-animate mt-4">
-            <div class="text-[10px] font-semibold text-[#64748b] uppercase tracking-widest mb-4">Here's where it comes from</div>
-            <div class="space-y-4">
-              <div>
-                <div class="flex items-center justify-between mb-1.5"><span class="text-sm font-semibold text-[#0A1C60]">Support & tickets</span><span class="text-sm font-bold text-emerald-600">${num(r.ticketHoursReturned)} hrs/mo returned</span></div>
-                <div class="h-3 rounded-full bg-slate-100 overflow-hidden"><div class="h-full rounded-full bg-gradient-to-r from-emerald-400 to-emerald-600 transition-all duration-700" style="width:${supportPct}%"></div></div>
-                <div class="text-[10px] text-slate-400 mt-1">${supportPct}% reduction - ${num(r.ticketsAvoided)} tickets avoided per month</div>
+            <div class="bi-hero-secondary">
+              <div class="bi-hero-stat">
+                <div class="bi-hero-stat-value">${fmtDollars(r.totalRecoveredAnnual)}</div>
+                <div class="bi-hero-stat-label">Annual capacity value</div>
               </div>
-              <div>
-                <div class="flex items-center justify-between mb-1.5"><span class="text-sm font-semibold text-[#0A1C60]">Packaging</span><span class="text-sm font-bold text-[#0070F3]">${num(r.pkgHoursReturned)} hrs/mo returned</span></div>
-                <div class="h-3 rounded-full bg-slate-100 overflow-hidden"><div class="h-full rounded-full bg-gradient-to-r from-blue-400 to-blue-600 transition-all duration-700" style="width:${pkgPct}%"></div></div>
-                <div class="text-[10px] text-slate-400 mt-1">${pkgPct}% reduction across ${ci.envs} environments</div>
+              <div class="bi-hero-stat">
+                <div class="bi-hero-stat-value">4–6 wk</div>
+                <div class="bi-hero-stat-label">Time to first value</div>
               </div>
-              <div>
-                <div class="flex items-center justify-between mb-1.5"><span class="text-sm font-semibold text-[#0A1C60]">Patching</span><span class="text-sm font-bold text-indigo-600">${num(r.patchHoursReturned)} hrs/mo returned</span></div>
-                <div class="h-3 rounded-full bg-slate-100 overflow-hidden"><div class="h-full rounded-full bg-gradient-to-r from-indigo-400 to-indigo-600 transition-all duration-700" style="width:${patchPct}%"></div></div>
-                <div class="text-[10px] text-slate-400 mt-1">${patchPct}% reduction - staged pipeline replaces per-platform rebuilds</div>
+              <div class="bi-hero-stat">
+                <div class="bi-hero-stat-value">${num(r.strategicHours)} h</div>
+                <div class="bi-hero-stat-label">Reinvested in strategy</div>
               </div>
             </div>
           </div>
 
-          <!-- BEAT 3: Here's what it means -  THE CLIMAX -->
-          <div class="rounded-2xl dash-animate mt-4 p-6" style="background:linear-gradient(135deg,#0A1C60 0%,#0070F3 100%)">
-            <div class="text-center mb-5">
-              <div class="text-[10px] font-semibold text-blue-200 uppercase tracking-widest mb-3">Where the capacity goes</div>
-              <div class="text-5xl font-bold text-white leading-none">${num(r.strategicHours)}</div>
-              <div class="text-sm text-blue-200 mt-2">hours / year returned to strategic work</div>
-              <div class="text-sm font-semibold text-white mt-1">${r.fteCapacity} FTE-equivalents - reallocated, not eliminated</div>
+          <!-- BREAKDOWN — where the hours come from -->
+          <div class="bi-breakdown dash-animate">
+            <div class="bi-section-head">
+              <div class="bi-section-title">Where the hours come from</div>
+              <div class="bi-section-sub">Monthly hours returned, by workflow</div>
             </div>
-            <div class="flex flex-wrap justify-center gap-3 mb-2">
-              ${['AI and Copilot rollouts','Cloud and endpoint migrations','Compliance and security posture','Automation and self-service','Pilot programs and modernization'].map(t => '<div class="px-3 py-1.5 rounded-full bg-white/15 text-[11px] font-semibold text-white">'+t+'</div>').join('')}
+            <div class="bi-bars">
+              <div class="bi-bar-row">
+                <div class="bi-bar-label">
+                  <span class="bi-bar-dot" style="background:#10B981"></span>
+                  <span class="bi-bar-name">Support &amp; tickets</span>
+                  <span class="bi-bar-note">${num(r.ticketsAvoided)} tickets avoided/mo · ${supportPct}% reduction</span>
+                </div>
+                <div class="bi-bar-track">
+                  <div class="bi-bar-fill" style="width:${supportPct}%;background:#10B981"></div>
+                </div>
+                <div class="bi-bar-value">${num(r.ticketHoursReturned)} <span>hrs/mo</span></div>
+              </div>
+              <div class="bi-bar-row">
+                <div class="bi-bar-label">
+                  <span class="bi-bar-dot" style="background:var(--r-blue-bright)"></span>
+                  <span class="bi-bar-name">Packaging</span>
+                  <span class="bi-bar-note">Across ${ci.envs} environments · ${pkgPct}% reduction</span>
+                </div>
+                <div class="bi-bar-track">
+                  <div class="bi-bar-fill" style="width:${pkgPct}%;background:var(--r-blue-bright)"></div>
+                </div>
+                <div class="bi-bar-value">${num(r.pkgHoursReturned)} <span>hrs/mo</span></div>
+              </div>
+              <div class="bi-bar-row">
+                <div class="bi-bar-label">
+                  <span class="bi-bar-dot" style="background:var(--r-blue)"></span>
+                  <span class="bi-bar-name">Patching</span>
+                  <span class="bi-bar-note">Staged pipeline replaces rebuilds · ${patchPct}% reduction</span>
+                </div>
+                <div class="bi-bar-track">
+                  <div class="bi-bar-fill" style="width:${patchPct}%;background:var(--r-blue)"></div>
+                </div>
+                <div class="bi-bar-value">${num(r.patchHoursReturned)} <span>hrs/mo</span></div>
+              </div>
             </div>
           </div>
 
-          <!-- Executive summary cards -->
-          <div class="grid grid-cols-3 gap-4 mt-4 dash-animate">
-            <div class="section-card p-5 rounded-2xl border-t-4 border-emerald-500">
-              <div class="text-[9px] font-semibold text-emerald-600 uppercase tracking-wider mb-3">Capacity Recovered</div>
-              <div class="text-3xl font-bold text-[#0A1C60] leading-none mb-2">${num(r.totalHoursYear)} hrs</div>
-              <div class="text-[10px] text-[#64748b] leading-relaxed">${num(r.totalHoursYear)} hours returned to the work that's actually on your roadmap. Dollar equivalent: ${fmtDollars(r.totalRecoveredAnnual)}/yr.</div>
+          <!-- WHERE IT GOES — strategic reallocation -->
+          <div class="bi-reinvest dash-animate">
+            <div class="bi-section-head">
+              <div class="bi-section-title">Where the recovered capacity goes</div>
+              <div class="bi-section-sub">${num(r.strategicHours)} hours / year · ${r.fteCapacity} FTE reallocated, not eliminated</div>
             </div>
-            <div class="section-card p-5 rounded-2xl border-t-4 border-[#0070F3]">
-              <div class="text-[9px] font-semibold text-[#0070F3] uppercase tracking-wider mb-3">Time to Value</div>
-              <div class="text-3xl font-bold text-[#0A1C60] leading-none mb-2">4-6 wk</div>
-              <div class="text-[10px] text-[#64748b] leading-relaxed">No rip-and-replace. Connects to your existing stack. Live before your next patch cycle.</div>
-            </div>
-            <div class="section-card p-5 rounded-2xl border-t-4 border-indigo-500">
-              <div class="text-[9px] font-semibold text-indigo-500 uppercase tracking-wider mb-3">Platform Risk</div>
-              <div class="text-3xl font-bold text-[#0A1C60] leading-none mb-2">Zero</div>
-              <div class="text-[10px] text-[#64748b] leading-relaxed">SOC 2 Type II. ISO 27001. 60M+ devices. Additive to your current environment.</div>
+            <div class="bi-reinvest-grid">
+              ${[
+                {icon:'sparkles', label:'AI &amp; Copilot rollouts'},
+                {icon:'cloud', label:'Cloud &amp; endpoint migrations'},
+                {icon:'shield-check', label:'Compliance &amp; security posture'},
+                {icon:'zap', label:'Automation &amp; self-service'},
+                {icon:'flag', label:'Pilot programs &amp; modernization'}
+              ].map(t => `<div class="bi-reinvest-tile"><i data-lucide="${t.icon}"></i><span>${t.label}</span></div>`).join('')}
             </div>
           </div>
-
-          <!-- Trust line -->
         `;
       }
 
