@@ -491,15 +491,18 @@
          Primary blue #0000CC, Accent cyan #00BFFF, flat surfaces, Inter
          ══════════════════════════════════════════════════════════════ */
       :root {
-        /* Recast tokens */
-        --r-blue: #0000CC;
-        --r-blue-hover: #1A1AE0;
-        --r-cyan: #00BFFF;
-        --r-cyan-hover: #33CCFF;
-        --r-decorator: #2222DD;
+        /* Recast tokens — calibrated to the live marketing site */
+        --r-blue: #1E3A8A;           /* Navy — hero, headlines */
+        --r-blue-hover: #1E40AF;
+        --r-blue-bright: #2A7FFF;    /* Bright "Re" blue — accents, links */
+        --r-cyan: #2A7FFF;
+        --r-cyan-hover: #4F95FF;
+        --r-orange: #E07050;         /* Coral/orange accent underline */
+        --r-decorator: #2A4BB0;      /* Lighter-blue "pixel dots" on navy */
+        --r-decorator-2: #3A5FD9;
         --r-ink: #1A1A2E;
         --r-ink-2: #4A4A5A;
-        --r-muted-blue: #AABBEE;
+        --r-muted-blue: #C7D2F7;
         --r-surface: #FFFFFF;
         --r-surface-2: #F0F0F6;
         --r-surface-3: #FAFAFE;
@@ -509,13 +512,10 @@
         --r-green: #0F7A3F;
         --r-amber: #CC8800;
 
-        /* Remap legacy shadow tokens to Recast's subtle register */
         --shadow-card: 0 1px 2px rgba(26,26,46,0.06);
         --shadow-hover: 0 2px 8px rgba(26,26,46,0.10);
         --shadow-elevated: 0 8px 24px rgba(26,26,46,0.12);
         --re-green: var(--r-green);
-
-        /* Flatter background — drop the radial blobs */
         --bg-main: #FAFAFE;
       }
 
@@ -613,50 +613,184 @@
         position: relative;
         margin-bottom: 0;
       }
-      /* Decorative + marks scattered on blue header */
-      header.relative::before,
-      header.relative::after {
-        content: "+ + + +";
+      /* Pixel-dot texture on the left and right of the hero, matching recastsoftware.com */
+      header.relative::before {
+        content: "";
         position: absolute;
-        color: var(--r-decorator);
-        font-weight: 700;
-        font-size: 18px;
-        letter-spacing: 18px;
-        opacity: 0.8;
+        inset: 0;
+        background-image:
+          radial-gradient(circle, var(--r-decorator) 1.5px, transparent 1.8px),
+          radial-gradient(circle, var(--r-decorator-2) 1.5px, transparent 1.8px);
+        background-size: 14px 14px, 14px 14px;
+        background-position: 0 0, 7px 7px;
+        -webkit-mask-image: linear-gradient(90deg, #000 0, #000 140px, transparent 260px, transparent calc(100% - 260px), #000 calc(100% - 140px), #000);
+                mask-image: linear-gradient(90deg, #000 0, #000 140px, transparent 260px, transparent calc(100% - 260px), #000 calc(100% - 140px), #000);
+        opacity: 0.7;
         pointer-events: none;
         z-index: 0;
       }
-      header.relative::before { top: 18px; right: 32px; }
-      header.relative::after  { top: 60px; right: 140px; letter-spacing: 24px; font-size: 14px; opacity: 0.5; }
+      header.relative::after {
+        content: "";
+        display: none;
+      }
 
-      /* Ensure hero inner wrappers sit above decorative marks */
       header.relative > div { position: relative; z-index: 1; }
-
-      /* Give the hero proper top/bottom breathing room + room for the tab rail */
       header.relative > div:first-child {
-        padding-top: 40px !important;
+        padding-top: 28px !important;
         padding-bottom: 20px !important;
       }
-      header.relative > div:last-child {
-        padding-bottom: 0 !important;
+      header.relative > div:last-child { padding-bottom: 0 !important; }
+
+      /* Eyebrow mark + product name row */
+      .recast-eyebrow-row {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 14px;
+      }
+      .recast-eyebrow-mark {
+        width: 38px; height: 38px;
+        background: var(--r-blue-bright);
+        border-radius: 4px;
+        display: grid; place-items: center;
+        color: #fff;
+        flex-shrink: 0;
+      }
+      .recast-eyebrow-mark svg { width: 22px; height: 22px; }
+      .recast-eyebrow-label {
+        color: #fff;
+        font-weight: 600;
+        font-size: 15px;
+        letter-spacing: 0.01em;
       }
 
       header.relative h1 {
         color: #fff !important;
         font-weight: 700 !important;
         letter-spacing: -0.02em !important;
-        line-height: 1.1 !important;
+        line-height: 1.08 !important;
         margin: 0 !important;
-        font-size: 48px !important;
+        font-size: 40px !important;
+        max-width: 20ch;
       }
-      header.relative h1 span:first-child { color: var(--r-cyan) !important; }
+      header.relative h1 span:first-child { color: var(--r-blue-bright) !important; }
       header.relative h1 span:nth-child(2) { color: #fff !important; }
+
+      /* Orange accent bar under the headline */
+      header.relative h1::after {
+        content: "";
+        display: block;
+        width: 56px;
+        height: 3px;
+        background: var(--r-orange);
+        margin-top: 14px;
+      }
+
       header.relative p {
         color: var(--r-muted-blue) !important;
-        font-size: 17px !important;
+        font-size: 15px !important;
         line-height: 1.55 !important;
-        margin-top: 12px !important;
+        margin-top: 14px !important;
+        max-width: 60ch;
       }
+
+      /* ── Top white nav bar (absolute, stuck above the blue hero) ── */
+      .recast-topnav {
+        background: #fff;
+        border-bottom: 1px solid var(--r-divider);
+        padding: 12px 0;
+      }
+      .recast-topnav-inner {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 0 24px;
+        display: flex;
+        align-items: center;
+        gap: 24px;
+      }
+      .recast-topnav-logo {
+        height: 28px;
+        width: auto;
+        flex-shrink: 0;
+      }
+      .recast-topnav-links {
+        display: flex;
+        align-items: center;
+        gap: 22px;
+        color: var(--r-ink);
+        font-weight: 600;
+        font-size: 14px;
+        flex: 1;
+      }
+      .recast-topnav-links span {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        cursor: default;
+      }
+      .recast-topnav-links span::after {
+        content: "";
+        width: 0; height: 0;
+        border-left: 4px solid transparent;
+        border-right: 4px solid transparent;
+        border-top: 4px solid var(--r-ink-2);
+      }
+      .recast-topnav-links .no-caret::after { display: none; }
+      .recast-topnav-cta {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .recast-topnav-cta .login {
+        color: var(--r-ink);
+        font-weight: 600;
+        font-size: 14px;
+      }
+      .recast-topnav-cta .btn-nav {
+        padding: 8px 16px;
+        font-size: 13px;
+        font-weight: 700;
+        border-radius: 2px;
+        border: 1.5px solid var(--r-blue);
+      }
+      .recast-topnav-cta .btn-nav.solid {
+        background: var(--r-blue);
+        color: #fff;
+      }
+      .recast-topnav-cta .btn-nav.solid:hover { background: var(--r-blue-hover); }
+      .recast-topnav-cta .btn-nav.outline {
+        background: transparent;
+        color: var(--r-blue);
+      }
+      .recast-topnav-cta .btn-nav.outline:hover { background: var(--r-quote-bg); }
+
+      /* Primary / secondary CTA buttons inside the hero (navy filled + navy outline) */
+      .recast-hero-ctas {
+        display: flex;
+        gap: 10px;
+        margin-top: 18px;
+      }
+      .recast-hero-ctas button {
+        padding: 10px 22px;
+        font-size: 14px;
+        font-weight: 700;
+        border-radius: 2px;
+        border: 1.5px solid #fff;
+        cursor: pointer;
+        transition: background 150ms, color 150ms;
+      }
+      .recast-hero-ctas button.primary {
+        background: #fff;
+        color: var(--r-blue);
+        border-color: #fff;
+      }
+      .recast-hero-ctas button.primary:hover { background: var(--r-muted-blue); }
+      .recast-hero-ctas button.outline {
+        background: transparent;
+        color: #fff;
+        border-color: #fff;
+      }
+      .recast-hero-ctas button.outline:hover { background: rgba(255,255,255,0.1); }
 
       /* Tab bar — clean underline rail at the bottom of the hero */
       .recast-tabs {
@@ -664,6 +798,7 @@
         align-items: stretch;
         gap: 0;
         border-top: 1px solid rgba(255,255,255,0.15);
+        margin-top: 24px;
         overflow-x: auto;
         scrollbar-width: none;
       }
@@ -675,7 +810,7 @@
         color: rgba(255,255,255,0.72);
         font-weight: 600;
         font-size: 14px;
-        padding: 16px 22px;
+        padding: 14px 20px;
         background: transparent;
         border: 0;
         border-bottom: 3px solid transparent;
@@ -688,10 +823,9 @@
       .recast-tab:hover { color: #fff; background: rgba(255,255,255,0.06); }
       .recast-tab.is-active {
         color: #fff;
-        border-bottom-color: var(--r-cyan);
+        border-bottom-color: var(--r-blue-bright);
       }
 
-      /* Kill the old tablist flex-wrap/rounding rule from header */
       header.relative [role="tablist"] {
         background: transparent !important;
         border: 0 !important;
@@ -908,44 +1042,66 @@
       html, body { height: 100%; overflow: hidden; }
       body > #app { height: 100vh; display: flex; flex-direction: column; }
       body > #app > header.relative { flex: 0 0 auto; }
+      body > #app > .recast-topnav { flex: 0 0 auto; }
       body > #app > main.mx-auto {
         flex: 1 1 auto;
         min-height: 0;
         overflow-y: auto;
-        padding-top: 20px !important;
-        padding-bottom: 20px !important;
+        padding-top: 14px !important;
+        padding-bottom: 14px !important;
         max-width: none !important;
         width: 100% !important;
       }
       body > #app > main.mx-auto > section {
-        max-width: 1280px;
+        max-width: 1400px;
         margin: 0 auto;
-        padding: 0 16px;
+        padding: 0 20px;
       }
 
-      /* Compact hero to reclaim vertical space */
+      /* Compact hero + topnav so the panel gets most of the viewport */
+      .recast-topnav { padding: 8px 0 !important; }
+      .recast-topnav-logo { height: 22px !important; }
+      .recast-topnav-links { font-size: 13px !important; gap: 18px !important; }
+      .recast-topnav-cta .btn-nav { padding: 6px 12px !important; font-size: 12px !important; }
+
       header.relative > div:first-child {
-        padding-top: 20px !important;
-        padding-bottom: 12px !important;
+        padding-top: 14px !important;
+        padding-bottom: 10px !important;
       }
-      header.relative h1 { font-size: 32px !important; }
-      header.relative p { font-size: 14px !important; margin-top: 6px !important; max-width: 60ch; }
-      .recast-tab { padding: 12px 18px !important; font-size: 13px !important; }
+      .recast-eyebrow-row { margin-bottom: 8px !important; }
+      .recast-eyebrow-mark { width: 28px !important; height: 28px !important; }
+      .recast-eyebrow-mark svg { width: 16px !important; height: 16px !important; }
+      .recast-eyebrow-label { font-size: 13px !important; }
+      header.relative h1 { font-size: 24px !important; line-height: 1.1 !important; }
+      header.relative h1::after { margin-top: 8px !important; width: 40px !important; height: 2px !important; }
+      header.relative p { font-size: 13px !important; margin-top: 8px !important; }
+      .recast-tabs { margin-top: 12px !important; }
+      .recast-tab { padding: 10px 16px !important; font-size: 13px !important; }
 
-      /* Tighter section spacing */
+      /* Tighter, denser panels */
       #panel-problems.space-y-4 > * + *,
-      #panel-roi.space-y-4 > * + * { margin-top: 12px !important; }
-      #panel-solution.space-y-3 > * + * { margin-top: 10px !important; }
-      .section-card.p-8 { padding: 20px !important; }
-      .section-card.p-6 { padding: 16px !important; }
+      #panel-roi.space-y-4 > * + * { margin-top: 10px !important; }
+      #panel-solution.space-y-3 > * + * { margin-top: 8px !important; }
+      .section-card { padding: 14px !important; }
+      .section-card.p-8, .section-card.p-6 { padding: 16px !important; }
+      .section-card h2, .section-card h3 { font-size: 16px !important; margin-bottom: 6px !important; }
+      .sub-card.p-6, .sub-card.p-4 { padding: 10px 12px !important; }
 
-      /* Modals still work — they overlay the whole viewport */
+      /* Shrink the capacity chart so it doesn't dominate the viewport */
+      #capacity-gap-chart { max-height: 280px; }
+      .chart-container { aspect-ratio: auto; max-height: 280px; }
+
+      /* Device frames / demos: cap heights */
+      .device-frame { max-height: 52vh; }
+
+      /* Modals still overlay fullscreen */
       .modal-overlay { position: fixed !important; inset: 0 !important; z-index: 100; }
 
       @media (max-width: 900px) {
         html, body { overflow: auto; }
         body > #app { height: auto; display: block; }
         body > #app > main.mx-auto { overflow-y: visible; height: auto; }
+        .device-frame { max-height: none; }
       }
     </style>
   </head>
@@ -1821,10 +1977,14 @@
         root.innerHTML = `
           <header class="relative">
             <div class="relative mx-auto max-w-6xl px-4 pt-8 pb-6">
-              <h1 class="text-[40px] md:text-[56px] font-semibold leading-tight"><span style="color:#0070F3">Re</span><span style="color:#0A1C60">cast</span> Software</h1>
+              <div class="recast-eyebrow-row">
+                <div class="recast-eyebrow-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></div>
+                <div class="recast-eyebrow-label">Application Workspace</div>
+              </div>
+              <h1 class="text-[40px] md:text-[56px] font-semibold leading-tight"><span>Re</span><span>cast</span> Software</h1>
               <p class="mt-2 max-w-2xl text-[16px] leading-[1.5] text-[#4A5568]">
                 ${STATE.activeTab==='problems'
-                  ? ''
+                  ? 'Same package, any workspace: laptops, Cloud PCs, and virtual desktops (AVD, Citrix, Omnissa).'
                   : STATE.activeTab==='solution'
                     ? 'The current model multiplies work per platform. Here\'s what it looks like when that stops.'
                     : 'Application Workspace helps IT keep applications running smoothly as platforms change -  without creating more work'}
