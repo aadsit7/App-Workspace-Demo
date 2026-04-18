@@ -1402,6 +1402,57 @@
         /* Panel wrapper: less vertical padding so everything fits */
         body > #app > main.mx-auto { padding-top: 12px !important; padding-bottom: 12px !important; }
         #panel-problems.space-y-4 > * + * { margin-top: 10px !important; }
+
+        /* ─── Business Impact panel: fit to viewport, no scroll ─── */
+        #panel-roi { display: flex; flex-direction: column; gap: 10px; }
+        #panel-roi.space-y-4 > * + * { margin-top: 0 !important; }
+
+        /* Compact input card */
+        #panel-roi .bi-input-card { padding: 12px 16px !important; }
+        #panel-roi .bi-input-eyebrow { font-size: 10px !important; margin-bottom: 6px !important; }
+        #panel-roi .bi-input-label { font-size: 14px !important; }
+        #panel-roi .bi-input-employees { font-size: 18px !important; padding: 6px 10px !important; width: 110px !important; }
+        #panel-roi .bi-input-unit { font-size: 14px !important; }
+        #panel-roi .bi-input-cta { padding: 9px 16px !important; font-size: 13px !important; }
+        #panel-roi .bi-input-advanced { padding: 8px 12px !important; font-size: 12px !important; }
+
+        /* Hero: tighter */
+        #panel-roi .bi-hero { padding: 18px 24px !important; gap: 22px !important; grid-template-columns: 1fr 280px !important; }
+        #panel-roi .bi-hero-eyebrow { font-size: 10px !important; margin-bottom: 6px !important; }
+        #panel-roi .bi-hero-number { font-size: 54px !important; }
+        #panel-roi .bi-hero-unit { font-size: 16px !important; }
+        #panel-roi .bi-hero-sub { font-size: 13px !important; margin-top: 8px !important; }
+        #panel-roi .bi-hero-secondary { padding-left: 20px !important; gap: 10px !important; }
+        #panel-roi .bi-hero-stat-value { font-size: 18px !important; }
+        #panel-roi .bi-hero-stat-label { font-size: 10px !important; }
+
+        /* Breakdown + Reinvest: compact padding */
+        #panel-roi .bi-breakdown, #panel-roi .bi-reinvest { padding: 14px 18px !important; }
+        #panel-roi .bi-section-head { margin-bottom: 10px !important; padding-bottom: 8px !important; }
+        #panel-roi .bi-section-title { font-size: 13px !important; }
+        #panel-roi .bi-section-sub { font-size: 11px !important; }
+        #panel-roi .bi-bars { gap: 8px !important; }
+        #panel-roi .bi-bar-row { grid-template-columns: 260px 1fr 110px !important; }
+        #panel-roi .bi-bar-name { font-size: 12px !important; }
+        #panel-roi .bi-bar-note { font-size: 10px !important; }
+        #panel-roi .bi-bar-track { height: 8px !important; }
+        #panel-roi .bi-bar-value { font-size: 15px !important; }
+
+        /* Reinvest tiles compact */
+        #panel-roi .bi-reinvest-tile { padding: 10px !important; font-size: 11px !important; gap: 5px !important; }
+        #panel-roi .bi-reinvest-tile i[data-lucide] { width: 15px !important; height: 15px !important; }
+        #panel-roi .bi-reinvest-grid { gap: 8px !important; }
+
+        /* Action bar compact */
+        #panel-roi .bi-actionbar { padding-top: 0 !important; }
+        #panel-roi .bi-action-primary, #panel-roi .bi-action-secondary { padding: 8px 16px !important; font-size: 12px !important; }
+
+        /* Empty + too-small states compact */
+        #panel-roi .bi-empty { padding: 24px 20px !important; }
+        #panel-roi .bi-empty-visual { height: 50px !important; margin-bottom: 10px !important; }
+        #panel-roi .bi-empty-title { font-size: 14px !important; }
+        #panel-roi .bi-empty-body { font-size: 12px !important; }
+        #panel-roi .bi-toosmall { padding: 12px 16px !important; }
       }
 
       /* Device frames / demos: cap heights */
