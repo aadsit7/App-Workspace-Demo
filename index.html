@@ -2690,6 +2690,14 @@
         STATE.flowTimers.timeouts.push(tid);
       }
 
+      function scrollPreserveRender(){
+        const mainEl = document.querySelector('body > #app > main');
+        const scrollTop = mainEl ? mainEl.scrollTop : 0;
+        render();
+        const newMainEl = document.querySelector('body > #app > main');
+        if (newMainEl) newMainEl.scrollTop = scrollTop;
+      }
+
       function startFlow(){
         if (STATE.flowRunning) return;
         clearFlowTimers();
@@ -2697,9 +2705,11 @@
         STATE.flowPaused = false;
         STATE.flowScenarioIdx = 0;
         STATE.flowPhase = 'idle';
+        STATE.flowAppOpened = false;
+        STATE._firstOpenDone = false;
         STATE.flowQueue = buildFlowQueue();
         STATE.flowQueueIdx = 0;
-        render();
+        scrollPreserveRender();
         runFlowQueue();
       }
 
@@ -2708,13 +2718,13 @@
         STATE.flowPaused = true;
         STATE.flowTimers.timeouts.forEach(id => clearTimeout(id));
         STATE.flowTimers.timeouts = [];
-        render();
+        scrollPreserveRender();
       }
 
       function resumeFlow(){
         if (!STATE.flowRunning || !STATE.flowPaused) return;
         STATE.flowPaused = false;
-        render();
+        scrollPreserveRender();
         runFlowQueue();
       }
 
@@ -2734,7 +2744,13 @@
         });
       }
 
-      function updateFlowDOM(){ render(); }
+      function updateFlowDOM(){
+        if (STATE.activeTab !== 'solution') { render(); return; }
+        const panelSection = document.querySelector('main > section');
+        if (!panelSection) { render(); return; }
+        panelSection.innerHTML = renderSolution();
+        if (window.lucide?.createIcons) try { window.lucide.createIcons(); } catch {}
+      }
 
       function resetFlow(){
         clearFlowTimers();
@@ -3391,6 +3407,10 @@
         const scenario = sc >= 0 && sc < SCENARIOS.length ? SCENARIOS[sc] : null;
         const appOpen = scenario && !['idle','launch','catalog','clicking'].includes(phase);
         const showDesktop = !scenario || phase === 'idle' || phase === 'launch';
+        const firstOpen = appOpen && !STATE._firstOpenDone;
+        if (firstOpen) STATE._firstOpenDone = true;
+        const appWindowClass = appOpen ? (firstOpen ? 'open' : 'open-instant') : '';
+        const msgClass = appOpen ? (firstOpen ? 'show' : 'show-instant') : '';
 
         const phaseLabel = !scenario ? 'Ready' :
           phase === 'idle' ? 'Waiting...' :
@@ -3485,7 +3505,7 @@
                 </div>
                 `}
 
-                <div class="app-window-overlay ${appOpen ? 'open' : ''}" id="appWindow">
+                <div class="app-window-overlay ${appWindowClass}" id="appWindow">
                   <div class="app-window-topbar">
                     <div class="aw-icon" style="background:#5B53D6">T</div>
                     <div>
@@ -3504,15 +3524,15 @@
                     <div class="teams-chat-area">
                       <div class="teams-chat-header"><i data-lucide="hash" class="w-3 h-3 text-slate-400"></i> General</div>
                       <div class="teams-chat-body">
-                        <div class="teams-msg ${appOpen ? 'show' : ''}" style="transition-delay:0.3s">
+                        <div class="teams-msg ${msgClass}" style="transition-delay:${firstOpen ? '0.3s' : '0s'}">
                           <div class="teams-msg-avatar" style="background:#3b82f6">AK</div>
                           <div class="teams-msg-bubble">Hey team, the Q3 deck is updated and ready for review</div>
                         </div>
-                        <div class="teams-msg ${appOpen ? 'show' : ''}" style="transition-delay:0.6s">
+                        <div class="teams-msg ${msgClass}" style="transition-delay:${firstOpen ? '0.6s' : '0s'}">
                           <div class="teams-msg-avatar" style="background:#10b981">JR</div>
                           <div class="teams-msg-bubble">Perfect timing -  pulling it up now</div>
                         </div>
-                        <div class="teams-msg ${appOpen ? 'show' : ''}" style="transition-delay:0.9s">
+                        <div class="teams-msg ${msgClass}" style="transition-delay:${firstOpen ? '0.9s' : '0s'}">
                           <div class="teams-msg-bubble self">On it. Give me 5 min.</div>
                         </div>
                       </div>
