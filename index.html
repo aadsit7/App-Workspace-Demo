@@ -1291,6 +1291,9 @@
           cursor: pointer !important;
         }
         .flip-card.flipped { height: 210px !important; }
+        /* Force-hide inactive face — bypasses unreliable backface-visibility */
+        .flip-card:not(.flipped) .flip-card-back { visibility: hidden !important; }
+        .flip-card.flipped .flip-card-front { visibility: hidden !important; }
         .flip-card-front {
           display: flex !important;
           flex-direction: row !important;
