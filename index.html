@@ -1284,45 +1284,28 @@
         #panel-problems.cs-panel { display: flex; flex-direction: column; gap: 10px; }
         #panel-problems.cs-panel > * + * { margin-top: 0 !important; }
 
-        /* Simplify stat cards: no flipping, always show content */
+        /* Compact flip cards — keep original 3D flip behavior intact */
         .flip-card {
-          height: auto !important;
+          height: 68px !important;
           min-height: 68px !important;
-          perspective: none !important;
-          cursor: default !important;
+          cursor: pointer !important;
         }
-        .flip-card.flipped { height: auto !important; }
-        .flip-card-inner {
-          position: static !important;
-          transform: none !important;
-          transform-style: flat !important;
-          height: auto !important;
-        }
-        .flip-card.flipped .flip-card-inner { transform: none !important; }
+        .flip-card.flipped { height: 210px !important; }
         .flip-card-front {
-          position: static !important;
-          inset: auto !important;
-          transform: none !important;
-          backface-visibility: visible !important;
-          height: auto !important;
           display: flex !important;
-          flex-direction: column !important;
-          align-items: flex-start !important;
-          justify-content: center !important;
-          gap: 2px !important;
+          flex-direction: row !important;
+          align-items: center !important;
+          justify-content: flex-start !important;
+          gap: 10px !important;
           padding: 10px 14px !important;
           background: #fff !important;
           border: 1px solid var(--r-divider) !important;
           border-radius: 6px !important;
         }
-        .flip-card-back {
-          display: none !important;
-        }
         .flip-card-front i[data-lucide] {
-          width: 14px !important;
-          height: 14px !important;
+          width: 16px !important;
+          height: 16px !important;
           color: var(--r-blue-bright) !important;
-          margin-bottom: 0 !important;
         }
         .flip-card-stat {
           font-size: 22px !important;
@@ -1334,7 +1317,9 @@
           line-height: 1 !important;
         }
         .flip-card-tap {
-          display: none !important;
+          margin-left: auto !important;
+          font-size: 9px !important;
+          color: #94a3b8 !important;
         }
 
         /* Panel heading — compact inline row with edit button */
