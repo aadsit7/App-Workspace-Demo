@@ -2054,7 +2054,7 @@
         obPaused: false,
         obQueue: [],
         obQueueIdx: 0,
-        solutionViewSetupStore: true,
+        solutionViewSetupStore: false,
         ssPhase: 'idle',
         ssRunning: false,
         ssPaused: false,
@@ -3939,7 +3939,7 @@
         };
 
         return `
-          <div class="section-card p-4">
+          <div class="section-card p-4" id="ss-panel">
             <div class="flex items-center justify-between mb-3">
               <div class="bts-label bts-label-platform"><i data-lucide="library" class="w-3 h-3"></i> Setup Store: The Curated Catalog</div>
               <div class="flex items-center gap-2 text-[12px]">
@@ -4816,6 +4816,10 @@
         }
         render();
         runSsQueue();
+        setTimeout(() => {
+          const el = document.getElementById('ss-panel');
+          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 50);
       }
 
       function stepSs(){
@@ -4900,8 +4904,8 @@
               <div class="flex flex-wrap items-center justify-between gap-3">
                 <!-- View toggles -->
                 <div class="flex items-center gap-2">
-                  <button type="button" data-action="toggle-solution-view" data-view="admin" class="view-toggle ${STATE.solutionViewAdmin ? 'active' : ''}"><i data-lucide="settings-2" class="w-3.5 h-3.5"></i> Admin Console</button>
                   <button type="button" data-action="toggle-solution-view" data-view="setupstore" class="view-toggle ${STATE.solutionViewSetupStore ? 'active' : ''}"><i data-lucide="library" class="w-3.5 h-3.5"></i> Setup Store</button>
+                  <button type="button" data-action="toggle-solution-view" data-view="admin" class="view-toggle ${STATE.solutionViewAdmin ? 'active' : ''}"><i data-lucide="settings-2" class="w-3.5 h-3.5"></i> Admin Console</button>
                   <button type="button" data-action="toggle-solution-view" data-view="user" class="view-toggle ${STATE.solutionViewUser ? 'active' : ''}"><i data-lucide="monitor-smartphone" class="w-3.5 h-3.5"></i> User Experience</button>
                   <button type="button" data-action="toggle-solution-view" data-view="onboarding" class="view-toggle ${STATE.solutionViewOnboarding ? 'active' : ''}"><i data-lucide="user-plus" class="w-3.5 h-3.5"></i> Onboarding</button>
                   <button type="button" data-action="toggle-solution-view" data-view="dashboard" class="view-toggle ${STATE.solutionViewDashboard ? 'active' : ''}"><i data-lucide="bar-chart-3" class="w-3.5 h-3.5"></i> Dashboard & Reporting</button>
