@@ -1022,10 +1022,19 @@
       .ss-counter { font-family: ui-monospace, monospace; font-size: 22px; font-weight: 800;
         color: var(--r-blue); letter-spacing: -0.02em; }
 
+      /* Smooth height-reveal wrapper — @keyframes fires on element insert (unlike transition) */
+      .ss-grow { display: grid; grid-template-rows: 0fr; overflow: hidden; }
+      .ss-grow > .ss-grow-inner { min-height: 0; }
+      .ss-grow.ss-grow-done { grid-template-rows: 1fr; overflow: visible; }
+      .ss-grow.ss-grow-active { animation: ssGrowIn 0.55s cubic-bezier(0.4,0,0.2,1) forwards; }
+      @keyframes ssGrowIn {
+        from { grid-template-rows: 0fr; opacity: 0; }
+        to   { grid-template-rows: 1fr; opacity: 1; }
+      }
+
       .ss-package-card { background: white; border: 2px solid var(--r-blue); border-radius: 8px;
-        padding: 14px; box-shadow: var(--shadow-elevated);
-        opacity: 0; transform: scale(0.95); transition: all 0.5s cubic-bezier(0.2,0.8,0.2,1); }
-      .ss-package-card.ss-pop { opacity: 1; transform: scale(1); }
+        padding: 14px; box-shadow: var(--shadow-elevated); }
+      .ss-package-card.ss-pop { /* entry handled by ss-grow wrapper */ }
 
       .ss-package-header { display: flex; align-items: center; gap: 10px; padding-bottom: 10px;
         border-bottom: 1px solid var(--r-divider); margin-bottom: 10px; }
@@ -1083,17 +1092,13 @@
       .ss-target.ss-primary { border-color: var(--r-blue); color: var(--r-blue); font-weight: 700; }
 
       .ss-callouts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 14px; }
-      .ss-callout { padding: 12px; border-radius: 6px; background: white; border: 1px solid var(--r-divider);
-        opacity: 0; transform: translateY(8px); transition: all 0.5s ease; }
-      .ss-callout.ss-show { opacity: 1; transform: translateY(0); }
+      .ss-callout { padding: 12px; border-radius: 6px; background: white; border: 1px solid var(--r-divider); }
       .ss-callout i[data-lucide] { width: 18px; height: 18px; color: var(--r-blue-bright); margin-bottom: 6px; }
       .ss-callout-title { font-size: 12px; font-weight: 700; color: var(--r-ink); margin-bottom: 3px; }
       .ss-callout-body { font-size: 10px; color: var(--r-ink-2); line-height: 1.4; }
 
       .ss-final-line { text-align: center; margin-top: 14px; padding: 10px; font-size: 13px; font-weight: 700;
-        color: var(--r-blue); background: var(--r-quote-bg); border-radius: 6px;
-        opacity: 0; transition: opacity 0.5s ease; }
-      .ss-final-line.ss-show { opacity: 1; }
+        color: var(--r-blue); background: var(--r-quote-bg); border-radius: 6px; }
 
       /* ═════════════════════════════════════════════════════════════
          MOBILE — comprehensive overhaul for <= 900px
@@ -3953,7 +3958,7 @@
               <!-- PHASE 1: Catalog -->
               <div class="ss-zone ss-visible mb-2" style="background:var(--r-quote-bg);border:1px solid var(--r-divider)">
                 <div class="flex items-center justify-between mb-2">
-                  <div class="ss-counter">${past('catalog') ? '8,000+' : '0'}</div>
+                  <div class="ss-counter">8,000+</div>
                   <div class="text-[10px] text-[var(--r-ink-2)] text-right">
                     <div class="font-semibold">pre-tested applications</div>
                     <div>Adobe · Citrix · Google · Microsoft · Mozilla · VMware · 30+ languages</div>
@@ -3961,7 +3966,7 @@
                 </div>
                 <div class="ss-vendor-grid">
                   ${SS_VENDORS.map((v, i) => `
-                    <div class="ss-vendor-tile ${past('catalog') ? 'ss-show' : ''}" style="transition-delay:${i * 0.04}s">
+                    <div class="ss-vendor-tile ss-show" style="transition-delay:${i * 0.04}s">
                       <div class="ss-v-icon" style="background:${v.c}">${v.l}</div>
                       <div class="ss-v-name">${v.n}</div>
                     </div>
@@ -3970,91 +3975,100 @@
                 <div class="text-[10px] text-center mt-2 text-[var(--r-blue)] font-semibold">A curated catalog you don't have to build.</div>
               </div>
 
-              <!-- PHASE 2: Package detail -->
-              ${past('package') ? `
-                <div class="ss-package-card ss-pop mb-2">
-                  <div class="ss-package-header">
-                    <div class="ss-package-icon" style="background:#ED2224">A</div>
-                    <div class="flex-1">
-                      <div class="ss-package-name">Adobe Acrobat Reader DC</div>
-                      <div class="ss-package-version">v24.001.20065 · Windows x64 + macOS</div>
+              <!-- PHASE 2: Package card — ss-grow prevents layout jump on insert -->
+              <div class="ss-grow ${past('package') ? (p === 'package' ? 'ss-grow-active' : 'ss-grow-done') : ''}">
+                <div class="ss-grow-inner" style="padding-bottom:8px">
+                  <div class="ss-package-card ss-pop">
+                    <div class="ss-package-header">
+                      <div class="ss-package-icon" style="background:#ED2224">A</div>
+                      <div class="flex-1">
+                        <div class="ss-package-name">Adobe Acrobat Reader DC</div>
+                        <div class="ss-package-version">v24.001.20065 · Windows x64 + macOS</div>
+                      </div>
+                      <div class="text-[9px] text-[var(--r-ink-2)] text-right">
+                        <div class="font-semibold uppercase tracking-widest">Inside every package</div>
+                      </div>
                     </div>
-                    <div class="text-[9px] text-[var(--r-ink-2)] text-right">
-                      <div class="font-semibold uppercase tracking-widest">Inside every package</div>
+                    <div class="ss-fields">
+                      ${SS_PACKAGE_FIELDS.map((f, i) => `
+                        <div class="ss-field ss-fill" style="transition-delay:${i * 0.08}s">
+                          <i data-lucide="${f.icon}"></i>
+                          <span>${f.label}</span>
+                        </div>
+                      `).join('')}
+                    </div>
+
+                    <!-- Security data — opacity only, no height change -->
+                    <div class="ss-security-row ${past('cve') ? 'ss-show' : ''}">
+                      <div class="ss-badge ss-badge-clean"><i data-lucide="shield-check" class="w-3 h-3"></i> VirusTotal: 0/72 clean</div>
+                      <div class="ss-badge ss-badge-cve"><i data-lucide="alert-triangle" class="w-3 h-3"></i> CVE-2024-41869 · CVSS 7.8</div>
+                      <div class="ss-badge ss-badge-supersede">supersedes v23.x</div>
+                    </div>
+
+                    <!-- Update flow — opacity only, no height change -->
+                    <div class="ss-update-flow ${past('update') ? 'ss-show' : ''}">
+                      <div class="ss-vendor-pulse ${p === 'update' ? 'ss-pulsing' : ''}">A</div>
+                      <i data-lucide="arrow-right" class="w-3 h-3 text-[var(--r-blue-bright)]"></i>
+                      <div class="text-[10px] text-[var(--r-ink)] flex-1">
+                        <span class="font-semibold">Adobe ships v24.002</span> →
+                        Recast packages, scans, scores, notifies →
+                        <span class="font-semibold">your team gets one email</span>
+                      </div>
+                    </div>
+
+                    <!-- DTAP bar — ss-grow prevents height jump inside card -->
+                    <div class="ss-grow ${past('update') ? (p === 'update' ? 'ss-grow-active' : 'ss-grow-done') : ''}">
+                      <div class="ss-grow-inner">
+                        <div class="ss-dtap-bar" style="margin-top:10px">
+                          <div class="ss-dtap-stage ss-done">Development</div>
+                          <span class="ss-dtap-arrow">→</span>
+                          <div class="ss-dtap-stage ss-done">Test</div>
+                          <span class="ss-dtap-arrow">→</span>
+                          <div class="ss-dtap-stage ss-current">Acceptance</div>
+                          <span class="ss-dtap-arrow">→</span>
+                          <div class="ss-dtap-stage">Production</div>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                  <div class="ss-fields">
-                    ${SS_PACKAGE_FIELDS.map((f, i) => `
-                      <div class="ss-field ${past('package') ? 'ss-fill' : ''}" style="transition-delay:${i * 0.08}s">
-                        <i data-lucide="${f.icon}"></i>
-                        <span>${f.label}</span>
+                </div>
+              </div>
+
+              <!-- PHASE 5: Fanout — ss-grow prevents layout jump on insert -->
+              <div class="ss-grow ${past('fanout') ? (p === 'fanout' ? 'ss-grow-active' : 'ss-grow-done') : ''}">
+                <div class="ss-grow-inner">
+                  <div class="ss-fanout">
+                    <div class="ss-fanout-source"><i data-lucide="library" class="w-3 h-3 inline"></i> Setup Store</div>
+                    <div class="ss-fanout-lines">
+                      ${SS_CONNECTORS.map((_, i) => `
+                        <div class="ss-fanout-line ss-drawn" style="transition-delay:${i * 0.1}s"></div>
+                      `).join('')}
+                    </div>
+                    <div class="ss-fanout-targets">
+                      ${SS_CONNECTORS.map((c, i) => `
+                        <div class="ss-target ${c.primary ? 'ss-primary' : ''} ss-show" style="transition-delay:${0.3 + i * 0.08}s">${c.label}</div>
+                      `).join('')}
+                    </div>
+                    <div class="text-[10px] text-center mt-1 text-[var(--r-ink-2)]">One curated source. Every delivery system you run.</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- PHASE 6: Done callouts — ss-grow prevents layout jump on insert -->
+              <div class="ss-grow ${past('done') ? (p === 'done' ? 'ss-grow-active' : 'ss-grow-done') : ''}">
+                <div class="ss-grow-inner">
+                  <div class="ss-callouts">
+                    ${SS_CALLOUTS.map((c, i) => `
+                      <div class="ss-callout">
+                        <i data-lucide="${c.icon}"></i>
+                        <div class="ss-callout-title">${c.title}</div>
+                        <div class="ss-callout-body">${c.body}</div>
                       </div>
                     `).join('')}
                   </div>
-
-                  <!-- PHASE 3: Security data -->
-                  <div class="ss-security-row ${past('cve') ? 'ss-show' : ''}">
-                    <div class="ss-badge ss-badge-clean"><i data-lucide="shield-check" class="w-3 h-3"></i> VirusTotal: 0/72 clean</div>
-                    <div class="ss-badge ss-badge-cve"><i data-lucide="alert-triangle" class="w-3 h-3"></i> CVE-2024-41869 · CVSS 7.8</div>
-                    <div class="ss-badge ss-badge-supersede">supersedes v23.x</div>
-                  </div>
-
-                  <!-- PHASE 4: Update flow + DTAP -->
-                  <div class="ss-update-flow ${past('update') ? 'ss-show' : ''}">
-                    <div class="ss-vendor-pulse ${past('update') && !past('fanout') ? 'ss-pulsing' : ''}">A</div>
-                    <i data-lucide="arrow-right" class="w-3 h-3 text-[var(--r-blue-bright)]"></i>
-                    <div class="text-[10px] text-[var(--r-ink)] flex-1">
-                      <span class="font-semibold">Adobe ships v24.002</span> →
-                      Recast packages, scans, scores, notifies →
-                      <span class="font-semibold">your team gets one email</span>
-                    </div>
-                  </div>
-
-                  ${past('update') ? `
-                    <div class="ss-dtap-bar">
-                      <div class="ss-dtap-stage ${past('update') ? 'ss-done' : ''}">Development</div>
-                      <span class="ss-dtap-arrow">→</span>
-                      <div class="ss-dtap-stage ${past('update') ? 'ss-done' : ''}">Test</div>
-                      <span class="ss-dtap-arrow">→</span>
-                      <div class="ss-dtap-stage ${past('update') ? 'ss-current' : ''}">Acceptance</div>
-                      <span class="ss-dtap-arrow">→</span>
-                      <div class="ss-dtap-stage">Production</div>
-                    </div>
-                  ` : ''}
+                  <div class="ss-final-line">The catalog is the work. We do it. You consume it.</div>
                 </div>
-              ` : ''}
-
-              <!-- PHASE 5: Fanout to connectors -->
-              ${past('fanout') ? `
-                <div class="ss-fanout">
-                  <div class="ss-fanout-source"><i data-lucide="library" class="w-3 h-3 inline"></i> Setup Store</div>
-                  <div class="ss-fanout-lines">
-                    ${SS_CONNECTORS.map((_, i) => `
-                      <div class="ss-fanout-line ${past('fanout') ? 'ss-drawn' : ''}" style="transition-delay:${i * 0.1}s"></div>
-                    `).join('')}
-                  </div>
-                  <div class="ss-fanout-targets">
-                    ${SS_CONNECTORS.map((c, i) => `
-                      <div class="ss-target ${c.primary ? 'ss-primary' : ''} ${past('fanout') ? 'ss-show' : ''}" style="transition-delay:${0.3 + i * 0.08}s">${c.label}</div>
-                    `).join('')}
-                  </div>
-                  <div class="text-[10px] text-center mt-1 text-[var(--r-ink-2)]">One curated source. Every delivery system you run.</div>
-                </div>
-              ` : ''}
-
-              <!-- PHASE 6: Final callouts -->
-              ${past('done') ? `
-                <div class="ss-callouts">
-                  ${SS_CALLOUTS.map((c, i) => `
-                    <div class="ss-callout ${past('done') ? 'ss-show' : ''}" style="transition-delay:${i * 0.15}s">
-                      <i data-lucide="${c.icon}"></i>
-                      <div class="ss-callout-title">${c.title}</div>
-                      <div class="ss-callout-body">${c.body}</div>
-                    </div>
-                  `).join('')}
-                </div>
-                <div class="ss-final-line ss-show">The catalog is the work. We do it. You consume it.</div>
-              ` : ''}
+              </div>
 
             `}
           </div>
