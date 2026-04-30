@@ -2080,6 +2080,227 @@
       }
 
       /* ═════════════════════════════════════════════════════════════
+         SETUP STORE — 3-ACT ANIMATION STAGE
+         ═════════════════════════════════════════════════════════════ */
+      .ss-act-stage {
+        position: relative;
+        min-height: 360px;
+      }
+
+      /* Caption row (above visual) — flicker during ticker, settle on resolve */
+      .ss-caption-stream {
+        height: 28px;
+        line-height: 28px;
+        text-align: center;
+        font-family: ui-monospace, 'Fraktion Mono', monospace;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--r-ink-2);
+        letter-spacing: -0.005em;
+        margin-bottom: 8px;
+        transition: color 200ms ease, background 200ms ease;
+        border-radius: 6px;
+      }
+      .ss-caption-stream.ss-caption-empty { color: transparent; }
+      .ss-caption-stream.ss-caption-flicker {
+        animation: ssCaptionFlick 60ms steps(1) infinite;
+        color: var(--r-blue);
+      }
+      .ss-caption-stream.ss-caption-final {
+        color: var(--r-blue);
+        background: var(--r-quote-bg);
+        font-size: 13px;
+        font-weight: 800;
+        animation: ssCaptionResolve 360ms cubic-bezier(0.2,0.8,0.2,1) both;
+      }
+      @keyframes ssCaptionFlick {
+        0%   { opacity: 1; }
+        50%  { opacity: 0.55; }
+      }
+      @keyframes ssCaptionResolve {
+        0%   { transform: scale(0.96); opacity: 0; }
+        100% { transform: scale(1); opacity: 1; }
+      }
+
+      .ss-act-panel {
+        position: relative;
+        transition: opacity 320ms ease;
+      }
+      .ss-act-panel.ss-act-show { opacity: 1; }
+      .ss-act-panel.ss-act-hide { opacity: 0; }
+
+      /* ── Act 1: counter + cascading vendor tiles ───────────────── */
+      .ss-counter-big {
+        font-family: ui-monospace, 'Fraktion Mono', monospace;
+        font-size: 32px;
+        font-weight: 800;
+        color: var(--r-blue);
+        letter-spacing: -0.03em;
+        line-height: 1;
+        font-variant-numeric: tabular-nums;
+      }
+      .ss-vendor-tile.ss-cascade {
+        opacity: 0;
+        transform: translateY(8px) scale(0.9);
+        animation: ssTileCascade 360ms cubic-bezier(0.2,0.8,0.2,1) forwards;
+        animation-delay: var(--cascade-delay, 0ms);
+      }
+      @keyframes ssTileCascade {
+        to { opacity: 1; transform: translateY(0) scale(1); }
+      }
+
+      /* Streaming dots overlay — ambient volume cue */
+      .ss-stream-layer {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        overflow: hidden;
+      }
+      .ss-stream-dot {
+        position: absolute;
+        top: -8px;
+        left: var(--sx, 50%);
+        width: 6px;
+        height: 6px;
+        border-radius: 2px;
+        background: var(--sc, var(--r-blue));
+        opacity: 0;
+        animation: ssStreamFall 1.6s linear infinite;
+        animation-delay: var(--sd, 0s);
+        box-shadow: 0 0 6px rgba(0,0,0,0.06);
+      }
+      @keyframes ssStreamFall {
+        0%   { transform: translateY(0); opacity: 0; }
+        15%  { opacity: 0.8; }
+        85%  { opacity: 0.6; }
+        100% { transform: translateY(420%); opacity: 0; }
+      }
+
+      /* ── Acts 2 + 3: cards stage ─────────────────────────────── */
+      .ss-cards-stage {
+        position: relative;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 16px;
+        transition: grid-template-columns 380ms cubic-bezier(0.4,0.0,0.2,1);
+      }
+      .ss-cards-stage.ss-cards-shifted {
+        grid-template-columns: 1fr 1fr;
+      }
+      .ss-cards-stage .ss-package-card {
+        margin: 0;
+        transition: transform 380ms cubic-bezier(0.4,0.0,0.2,1),
+                    box-shadow 320ms ease;
+      }
+
+      /* Adobe card slides slightly left when shifted; YourApp slides in from right */
+      .ss-card-adobe { z-index: 2; }
+      .ss-card-adobe.ss-card-shifted {
+        box-shadow: var(--shadow-elevated), 0 0 0 1px rgba(0,0,204,0.05);
+      }
+      .ss-card-your {
+        opacity: 0;
+        transform: translateX(40px);
+        pointer-events: none;
+        transition: opacity 380ms ease, transform 380ms cubic-bezier(0.2,0.8,0.2,1);
+        border-color: var(--r-blue) !important;
+      }
+      .ss-card-your.ss-card-your-in {
+        opacity: 1;
+        transform: translateX(0);
+        pointer-events: auto;
+      }
+
+      /* When stage is NOT shifted, only Adobe occupies the grid; hide YourApp slot */
+      .ss-cards-stage:not(.ss-cards-shifted) .ss-card-your {
+        display: none;
+      }
+
+      /* Field check mark — appears when field is done */
+      .ss-field-check {
+        width: 12px; height: 12px;
+        margin-left: auto;
+        color: var(--r-green);
+        flex-shrink: 0;
+        animation: ssCheckPop 280ms cubic-bezier(0.2,0.8,0.2,1) both;
+      }
+      @keyframes ssCheckPop {
+        0% { transform: scale(0); opacity: 0; }
+        60% { transform: scale(1.2); }
+        100% { transform: scale(1); opacity: 1; }
+      }
+      .ss-field-done { background: rgba(16,129,86,0.05) !important; border-left: 2px solid var(--r-green); padding-left: 6px; }
+      .ss-field-inherited { border-left-color: #00BFFF !important; background: rgba(0,191,255,0.06) !important; }
+      .ss-field-inherited::before {
+        content: '';
+        position: absolute;
+        left: -2px; top: 0; bottom: 0;
+        width: 2px;
+        background: linear-gradient(180deg, #00BFFF, var(--r-blue));
+      }
+
+      /* SVG inheritance lines layer */
+      .ss-inherit-svg {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        overflow: visible;
+        z-index: 3;
+      }
+      .ss-inherit-line {
+        fill: none;
+        stroke: #00BFFF;
+        stroke-width: 1.5;
+        stroke-linecap: round;
+        stroke-dasharray: var(--len, 200);
+        stroke-dashoffset: var(--len, 200);
+        filter: drop-shadow(0 0 4px rgba(0,191,255,0.6));
+        animation: ssLineDraw 360ms cubic-bezier(0.4,0.0,0.2,1) forwards;
+      }
+      @keyframes ssLineDraw {
+        to { stroke-dashoffset: 0; }
+      }
+
+      /* Badge pop animation (used for security badges in both cards) */
+      .ss-security-row.ss-show .ss-badge-pop {
+        opacity: 0;
+        transform: scale(0.85);
+        animation: ssBadgePop 320ms cubic-bezier(0.2,0.8,0.2,1) forwards;
+        animation-delay: var(--pop-delay, 0ms);
+      }
+      @keyframes ssBadgePop {
+        to { opacity: 1; transform: scale(1); }
+      }
+
+      /* Final beat — combined source badges */
+      .ss-fanout-source-combined {
+        display: inline-flex !important;
+        align-items: center;
+        gap: 6px;
+      }
+      .ss-fanout-source-badges {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        margin-left: 6px;
+        padding-left: 8px;
+        border-left: 1px solid rgba(255,255,255,0.25);
+      }
+      .ss-fanout-mini-badge {
+        width: 18px; height: 18px;
+        border-radius: 4px;
+        display: inline-grid;
+        place-items: center;
+        font-size: 10px;
+        font-weight: 800;
+      }
+      .ss-fanout-mini-adobe { background: #ED2224; color: #fff; }
+      .ss-fanout-mini-your { background: #00BFFF; color: #fff; }
+      .ss-fanout-mini-your i { width: 10px; height: 10px; }
+
+      /* ═════════════════════════════════════════════════════════════
          MOBILE — comprehensive overhaul for <= 900px
          Goal: every tab usable with a single vertical scroll, no overflow.
          ═════════════════════════════════════════════════════════════ */
@@ -3049,6 +3270,18 @@
         ssQueueIdx: 0,
         ssTimers: [],
         ssMode: 'curated',
+        ssAct: 'idle',          // 'idle' | '1' | '2' | '3' | 'final' | 'done'
+        ssCounter: 0,            // counter value (0 → 8047)
+        ssCaption: '',           // running caption above the visual
+        ssCaptionFinal: false,   // caption is final (resolved) state
+        ssFieldStep: 0,          // 0..8 — Adobe field fill index
+        ssBadgesAdobe: false,    // Adobe security badges shown
+        ssYourCardIn: false,     // YourApp card slid into view
+        ssInheritStep: 0,        // 0..8 — YourApp field inheritance index
+        ssBadgesYour: false,     // YourApp badges shown
+        ssAdobeShifted: false,   // Adobe card shifted left for Act 3
+        ssTickerIdx: -1,         // current ticker index (Act 1 flickers)
+        ssCounterRaf: null,
         showLabels: false,
         showSolutionCards: true,
         openWhy: null,
@@ -5066,20 +5299,25 @@
 
       /* ========== SETUP STORE VIEW ========== */
       function renderSetupStoreView(){
-        const p = STATE.ssPhase;
+        const act = STATE.ssAct || 'idle';
         const mode = STATE.ssMode || 'curated';
-        const past = (target) => {
-          const order = ['idle','catalog','package','cve','update','fanout','done'];
-          return order.indexOf(p) >= order.indexOf(target);
-        };
+        const animating = act !== 'idle';
+
+        // Header — replaces phase counter with act counter when animating
+        const actLabel = act === '1' ? 'Act 1 · Catalog scale'
+                        : act === '2' ? 'Act 2 · Package depth'
+                        : act === '3' ? 'Act 3 · Custom inheritance'
+                        : act === 'final' ? 'Final · One pipeline'
+                        : act === 'done' ? 'Complete' : '';
+        const actNum = act === '1' ? 1 : act === '2' ? 2 : act === '3' ? 3 : (act === 'final' || act === 'done') ? 4 : 0;
 
         return `
           <div class="section-card p-4" id="ss-panel">
             <div class="flex items-center justify-between mb-3 gap-3 flex-wrap">
               <div class="bts-label bts-label-platform">
                 <i data-lucide="library" class="w-3 h-3"></i> Setup Store: ${mode === 'custom' ? 'Custom &amp; Internal Apps' : 'The Curated Catalog'}
-                ${past('catalog') ? `<span style="margin-left:8px;padding:2px 8px;border-radius:999px;background:var(--r-quote-bg);color:var(--r-blue);font-size:10px;font-weight:700">
-                  ${['catalog','package','cve','update','fanout','done'].indexOf(p) + 1} of 6
+                ${animating ? `<span style="margin-left:8px;padding:2px 8px;border-radius:999px;background:var(--r-quote-bg);color:var(--r-blue);font-size:10px;font-weight:700">
+                  ${actLabel} (${actNum} of 4)
                 </span>` : ''}
               </div>
               <div class="ss-mode-toggle" role="tablist" aria-label="Package source">
@@ -5095,204 +5333,171 @@
 
             </div>
 
-            ${!past('catalog') ? `
-              <div class="text-center py-6 text-sm text-slate-400">
-                <i data-lucide="${mode === 'custom' ? 'box' : 'library'}" class="w-8 h-8 mx-auto mb-2 text-slate-300"></i>
-                <div>Press <strong>Play</strong> or <strong>Step</strong> to see the ${mode === 'custom' ? 'custom-app pipeline' : 'Setup Store'}</div>
-                <div class="text-[10px] text-slate-300 mt-1">${mode === 'custom' ? 'Custom &amp; Internal apps follow the same path' : "A curated catalog you don't have to build"}</div>
-              </div>
-            ` : `
+            ${animating ? renderSsActStage() : renderSsIdleStage(mode)}
+          </div>
+        `;
+      }
 
-              <!-- PHASE 1: Catalog -->
-              <div class="ss-zone ss-visible mb-2" style="background:var(--r-quote-bg);border:1px solid var(--r-divider)">
-                ${mode === 'custom' ? `
-                  <div class="flex items-center justify-between mb-2">
-                    <div class="ss-counter ss-counter-custom"><i data-lucide="git-branch" class="w-4 h-4 inline" style="margin-right:4px;vertical-align:-2px"></i>Same path</div>
-                    <div class="text-[10px] text-[var(--r-ink-2)] text-right">
-                      <div class="font-semibold">Custom &amp; internal apps follow the same path</div>
-                      <div>One pipeline — DTAP, CVE scan, auto-update — regardless of origin</div>
+      /* ─── Idle stage (pre-animation prompt) ─────────────────────────── */
+      function renderSsIdleStage(mode){
+        return `
+          <div class="text-center py-6 text-sm text-slate-400">
+            <i data-lucide="${mode === 'custom' ? 'box' : 'library'}" class="w-8 h-8 mx-auto mb-2 text-slate-300"></i>
+            <div>Press <strong>Play</strong> to see how 8,000+ commercial apps and your custom apps share <strong>one pipeline</strong></div>
+            <div class="text-[10px] text-slate-300 mt-1">Three acts: catalog scale → package depth → custom inheritance</div>
+          </div>
+        `;
+      }
+
+      /* ─── 3-act animation stage ─────────────────────────────────────── */
+      function renderSsActStage(){
+        const act = STATE.ssAct;
+        const counter = STATE.ssCounter || 0;
+        const caption = STATE.ssCaption || '';
+        const captionFinal = STATE.ssCaptionFinal;
+        const fieldStep = STATE.ssFieldStep || 0;
+        const inheritStep = STATE.ssInheritStep || 0;
+        const tickerIdx = STATE.ssTickerIdx;
+        const showAdobeBadges = STATE.ssBadgesAdobe;
+        const showYourBadges = STATE.ssBadgesYour;
+        const yourCardIn = STATE.ssYourCardIn;
+        const adobeShifted = STATE.ssAdobeShifted;
+        const showFinal = act === 'final' || act === 'done';
+        const showAct1 = act === '1';
+        const showAct2or3 = act === '2' || act === '3';
+
+        // Caption stream above visual (Act 1: ticker, Act 2/3: per-field)
+        const captionHtml = caption ? `
+          <div class="ss-caption-stream ${captionFinal ? 'ss-caption-final' : ''} ${showAct1 && !captionFinal ? 'ss-caption-flicker' : ''}">
+            ${captionFinal ? `<i data-lucide="sparkles" class="w-3.5 h-3.5 inline" style="margin-right:6px;vertical-align:-2px"></i>` : ''}
+            ${caption}
+          </div>
+        ` : `<div class="ss-caption-stream ss-caption-empty">&nbsp;</div>`;
+
+        return `
+          <div class="ss-act-stage">
+            ${captionHtml}
+
+            <!-- ACT 1: Catalog scale (vendor grid + counter) -->
+            <div class="ss-act-panel ${showAct1 ? 'ss-act-show' : 'ss-act-hide'}" style="${showAct1 ? '' : 'display:none'}">
+              <div class="ss-zone ss-visible" style="background:var(--r-quote-bg);border:1px solid var(--r-divider);position:relative;overflow:hidden">
+                <div class="flex items-center justify-between mb-2">
+                  <div class="ss-counter-big">${counter.toLocaleString()}</div>
+                  <div class="text-[11px] text-[var(--r-ink-2)] text-right">
+                    <div class="font-semibold text-[var(--r-ink)]">pre-tested applications</div>
+                    <div>Adobe · Citrix · Google · Microsoft · Mozilla · VMware · 30+ languages</div>
+                  </div>
+                </div>
+                <div class="ss-vendor-grid">
+                  ${SS_VENDORS.map((v, i) => `
+                    <div class="ss-vendor-tile ss-cascade" style="--cascade-delay:${i * 70}ms">
+                      <div class="ss-v-icon" style="background:${v.c}">${v.l}</div>
+                      <div class="ss-v-name">${v.n}</div>
+                    </div>
+                  `).join('')}
+                </div>
+                <!-- Streaming app icons overlay (CSS-driven, low-fidelity volume cue) -->
+                <div class="ss-stream-layer" aria-hidden="true">
+                  ${Array.from({length: 18}).map((_, i) => `
+                    <span class="ss-stream-dot" style="--sx:${(i*53)%100}%;--sd:${i*0.18}s;--sc:${SS_VENDORS[i % SS_VENDORS.length].c}"></span>
+                  `).join('')}
+                </div>
+                <div class="ss-categories-row">
+                  <span class="ss-cat-pill">Productivity</span>
+                  <span class="ss-cat-pill">Security</span>
+                  <span class="ss-cat-pill">Browsers</span>
+                  <span class="ss-cat-pill">Communication</span>
+                  <span class="ss-cat-pill">Developer Tools</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- ACT 2 + 3: Package depth + custom inheritance (cards stage) -->
+            <div class="ss-act-panel ${showAct2or3 ? 'ss-act-show' : 'ss-act-hide'}" style="${showAct2or3 ? '' : 'display:none'}">
+              <div class="ss-cards-stage ${adobeShifted ? 'ss-cards-shifted' : ''}">
+                <!-- Adobe card -->
+                <div class="ss-package-card ss-card-adobe ${adobeShifted ? 'ss-card-shifted' : ''}">
+                  <div class="ss-package-header">
+                    <div class="ss-package-icon" style="background:#ED2224">A</div>
+                    <div class="flex-1">
+                      <div class="ss-package-name">Adobe Acrobat Reader DC</div>
+                      <div class="ss-package-version">v24.001.20065 · Windows x64 + macOS</div>
                     </div>
                   </div>
-                  <div class="ss-custom-rail">
-                    <div class="ss-custom-source ss-show">
-                      <div class="ss-custom-source-icon"><i data-lucide="box" class="w-4 h-4"></i></div>
-                      <div class="ss-custom-source-meta">
-                        <div class="ss-custom-source-name">YourApp</div>
-                        <div class="ss-custom-source-version">v2.3</div>
-                      </div>
-                    </div>
-                    <div class="ss-custom-arrow"><i data-lucide="arrow-right" class="w-3 h-3"></i></div>
-                    <div class="ss-custom-stage ss-show" style="transition-delay:0.10s"><span class="ss-custom-dot"></span>Dev</div>
-                    <div class="ss-custom-arrow"><i data-lucide="arrow-right" class="w-3 h-3"></i></div>
-                    <div class="ss-custom-stage ss-show" style="transition-delay:0.20s"><span class="ss-custom-dot"></span>Test</div>
-                    <div class="ss-custom-arrow"><i data-lucide="arrow-right" class="w-3 h-3"></i></div>
-                    <div class="ss-custom-stage ss-show" style="transition-delay:0.30s"><span class="ss-custom-dot"></span>Acceptance</div>
-                    <div class="ss-custom-arrow"><i data-lucide="arrow-right" class="w-3 h-3"></i></div>
-                    <div class="ss-custom-stage ss-show" style="transition-delay:0.40s"><span class="ss-custom-dot"></span>Production</div>
-                    <div class="ss-custom-arrow"><i data-lucide="arrow-right" class="w-3 h-3"></i></div>
-                    <div class="ss-custom-target ss-show" style="transition-delay:0.50s">
-                      <i data-lucide="share-2" class="w-3 h-3"></i>
-                      <span>Same connectors</span>
-                    </div>
-                  </div>
-                  <div class="ss-categories-row">
-                    <span class="ss-cat-pill"><i data-lucide="check-circle-2" class="w-2.5 h-2.5 inline" style="margin-right:3px;vertical-align:-1px"></i>DTAP</span>
-                    <span class="ss-cat-pill"><i data-lucide="check-circle-2" class="w-2.5 h-2.5 inline" style="margin-right:3px;vertical-align:-1px"></i>CVE scan</span>
-                    <span class="ss-cat-pill"><i data-lucide="check-circle-2" class="w-2.5 h-2.5 inline" style="margin-right:3px;vertical-align:-1px"></i>Auto-update</span>
-                    <span class="ss-cat-pill"><i data-lucide="check-circle-2" class="w-2.5 h-2.5 inline" style="margin-right:3px;vertical-align:-1px"></i>Self-service</span>
-                    <span class="ss-cat-pill"><i data-lucide="check-circle-2" class="w-2.5 h-2.5 inline" style="margin-right:3px;vertical-align:-1px"></i>Same connectors</span>
-                  </div>
-                  <div class="text-[10px] text-center mt-2 text-[var(--r-blue)] font-semibold">Package once via the same pipeline — regardless of origin.</div>
-                ` : `
-                  <div class="flex items-center justify-between mb-2">
-                    <div class="ss-counter">8,000+</div>
-                    <div class="text-[10px] text-[var(--r-ink-2)] text-right">
-                      <div class="font-semibold">pre-tested applications</div>
-                      <div>Adobe · Citrix · Google · Microsoft · Mozilla · VMware · 30+ languages</div>
-                    </div>
-                  </div>
-                  <div class="ss-vendor-grid">
-                    ${SS_VENDORS.map((v, i) => `
-                      <div class="ss-vendor-tile ss-show" style="transition-delay:${i * 0.04}s">
-                        <div class="ss-v-icon" style="background:${v.c}">${v.l}</div>
-                        <div class="ss-v-name">${v.n}</div>
+                  <div class="ss-fields ss-fields-tracked" id="ss-fields-adobe">
+                    ${SS_PACKAGE_FIELDS.map((f, i) => `
+                      <div class="ss-field ${i < fieldStep ? 'ss-fill ss-field-done' : ''}" data-field-idx="${i}" data-card="adobe">
+                        <i data-lucide="${f.icon}"></i>
+                        <span>${f.label}</span>
+                        ${i < fieldStep ? `<i data-lucide="check" class="ss-field-check"></i>` : ''}
                       </div>
                     `).join('')}
                   </div>
-                  <div class="ss-categories-row">
-                    <span class="ss-cat-pill">Productivity</span>
-                    <span class="ss-cat-pill">Security</span>
-                    <span class="ss-cat-pill">Browsers</span>
-                    <span class="ss-cat-pill">Communication</span>
-                    <span class="ss-cat-pill">Developer Tools</span>
-                  </div>
-                  <div class="text-[10px] text-center mt-2 text-[var(--r-blue)] font-semibold">Every one of these is hours of packaging work, already done.</div>
-                `}
-              </div>
-
-              <!-- PHASE 2: Package card — ss-grow prevents layout jump on insert -->
-              <div class="ss-grow ${past('package') ? (p === 'package' ? 'ss-grow-active' : 'ss-grow-done') : ''}">
-                <div class="ss-grow-inner" style="padding-bottom:8px">
-                  <div class="ss-package-card ss-pop">
-                    <div class="ss-package-header">
-                      ${mode === 'custom' ? `
-                        <div class="ss-package-icon ss-package-icon-custom"><i data-lucide="box" class="w-4 h-4"></i></div>
-                        <div class="flex-1">
-                          <div class="ss-package-name">YourApp <span style="font-weight:500;color:var(--r-ink-2)">·</span> Custom internal app</div>
-                          <div class="ss-package-version">v2.3 · Windows x64 + macOS</div>
-                        </div>
-                      ` : `
-                        <div class="ss-package-icon" style="background:#ED2224">A</div>
-                        <div class="flex-1">
-                          <div class="ss-package-name">Adobe Acrobat Reader DC</div>
-                          <div class="ss-package-version">v24.001.20065 · Windows x64 + macOS</div>
-                        </div>
-                      `}
-                    </div>
-                    <div class="text-[10px] text-[var(--r-ink-2)] mb-2" style="font-style: italic;">
-                      ${mode === 'custom'
-                        ? 'Custom apps inherit the same packaging pipeline — define once, deliver everywhere.'
-                        : 'Each of these is a job your team would otherwise do by hand. Setup Store does it for you, on every package.'}
-                    </div>
-                    <div class="ss-fields">
-                      ${SS_PACKAGE_FIELDS.map((f, i) => `
-                        <div class="ss-field ss-fill" style="transition-delay:${i * 0.08}s">
-                          <i data-lucide="${f.icon}"></i>
-                          <span>${f.label}</span>
-                        </div>
-                      `).join('')}
-                    </div>
-
-                    <!-- Security data — opacity only, no height change -->
-                    <div class="ss-security-row ${past('cve') ? 'ss-show' : ''}">
-                      ${mode === 'custom' ? `
-                        <div class="ss-badge ss-badge-clean"><i data-lucide="shield-check" class="w-3 h-3"></i> VirusTotal: 0/72 clean</div>
-                        <div class="ss-badge ss-badge-cve"><i data-lucide="alert-triangle" class="w-3 h-3"></i> Internal CVE policy applied</div>
-                        <div class="ss-badge ss-badge-supersede">supersedes v2.2</div>
-                      ` : `
-                        <div class="ss-badge ss-badge-clean"><i data-lucide="shield-check" class="w-3 h-3"></i> VirusTotal: 0/72 clean</div>
-                        <div class="ss-badge ss-badge-cve"><i data-lucide="alert-triangle" class="w-3 h-3"></i> CVE-2024-41869 · CVSS 7.8</div>
-                        <div class="ss-badge ss-badge-supersede">supersedes v23.x</div>
-                      `}
-                    </div>
-
-                    <!-- Update flow — opacity only, no height change -->
-                    <div class="ss-update-flow ${past('update') ? 'ss-show' : ''}">
-                      ${mode === 'custom' ? `
-                        <div class="ss-vendor-pulse ss-vendor-pulse-custom ${p === 'update' ? 'ss-pulsing' : ''}"><i data-lucide="box" class="w-3 h-3"></i></div>
-                        <i data-lucide="arrow-right" class="w-3 h-3 text-[var(--r-blue-bright)]"></i>
-                        <div class="text-[10px] text-[var(--r-ink)] flex-1">
-                          <span class="font-semibold">Your dev team ships v2.4</span> →
-                          Recast packages, scans, scores, notifies →
-                          <span class="font-semibold">your team gets one email</span>
-                        </div>
-                      ` : `
-                        <div class="ss-vendor-pulse ${p === 'update' ? 'ss-pulsing' : ''}">A</div>
-                        <i data-lucide="arrow-right" class="w-3 h-3 text-[var(--r-blue-bright)]"></i>
-                        <div class="text-[10px] text-[var(--r-ink)] flex-1">
-                          <span class="font-semibold">Adobe ships v24.002</span> →
-                          Recast packages, scans, scores, notifies →
-                          <span class="font-semibold">your team gets one email</span>
-                        </div>
-                      `}
-                    </div>
-
-                    <!-- DTAP bar — ss-grow prevents height jump inside card -->
-                    <div class="ss-grow ${past('update') ? (p === 'update' ? 'ss-grow-active' : 'ss-grow-done') : ''}">
-                      <div class="ss-grow-inner">
-                        <div class="ss-dtap-bar" style="margin-top:10px">
-                          <div class="ss-dtap-stage ss-done">Development</div>
-                          <span class="ss-dtap-arrow ss-arrow-active">→</span>
-                          <div class="ss-dtap-stage ss-done">Test</div>
-                          <span class="ss-dtap-arrow ss-arrow-active">→</span>
-                          <div class="ss-dtap-stage ss-current">Acceptance</div>
-                          <span class="ss-dtap-arrow ss-arrow-pending">→</span>
-                          <div class="ss-dtap-stage">Production</div>
-                        </div>
-                      </div>
-                    </div>
+                  <div class="ss-security-row ${showAdobeBadges ? 'ss-show' : ''}">
+                    <div class="ss-badge ss-badge-clean ss-badge-pop" style="--pop-delay:0ms"><i data-lucide="shield-check" class="w-3 h-3"></i> VirusTotal: 0/72 clean</div>
+                    <div class="ss-badge ss-badge-cve ss-badge-pop" style="--pop-delay:120ms"><i data-lucide="alert-triangle" class="w-3 h-3"></i> CVE-2024-41869 · CVSS 7.8</div>
+                    <div class="ss-badge ss-badge-supersede ss-badge-pop" style="--pop-delay:240ms">supersedes v23.x</div>
                   </div>
                 </div>
-              </div>
 
-              <!-- PHASE 5: Fanout — ss-grow prevents layout jump on insert -->
-              <div class="ss-grow ${past('fanout') ? (p === 'fanout' ? 'ss-grow-active' : 'ss-grow-done') : ''}">
-                <div class="ss-grow-inner">
-                  <div class="ss-fanout">
-                    <div class="ss-fanout-source"><i data-lucide="library" class="w-3 h-3 inline"></i> Setup Store</div>
-                    <div class="ss-fanout-lines">
-                      ${SS_CONNECTORS.map((_, i) => `
-                        <div class="ss-fanout-line ss-drawn" style="transition-delay:${i * 0.1}s"></div>
-                      `).join('')}
+                <!-- YourApp card (slides in for Act 3) -->
+                <div class="ss-package-card ss-card-your ${yourCardIn ? 'ss-card-your-in' : ''}">
+                  <div class="ss-package-header">
+                    <div class="ss-package-icon ss-package-icon-custom"><i data-lucide="box" class="w-4 h-4"></i></div>
+                    <div class="flex-1">
+                      <div class="ss-package-name">YourApp <span style="font-weight:500;color:var(--r-ink-2)">·</span> Custom internal app</div>
+                      <div class="ss-package-version">v2.3 · Windows x64 + macOS</div>
                     </div>
-                    <div class="ss-connectors-label">Connectors</div>
-                    <div class="ss-fanout-targets">
-                      ${SS_CONNECTORS.map((c, i) => `
-                        <div class="ss-target ${c.primary ? 'ss-primary' : ''} ss-show" style="transition-delay:${0.3 + i * 0.08}s">${c.label}</div>
-                      `).join('')}
-                    </div>
-                    <div class="text-[10px] text-center mt-1 text-[var(--r-ink-2)]">The same catalog feeds Application Workspace and the major delivery platforms. The supply chain is the product.</div>
                   </div>
-                </div>
-              </div>
-
-              <!-- PHASE 6: Done callouts — ss-grow prevents layout jump on insert -->
-              <div class="ss-grow ${past('done') ? (p === 'done' ? 'ss-grow-active' : 'ss-grow-done') : ''}">
-                <div class="ss-grow-inner">
-                  <div class="ss-callouts">
-                    ${SS_CALLOUTS.map((c, i) => `
-                      <div class="ss-callout">
-                        <i data-lucide="${c.icon}"></i>
-                        <div class="ss-callout-title">${c.title}</div>
-                        <div class="ss-callout-body">${c.body}</div>
+                  <div class="ss-fields ss-fields-tracked" id="ss-fields-your">
+                    ${SS_PACKAGE_FIELDS.map((f, i) => `
+                      <div class="ss-field ${i < inheritStep ? 'ss-fill ss-field-done ss-field-inherited' : ''}" data-field-idx="${i}" data-card="your">
+                        <i data-lucide="${f.icon}"></i>
+                        <span>${f.label}</span>
+                        ${i < inheritStep ? `<i data-lucide="check" class="ss-field-check"></i>` : ''}
                       </div>
                     `).join('')}
                   </div>
-                  <div class="ss-final-line">The catalog is the work. We do it. You consume it.</div>
+                  <div class="ss-security-row ${showYourBadges ? 'ss-show' : ''}">
+                    <div class="ss-badge ss-badge-clean ss-badge-pop" style="--pop-delay:0ms"><i data-lucide="shield-check" class="w-3 h-3"></i> VirusTotal: 0/72 clean</div>
+                    <div class="ss-badge ss-badge-cve ss-badge-pop" style="--pop-delay:120ms"><i data-lucide="alert-triangle" class="w-3 h-3"></i> Internal CVE policy applied</div>
+                    <div class="ss-badge ss-badge-supersede ss-badge-pop" style="--pop-delay:240ms">supersedes v2.2</div>
+                  </div>
                 </div>
-              </div>
 
-            `}
+                <!-- SVG inheritance lines (drawn by post-render script) -->
+                <svg class="ss-inherit-svg" id="ss-inherit-svg" aria-hidden="true"></svg>
+              </div>
+            </div>
+
+            <!-- FINAL beat: connector fanout from combined source -->
+            <div class="ss-act-panel ${showFinal ? 'ss-act-show' : 'ss-act-hide'}" style="${showFinal ? '' : 'display:none'}">
+              <div class="ss-fanout">
+                <div class="ss-fanout-source ss-fanout-source-combined">
+                  <i data-lucide="library" class="w-3.5 h-3.5 inline" style="margin-right:4px;vertical-align:-2px"></i>
+                  Setup Store
+                  <span class="ss-fanout-source-badges">
+                    <span class="ss-fanout-mini-badge ss-fanout-mini-adobe">A</span>
+                    <span class="ss-fanout-mini-badge ss-fanout-mini-your"><i data-lucide="box" class="w-2.5 h-2.5"></i></span>
+                  </span>
+                </div>
+                <div class="ss-fanout-lines">
+                  ${SS_CONNECTORS.map((_, i) => `
+                    <div class="ss-fanout-line ${showFinal ? 'ss-drawn' : ''}" style="transition-delay:${i * 80}ms"></div>
+                  `).join('')}
+                </div>
+                <div class="ss-connectors-label">Connectors</div>
+                <div class="ss-fanout-targets">
+                  ${SS_CONNECTORS.map((c, i) => `
+                    <div class="ss-target ${c.primary ? 'ss-primary' : ''} ${showFinal ? 'ss-show' : ''}" style="transition-delay:${(SS_CONNECTORS.length * 80) + i * 70}ms">${c.label}</div>
+                  `).join('')}
+                </div>
+                ${act === 'done' ? `
+                  <div class="ss-final-line">One pipeline. Commercial apps and yours. Same delivery, same quality, same speed.</div>
+                ` : ''}
+              </div>
+            </div>
+
           </div>
         `;
       }
@@ -5307,15 +5512,45 @@
       ];
 
       const SS_PACKAGE_FIELDS = [
-        {icon:'shield-check', label:'Verified vendor source'},
-        {icon:'terminal',     label:'Tested silent switches'},
-        {icon:'wand-2',       label:'MSI Configuration Wizard (enterprise defaults)'},
-        {icon:'package-plus', label:'Install + uninstall actions'},
-        {icon:'scan-search',  label:'Detection filters'},
-        {icon:'link-2',       label:'Dependencies resolved'},
-        {icon:'image',        label:'Icon, description, website'},
-        {icon:'mouse-pointer-click', label:'Shortcuts (Launch / Help / Docs / License / Config)'},
-        {icon:'monitor',      label:'Platform: Windows x64 + macOS'},
+        {icon:'shield-check', label:'Verified vendor source',
+         capAdobe:'Hunting verified vendor source\u2026',
+         capYour:'Same vendor verification\u2026'},
+        {icon:'terminal',     label:'Tested silent switches',
+         capAdobe:'Testing silent install switches\u2026',
+         capYour:'Same silent switch testing\u2026'},
+        {icon:'wand-2',       label:'MSI Configuration Wizard',
+         capAdobe:'Generating MSI Configuration Wizard\u2026',
+         capYour:'Same enterprise defaults applied\u2026'},
+        {icon:'package-plus', label:'Install + uninstall actions',
+         capAdobe:'Mapping install + uninstall actions\u2026',
+         capYour:'Same install + uninstall mapping\u2026'},
+        {icon:'scan-search',  label:'Detection filters',
+         capAdobe:'Building detection filters\u2026',
+         capYour:'Same detection filter logic\u2026'},
+        {icon:'link-2',       label:'Dependencies resolved',
+         capAdobe:'Resolving dependencies\u2026',
+         capYour:'Same dependency resolution\u2026'},
+        {icon:'image',        label:'Icon, description, website',
+         capAdobe:'Pulling icon, description, website\u2026',
+         capYour:'Same metadata harvesting\u2026'},
+        {icon:'mouse-pointer-click', label:'Shortcuts (Launch / Help / Docs)',
+         capAdobe:'Wiring shortcuts (Launch / Help / Docs)\u2026',
+         capYour:'Same shortcut configuration\u2026'},
+      ];
+
+      const SS_TICKER_APPS = [
+        'Adobe Acrobat: packaged',
+        'Microsoft Teams: packaged',
+        'Zoom Workplace: packaged',
+        'Notepad++ v8.7: packaged',
+        'Google Chrome 130: packaged',
+        '7-Zip 24.07: packaged',
+        'Mozilla Firefox ESR: packaged',
+        'OpenVPN 2.6: packaged',
+        'Citrix Workspace: packaged',
+        'VMware Horizon: packaged',
+        'Python 3.12: packaged',
+        'Java JDK 21: packaged',
       ];
 
       const SS_CONNECTORS = [
@@ -6003,17 +6238,215 @@
         scrollPreserveRender();
       }
 
-      /* ========== SS ANIMATION ENGINE ========== */
+      /* ════════════════════════════════════════════════════════════
+         SS ANIMATION ENGINE — 3-act sequence (~13s total)
+         Act 1 (3.6s): Catalog scale — vendor cascade + counter + ticker captions
+         Act 2 (5.0s): Package depth — Adobe fields fill sequentially + badges
+         Act 3 (4.0s): Custom inheritance — YourApp slides in, cyan lines draw, fields fill
+         Final (1.6s): Combined fanout from one Setup Store source
+         ════════════════════════════════════════════════════════════ */
+      const SS_COUNTER_TARGET = 8047;
+
       function buildSsQueue(){
-        const phases = ['catalog','package','cve','update','fanout','done'];
-        const delays = [1200, 2000, 3500, 2000, 1800, 1500];
         const queue = [];
-        phases.forEach((phase, i) => {
-          queue.push({ delay: delays[i], fn(){ STATE.ssPhase = phase; scrollPreserveRender(); } });
+        const push = (delay, fn) => queue.push({ delay, fn });
+
+        // ── ACT 1 ──────────────────────────────────────────────
+        push(40, () => {
+          STATE.ssAct = '1';
+          STATE.ssCounter = 0;
+          STATE.ssCaption = '';
+          STATE.ssCaptionFinal = false;
+          STATE.ssTickerIdx = -1;
+          STATE.ssFieldStep = 0;
+          STATE.ssBadgesAdobe = false;
+          STATE.ssYourCardIn = false;
+          STATE.ssAdobeShifted = false;
+          STATE.ssInheritStep = 0;
+          STATE.ssBadgesYour = false;
+          scrollPreserveRender();
+          ssTweenCounter(0, SS_COUNTER_TARGET, 1500);
+          ssTickerStart();
         });
-        queue.push({ delay: 2000, fn(){ STATE.ssRunning = false; STATE.ssPaused = false; scrollPreserveRender(); } });
+        // Ticker resolves to closing caption (~3.0s in)
+        push(3000, () => {
+          ssTickerStop();
+          STATE.ssCaption = '8,047 apps. Packaged. Updated. Patched. Daily.';
+          STATE.ssCaptionFinal = true;
+          scrollPreserveRender();
+        });
+
+        // ── ACT 2 ──────────────────────────────────────────────
+        push(900, () => {
+          STATE.ssAct = '2';
+          STATE.ssCaption = SS_PACKAGE_FIELDS[0].capAdobe;
+          STATE.ssCaptionFinal = false;
+          STATE.ssFieldStep = 0;
+          scrollPreserveRender();
+        });
+        // 8 fields, ~280ms apart
+        for (let i = 0; i < SS_PACKAGE_FIELDS.length; i++) {
+          push(280, () => {
+            STATE.ssFieldStep = i + 1;
+            const next = SS_PACKAGE_FIELDS[i + 1];
+            if (next) {
+              STATE.ssCaption = next.capAdobe;
+            }
+            scrollPreserveRender();
+          });
+        }
+        push(360, () => {
+          STATE.ssBadgesAdobe = true;
+          STATE.ssCaption = 'All 8 packaging steps complete. Per app. Per day. Times 8,000.';
+          STATE.ssCaptionFinal = true;
+          scrollPreserveRender();
+        });
+
+        // ── ACT 3 ──────────────────────────────────────────────
+        push(1100, () => {
+          STATE.ssAct = '3';
+          STATE.ssAdobeShifted = true;
+          STATE.ssYourCardIn = true;
+          STATE.ssCaption = SS_PACKAGE_FIELDS[0].capYour;
+          STATE.ssCaptionFinal = false;
+          STATE.ssInheritStep = 0;
+          scrollPreserveRender();
+        });
+        // Wait for slide-in to settle, then draw inheritance lines + fill fields
+        push(420, () => {
+          ssDrawInheritLines();
+        });
+        for (let i = 0; i < SS_PACKAGE_FIELDS.length; i++) {
+          push(310, () => {
+            STATE.ssInheritStep = i + 1;
+            const next = SS_PACKAGE_FIELDS[i + 1];
+            if (next) {
+              STATE.ssCaption = next.capYour;
+            }
+            scrollPreserveRender();
+            // Re-draw lines so newly-filled targets connect cleanly
+            requestAnimationFrame(() => ssDrawInheritLines());
+          });
+        }
+        push(360, () => {
+          STATE.ssBadgesYour = true;
+          STATE.ssCaption = 'Your custom apps. OEM-grade pipeline. Same tools we use on the 8,000.';
+          STATE.ssCaptionFinal = true;
+          scrollPreserveRender();
+          requestAnimationFrame(() => ssDrawInheritLines());
+        });
+
+        // ── FINAL beat ────────────────────────────────────────
+        push(1100, () => {
+          STATE.ssAct = 'final';
+          STATE.ssCaption = '';
+          STATE.ssCaptionFinal = false;
+          scrollPreserveRender();
+        });
+        push(1200, () => {
+          STATE.ssAct = 'done';
+          STATE.ssCaption = 'One pipeline. Commercial apps and yours. Same delivery, same quality, same speed.';
+          STATE.ssCaptionFinal = true;
+          scrollPreserveRender();
+        });
+        push(800, () => {
+          STATE.ssRunning = false;
+          STATE.ssPaused = false;
+          scrollPreserveRender();
+        });
+
         return queue;
       }
+
+      /* Counter tween — RAF-driven */
+      function ssTweenCounter(from, to, durationMs){
+        if (STATE.ssCounterRaf) cancelAnimationFrame(STATE.ssCounterRaf);
+        const t0 = performance.now();
+        const ease = (t) => 1 - Math.pow(1 - t, 3); // easeOutCubic
+        const tick = (now) => {
+          if (STATE.ssPaused) {
+            STATE.ssCounterRaf = requestAnimationFrame(tick);
+            return;
+          }
+          const t = Math.min(1, (now - t0) / durationMs);
+          STATE.ssCounter = Math.round(from + (to - from) * ease(t));
+          // Update only the counter text node (avoid full re-render every frame)
+          const el = document.querySelector('.ss-counter-big');
+          if (el) el.textContent = STATE.ssCounter.toLocaleString();
+          if (t < 1) {
+            STATE.ssCounterRaf = requestAnimationFrame(tick);
+          } else {
+            STATE.ssCounterRaf = null;
+          }
+        };
+        STATE.ssCounterRaf = requestAnimationFrame(tick);
+      }
+
+      /* Ticker — flickers app names ~50ms each during Act 1 */
+      function ssTickerStart(){
+        ssTickerStop();
+        let i = 0;
+        const tick = () => {
+          if (STATE.ssAct !== '1' || STATE.ssCaptionFinal || STATE.ssPaused) return;
+          STATE.ssCaption = SS_TICKER_APPS[i % SS_TICKER_APPS.length];
+          // Update only the caption text node (avoid full re-render)
+          const el = document.querySelector('.ss-caption-stream');
+          if (el && !el.classList.contains('ss-caption-final')) {
+            el.textContent = STATE.ssCaption;
+          }
+          i++;
+          STATE._ssTickerTimer = setTimeout(tick, 80);
+        };
+        tick();
+      }
+      function ssTickerStop(){
+        if (STATE._ssTickerTimer) { clearTimeout(STATE._ssTickerTimer); STATE._ssTickerTimer = null; }
+      }
+
+      /* Draw cyan inheritance lines from Adobe fields → YourApp fields (SVG) */
+      function ssDrawInheritLines(){
+        const svg = document.getElementById('ss-inherit-svg');
+        if (!svg) return;
+        const stage = svg.parentElement;
+        if (!stage) return;
+        const sRect = stage.getBoundingClientRect();
+        // Match SVG coordinate space to the stage
+        svg.setAttribute('viewBox', `0 0 ${sRect.width} ${sRect.height}`);
+        svg.style.width = sRect.width + 'px';
+        svg.style.height = sRect.height + 'px';
+
+        const adobe = stage.querySelectorAll('#ss-fields-adobe .ss-field');
+        const your  = stage.querySelectorAll('#ss-fields-your  .ss-field');
+        const step = STATE.ssInheritStep || 0;
+
+        // Clear and re-draw every render so positions stay correct on resize/shift
+        svg.innerHTML = '';
+        const ns = 'http://www.w3.org/2000/svg';
+        for (let i = 0; i < step && i < adobe.length && i < your.length; i++) {
+          const aR = adobe[i].getBoundingClientRect();
+          const yR = your[i].getBoundingClientRect();
+          const x1 = aR.right - sRect.left;
+          const y1 = aR.top + aR.height / 2 - sRect.top;
+          const x2 = yR.left - sRect.left;
+          const y2 = yR.top + yR.height / 2 - sRect.top;
+          const cx = (x1 + x2) / 2;
+          const d = `M ${x1.toFixed(1)} ${y1.toFixed(1)} C ${cx.toFixed(1)} ${y1.toFixed(1)}, ${cx.toFixed(1)} ${y2.toFixed(1)}, ${x2.toFixed(1)} ${y2.toFixed(1)}`;
+          const path = document.createElementNS(ns, 'path');
+          path.setAttribute('d', d);
+          path.setAttribute('class', 'ss-inherit-line');
+          // Approximate path length for stroke-dasharray
+          const len = Math.hypot(x2 - x1, y2 - y1) + 40;
+          path.style.setProperty('--len', len.toFixed(0));
+          path.style.animationDelay = `${i * 30}ms`;
+          svg.appendChild(path);
+        }
+      }
+      // Redraw on window resize while animating
+      window.addEventListener('resize', () => {
+        if (STATE.ssAct === '3' || STATE.ssAct === 'final' || STATE.ssAct === 'done') {
+          requestAnimationFrame(() => ssDrawInheritLines());
+        }
+      });
 
       function runSsQueue(){
         if (STATE.ssPaused || STATE.ssQueueIdx >= STATE.ssQueue.length) return;
@@ -6031,19 +6464,23 @@
         if (STATE.ssRunning) return;
         STATE.ssTimers.forEach(id => clearTimeout(id));
         STATE.ssTimers = [];
+        ssTickerStop();
+        if (STATE.ssCounterRaf) { cancelAnimationFrame(STATE.ssCounterRaf); STATE.ssCounterRaf = null; }
         STATE.ssRunning = true;
         STATE.ssPaused = false;
-        // If catalog is already visible, keep it showing and jump to package phase
-        const alreadyStarted = STATE.ssPhase !== 'idle';
-        if (alreadyStarted) {
-          STATE.ssPhase = 'catalog';
-          STATE.ssQueue = buildSsQueue();
-          STATE.ssQueueIdx = 1; // skip catalog step — it's already on screen
-        } else {
-          STATE.ssPhase = 'idle';
-          STATE.ssQueue = buildSsQueue();
-          STATE.ssQueueIdx = 0;
-        }
+        // Always replay from the top — each act builds on the previous
+        STATE.ssAct = 'idle';
+        STATE.ssCounter = 0;
+        STATE.ssCaption = '';
+        STATE.ssCaptionFinal = false;
+        STATE.ssFieldStep = 0;
+        STATE.ssInheritStep = 0;
+        STATE.ssBadgesAdobe = false;
+        STATE.ssBadgesYour = false;
+        STATE.ssYourCardIn = false;
+        STATE.ssAdobeShifted = false;
+        STATE.ssQueue = buildSsQueue();
+        STATE.ssQueueIdx = 0;
         scrollPreserveRender();
         runSsQueue();
         setTimeout(() => {
@@ -6057,7 +6494,7 @@
         if (!STATE.ssQueue || STATE.ssQueue.length === 0) {
           STATE.ssQueue = buildSsQueue();
           STATE.ssQueueIdx = 0;
-          STATE.ssPhase = 'idle';
+          STATE.ssAct = 'idle';
         }
         if (STATE.ssQueueIdx >= STATE.ssQueue.length) return;
         const step = STATE.ssQueue[STATE.ssQueueIdx];
@@ -6068,7 +6505,18 @@
       function resetSs(){
         STATE.ssTimers.forEach(id => clearTimeout(id));
         STATE.ssTimers = [];
-        STATE.ssPhase = 'idle';
+        ssTickerStop();
+        if (STATE.ssCounterRaf) { cancelAnimationFrame(STATE.ssCounterRaf); STATE.ssCounterRaf = null; }
+        STATE.ssAct = 'idle';
+        STATE.ssCounter = 0;
+        STATE.ssCaption = '';
+        STATE.ssCaptionFinal = false;
+        STATE.ssFieldStep = 0;
+        STATE.ssInheritStep = 0;
+        STATE.ssBadgesAdobe = false;
+        STATE.ssBadgesYour = false;
+        STATE.ssYourCardIn = false;
+        STATE.ssAdobeShifted = false;
         STATE.ssRunning = false;
         STATE.ssPaused = false;
         STATE.ssQueue = [];
@@ -7138,6 +7586,11 @@
             STATE.ssTimers.forEach(id => clearTimeout(id)); STATE.ssTimers = [];
             clearFlowTimers();
             STATE.ssRunning = false; STATE.ssPaused = false; STATE.ssPhase = 'idle'; STATE.ssQueue = []; STATE.ssQueueIdx = 0;
+            STATE.ssAct = 'idle'; STATE.ssCounter = 0; STATE.ssCaption = ''; STATE.ssCaptionFinal = false;
+            STATE.ssFieldStep = 0; STATE.ssInheritStep = 0; STATE.ssBadgesAdobe = false; STATE.ssBadgesYour = false;
+            STATE.ssYourCardIn = false; STATE.ssAdobeShifted = false;
+            if (STATE.ssCounterRaf) { cancelAnimationFrame(STATE.ssCounterRaf); STATE.ssCounterRaf = null; }
+            if (typeof ssTickerStop === 'function') ssTickerStop();
             STATE.obRunning = false; STATE.obPaused = false; STATE.obPhase = 'idle'; STATE.obQueue = []; STATE.obQueueIdx = 0;
             STATE.drRunning = false; STATE.drPaused = false; STATE.drPhase = 'idle'; STATE.drQueue = []; STATE.drQueueIdx = 0;
             STATE.mtRunning = false; STATE.mtPaused = false; STATE.mtPhase = 'idle'; STATE.mtQueue = []; STATE.mtQueueIdx = 0;
@@ -7215,11 +7668,7 @@
             if (STATE.ssMode === newMode) return;
             STATE.ssMode = newMode;
             // Reset animation state so user starts fresh in the new mode
-            STATE.ssTimers.forEach(id => clearTimeout(id)); STATE.ssTimers = [];
-            STATE.ssRunning = false; STATE.ssPaused = false;
-            STATE.ssPhase = 'idle';
-            STATE.ssQueue = []; STATE.ssQueueIdx = 0;
-            scrollPreserveRender();
+            resetSs();
             return;
           }
           if (action === 'pause-ss') {
