@@ -232,13 +232,21 @@
       .view-toggle:hover:not(.active) { border-color: #94a3b8; }
       /* Lifecycle rail */
       .lifecycle-item { display: flex; flex-direction: column; align-items: center; gap: 3px; }
-      .lifecycle-label { font-size: 8.5px; font-weight: 700; letter-spacing: 0.08em; color: #94a3b8; white-space: nowrap; }
-      .lifecycle-dot { width: 6px; height: 6px; border-radius: 50%; background: #cbd5e1; transition: background 0.2s ease; flex-shrink: 0; }
+      .lifecycle-label { font-size: 8.5px; font-weight: 700; letter-spacing: 0.08em; color: #94a3b8; white-space: nowrap; transition: color 0.3s ease; }
+      .lifecycle-label.lc-active { color: #0070F3; }
+      .lifecycle-label.lc-done { color: #10b981; }
+      .lifecycle-dot { width: 6px; height: 6px; border-radius: 50%; background: #cbd5e1; transition: background 0.3s ease, transform 0.3s ease; flex-shrink: 0; }
       .lifecycle-dot.lifecycle-dot-active { background: #0070F3; }
-      .lifecycle-connector { flex: 1; height: 1px; background: #e2e8f0; min-width: 6px; margin-bottom: 28px; align-self: center; }
+      .lifecycle-dot.lifecycle-dot-done { background: #10b981; }
+      .lifecycle-dot.lifecycle-dot-playing { animation: lc-pulse 1.4s ease-in-out infinite; }
+      @keyframes lc-pulse { 0%,100%{ transform:scale(1); opacity:1; } 50%{ transform:scale(1.8); opacity:0.6; } }
+      .lifecycle-connector { flex: 1; height: 1px; background: #e2e8f0; min-width: 6px; margin-bottom: 28px; align-self: center; transition: background 0.3s ease; }
+      .lifecycle-connector.lc-done { background: #10b981; }
       .lifecycle-play-btn { display: inline-flex; align-items: center; gap: 5px; padding: 5px 12px; border-radius: 9999px; font-size: 11px; font-weight: 600; border: 1px solid #0070F3; background: white; color: #0070F3; cursor: pointer; transition: all 0.2s ease; white-space: nowrap; }
       .lifecycle-play-btn:hover { background: #eff6ff; }
-      .lifecycle-play-btn.playing { background: #eff6ff; }
+      .lifecycle-play-btn.playing { background: #fee2e2; border-color: #ef4444; color: #dc2626; }
+      .lifecycle-play-btn.playing:hover { background: #fecaca; }
+      .lc-step-badge { display: inline-flex; align-items: center; justify-content: center; background: #dc2626; color: white; border-radius: 9999px; font-size: 9px; font-weight: 700; padding: 1px 6px; margin-left: 2px; }
       /* Admin console rows */
       .admin-row { padding: 8px 10px; border-radius: 8px; border: 1px solid #e5e7eb; background: white; transition: all 0.4s ease; opacity: 0.3; }
       .admin-row.row-active { opacity: 1; border-color: #0070F3; background: #eff6ff; }
@@ -2133,6 +2141,7 @@
         solutionViewAdmin: false,
         solutionViewMultiTenant: false,
         lifecyclePlaying: false,
+        lcStep: -1,
         lcTimers: [],
         mtPhase: 'idle',
         mtRunning: false,
@@ -5049,18 +5058,27 @@
                     {view:'user',       stage:'RUN',        name:'User Experience',      icon:'monitor-smartphone',active:STATE.solutionViewUser},
                     {view:'dashboard',  stage:'MEASURE',    name:'Dashboard & Reporting',icon:'bar-chart-3',       active:STATE.solutionViewDashboard},
                     {view:'multitenant',stage:'SCALE',      name:'Multi-Tenant',         icon:'building-2',        active:STATE.solutionViewMultiTenant},
-                  ].map((item, idx, arr) => `
+                  ].map((item, idx, arr) => {
+                    const isDone    = STATE.lifecyclePlaying && idx < STATE.lcStep;
+                    const isCurrent = STATE.lifecyclePlaying && idx === STATE.lcStep;
+                    const dotClass  = isDone ? 'lifecycle-dot-done' : (isCurrent ? 'lifecycle-dot-active lifecycle-dot-playing' : (item.active ? 'lifecycle-dot-active' : ''));
+                    const lblClass  = isDone ? 'lc-done' : (isCurrent ? 'lc-active' : '');
+                    const connClass = isDone ? 'lc-done' : '';
+                    return `
                     <div class="lifecycle-item">
-                      <span class="lifecycle-label">${item.stage}</span>
-                      <div class="lifecycle-dot ${item.active ? 'lifecycle-dot-active' : ''}"></div>
+                      <span class="lifecycle-label ${lblClass}">${item.stage}</span>
+                      <div class="lifecycle-dot ${dotClass}"></div>
                       <button type="button" data-action="toggle-solution-view" data-view="${item.view}" class="view-toggle ${item.active ? 'active' : ''}"><i data-lucide="${item.icon}" class="w-3.5 h-3.5"></i> ${item.name}</button>
                     </div>
-                    ${idx < arr.length - 1 ? '<div class="lifecycle-connector"></div>' : ''}
-                  `).join('')}
+                    ${idx < arr.length - 1 ? '<div class="lifecycle-connector ' + connClass + '"></div>' : ''}
+                  `;}).join('')}
                 </div>
                 <!-- Play lifecycle + Flow controls -->
                 <div class="flex items-center gap-2">
-                  <button type="button" data-action="play-lifecycle" class="lifecycle-play-btn ${STATE.lifecyclePlaying ? 'playing' : ''}"><i data-lucide="${STATE.lifecyclePlaying ? 'loader' : 'play-circle'}" class="w-3.5 h-3.5"></i> Play the lifecycle</button>
+                  ${STATE.lifecyclePlaying
+                    ? `<button type="button" data-action="play-lifecycle" class="lifecycle-play-btn playing" title="Stop the lifecycle tour"><i data-lucide="square" class="w-3 h-3"></i> Stop tour <span class="lc-step-badge">${STATE.lcStep + 1}/6</span></button>`
+                    : `<button type="button" data-action="play-lifecycle" class="lifecycle-play-btn"><i data-lucide="play-circle" class="w-3.5 h-3.5"></i> Play the lifecycle</button>`
+                  }
                   ${(STATE.solutionViewUser || STATE.solutionViewAdmin || STATE.solutionViewSetupStore || STATE.solutionViewMultiTenant || STATE.solutionViewDashboard || STATE.solutionViewOnboarding) ? `
                   <!-- Flow controls -->
                   <div class="flex items-center gap-2 text-[12px]">
@@ -5966,7 +5984,7 @@
           if (node) { const id = node.dataset.id; STATE.activePopover = STATE.activePopover === id ? null : id; render(); return; }
           if (!action) return;
 
-          if (action === 'switch-tab') { STATE.activeTab = act.getAttribute('data-tab'); STATE.visitedCards = []; STATE.activePopover = null; if (STATE.openWhyModal && STATE._savedDriverStates) { STATE.drivers.forEach((d, i) => { d.state = STATE._savedDriverStates[i]; }); STATE.showTippingPoint = STATE._savedTippingPoint; STATE.recastMode = STATE._savedRecastMode; STATE.targetDemandExponent = STATE._savedDemandExp; STATE.targetCapacitySlope = STATE._savedCapSlope; STATE._savedDriverStates = null; updateCurves(); } STATE.openWhyModal = null; STATE.insightContent = null; STATE.flowStep = -1; STATE.flowRunning = false; STATE.flowPaused = false; STATE.flowScenarioIdx = -1; STATE.flowPhase = 'idle'; STATE.flowAppOpened = false; STATE._firstOpenDone = false; STATE.showAdminView = false; STATE.showAutopilot = false; STATE.autopilotStep = -1; STATE.autopilotAppCount = 0; STATE.drPhase = 'idle'; STATE.drRunning = false; STATE.drPaused = false; STATE.drQueue = []; STATE.drQueueIdx = 0; STATE.obPhase = 'idle'; STATE.obRunning = false; STATE.obPaused = false; STATE.obQueue = []; STATE.obQueueIdx = 0; STATE.ssPhase = 'idle'; STATE.ssRunning = false; STATE.ssPaused = false; STATE.ssQueue = []; STATE.ssQueueIdx = 0; STATE.ssTimers.forEach(id => clearTimeout(id)); STATE.ssTimers = []; STATE.lcTimers.forEach(id => clearTimeout(id)); STATE.lcTimers = []; STATE.lifecyclePlaying = false; clearFlowTimers(); render(); return; }
+          if (action === 'switch-tab') { STATE.activeTab = act.getAttribute('data-tab'); STATE.visitedCards = []; STATE.activePopover = null; if (STATE.openWhyModal && STATE._savedDriverStates) { STATE.drivers.forEach((d, i) => { d.state = STATE._savedDriverStates[i]; }); STATE.showTippingPoint = STATE._savedTippingPoint; STATE.recastMode = STATE._savedRecastMode; STATE.targetDemandExponent = STATE._savedDemandExp; STATE.targetCapacitySlope = STATE._savedCapSlope; STATE._savedDriverStates = null; updateCurves(); } STATE.openWhyModal = null; STATE.insightContent = null; STATE.flowStep = -1; STATE.flowRunning = false; STATE.flowPaused = false; STATE.flowScenarioIdx = -1; STATE.flowPhase = 'idle'; STATE.flowAppOpened = false; STATE._firstOpenDone = false; STATE.showAdminView = false; STATE.showAutopilot = false; STATE.autopilotStep = -1; STATE.autopilotAppCount = 0; STATE.drPhase = 'idle'; STATE.drRunning = false; STATE.drPaused = false; STATE.drQueue = []; STATE.drQueueIdx = 0; STATE.obPhase = 'idle'; STATE.obRunning = false; STATE.obPaused = false; STATE.obQueue = []; STATE.obQueueIdx = 0; STATE.ssPhase = 'idle'; STATE.ssRunning = false; STATE.ssPaused = false; STATE.ssQueue = []; STATE.ssQueueIdx = 0; STATE.ssTimers.forEach(id => clearTimeout(id)); STATE.ssTimers = []; STATE.lcTimers.forEach(id => clearTimeout(id)); STATE.lcTimers = []; STATE.lifecyclePlaying = false; STATE.lcStep = -1; clearFlowTimers(); render(); return; }
           if (action === 'advance') { STATE.activeTab = act.getAttribute('data-next'); if (STATE.openWhyModal && STATE._savedDriverStates) { STATE.drivers.forEach((d, i) => { d.state = STATE._savedDriverStates[i]; }); STATE.showTippingPoint = STATE._savedTippingPoint; STATE.recastMode = STATE._savedRecastMode; STATE.targetDemandExponent = STATE._savedDemandExp; STATE.targetCapacitySlope = STATE._savedCapSlope; STATE._savedDriverStates = null; updateCurves(); } STATE.openWhyModal = null; if (STATE.activeTab === 'roi') { calculateImpact(); } render(); return; }
           if (action === 'toggle-solution-view') {
             const view = act.getAttribute('data-view');
@@ -5979,31 +5997,74 @@
             scrollPreserveRender(); return;
           }
           if (action === 'play-lifecycle') {
+            // Clear any in-flight lifecycle timers
             STATE.lcTimers.forEach(id => clearTimeout(id)); STATE.lcTimers = [];
-            if (STATE.lifecyclePlaying) { STATE.lifecyclePlaying = false; scrollPreserveRender(); return; }
+
+            if (STATE.lifecyclePlaying) {
+              // Stop: leave the current view open so the user can keep exploring
+              STATE.lifecyclePlaying = false; STATE.lcStep = -1;
+              scrollPreserveRender(); return;
+            }
+
+            // Full animation reset before starting the tour
+            STATE.ssTimers.forEach(id => clearTimeout(id)); STATE.ssTimers = [];
+            clearFlowTimers();
+            STATE.ssRunning = false; STATE.ssPaused = false; STATE.ssPhase = 'idle'; STATE.ssQueue = []; STATE.ssQueueIdx = 0;
+            STATE.obRunning = false; STATE.obPaused = false; STATE.obPhase = 'idle'; STATE.obQueue = []; STATE.obQueueIdx = 0;
+            STATE.drRunning = false; STATE.drPaused = false; STATE.drPhase = 'idle'; STATE.drQueue = []; STATE.drQueueIdx = 0;
+            STATE.mtRunning = false; STATE.mtPaused = false; STATE.mtPhase = 'idle'; STATE.mtQueue = []; STATE.mtQueueIdx = 0;
             STATE.solutionViewSetupStore = false; STATE.solutionViewAdmin = false; STATE.solutionViewOnboarding = false;
             STATE.solutionViewUser = false; STATE.solutionViewDashboard = false; STATE.solutionViewMultiTenant = false;
-            STATE.lifecyclePlaying = true;
-            const lcViews = [
-              { key: 'solutionViewSetupStore', start: () => startSs() },
-              { key: 'solutionViewAdmin',       start: null },
-              { key: 'solutionViewOnboarding',  start: () => startOb() },
-              { key: 'solutionViewUser',        start: null },
-              { key: 'solutionViewDashboard',   start: () => startDr() },
-              { key: 'solutionViewMultiTenant', start: () => startMt() },
+            STATE.lifecyclePlaying = true; STATE.lcStep = -1;
+
+            // Dwell = sum of all animation phase delays + breathing room after "done"
+            // SS delays: [1200,2000,3500,2000,1800,1500,2000] = 14000 + 1500 breathing
+            // OB delays: [1000,2000,2000,2500,3500,2500,2500] = 16000 + 1500 breathing
+            // DR delays: [800,1200,1000,1500,1400,1500,2000]  =  9400 + 1500 breathing
+            // MT delays: [800,1200,1200,1500,1200,1500,2000]  =  9400 + 1500 breathing
+            const lcSteps = [
+              { key: 'solutionViewSetupStore', start: () => startSs(), dwell: 15500 },
+              { key: 'solutionViewAdmin',       start: null,            dwell:  5000 },
+              { key: 'solutionViewOnboarding',  start: () => startOb(), dwell: 17500 },
+              { key: 'solutionViewUser',        start: null,            dwell:  5000 },
+              { key: 'solutionViewDashboard',   start: () => startDr(), dwell: 10900 },
+              { key: 'solutionViewMultiTenant', start: () => startMt(), dwell: 10900 },
             ];
-            const DWELL = 6000;
-            lcViews.forEach((v, i) => {
+
+            let elapsed = 0;
+            lcSteps.forEach((step, i) => {
               const t = setTimeout(() => {
-                lcViews.forEach(x => { STATE[x.key] = false; });
-                STATE[v.key] = true;
+                if (!STATE.lifecyclePlaying) return;
+                // Clear previous view's animation before opening the next
+                STATE.ssTimers.forEach(id => clearTimeout(id)); STATE.ssTimers = [];
+                clearFlowTimers();
+                STATE.ssRunning = false; STATE.ssPaused = false;
+                STATE.obRunning = false; STATE.obPaused = false;
+                STATE.drRunning = false; STATE.drPaused = false;
+                STATE.mtRunning = false; STATE.mtPaused = false;
+                // Open this step's view
+                STATE.solutionViewSetupStore = false; STATE.solutionViewAdmin = false; STATE.solutionViewOnboarding = false;
+                STATE.solutionViewUser = false; STATE.solutionViewDashboard = false; STATE.solutionViewMultiTenant = false;
+                STATE[step.key] = true; STATE.lcStep = i;
                 scrollPreserveRender();
-                if (v.start) { const ts = setTimeout(() => { if (STATE.lifecyclePlaying) v.start(); }, 150); STATE.lcTimers.push(ts); }
-              }, i * DWELL);
+                // Trigger animation after the render has settled
+                if (step.start) {
+                  const ts = setTimeout(() => { if (STATE.lifecyclePlaying && STATE.lcStep === i) step.start(); }, 250);
+                  STATE.lcTimers.push(ts);
+                }
+              }, elapsed);
               STATE.lcTimers.push(t);
+              elapsed += step.dwell;
             });
-            const tEnd = setTimeout(() => { STATE.lifecyclePlaying = false; scrollPreserveRender(); }, lcViews.length * DWELL);
+
+            // Tour complete: leave the last view open, reset playing state
+            const tEnd = setTimeout(() => {
+              if (!STATE.lifecyclePlaying) return;
+              STATE.lifecyclePlaying = false; STATE.lcStep = -1;
+              scrollPreserveRender();
+            }, elapsed);
             STATE.lcTimers.push(tEnd);
+
             scrollPreserveRender(); return;
           }
           if (action === 'start-mt') { startMt(); return; }
