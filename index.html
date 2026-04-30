@@ -466,9 +466,61 @@
       .flow-banner { font-size: 12px; font-weight: 600; color: #0070F3; text-align: center; padding: 6px 12px; background: rgba(239,246,255,0.9); border: 1px solid #bfdbfe; border-radius: 6px; opacity: 0; transition: opacity 0.5s ease; }
       .flow-banner.visible { opacity: 1; }
       .bts-label-platform { color: #0A1C60; background: linear-gradient(135deg, #eff6ff, #e0e7ff); border: 1px solid #bfdbfe; }
-      .platform-bar { background: linear-gradient(135deg, #0A1C60 0%, #0070F3 100%); border-radius: 10px; padding: 10px 14px; color: white; position: relative; overflow: hidden; }
-      .platform-bar::before { content: ''; position: absolute; top: -50%; right: -10%; width: 200px; height: 200px; background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%); pointer-events: none; }
-      .platform-cap { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: 600; background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.9); border: 1px solid rgba(255,255,255,0.15); transition: all 0.3s ease; white-space: nowrap; }
+      .platform-bar { background: linear-gradient(180deg, #0A1C60 0%, #0E2585 60%, #1232A0 100%); border-radius: 10px 10px 0 0; padding: 14px 18px 16px; color: white; position: relative; overflow: hidden; }
+      .platform-bar::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: linear-gradient(90deg, transparent 0%, #00BFFF 20%, #00BFFF 80%, transparent 100%); box-shadow: 0 0 12px rgba(0,191,255,0.55); pointer-events: none; }
+      .platform-bar-title { font-size: 15px; font-weight: 700; color: #FFFFFF; letter-spacing: 0.005em; line-height: 1.2; }
+      .platform-bar-credit { display: inline-flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 500; color: rgba(255,255,255,0.65); margin-top: 3px; letter-spacing: 0.02em; }
+      .platform-bar-credit i { width: 11px; height: 11px; opacity: 0.85; }
+      .platform-stats-row { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; align-items: center; gap: 0; padding: 10px 4px; margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.12); border-bottom: 1px solid rgba(255,255,255,0.12); }
+      .platform-stat-hero { text-align: center; padding: 0 4px; }
+      .platform-stat-hero-value { font-size: 20px; font-weight: 800; color: #FFFFFF; line-height: 1; letter-spacing: -0.01em; }
+      .platform-stat-hero-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; color: #AABBEE; font-weight: 600; margin-top: 5px; }
+      .platform-stats-row-divider { width: 1px; height: 26px; background: rgba(255,255,255,0.15); }
+      .platform-groups { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0; margin-top: 12px; }
+      .platform-group { padding: 0 10px; min-width: 0; border-right: 1px solid rgba(255,255,255,0.12); }
+      .platform-group:last-child { border-right: none; }
+      .platform-group:first-child { padding-left: 0; }
+      .platform-group:last-child { padding-right: 0; }
+      .platform-group-label { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: #AABBEE; margin-bottom: 6px; line-height: 1; }
+      .platform-group-pills { display: flex; flex-direction: column; gap: 4px; align-items: flex-start; }
+      .platform-bar::before { content: ''; position: absolute; top: -50%; right: -10%; width: 240px; height: 240px; background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%); pointer-events: none; }
+      .platform-cap { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: 600; background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.9); border: 1px solid rgba(255,255,255,0.15); transition: all 0.3s ease; white-space: nowrap; line-height: 1.15; }
+
+      /* ─── Architecture / Fit diagram (top of Recast Approach tab) ─── */
+      .arch-fit { position: relative; padding: 12px 14px 14px; border-radius: 12px; background: linear-gradient(180deg, #FFFFFF 0%, #F5F8FF 100%); border: 1px solid #E2E8F0; }
+      .arch-fit::after { content: ''; position: absolute; left: 16px; right: 16px; bottom: -1px; height: 2px; background: linear-gradient(90deg, transparent 0%, #00BFFF 18%, #00BFFF 82%, transparent 100%); border-radius: 2px; box-shadow: 0 0 14px rgba(0,191,255,0.55); pointer-events: none; }
+      .arch-fit-title { font-size: 13px; font-weight: 700; color: #0A1C60; text-align: center; letter-spacing: 0.005em; margin-bottom: 1px; }
+      .arch-fit-subtitle { font-size: 10px; font-weight: 500; color: #64748B; text-align: center; margin-bottom: 8px; }
+      .arch-row { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 5px; }
+      .arch-row-label { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: #64748B; text-align: center; margin-bottom: 4px; }
+      .arch-row-label-end { color: #0070F3; }
+      .arch-tool-pill { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 9999px; font-size: 11px; font-weight: 600; color: #FFFFFF; line-height: 1.2; }
+      .arch-device-pill { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 8px; border: 1px solid #E2E8F0; background: #FFFFFF; font-size: 11px; font-weight: 500; color: #475569; line-height: 1.2; }
+      .arch-bracket-up { width: 60%; max-width: 520px; height: 10px; margin: 3px auto 0; border: 2px dashed #CBD5E1; border-top: none; border-radius: 0 0 10px 10px; }
+      .arch-bracket-down { width: 60%; max-width: 520px; height: 10px; margin: 0 auto 3px; border: 2px solid #0070F3; border-top: none; border-radius: 0 0 10px 10px; }
+      .arch-aw { position: relative; margin: 4px 0; padding: 10px 14px 11px; border-radius: 10px; background: linear-gradient(180deg, #0A1C60 0%, #0E2585 60%, #1232A0 100%); color: #FFFFFF; overflow: hidden; box-shadow: 0 6px 20px -8px rgba(10,28,96,0.45); }
+      .arch-aw::before { content: ''; position: absolute; top: -40%; right: -8%; width: 200px; height: 200px; background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%); pointer-events: none; }
+      .arch-aw-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+      .arch-aw-brand { display: flex; flex-direction: column; gap: 1px; }
+      .arch-aw-title { font-size: 15px; font-weight: 800; color: #FFFFFF; letter-spacing: -0.005em; line-height: 1.15; }
+      .arch-aw-tagline { font-size: 10px; font-weight: 500; color: #BFDBFE; letter-spacing: 0.04em; }
+      .arch-aw-brand-mark { display: inline-flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.75); }
+      .arch-aw-caps { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 7px; padding-top: 7px; border-top: 1px solid rgba(255,255,255,0.14); }
+      .arch-aw-cap { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.92); background: rgba(255,255,255,0.10); border: 1px solid rgba(255,255,255,0.16); white-space: nowrap; line-height: 1.15; }
+      .arch-aw-cap i { width: 10px; height: 10px; opacity: 0.85; flex-shrink: 0; }
+      @media (max-width: 720px) {
+        .arch-aw-head { flex-direction: column; align-items: flex-start; }
+        .arch-bracket-up, .arch-bracket-down { width: 80%; }
+      }
+      .platform-group .platform-cap { white-space: normal; align-items: flex-start; padding: 4px 7px; }
+      .platform-group .platform-cap i { margin-top: 1px; flex-shrink: 0; }
+      @media (max-width: 900px) {
+        .platform-groups { grid-template-columns: repeat(2, 1fr); gap: 12px 0; }
+        .platform-group { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.12); padding: 0 10px 10px !important; }
+        .platform-group:nth-child(2n) { border-right: none; }
+        .platform-group:nth-child(odd) { border-right: 1px solid rgba(255,255,255,0.12); }
+        .platform-group:nth-last-child(-n+2) { border-bottom: none; padding-bottom: 0 !important; }
+      }
       .platform-cap:hover { background: rgba(255,255,255,0.2); }
       .platform-stat { text-align: center; padding: 6px 8px; min-width: 0; }
       .platform-stat-value { font-size: 16px; font-weight: 700; color: white; line-height: 1; }
@@ -2732,8 +2784,9 @@
                 `}
               </div>
               <div class="flex items-center gap-2 text-[12px]">
-                <button type="button" data-action="toggle-flow" class="bg-[#0070F3] text-white w-7 h-7 rounded-full hover:bg-[#005AD0] inline-flex items-center justify-center"><i data-lucide="${STATE.flowRunning && !STATE.flowPaused ? 'pause' : 'play'}" class="w-3.5 h-3.5"></i></button>
-                <button type="button" data-action="reset-flow" class="bg-[#0A1C60] text-white w-7 h-7 rounded-full hover:bg-[#0070F3] inline-flex items-center justify-center" title="Reset"><i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i></button>
+                <button type="button" data-action="toggle-flow" class="bg-[#0070F3] text-white w-7 h-7 rounded-full hover:bg-[#005AD0] inline-flex items-center justify-center" title="${STATE.flowRunning && !STATE.flowPaused ? 'Pause' : 'Play'}" aria-label="${STATE.flowRunning && !STATE.flowPaused ? 'Pause' : 'Play'}"><i data-lucide="${STATE.flowRunning && !STATE.flowPaused ? 'pause' : 'play'}" class="w-3.5 h-3.5"></i></button>
+                <button type="button" data-action="step-flow" class="bg-white text-[#0070F3] border border-[#0070F3] w-7 h-7 rounded-full hover:bg-[#eff6ff] inline-flex items-center justify-center" title="Step" aria-label="Step"><i data-lucide="step-forward" class="w-3.5 h-3.5"></i></button>
+                <button type="button" data-action="reset-flow" class="bg-[#0A1C60] text-white w-7 h-7 rounded-full hover:bg-[#0070F3] inline-flex items-center justify-center" title="Reset" aria-label="Reset"><i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i></button>
               </div>
             </div>
 
@@ -2884,38 +2937,71 @@
                 <span>Application Workspace -  handling everything behind the scenes</span>
               </div>
             ` : `
-              <div class="flex items-center gap-3 mb-2">
-                <div class="flex-1 h-px bg-gradient-to-r from-transparent via-blue-200 to-transparent"></div>
-                <div class="bts-label bts-label-platform"><i data-lucide="boxes" class="w-3 h-3"></i> The Application Lifecycle, on One Platform</div>
-                <div class="flex-1 h-px bg-gradient-to-r from-transparent via-blue-200 to-transparent"></div>
-              </div>
-
               <div class="platform-bar" id="platformLayer">
-                <div class="flex items-center justify-between mb-2">
-                  <div class="flex items-center gap-2">
-                    <i data-lucide="layout-grid" class="w-4 h-4 text-blue-200"></i>
-                    <span class="text-sm font-bold tracking-wide">Application Workspace</span>
-                  </div>
-                  <div class="flex items-center gap-1">
-                    <div class="platform-stat"><div class="platform-stat-value">8,000+</div><div class="platform-stat-label">Curated Apps</div></div>
-                    <div class="platform-divider"></div>
-                    <div class="platform-stat"><div class="platform-stat-value">Daily</div><div class="platform-stat-label">Updates</div></div>
-                    <div class="platform-divider"></div>
-                    <div class="platform-stat"><div class="platform-stat-value">CVE</div><div class="platform-stat-label">+ Scan Data</div></div>
+                <div class="flex flex-col items-start">
+                  <div class="platform-bar-title">The Application Lifecycle, on One Platform</div>
+                  <div class="platform-bar-credit">
+                    <i data-lucide="layout-grid"></i>
+                    <span>Application Workspace</span>
                   </div>
                 </div>
-                <div class="flex flex-wrap gap-1.5">
-                  <div class="platform-cap"><i data-lucide="package" class="w-3 h-3"></i> Custom App Packaging</div>
-                  <div class="platform-cap"><i data-lucide="building-2" class="w-3 h-3"></i> Multi-Tenant</div>
-                  <div class="platform-cap"><i data-lucide="monitor-smartphone" class="w-3 h-3"></i> Multi-Device</div>
-                  <div class="platform-cap"><i data-lucide="bot" class="w-3 h-3"></i> Automated Patching</div>
-                  <div class="platform-cap"><i data-lucide="user-check" class="w-3 h-3"></i> Identity-Based Access</div>
-                  <div class="platform-cap"><i data-lucide="shopping-bag" class="w-3 h-3"></i> Self-Service Catalog</div>
-                  <div class="platform-cap"><i data-lucide="shield" class="w-3 h-3"></i> CVE Auto-Patching</div>
-                  <div class="platform-cap"><i data-lucide="eye" class="w-3 h-3"></i> Central Governance</div>
+
+                <div class="platform-stats-row">
+                  <div class="platform-stat-hero">
+                    <div class="platform-stat-hero-value">8,000+</div>
+                    <div class="platform-stat-hero-label">Curated Apps</div>
+                  </div>
+                  <div class="platform-stats-row-divider"></div>
+                  <div class="platform-stat-hero">
+                    <div class="platform-stat-hero-value">Daily</div>
+                    <div class="platform-stat-hero-label">Updates</div>
+                  </div>
+                  <div class="platform-stats-row-divider"></div>
+                  <div class="platform-stat-hero">
+                    <div class="platform-stat-hero-value">CVE</div>
+                    <div class="platform-stat-hero-label">+ Scan Data</div>
+                  </div>
                 </div>
-                <div class="mt-2 text-[10px] text-blue-200 tracking-wide text-center">
-                  Package &middot; Deliver &middot; Update &middot; Configure &middot; Audit -  across every environment from one place
+
+                <div class="platform-groups">
+                  <div class="platform-group">
+                    <div class="platform-group-label">Package</div>
+                    <div class="platform-group-pills">
+                      <div class="platform-cap"><i data-lucide="package" class="w-3 h-3"></i> Custom App Packaging</div>
+                    </div>
+                  </div>
+                  <div class="platform-group">
+                    <div class="platform-group-label">Configure</div>
+                    <div class="platform-group-pills">
+                      <div class="platform-cap"><i data-lucide="user-check" class="w-3 h-3"></i> Identity-Based Access</div>
+                      <div class="platform-cap"><i data-lucide="shopping-bag" class="w-3 h-3"></i> Self-Service Catalog</div>
+                    </div>
+                  </div>
+                  <div class="platform-group">
+                    <div class="platform-group-label">Deliver</div>
+                    <div class="platform-group-pills">
+                      <div class="platform-cap"><i data-lucide="monitor-smartphone" class="w-3 h-3"></i> Multi-Device</div>
+                    </div>
+                  </div>
+                  <div class="platform-group">
+                    <div class="platform-group-label">Update</div>
+                    <div class="platform-group-pills">
+                      <div class="platform-cap"><i data-lucide="bot" class="w-3 h-3"></i> Automated Patching</div>
+                      <div class="platform-cap"><i data-lucide="shield" class="w-3 h-3"></i> CVE Auto-Patching</div>
+                    </div>
+                  </div>
+                  <div class="platform-group">
+                    <div class="platform-group-label">Govern</div>
+                    <div class="platform-group-pills">
+                      <div class="platform-cap"><i data-lucide="eye" class="w-3 h-3"></i> Central Governance</div>
+                    </div>
+                  </div>
+                  <div class="platform-group">
+                    <div class="platform-group-label">Scale</div>
+                    <div class="platform-group-pills">
+                      <div class="platform-cap"><i data-lucide="building-2" class="w-3 h-3"></i> Multi-Tenant</div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -3192,6 +3278,21 @@
         STATE._firstOpenDone = false;
         STATE.flowDevice = null;
         render();
+      }
+
+      function stepFlow(){
+        if (STATE.flowRunning) return;
+        if (!STATE.flowDevice) STATE.flowDevice = 'Windows';
+        if (!STATE.flowQueue || STATE.flowQueue.length === 0) {
+          STATE.flowQueue = buildFlowQueue();
+          STATE.flowQueueIdx = 0;
+          STATE.flowPhase = 'idle';
+          STATE.flowPaused = true;
+        }
+        if (STATE.flowQueueIdx >= STATE.flowQueue.length) return;
+        const step = STATE.flowQueue[STATE.flowQueueIdx];
+        step.fn();
+        STATE.flowQueueIdx++;
       }
 
       function startAppCascade(){
@@ -4045,95 +4146,11 @@
             </div>
 
             ${!scenario ? `
-              <!-- Architecture diagram (idle state) -->
-              <div class="rounded-xl border border-slate-200 bg-white/80 p-4 mb-3">
-                <div class="text-[10px] font-semibold text-[#0A1C60] text-center mb-3 uppercase tracking-widest">How It Fits Together</div>
-                <div class="text-center mb-2">
-                  <div class="text-[9px] font-semibold uppercase tracking-widest text-[#64748b] mb-1.5">Your Existing Mgmt Tools</div>
-                  <div class="flex flex-wrap justify-center gap-1.5">
-                    <span class="px-3 py-1 rounded-full text-[11px] font-medium text-white" style="background:#5B53D6">Intune</span>
-                    <span class="px-3 py-1 rounded-full text-[11px] font-medium text-white" style="background:#E84D1A">ConfigMgr</span>
-                    <span class="px-3 py-1 rounded-full text-[11px] font-medium text-white" style="background:#374151">Citrix</span>
-                    <span class="px-3 py-1 rounded-full text-[11px] font-medium text-white" style="background:#4B5563">AVD / W365</span>
-                    <span class="px-3 py-1 rounded-full text-[11px] font-medium text-white" style="background:#4B5563">macOS</span>
-                  </div>
-                </div>
-                <div class="flex justify-center"><div style="width:70%;height:18px;border:2px dashed #cbd5e1;border-top:none;border-radius:0 0 12px 12px"></div></div>
-                <div class="relative my-1.5">
-                  <div class="flex items-center">
-                    <div class="hidden md:flex flex-col gap-1 flex-shrink-0 mr-3">
-                      <div class="flex items-center gap-1 px-2 py-0.5 rounded-full border border-slate-200 bg-white text-[10px] text-[#475569]"><div class="w-1.5 h-1.5 rounded-full bg-green-400"></div>8,000+ Pre-tested Apps</div>
-                      <div class="flex items-center gap-1 px-2 py-0.5 rounded-full border border-slate-200 bg-white text-[10px] text-[#475569]"><div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div>Custom App Packaging</div>
-                      <div class="flex items-center gap-1 px-2 py-0.5 rounded-full border border-slate-200 bg-white text-[10px] text-[#475569]"><div class="w-1.5 h-1.5 rounded-full bg-purple-400"></div>Smart Icon Technology</div>
-                    </div>
-                    <div class="flex-1 rounded-lg p-3 text-center" style="background:linear-gradient(135deg,#0A1C60 0%,#0070F3 100%)">
-                      <div class="text-sm font-bold text-white">Application Workspace</div>
-                      <div class="text-[11px] text-blue-200 mt-0.5">Package &middot; Deliver &middot; Update &middot; Self-Service &middot; Audit</div>
-                    </div>
-                    <div class="hidden md:flex flex-col gap-1 flex-shrink-0 ml-3">
-                      <div class="flex items-center gap-1 px-2 py-0.5 rounded-full border border-slate-200 bg-white text-[10px] text-[#475569]"><div class="w-1.5 h-1.5 rounded-full bg-indigo-400"></div>Identity-Based Access</div>
-                      <div class="flex items-center gap-1 px-2 py-0.5 rounded-full border border-slate-200 bg-white text-[10px] text-[#475569]"><div class="w-1.5 h-1.5 rounded-full bg-red-400"></div>CVE / Auto-Patching</div>
-                    </div>
-                  </div>
-                </div>
-                <div class="flex justify-center"><div style="width:70%;height:18px;border:2px solid #0070F3;border-top:none;border-radius:0 0 12px 12px"></div></div>
-                <div class="text-center mt-2">
-                  <div class="text-[9px] font-semibold uppercase tracking-widest text-[#0070F3] mb-1.5">End Users & Devices</div>
-                  <div class="flex flex-wrap justify-center gap-1.5">
-                    ${['Laptop','Virtual Desktop','Cloud PC / W365','macOS','BYOD / Remote'].map(d => `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border border-slate-200 bg-white text-[11px] text-[#475569]">${d}</span>`).join('')}
-                  </div>
-                </div>
-              </div>
               <div class="text-center py-4 text-sm text-slate-400">
                 <i data-lucide="play-circle" class="w-6 h-6 mx-auto mb-2 text-slate-300"></i>
                 <div>Press <strong>Start</strong> or <strong>Step</strong> to see the admin perspective</div>
               </div>
             ` : `
-              <!-- Architecture diagram: How It Fits Together -->
-              <div class="rounded-xl border border-slate-200 bg-white/80 p-4 mb-3">
-                <div class="text-[10px] font-semibold text-[#0A1C60] text-center mb-3 uppercase tracking-widest">How It Fits Together</div>
-                <!-- Existing Mgmt Tools -->
-                <div class="text-center mb-2">
-                  <div class="text-[9px] font-semibold uppercase tracking-widest text-[#64748b] mb-1.5">Your Existing Mgmt Tools</div>
-                  <div class="flex flex-wrap justify-center gap-1.5">
-                    <span class="px-3 py-1 rounded-full text-[11px] font-medium text-white" style="background:#5B53D6">Intune</span>
-                    <span class="px-3 py-1 rounded-full text-[11px] font-medium text-white" style="background:#E84D1A">ConfigMgr</span>
-                    <span class="px-3 py-1 rounded-full text-[11px] font-medium text-white" style="background:#374151">Citrix</span>
-                    <span class="px-3 py-1 rounded-full text-[11px] font-medium text-white" style="background:#4B5563">AVD / W365</span>
-                    <span class="px-3 py-1 rounded-full text-[11px] font-medium text-white" style="background:#4B5563">macOS</span>
-                  </div>
-                </div>
-                <!-- Dashed bracket down -->
-                <div class="flex justify-center"><div style="width:70%;height:18px;border:2px dashed #cbd5e1;border-top:none;border-radius:0 0 12px 12px"></div></div>
-                <!-- Application Workspace with side capabilities -->
-                <div class="relative my-1.5">
-                  <div class="flex items-center">
-                    <div class="hidden md:flex flex-col gap-1 flex-shrink-0 mr-3">
-                      <div class="flex items-center gap-1 px-2 py-0.5 rounded-full border border-slate-200 bg-white text-[10px] text-[#475569]"><div class="w-1.5 h-1.5 rounded-full bg-green-400"></div>8,000+ Pre-tested Apps</div>
-                      <div class="flex items-center gap-1 px-2 py-0.5 rounded-full border border-slate-200 bg-white text-[10px] text-[#475569]"><div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div>Custom App Packaging</div>
-                      <div class="flex items-center gap-1 px-2 py-0.5 rounded-full border border-slate-200 bg-white text-[10px] text-[#475569]"><div class="w-1.5 h-1.5 rounded-full bg-purple-400"></div>Smart Icon Technology</div>
-                    </div>
-                    <div class="flex-1 rounded-lg p-3 text-center" style="background:linear-gradient(135deg,#0A1C60 0%,#0070F3 100%)">
-                      <div class="text-sm font-bold text-white">Application Workspace</div>
-                      <div class="text-[11px] text-blue-200 mt-0.5">Package &middot; Deliver &middot; Update &middot; Self-Service &middot; Audit</div>
-                    </div>
-                    <div class="hidden md:flex flex-col gap-1 flex-shrink-0 ml-3">
-                      <div class="flex items-center gap-1 px-2 py-0.5 rounded-full border border-slate-200 bg-white text-[10px] text-[#475569]"><div class="w-1.5 h-1.5 rounded-full bg-indigo-400"></div>Identity-Based Access</div>
-                      <div class="flex items-center gap-1 px-2 py-0.5 rounded-full border border-slate-200 bg-white text-[10px] text-[#475569]"><div class="w-1.5 h-1.5 rounded-full bg-red-400"></div>CVE / Auto-Patching</div>
-                    </div>
-                  </div>
-                </div>
-                <!-- Solid bracket down -->
-                <div class="flex justify-center"><div style="width:70%;height:18px;border:2px solid #0070F3;border-top:none;border-radius:0 0 12px 12px"></div></div>
-                <!-- End Users & Devices -->
-                <div class="text-center mt-2">
-                  <div class="text-[9px] font-semibold uppercase tracking-widest text-[#0070F3] mb-1.5">End Users & Devices</div>
-                  <div class="flex flex-wrap justify-center gap-1.5">
-                    ${['Laptop','Virtual Desktop','Cloud PC / W365','macOS','BYOD / Remote'].map(d => `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border border-slate-200 bg-white text-[11px] text-[#475569]">${d}</span>`).join('')}
-                  </div>
-                </div>
-              </div>
-
               <!-- Platform stats strip -->
               <div class="platform-bar mb-3" style="padding:8px 12px">
                 <div class="flex items-center justify-between">
@@ -4294,15 +4311,7 @@
                   <span class="ss-mode-label">Custom packaging</span>
                 </button>
               </div>
-              <div class="flex items-center gap-2 text-[12px]">
-                ${STATE.ssRunning ? `
-                  <button type="button" data-action="pause-ss" class="bg-[#0070F3] text-white px-2.5 py-1.5 text-[12px] font-semibold rounded hover:bg-[#005AD0] inline-flex items-center gap-1"><i data-lucide="${STATE.ssPaused ? 'play' : 'pause'}" class="w-3 h-3"></i> ${STATE.ssPaused ? 'Resume' : 'Pause'}</button>
-                ` : `
-                  <button type="button" data-action="start-ss" class="bg-[#0070F3] text-white px-4 py-2 text-[13px] font-bold rounded-md hover:bg-[#005AD0] inline-flex items-center gap-1.5 shadow-md ss-pulse-cta"><i data-lucide="play" class="w-4 h-4"></i> Play</button>
-                  <button type="button" data-action="step-ss" class="bg-white text-[#0070F3] border border-[#0070F3] px-2.5 py-1.5 text-[12px] font-semibold rounded hover:bg-[#eff6ff] inline-flex items-center gap-1"><i data-lucide="skip-forward" class="w-3 h-3"></i> Step</button>
-                `}
-                <button type="button" data-action="reset-ss" class="bg-transparent text-[#0A1C60] border-2 border-[#0A1C60] px-2.5 py-1.5 rounded hover:text-[#0070F3] hover:border-[#0070F3]">Reset</button>
-              </div>
+
             </div>
 
             ${!past('catalog') ? `
@@ -4558,15 +4567,7 @@
           <div class="section-card p-4">
             <div class="flex items-center justify-between mb-3">
               <div class="bts-label bts-label-platform"><i data-lucide="building-2" class="w-3 h-3"></i> Multi-Tenant Deployment</div>
-              <div class="flex items-center gap-2 text-[12px]">
-                ${STATE.mtRunning ? `
-                  <button type="button" data-action="pause-mt" class="bg-[#0070F3] text-white px-2.5 py-1.5 text-[12px] font-semibold rounded hover:bg-[#005AD0] inline-flex items-center gap-1"><i data-lucide="${STATE.mtPaused ? 'play' : 'pause'}" class="w-3 h-3"></i> ${STATE.mtPaused ? 'Resume' : 'Pause'}</button>
-                ` : `
-                  <button type="button" data-action="start-mt" class="bg-[#0070F3] text-white px-2.5 py-1.5 text-[12px] font-semibold rounded hover:bg-[#005AD0] inline-flex items-center gap-1"><i data-lucide="play" class="w-3 h-3"></i> Auto</button>
-                  <button type="button" data-action="step-mt" class="bg-white text-[#0070F3] border border-[#0070F3] px-2.5 py-1.5 text-[12px] font-semibold rounded hover:bg-[#eff6ff] inline-flex items-center gap-1"><i data-lucide="skip-forward" class="w-3 h-3"></i> Step</button>
-                `}
-                <button type="button" data-action="reset-mt" class="bg-transparent text-[#0A1C60] border-2 border-[#0A1C60] px-2.5 py-1.5 rounded hover:text-[#0070F3] hover:border-[#0070F3]">Reset</button>
-              </div>
+
             </div>
 
             ${!past('primary') ? `
@@ -4679,15 +4680,7 @@
           <div class="section-card p-4">
             <div class="flex items-center justify-between mb-3">
               <div class="bts-label bts-label-platform"><i data-lucide="bar-chart-3" class="w-3 h-3"></i> Dashboard & Reporting</div>
-              <div class="flex items-center gap-2 text-[12px]">
-                ${STATE.drRunning ? `
-                  <button type="button" data-action="pause-dr" class="bg-[#0070F3] text-white px-2.5 py-1.5 text-[12px] font-semibold rounded hover:bg-[#005AD0] inline-flex items-center gap-1"><i data-lucide="${STATE.drPaused ? 'play' : 'pause'}" class="w-3 h-3"></i> ${STATE.drPaused ? 'Resume' : 'Pause'}</button>
-                ` : `
-                  <button type="button" data-action="start-dr" class="bg-[#0070F3] text-white px-2.5 py-1.5 text-[12px] font-semibold rounded hover:bg-[#005AD0] inline-flex items-center gap-1"><i data-lucide="play" class="w-3 h-3"></i> Auto</button>
-                  <button type="button" data-action="step-dr" class="bg-white text-[#0070F3] border border-[#0070F3] px-2.5 py-1.5 text-[12px] font-semibold rounded hover:bg-[#eff6ff] inline-flex items-center gap-1"><i data-lucide="skip-forward" class="w-3 h-3"></i> Step</button>
-                `}
-                <button type="button" data-action="reset-dr" class="bg-transparent text-[#0A1C60] border-2 border-[#0A1C60] px-2.5 py-1.5 rounded hover:text-[#0070F3] hover:border-[#0070F3]">Reset</button>
-              </div>
+
             </div>
 
             ${!past('source') ? `
@@ -4914,15 +4907,7 @@
           <div class="section-card p-4">
             <div class="flex items-center justify-between mb-3">
               <div class="bts-label bts-label-platform"><i data-lucide="user-plus" class="w-3 h-3"></i> Onboarding: Day 1 Experience</div>
-              <div class="flex items-center gap-2 text-[12px]">
-                ${STATE.obRunning ? `
-                  <button type="button" data-action="pause-ob" class="bg-[#0070F3] text-white px-2.5 py-1.5 text-[12px] font-semibold rounded hover:bg-[#005AD0] inline-flex items-center gap-1"><i data-lucide="${STATE.obPaused ? 'play' : 'pause'}" class="w-3 h-3"></i> ${STATE.obPaused ? 'Resume' : 'Pause'}</button>
-                ` : `
-                  <button type="button" data-action="start-ob" class="bg-[#0070F3] text-white px-2.5 py-1.5 text-[12px] font-semibold rounded hover:bg-[#005AD0] inline-flex items-center gap-1"><i data-lucide="play" class="w-3 h-3"></i> Auto</button>
-                  <button type="button" data-action="step-ob" class="bg-white text-[#0070F3] border border-[#0070F3] px-2.5 py-1.5 text-[12px] font-semibold rounded hover:bg-[#eff6ff] inline-flex items-center gap-1"><i data-lucide="skip-forward" class="w-3 h-3"></i> Step</button>
-                `}
-                <button type="button" data-action="reset-ob" class="bg-transparent text-[#0A1C60] border-2 border-[#0A1C60] px-2.5 py-1.5 rounded hover:text-[#0070F3] hover:border-[#0070F3]">Reset</button>
-              </div>
+
             </div>
 
             ${!past('setup') ? `
@@ -5311,39 +5296,46 @@
               ${NEW_CARDS.map(card => compactCard(card)).join('')}
             </div>
 
-            <!-- THE CENTRALIZED PLATFORM (always visible) -->
+            <!-- HOW APPLICATION WORKSPACE FITS TOGETHER (always visible) -->
             <div class="section-card p-4">
-              <div class="flex items-center gap-3 mb-2">
-                <div class="flex-1 h-px bg-gradient-to-r from-transparent via-blue-200 to-transparent"></div>
-                <div class="bts-label bts-label-platform"><i data-lucide="boxes" class="w-3 h-3"></i> The Application Lifecycle, on One Platform</div>
-                <div class="flex-1 h-px bg-gradient-to-r from-transparent via-blue-200 to-transparent"></div>
-              </div>
-              <div class="platform-bar" style="padding:10px 14px">
-                <div class="flex items-center justify-between mb-2">
-                  <div class="flex items-center gap-2">
-                    <i data-lucide="layout-grid" class="w-4 h-4 text-blue-200"></i>
-                    <span class="text-sm font-bold tracking-wide">Application Workspace</span>
+              <div class="arch-fit">
+                <div class="arch-fit-title">How Application Workspace Fits Together</div>
+                <div class="arch-fit-subtitle">A layer between the management tools you already own and the people you serve</div>
+
+                <div class="arch-row-label">Your Existing Mgmt Tools</div>
+                <div class="arch-row">
+                  <span class="arch-tool-pill" style="background:#5B53D6">Intune</span>
+                  <span class="arch-tool-pill" style="background:#E84D1A">ConfigMgr</span>
+                  <span class="arch-tool-pill" style="background:#374151">Citrix</span>
+                  <span class="arch-tool-pill" style="background:#4B5563">AVD / W365</span>
+                  <span class="arch-tool-pill" style="background:#4B5563">macOS</span>
+                </div>
+                <div class="arch-bracket-up"></div>
+
+                <div class="arch-aw">
+                  <div class="arch-aw-head">
+                    <div class="arch-aw-brand">
+                      <div class="arch-aw-title">Application Workspace</div>
+                      <div class="arch-aw-tagline">Package &middot; Deliver &middot; Update &middot; Self-Service &middot; Audit</div>
+                    </div>
+                    <div class="arch-aw-brand-mark">
+                      <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
+                      <span>The Application Lifecycle, on One Platform</span>
+                    </div>
                   </div>
-                  <div class="flex items-center gap-1">
-                    <div class="platform-stat"><div class="platform-stat-value">8,000+</div><div class="platform-stat-label">Curated Apps</div></div>
-                    <div class="platform-divider"></div>
-                    <div class="platform-stat"><div class="platform-stat-value">Daily</div><div class="platform-stat-label">Updates</div></div>
-                    <div class="platform-divider"></div>
-                    <div class="platform-stat"><div class="platform-stat-value">CVE</div><div class="platform-stat-label">+ Scan Data</div></div>
+                  <div class="arch-aw-caps">
+                    <span class="arch-aw-cap"><i data-lucide="package"></i> 8,000+ Pre-tested Apps</span>
+                    <span class="arch-aw-cap"><i data-lucide="wrench"></i> Custom App Packaging</span>
+                    <span class="arch-aw-cap"><i data-lucide="user-check"></i> Identity-Based Access</span>
+                    <span class="arch-aw-cap"><i data-lucide="shield"></i> CVE / Auto-Patching</span>
+                    <span class="arch-aw-cap"><i data-lucide="shopping-bag"></i> Self-Service Catalog</span>
                   </div>
                 </div>
-                <div class="flex flex-wrap gap-1.5">
-                  <div class="platform-cap"><i data-lucide="package" class="w-3 h-3"></i> Custom App Packaging</div>
-                  <div class="platform-cap"><i data-lucide="building-2" class="w-3 h-3"></i> Multi-Tenant</div>
-                  <div class="platform-cap"><i data-lucide="monitor-smartphone" class="w-3 h-3"></i> Multi-Device</div>
-                  <div class="platform-cap"><i data-lucide="bot" class="w-3 h-3"></i> Automated Patching</div>
-                  <div class="platform-cap"><i data-lucide="user-check" class="w-3 h-3"></i> Identity-Based Access</div>
-                  <div class="platform-cap"><i data-lucide="shopping-bag" class="w-3 h-3"></i> Self-Service Catalog</div>
-                  <div class="platform-cap"><i data-lucide="shield" class="w-3 h-3"></i> CVE Auto-Patching</div>
-                  <div class="platform-cap"><i data-lucide="eye" class="w-3 h-3"></i> Central Governance</div>
-                </div>
-                <div class="mt-2 text-[10px] text-blue-200 tracking-wide text-center">
-                  Package &middot; Deliver &middot; Update &middot; Configure &middot; Audit -  across every environment from one place
+
+                <div class="arch-bracket-down"></div>
+                <div class="arch-row-label arch-row-label-end">End Users &amp; Devices</div>
+                <div class="arch-row">
+                  ${['Laptop','Virtual Desktop','Cloud PC / W365','macOS','BYOD / Remote'].map(d => `<span class="arch-device-pill"><i data-lucide="monitor" class="w-3 h-3"></i>${d}</span>`).join('')}
                 </div>
               </div>
             </div>
@@ -5377,12 +5369,23 @@
                 </div>
                 <!-- Flow controls (icon-only) -->
                 <div class="flex items-center gap-2">
-                  ${(STATE.solutionViewUser || STATE.solutionViewAdmin || STATE.solutionViewSetupStore || STATE.solutionViewMultiTenant || STATE.solutionViewDashboard || STATE.solutionViewOnboarding) ? `
+                  ${(STATE.solutionViewUser || STATE.solutionViewAdmin || STATE.solutionViewSetupStore || STATE.solutionViewMultiTenant || STATE.solutionViewDashboard || STATE.solutionViewOnboarding) ? (() => {
+                    const _running =
+                      (STATE.solutionViewSetupStore && STATE.ssRunning && !STATE.ssPaused) ||
+                      (STATE.solutionViewMultiTenant && STATE.mtRunning && !STATE.mtPaused) ||
+                      (STATE.solutionViewDashboard && STATE.drRunning && !STATE.drPaused) ||
+                      (STATE.solutionViewOnboarding && STATE.obRunning && !STATE.obPaused) ||
+                      ((STATE.solutionViewUser || STATE.solutionViewAdmin) && STATE.flowRunning && !STATE.flowPaused);
+                    const _label = _running ? 'Pause' : 'Play';
+                    const _icon  = _running ? 'pause' : 'play';
+                    return `
                   <div class="flex items-center gap-1.5 text-[12px]">
-                    <button type="button" data-action="toggle-flow" title="${STATE.flowRunning && !STATE.flowPaused ? 'Pause' : 'Play'}" aria-label="${STATE.flowRunning && !STATE.flowPaused ? 'Pause' : 'Play'}" class="bg-[#0070F3] text-white w-8 h-8 rounded-full hover:bg-[#005AD0] inline-flex items-center justify-center transition shadow-sm"><i data-lucide="${STATE.flowRunning && !STATE.flowPaused ? 'pause' : 'play'}" class="w-3.5 h-3.5"></i></button>
+                    <button type="button" data-action="toggle-flow" title="${_label}" aria-label="${_label}" class="bg-[#0070F3] text-white w-8 h-8 rounded-full hover:bg-[#005AD0] inline-flex items-center justify-center transition shadow-sm"><i data-lucide="${_icon}" class="w-3.5 h-3.5"></i></button>
+                    <button type="button" data-action="step-flow" title="Step" aria-label="Step" class="bg-white text-[#0070F3] border border-[#0070F3] w-8 h-8 rounded-full hover:bg-[#eff6ff] inline-flex items-center justify-center transition"><i data-lucide="step-forward" class="w-3.5 h-3.5"></i></button>
                     <button type="button" data-action="reset-flow" title="Reset" aria-label="Reset" class="bg-white text-[#0A1C60] border border-[#0A1C60]/30 w-8 h-8 rounded-full hover:bg-slate-50 hover:border-[#0A1C60] inline-flex items-center justify-center transition"><i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i></button>
                   </div>
-                  ` : ''}
+                    `;
+                  })() : ''}
                 </div>
               </div>
 
@@ -6447,8 +6450,70 @@
           }
           if (action === 'toggle-regulated') { STATE.calcInputs.regulated = act.getAttribute('data-val') === 'true'; render(); return; }
           if (action === 'select-device') { STATE.flowDevice = act.getAttribute('data-device'); startFlow(); return; }
-          if (action === 'toggle-flow') { if (!STATE.flowRunning) { if (!STATE.flowDevice) STATE.flowDevice = 'Windows'; startFlow(); } else if (STATE.flowPaused) { resumeFlow(); } else { pauseFlow(); } return; }
-          if (action === 'reset-flow') { resetFlow(); return; }
+          if (action === 'toggle-flow' || action === 'step-flow' || action === 'reset-flow') {
+            // Fan out to every selected view's animation. Admin Console + User Experience
+            // share the same per-click flow, so we coalesce them.
+            const targets = [];
+            if (STATE.solutionViewUser || STATE.solutionViewAdmin) targets.push('flow');
+            if (STATE.solutionViewSetupStore) targets.push('ss');
+            if (STATE.solutionViewMultiTenant) targets.push('mt');
+            if (STATE.solutionViewDashboard) targets.push('dr');
+            if (STATE.solutionViewOnboarding) targets.push('ob');
+            if (targets.length === 0) targets.push('flow'); // safe default
+
+            // For toggle: if ANY targeted animation is currently running & not paused, treat as Pause; else Play/Resume.
+            const anyActive = (
+              (targets.includes('flow') && STATE.flowRunning && !STATE.flowPaused) ||
+              (targets.includes('ss')   && STATE.ssRunning   && !STATE.ssPaused)   ||
+              (targets.includes('mt')   && STATE.mtRunning   && !STATE.mtPaused)   ||
+              (targets.includes('dr')   && STATE.drRunning   && !STATE.drPaused)   ||
+              (targets.includes('ob')   && STATE.obRunning   && !STATE.obPaused)
+            );
+
+            const clearTimers = () => { STATE.flowTimers.timeouts.forEach(id => clearTimeout(id)); STATE.flowTimers.timeouts = []; };
+
+            targets.forEach(t => {
+              if (t === 'flow') {
+                if (action === 'toggle-flow') {
+                  if (!STATE.flowRunning) { if (!STATE.flowDevice) STATE.flowDevice = 'Windows'; startFlow(); }
+                  else if (anyActive) { pauseFlow(); }
+                  else if (STATE.flowPaused) { resumeFlow(); }
+                } else if (action === 'step-flow') { stepFlow(); }
+                else if (action === 'reset-flow') { resetFlow(); }
+              } else if (t === 'ss') {
+                if (action === 'toggle-flow') {
+                  if (!STATE.ssRunning) { startSs(); }
+                  else if (anyActive) { STATE.ssPaused = true; clearTimers(); }
+                  else if (STATE.ssPaused) { STATE.ssPaused = false; runSsQueue(); }
+                } else if (action === 'step-flow') { stepSs(); }
+                else if (action === 'reset-flow') { resetSs(); }
+              } else if (t === 'mt') {
+                if (action === 'toggle-flow') {
+                  if (!STATE.mtRunning) { startMt(); }
+                  else if (anyActive) { STATE.mtPaused = true; clearTimers(); }
+                  else if (STATE.mtPaused) { STATE.mtPaused = false; runMtQueue(); }
+                } else if (action === 'step-flow') { stepMt(); }
+                else if (action === 'reset-flow') { resetMt(); }
+              } else if (t === 'dr') {
+                if (action === 'toggle-flow') {
+                  if (!STATE.drRunning) { startDr(); }
+                  else if (anyActive) { STATE.drPaused = true; clearTimers(); }
+                  else if (STATE.drPaused) { STATE.drPaused = false; runDrQueue(); }
+                } else if (action === 'step-flow') { stepDr(); }
+                else if (action === 'reset-flow') { resetDr(); }
+              } else if (t === 'ob') {
+                if (action === 'toggle-flow') {
+                  if (!STATE.obRunning) { startOb(); }
+                  else if (anyActive) { STATE.obPaused = true; clearTimers(); }
+                  else if (STATE.obPaused) { STATE.obPaused = false; runObQueue(); }
+                } else if (action === 'step-flow') { stepOb(); }
+                else if (action === 'reset-flow') { resetOb(); }
+              }
+            });
+
+            scrollPreserveRender();
+            return;
+          }
           if (action === 'toggle-admin-view') { STATE.showAdminView = !STATE.showAdminView; scrollPreserveRender(); return; }
           if (action === 'toggle-autopilot') { STATE.showAutopilot = !STATE.showAutopilot; STATE.autopilotStep = -1; STATE.autopilotAppCount = 0; clearFlowTimers(); scrollPreserveRender(); return; }
           if (action === 'start-autopilot') {
