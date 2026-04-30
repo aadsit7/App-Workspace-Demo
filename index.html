@@ -2879,10 +2879,15 @@
 
       function scrollPreserveRender(){
         const mainEl = document.querySelector('body > #app > main');
-        const scrollTop = mainEl ? mainEl.scrollTop : 0;
+        const mainScrollTop = mainEl ? mainEl.scrollTop : 0;
+        const winScrollTop = window.scrollY || document.documentElement.scrollTop || 0;
         render();
         const newMainEl = document.querySelector('body > #app > main');
-        if (newMainEl) newMainEl.scrollTop = scrollTop;
+        if (newMainEl) newMainEl.scrollTop = mainScrollTop;
+        if (winScrollTop > 0) {
+          document.documentElement.scrollTop = winScrollTop;
+          document.body.scrollTop = winScrollTop;
+        }
       }
 
       function startFlow(){
@@ -4701,13 +4706,13 @@
       /* ========== OB ANIMATION ENGINE ========== */
       function buildObQueue(){
         const queue = [];
-        queue.push({ delay: 1000, fn(){ STATE.obPhase = 'setup'; render(); } });
-        queue.push({ delay: 2000, fn(){ STATE.obPhase = 'autopilot'; render(); } });
-        queue.push({ delay: 2000, fn(){ STATE.obPhase = 'diverge'; render(); } });
-        queue.push({ delay: 2500, fn(){ STATE.obPhase = 'deploying'; render(); } });
-        queue.push({ delay: 3500, fn(){ STATE.obPhase = 'result'; render(); } });
-        queue.push({ delay: 2500, fn(){ STATE.obPhase = 'done'; render(); } });
-        queue.push({ delay: 2500, fn(){ STATE.obRunning = false; STATE.obPaused = false; render(); } });
+        queue.push({ delay: 1000, fn(){ STATE.obPhase = 'setup'; scrollPreserveRender(); } });
+        queue.push({ delay: 2000, fn(){ STATE.obPhase = 'autopilot'; scrollPreserveRender(); } });
+        queue.push({ delay: 2000, fn(){ STATE.obPhase = 'diverge'; scrollPreserveRender(); } });
+        queue.push({ delay: 2500, fn(){ STATE.obPhase = 'deploying'; scrollPreserveRender(); } });
+        queue.push({ delay: 3500, fn(){ STATE.obPhase = 'result'; scrollPreserveRender(); } });
+        queue.push({ delay: 2500, fn(){ STATE.obPhase = 'done'; scrollPreserveRender(); } });
+        queue.push({ delay: 2500, fn(){ STATE.obRunning = false; STATE.obPaused = false; scrollPreserveRender(); } });
         return queue;
       }
 
@@ -4732,7 +4737,7 @@
         STATE.obPhase = 'idle';
         STATE.obQueue = buildObQueue();
         STATE.obQueueIdx = 0;
-        render();
+        scrollPreserveRender();
         runObQueue();
       }
 
@@ -4757,7 +4762,7 @@
         STATE.obPaused = false;
         STATE.obQueue = [];
         STATE.obQueueIdx = 0;
-        render();
+        scrollPreserveRender();
       }
 
       /* ========== DR ANIMATION ENGINE ========== */
@@ -4766,9 +4771,9 @@
         const delays = [800, 1200, 1000, 1500, 1400, 1500];
         const queue = [];
         phases.forEach((phase, i) => {
-          queue.push({ delay: delays[i], fn(){ STATE.drPhase = phase; render(); } });
+          queue.push({ delay: delays[i], fn(){ STATE.drPhase = phase; scrollPreserveRender(); } });
         });
-        queue.push({ delay: 2000, fn(){ STATE.drRunning = false; STATE.drPaused = false; render(); } });
+        queue.push({ delay: 2000, fn(){ STATE.drRunning = false; STATE.drPaused = false; scrollPreserveRender(); } });
         return queue;
       }
 
@@ -4793,7 +4798,7 @@
         STATE.drPhase = 'idle';
         STATE.drQueue = buildDrQueue();
         STATE.drQueueIdx = 0;
-        render();
+        scrollPreserveRender();
         runDrQueue();
       }
 
@@ -4818,7 +4823,7 @@
         STATE.drPaused = false;
         STATE.drQueue = [];
         STATE.drQueueIdx = 0;
-        render();
+        scrollPreserveRender();
       }
 
       /* ========== MT ANIMATION ENGINE ========== */
@@ -4827,9 +4832,9 @@
         const delays = [800, 1200, 1200, 1500, 1200, 1500];
         const queue = [];
         phases.forEach((phase, i) => {
-          queue.push({ delay: delays[i], fn(){ STATE.mtPhase = phase; render(); } });
+          queue.push({ delay: delays[i], fn(){ STATE.mtPhase = phase; scrollPreserveRender(); } });
         });
-        queue.push({ delay: 2000, fn(){ STATE.mtRunning = false; STATE.mtPaused = false; render(); } });
+        queue.push({ delay: 2000, fn(){ STATE.mtRunning = false; STATE.mtPaused = false; scrollPreserveRender(); } });
         return queue;
       }
 
@@ -4854,7 +4859,7 @@
         STATE.mtPhase = 'idle';
         STATE.mtQueue = buildMtQueue();
         STATE.mtQueueIdx = 0;
-        render();
+        scrollPreserveRender();
         runMtQueue();
       }
 
@@ -4879,7 +4884,7 @@
         STATE.mtPaused = false;
         STATE.mtQueue = [];
         STATE.mtQueueIdx = 0;
-        render();
+        scrollPreserveRender();
       }
 
       /* ========== SS ANIMATION ENGINE ========== */
@@ -4888,9 +4893,9 @@
         const delays = [1200, 2000, 3500, 2000, 1800, 1500];
         const queue = [];
         phases.forEach((phase, i) => {
-          queue.push({ delay: delays[i], fn(){ STATE.ssPhase = phase; render(); } });
+          queue.push({ delay: delays[i], fn(){ STATE.ssPhase = phase; scrollPreserveRender(); } });
         });
-        queue.push({ delay: 2000, fn(){ STATE.ssRunning = false; STATE.ssPaused = false; render(); } });
+        queue.push({ delay: 2000, fn(){ STATE.ssRunning = false; STATE.ssPaused = false; scrollPreserveRender(); } });
         return queue;
       }
 
@@ -4923,7 +4928,7 @@
           STATE.ssQueue = buildSsQueue();
           STATE.ssQueueIdx = 0;
         }
-        render();
+        scrollPreserveRender();
         runSsQueue();
         setTimeout(() => {
           const el = document.getElementById('ss-panel');
@@ -4952,7 +4957,7 @@
         STATE.ssPaused = false;
         STATE.ssQueue = [];
         STATE.ssQueueIdx = 0;
-        render();
+        scrollPreserveRender();
       }
 
       /* ========== SOLUTION TAB (3-zone layout) ========== */
@@ -5934,26 +5939,26 @@
             if (view === 'multitenant') STATE.solutionViewMultiTenant = !STATE.solutionViewMultiTenant;
             if (view === 'dashboard') STATE.solutionViewDashboard = !STATE.solutionViewDashboard;
             if (view === 'onboarding') STATE.solutionViewOnboarding = !STATE.solutionViewOnboarding;
-            render(); return;
+            scrollPreserveRender(); return;
           }
           if (action === 'start-mt') { startMt(); return; }
           if (action === 'step-mt') { stepMt(); return; }
           if (action === 'reset-mt') { resetMt(); return; }
-          if (action === 'pause-mt') { if (STATE.mtPaused) { STATE.mtPaused = false; render(); runMtQueue(); } else { STATE.mtPaused = true; STATE.flowTimers.timeouts.forEach(id => clearTimeout(id)); STATE.flowTimers.timeouts = []; render(); } return; }
+          if (action === 'pause-mt') { if (STATE.mtPaused) { STATE.mtPaused = false; scrollPreserveRender(); runMtQueue(); } else { STATE.mtPaused = true; STATE.flowTimers.timeouts.forEach(id => clearTimeout(id)); STATE.flowTimers.timeouts = []; scrollPreserveRender(); } return; }
           if (action === 'start-dr') { startDr(); return; }
           if (action === 'step-dr') { stepDr(); return; }
           if (action === 'reset-dr') { resetDr(); return; }
-          if (action === 'pause-dr') { if (STATE.drPaused) { STATE.drPaused = false; render(); runDrQueue(); } else { STATE.drPaused = true; STATE.flowTimers.timeouts.forEach(id => clearTimeout(id)); STATE.flowTimers.timeouts = []; render(); } return; }
+          if (action === 'pause-dr') { if (STATE.drPaused) { STATE.drPaused = false; scrollPreserveRender(); runDrQueue(); } else { STATE.drPaused = true; STATE.flowTimers.timeouts.forEach(id => clearTimeout(id)); STATE.flowTimers.timeouts = []; scrollPreserveRender(); } return; }
           if (action === 'start-ob') { startOb(); return; }
           if (action === 'step-ob') { stepOb(); return; }
           if (action === 'reset-ob') { resetOb(); return; }
-          if (action === 'pause-ob') { if (STATE.obPaused) { STATE.obPaused = false; render(); runObQueue(); } else { STATE.obPaused = true; STATE.flowTimers.timeouts.forEach(id => clearTimeout(id)); STATE.flowTimers.timeouts = []; render(); } return; }
+          if (action === 'pause-ob') { if (STATE.obPaused) { STATE.obPaused = false; scrollPreserveRender(); runObQueue(); } else { STATE.obPaused = true; STATE.flowTimers.timeouts.forEach(id => clearTimeout(id)); STATE.flowTimers.timeouts = []; scrollPreserveRender(); } return; }
           if (action === 'start-ss') { startSs(); return; }
           if (action === 'step-ss') { stepSs(); return; }
           if (action === 'reset-ss') { resetSs(); return; }
           if (action === 'pause-ss') {
-            if (STATE.ssPaused) { STATE.ssPaused = false; render(); runSsQueue(); }
-            else { STATE.ssPaused = true; STATE.flowTimers.timeouts.forEach(id => clearTimeout(id)); STATE.flowTimers.timeouts = []; render(); }
+            if (STATE.ssPaused) { STATE.ssPaused = false; scrollPreserveRender(); runSsQueue(); }
+            else { STATE.ssPaused = true; STATE.flowTimers.timeouts.forEach(id => clearTimeout(id)); STATE.flowTimers.timeouts = []; scrollPreserveRender(); }
             return;
           }
           if (action === 'close-modal') { STATE.modalOpen = false; render(); return; }
@@ -6009,19 +6014,19 @@
           if (action === 'select-device') { STATE.flowDevice = act.getAttribute('data-device'); startFlow(); return; }
           if (action === 'toggle-flow') { if (!STATE.flowRunning) { if (!STATE.flowDevice) STATE.flowDevice = 'Windows'; startFlow(); } else if (STATE.flowPaused) { resumeFlow(); } else { pauseFlow(); } return; }
           if (action === 'reset-flow') { resetFlow(); return; }
-          if (action === 'toggle-admin-view') { STATE.showAdminView = !STATE.showAdminView; render(); return; }
-          if (action === 'toggle-autopilot') { STATE.showAutopilot = !STATE.showAutopilot; STATE.autopilotStep = -1; STATE.autopilotAppCount = 0; clearFlowTimers(); render(); return; }
+          if (action === 'toggle-admin-view') { STATE.showAdminView = !STATE.showAdminView; scrollPreserveRender(); return; }
+          if (action === 'toggle-autopilot') { STATE.showAutopilot = !STATE.showAutopilot; STATE.autopilotStep = -1; STATE.autopilotAppCount = 0; clearFlowTimers(); scrollPreserveRender(); return; }
           if (action === 'start-autopilot') {
             if (STATE.autopilotStep >= 0) return;
-            STATE.autopilotStep = 0; STATE.autopilotAppCount = 0; render();
+            STATE.autopilotStep = 0; STATE.autopilotAppCount = 0; scrollPreserveRender();
             const apQueue = [
-              { delay: 1800, fn(){ STATE.autopilotStep = 1; render(); } },
-              { delay: 1800, fn(){ STATE.autopilotStep = 2; render(); } },
-              { delay: 1800, fn(){ STATE.autopilotStep = 3; render(); } },
-              { delay: 1800, fn(){ STATE.autopilotStep = 4; render(); } },
-              { delay: 1800, fn(){ STATE.autopilotStep = 5; render(); } },
-              { delay: 1800, fn(){ STATE.autopilotStep = 6; render(); startAppCascade(); } },
-              { delay: 2500, fn(){ STATE.autopilotStep = 7; render(); } },
+              { delay: 1800, fn(){ STATE.autopilotStep = 1; scrollPreserveRender(); } },
+              { delay: 1800, fn(){ STATE.autopilotStep = 2; scrollPreserveRender(); } },
+              { delay: 1800, fn(){ STATE.autopilotStep = 3; scrollPreserveRender(); } },
+              { delay: 1800, fn(){ STATE.autopilotStep = 4; scrollPreserveRender(); } },
+              { delay: 1800, fn(){ STATE.autopilotStep = 5; scrollPreserveRender(); } },
+              { delay: 1800, fn(){ STATE.autopilotStep = 6; scrollPreserveRender(); startAppCascade(); } },
+              { delay: 2500, fn(){ STATE.autopilotStep = 7; scrollPreserveRender(); } },
             ];
             let qIdx = 0;
             function runApQueue(){
@@ -6033,7 +6038,7 @@
             runApQueue();
             return;
           }
-          if (action === 'reset-autopilot') { clearFlowTimers(); STATE.autopilotStep = -1; STATE.autopilotAppCount = 0; render(); return; }
+          if (action === 'reset-autopilot') { clearFlowTimers(); STATE.autopilotStep = -1; STATE.autopilotAppCount = 0; scrollPreserveRender(); return; }
 
           if (action === 'open-pdf-input') { STATE.pdfCompanyInput = true; render(); setTimeout(() => { const el = document.getElementById('pdf-company-input'); if (el) el.focus(); }, 50); return; }
           if (action === 'cancel-pdf-input') { STATE.pdfCompanyInput = false; render(); return; }
