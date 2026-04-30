@@ -230,6 +230,15 @@
       .view-toggle { display: inline-flex; align-items: center; gap: 5px; padding: 5px 12px; border-radius: 9999px; font-size: 12px; font-weight: 600; border: 1px solid #e2e8f0; background: white; color: #64748b; cursor: pointer; transition: all 0.2s ease; }
       .view-toggle.active { border-color: #0070F3; background: #eff6ff; color: #0070F3; }
       .view-toggle:hover:not(.active) { border-color: #94a3b8; }
+      /* Lifecycle rail */
+      .lifecycle-item { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+      .lifecycle-label { font-size: 8.5px; font-weight: 700; letter-spacing: 0.08em; color: #94a3b8; white-space: nowrap; }
+      .lifecycle-dot { width: 6px; height: 6px; border-radius: 50%; background: #cbd5e1; transition: background 0.2s ease; flex-shrink: 0; }
+      .lifecycle-dot.lifecycle-dot-active { background: #0070F3; }
+      .lifecycle-connector { flex: 1; height: 1px; background: #e2e8f0; min-width: 6px; margin-bottom: 28px; align-self: center; }
+      .lifecycle-play-btn { display: inline-flex; align-items: center; gap: 5px; padding: 5px 12px; border-radius: 9999px; font-size: 11px; font-weight: 600; border: 1px solid #0070F3; background: white; color: #0070F3; cursor: pointer; transition: all 0.2s ease; white-space: nowrap; }
+      .lifecycle-play-btn:hover { background: #eff6ff; }
+      .lifecycle-play-btn.playing { background: #eff6ff; }
       /* Admin console rows */
       .admin-row { padding: 8px 10px; border-radius: 8px; border: 1px solid #e5e7eb; background: white; transition: all 0.4s ease; opacity: 0.3; }
       .admin-row.row-active { opacity: 1; border-color: #0070F3; background: #eff6ff; }
@@ -2123,6 +2132,8 @@
         solutionViewUser: false,
         solutionViewAdmin: false,
         solutionViewMultiTenant: false,
+        lifecyclePlaying: false,
+        lcTimers: [],
         mtPhase: 'idle',
         mtRunning: false,
         mtPaused: false,
@@ -5028,33 +5039,46 @@
 
             <!-- ZONE A: Control strip -->
             <div class="section-card p-3">
-              <div class="flex flex-wrap items-center justify-between gap-3">
-                <!-- View toggles -->
+              <div class="flex flex-wrap items-end justify-between gap-3">
+                <!-- Lifecycle rail + View toggles -->
+                <div class="flex items-end gap-1.5">
+                  ${[
+                    {view:'setupstore', stage:'PACKAGE',   name:'Setup Store',          icon:'library',           active:STATE.solutionViewSetupStore},
+                    {view:'admin',      stage:'CONFIGURE',  name:'Admin Console',        icon:'settings-2',        active:STATE.solutionViewAdmin},
+                    {view:'onboarding', stage:'DELIVER',    name:'Onboarding',           icon:'user-plus',         active:STATE.solutionViewOnboarding},
+                    {view:'user',       stage:'RUN',        name:'User Experience',      icon:'monitor-smartphone',active:STATE.solutionViewUser},
+                    {view:'dashboard',  stage:'MEASURE',    name:'Dashboard & Reporting',icon:'bar-chart-3',       active:STATE.solutionViewDashboard},
+                    {view:'multitenant',stage:'SCALE',      name:'Multi-Tenant',         icon:'building-2',        active:STATE.solutionViewMultiTenant},
+                  ].map((item, idx, arr) => `
+                    <div class="lifecycle-item">
+                      <span class="lifecycle-label">${item.stage}</span>
+                      <div class="lifecycle-dot ${item.active ? 'lifecycle-dot-active' : ''}"></div>
+                      <button type="button" data-action="toggle-solution-view" data-view="${item.view}" class="view-toggle ${item.active ? 'active' : ''}"><i data-lucide="${item.icon}" class="w-3.5 h-3.5"></i> ${item.name}</button>
+                    </div>
+                    ${idx < arr.length - 1 ? '<div class="lifecycle-connector"></div>' : ''}
+                  `).join('')}
+                </div>
+                <!-- Play lifecycle + Flow controls -->
                 <div class="flex items-center gap-2">
-                  <button type="button" data-action="toggle-solution-view" data-view="setupstore" class="view-toggle ${STATE.solutionViewSetupStore ? 'active' : ''}"><i data-lucide="library" class="w-3.5 h-3.5"></i> Setup Store</button>
-                  <button type="button" data-action="toggle-solution-view" data-view="admin" class="view-toggle ${STATE.solutionViewAdmin ? 'active' : ''}"><i data-lucide="settings-2" class="w-3.5 h-3.5"></i> Admin Console</button>
-                  <button type="button" data-action="toggle-solution-view" data-view="user" class="view-toggle ${STATE.solutionViewUser ? 'active' : ''}"><i data-lucide="monitor-smartphone" class="w-3.5 h-3.5"></i> User Experience</button>
-                  <button type="button" data-action="toggle-solution-view" data-view="onboarding" class="view-toggle ${STATE.solutionViewOnboarding ? 'active' : ''}"><i data-lucide="user-plus" class="w-3.5 h-3.5"></i> Onboarding</button>
-                  <button type="button" data-action="toggle-solution-view" data-view="dashboard" class="view-toggle ${STATE.solutionViewDashboard ? 'active' : ''}"><i data-lucide="bar-chart-3" class="w-3.5 h-3.5"></i> Dashboard & Reporting</button>
-                  <button type="button" data-action="toggle-solution-view" data-view="multitenant" class="view-toggle ${STATE.solutionViewMultiTenant ? 'active' : ''}"><i data-lucide="building-2" class="w-3.5 h-3.5"></i> Multi-Tenant</button>
+                  <button type="button" data-action="play-lifecycle" class="lifecycle-play-btn ${STATE.lifecyclePlaying ? 'playing' : ''}"><i data-lucide="${STATE.lifecyclePlaying ? 'loader' : 'play-circle'}" class="w-3.5 h-3.5"></i> Play the lifecycle</button>
+                  ${(STATE.solutionViewUser || STATE.solutionViewAdmin || STATE.solutionViewSetupStore || STATE.solutionViewMultiTenant || STATE.solutionViewDashboard || STATE.solutionViewOnboarding) ? `
+                  <!-- Flow controls -->
+                  <div class="flex items-center gap-2 text-[12px]">
+                    <button type="button" data-action="toggle-flow" class="bg-[#0070F3] text-white w-7 h-7 rounded-full hover:bg-[#005AD0] inline-flex items-center justify-center"><i data-lucide="${STATE.flowRunning && !STATE.flowPaused ? 'pause' : 'play'}" class="w-3.5 h-3.5"></i></button>
+                    <button type="button" data-action="reset-flow" class="bg-[#0A1C60] text-white w-7 h-7 rounded-full hover:bg-[#0070F3] inline-flex items-center justify-center" title="Reset"><i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i></button>
+                  </div>
+                  ` : ''}
                 </div>
-                ${(STATE.solutionViewUser || STATE.solutionViewAdmin || STATE.solutionViewSetupStore || STATE.solutionViewMultiTenant || STATE.solutionViewDashboard || STATE.solutionViewOnboarding) ? `
-                <!-- Flow controls -->
-                <div class="flex items-center gap-2 text-[12px]">
-                  <button type="button" data-action="toggle-flow" class="bg-[#0070F3] text-white w-7 h-7 rounded-full hover:bg-[#005AD0] inline-flex items-center justify-center"><i data-lucide="${STATE.flowRunning && !STATE.flowPaused ? 'pause' : 'play'}" class="w-3.5 h-3.5"></i></button>
-                  <button type="button" data-action="reset-flow" class="bg-[#0A1C60] text-white w-7 h-7 rounded-full hover:bg-[#0070F3] inline-flex items-center justify-center" title="Reset"><i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i></button>
-                </div>
-                ` : ''}
               </div>
 
             </div>
 
             <!-- ZONE B: Main content (dynamic columns) -->
             <div class="grid grid-cols-1 ${multiCol ? 'lg:grid-cols-2' : ''} gap-3">
-              ${STATE.solutionViewUser ? renderUserView() : ''}
-              ${STATE.solutionViewAdmin ? renderAdminConsole() : ''}
               ${STATE.solutionViewSetupStore ? renderSetupStoreView() : ''}
+              ${STATE.solutionViewAdmin ? renderAdminConsole() : ''}
               ${STATE.solutionViewOnboarding ? renderOnboardingView() : ''}
+              ${STATE.solutionViewUser ? renderUserView() : ''}
               ${STATE.solutionViewDashboard ? renderDashboardView() : ''}
               ${STATE.solutionViewMultiTenant ? renderMultiTenantView() : ''}
             </div>
@@ -5942,7 +5966,7 @@
           if (node) { const id = node.dataset.id; STATE.activePopover = STATE.activePopover === id ? null : id; render(); return; }
           if (!action) return;
 
-          if (action === 'switch-tab') { STATE.activeTab = act.getAttribute('data-tab'); STATE.visitedCards = []; STATE.activePopover = null; if (STATE.openWhyModal && STATE._savedDriverStates) { STATE.drivers.forEach((d, i) => { d.state = STATE._savedDriverStates[i]; }); STATE.showTippingPoint = STATE._savedTippingPoint; STATE.recastMode = STATE._savedRecastMode; STATE.targetDemandExponent = STATE._savedDemandExp; STATE.targetCapacitySlope = STATE._savedCapSlope; STATE._savedDriverStates = null; updateCurves(); } STATE.openWhyModal = null; STATE.insightContent = null; STATE.flowStep = -1; STATE.flowRunning = false; STATE.flowPaused = false; STATE.flowScenarioIdx = -1; STATE.flowPhase = 'idle'; STATE.flowAppOpened = false; STATE._firstOpenDone = false; STATE.showAdminView = false; STATE.showAutopilot = false; STATE.autopilotStep = -1; STATE.autopilotAppCount = 0; STATE.drPhase = 'idle'; STATE.drRunning = false; STATE.drPaused = false; STATE.drQueue = []; STATE.drQueueIdx = 0; STATE.obPhase = 'idle'; STATE.obRunning = false; STATE.obPaused = false; STATE.obQueue = []; STATE.obQueueIdx = 0; STATE.ssPhase = 'idle'; STATE.ssRunning = false; STATE.ssPaused = false; STATE.ssQueue = []; STATE.ssQueueIdx = 0; STATE.ssTimers.forEach(id => clearTimeout(id)); STATE.ssTimers = []; clearFlowTimers(); render(); return; }
+          if (action === 'switch-tab') { STATE.activeTab = act.getAttribute('data-tab'); STATE.visitedCards = []; STATE.activePopover = null; if (STATE.openWhyModal && STATE._savedDriverStates) { STATE.drivers.forEach((d, i) => { d.state = STATE._savedDriverStates[i]; }); STATE.showTippingPoint = STATE._savedTippingPoint; STATE.recastMode = STATE._savedRecastMode; STATE.targetDemandExponent = STATE._savedDemandExp; STATE.targetCapacitySlope = STATE._savedCapSlope; STATE._savedDriverStates = null; updateCurves(); } STATE.openWhyModal = null; STATE.insightContent = null; STATE.flowStep = -1; STATE.flowRunning = false; STATE.flowPaused = false; STATE.flowScenarioIdx = -1; STATE.flowPhase = 'idle'; STATE.flowAppOpened = false; STATE._firstOpenDone = false; STATE.showAdminView = false; STATE.showAutopilot = false; STATE.autopilotStep = -1; STATE.autopilotAppCount = 0; STATE.drPhase = 'idle'; STATE.drRunning = false; STATE.drPaused = false; STATE.drQueue = []; STATE.drQueueIdx = 0; STATE.obPhase = 'idle'; STATE.obRunning = false; STATE.obPaused = false; STATE.obQueue = []; STATE.obQueueIdx = 0; STATE.ssPhase = 'idle'; STATE.ssRunning = false; STATE.ssPaused = false; STATE.ssQueue = []; STATE.ssQueueIdx = 0; STATE.ssTimers.forEach(id => clearTimeout(id)); STATE.ssTimers = []; STATE.lcTimers.forEach(id => clearTimeout(id)); STATE.lcTimers = []; STATE.lifecyclePlaying = false; clearFlowTimers(); render(); return; }
           if (action === 'advance') { STATE.activeTab = act.getAttribute('data-next'); if (STATE.openWhyModal && STATE._savedDriverStates) { STATE.drivers.forEach((d, i) => { d.state = STATE._savedDriverStates[i]; }); STATE.showTippingPoint = STATE._savedTippingPoint; STATE.recastMode = STATE._savedRecastMode; STATE.targetDemandExponent = STATE._savedDemandExp; STATE.targetCapacitySlope = STATE._savedCapSlope; STATE._savedDriverStates = null; updateCurves(); } STATE.openWhyModal = null; if (STATE.activeTab === 'roi') { calculateImpact(); } render(); return; }
           if (action === 'toggle-solution-view') {
             const view = act.getAttribute('data-view');
@@ -5952,6 +5976,34 @@
             if (view === 'multitenant') STATE.solutionViewMultiTenant = !STATE.solutionViewMultiTenant;
             if (view === 'dashboard') STATE.solutionViewDashboard = !STATE.solutionViewDashboard;
             if (view === 'onboarding') STATE.solutionViewOnboarding = !STATE.solutionViewOnboarding;
+            scrollPreserveRender(); return;
+          }
+          if (action === 'play-lifecycle') {
+            STATE.lcTimers.forEach(id => clearTimeout(id)); STATE.lcTimers = [];
+            if (STATE.lifecyclePlaying) { STATE.lifecyclePlaying = false; scrollPreserveRender(); return; }
+            STATE.solutionViewSetupStore = false; STATE.solutionViewAdmin = false; STATE.solutionViewOnboarding = false;
+            STATE.solutionViewUser = false; STATE.solutionViewDashboard = false; STATE.solutionViewMultiTenant = false;
+            STATE.lifecyclePlaying = true;
+            const lcViews = [
+              { key: 'solutionViewSetupStore', start: () => startSs() },
+              { key: 'solutionViewAdmin',       start: null },
+              { key: 'solutionViewOnboarding',  start: () => startOb() },
+              { key: 'solutionViewUser',        start: null },
+              { key: 'solutionViewDashboard',   start: () => startDr() },
+              { key: 'solutionViewMultiTenant', start: () => startMt() },
+            ];
+            const DWELL = 6000;
+            lcViews.forEach((v, i) => {
+              const t = setTimeout(() => {
+                lcViews.forEach(x => { STATE[x.key] = false; });
+                STATE[v.key] = true;
+                scrollPreserveRender();
+                if (v.start) { const ts = setTimeout(() => { if (STATE.lifecyclePlaying) v.start(); }, 150); STATE.lcTimers.push(ts); }
+              }, i * DWELL);
+              STATE.lcTimers.push(t);
+            });
+            const tEnd = setTimeout(() => { STATE.lifecyclePlaying = false; scrollPreserveRender(); }, lcViews.length * DWELL);
+            STATE.lcTimers.push(tEnd);
             scrollPreserveRender(); return;
           }
           if (action === 'start-mt') { startMt(); return; }
