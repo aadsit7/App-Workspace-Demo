@@ -1185,6 +1185,10 @@
       .ss-arrow-pending {
         color: var(--r-divider) !important;
       }
+      /* Custom-apps parallel track */
+      .ss-custom-track { background: white; border: 1.5px solid var(--r-divider); border-radius: 8px; padding: 10px 12px; }
+      .ss-custom-track .ss-dtap-bar { margin-top: 0; }
+      .ss-custom-app-icon { width: 28px; height: 28px; border-radius: 6px; display: grid; place-items: center; font-size: 13px; font-weight: 800; color: white; flex-shrink: 0; }
       @keyframes ssArrowPulse {
         0%, 100% { opacity: 0.4; }
         50% { opacity: 1; }
@@ -4045,7 +4049,7 @@
       function renderSetupStoreView(){
         const p = STATE.ssPhase;
         const past = (target) => {
-          const order = ['idle','catalog','package','cve','update','fanout','done'];
+          const order = ['idle','catalog','package','cve','update','fanout','custom','done'];
           return order.indexOf(p) >= order.indexOf(target);
         };
 
@@ -4055,7 +4059,7 @@
               <div class="bts-label bts-label-platform">
                 <i data-lucide="library" class="w-3 h-3"></i> Setup Store: The Curated Catalog
                 ${past('catalog') ? `<span style="margin-left:8px;padding:2px 8px;border-radius:999px;background:var(--r-quote-bg);color:var(--r-blue);font-size:10px;font-weight:700">
-                  ${['catalog','package','cve','update','fanout','done'].indexOf(p) + 1} of 6
+                  ${['catalog','package','cve','update','fanout','custom','done'].indexOf(p) + 1} of 7
                 </span>` : ''}
               </div>
               <div class="flex items-center gap-2 text-[12px]">
@@ -4184,7 +4188,41 @@
                 </div>
               </div>
 
-              <!-- PHASE 6: Done callouts — ss-grow prevents layout jump on insert -->
+              <!-- PHASE 6: Custom apps parallel track -->
+              <div class="ss-grow ${past('custom') ? (p === 'custom' ? 'ss-grow-active' : 'ss-grow-done') : ''}">
+                <div class="ss-grow-inner" style="padding-bottom:8px">
+                  <div class="ss-custom-track">
+                    <div class="text-[10px] font-semibold text-[var(--r-blue)] mb-2 flex items-center gap-1.5">
+                      <i data-lucide="box" class="w-3 h-3"></i>
+                      Custom &amp; internal apps follow the same path
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <div class="flex flex-col items-center gap-1 flex-shrink-0">
+                        <div class="ss-custom-app-icon" style="background:#6366f1">⚙</div>
+                        <div style="font-size:8px;font-weight:700;color:var(--r-ink-2);text-align:center;line-height:1.2">YourApp<br>v2.1</div>
+                      </div>
+                      <i data-lucide="arrow-right" class="w-3 h-3 text-[var(--r-blue-bright)] flex-shrink-0"></i>
+                      <div class="ss-dtap-bar flex-1" style="margin-top:0">
+                        <div class="ss-dtap-stage ss-done">Dev</div>
+                        <span class="ss-dtap-arrow ss-arrow-active">→</span>
+                        <div class="ss-dtap-stage ss-done">Test</div>
+                        <span class="ss-dtap-arrow ss-arrow-active">→</span>
+                        <div class="ss-dtap-stage ss-current">Acceptance</div>
+                        <span class="ss-dtap-arrow ss-arrow-pending">→</span>
+                        <div class="ss-dtap-stage">Production</div>
+                      </div>
+                      <i data-lucide="arrow-right" class="w-3 h-3 text-[var(--r-blue-bright)] flex-shrink-0"></i>
+                      <div class="flex flex-col items-center gap-1 flex-shrink-0">
+                        <i data-lucide="library" class="w-4 h-4 text-[var(--r-blue)]"></i>
+                        <div style="font-size:8px;font-weight:700;color:var(--r-blue);text-align:center;line-height:1.2">Same<br>connectors</div>
+                      </div>
+                    </div>
+                    <div class="text-[9px] text-[var(--r-ink-2)] mt-2">Package once via the same pipeline — DTAP, CVE scan, auto-update — regardless of origin.</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- PHASE 7: Done callouts — ss-grow prevents layout jump on insert -->
               <div class="ss-grow ${past('done') ? (p === 'done' ? 'ss-grow-active' : 'ss-grow-done') : ''}">
                 <div class="ss-grow-inner">
                   <div class="ss-callouts">
@@ -4922,8 +4960,8 @@
 
       /* ========== SS ANIMATION ENGINE ========== */
       function buildSsQueue(){
-        const phases = ['catalog','package','cve','update','fanout','done'];
-        const delays = [1200, 2000, 3500, 2000, 1800, 1500];
+        const phases = ['catalog','package','cve','update','fanout','custom','done'];
+        const delays = [1200, 2000, 3500, 2000, 1800, 2500, 1500];
         const queue = [];
         phases.forEach((phase, i) => {
           queue.push({ delay: delays[i], fn(){ STATE.ssPhase = phase; scrollPreserveRender(); } });
@@ -6018,12 +6056,12 @@
             STATE.lifecyclePlaying = true; STATE.lcStep = -1;
 
             // Dwell = sum of all animation phase delays + breathing room after "done"
-            // SS delays: [1200,2000,3500,2000,1800,1500,2000] = 14000 + 1500 breathing
+            // SS delays: [1200,2000,3500,2000,1800,2500,1500,2000] = 16500 + 1500 breathing
             // OB delays: [1000,2000,2000,2500,3500,2500,2500] = 16000 + 1500 breathing
             // DR delays: [800,1200,1000,1500,1400,1500,2000]  =  9400 + 1500 breathing
             // MT delays: [800,1200,1200,1500,1200,1500,2000]  =  9400 + 1500 breathing
             const lcSteps = [
-              { key: 'solutionViewSetupStore', start: () => startSs(), dwell: 15500 },
+              { key: 'solutionViewSetupStore', start: () => startSs(), dwell: 18000 },
               { key: 'solutionViewAdmin',       start: null,            dwell:  5000 },
               { key: 'solutionViewOnboarding',  start: () => startOb(), dwell: 17500 },
               { key: 'solutionViewUser',        start: null,            dwell:  5000 },
