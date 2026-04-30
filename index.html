@@ -106,15 +106,15 @@
       @keyframes metricsAppear { to { opacity: 1; transform: translateY(0); } }
       .interactive-node { transition: opacity 0.3s, transform 0.3s; }
       .interactive-node:hover { opacity: 0.9; transform: scale(1.05); }
-      .chart-container { width: 100%; height: auto; aspect-ratio: 800 / 420; background: #ffffff; border-radius: 16px; padding: 8px; }
+      .chart-container { width: 100%; height: auto; aspect-ratio: 860 / 420; background: #ffffff; border-radius: 16px; padding: 8px; }
       #capacity-gap-chart { width: 100%; height: 100%; }
-      .chart-text { font-size: 11px; font-weight: 600; fill: #334155; letter-spacing: 0.01em; font-family: Inter, system-ui, sans-serif; }
-      .chart-axis { stroke: #e2e8f0; stroke-width: 1; }
-      .chart-axis-label { font-size: 10px; font-weight: 700; fill: #64748b; font-family: Inter, system-ui, sans-serif; letter-spacing: 0.1em; text-transform: uppercase; }
-      .chart-year-label { font-size: 12px; fill: #64748b; font-weight: 600; }
-      .chart-annotation { font-size: 14px; font-weight: 800; fill: #0A1C60; font-family: Inter, system-ui, sans-serif; letter-spacing: 0.06em; text-transform: uppercase; }
-      .demand-line { stroke-width: 3; filter: drop-shadow(0 2px 6px rgba(239,68,68,0.25)); }
-      .capacity-line { stroke-width: 2; }
+      .chart-text { font-size: 11px; font-weight: 600; fill: var(--r-ink); letter-spacing: 0.01em; font-family: Inter, system-ui, sans-serif; }
+      .chart-axis { stroke: #DDDDEE; stroke-width: 1; }
+      .chart-axis-label { font-size: 17px; font-weight: 800; fill: var(--r-blue); font-family: Inter, system-ui, sans-serif; letter-spacing: 0.10em; text-transform: uppercase; }
+      .chart-year-label { font-size: 12px; fill: var(--r-ink-2); font-weight: 600; font-family: Inter, system-ui, sans-serif; }
+      .chart-annotation { font-size: 17px; font-weight: 800; fill: var(--r-blue); font-family: Inter, system-ui, sans-serif; letter-spacing: 0.10em; text-transform: uppercase; }
+      .demand-line { stroke-width: 3.25; filter: drop-shadow(0 2px 10px rgba(204,34,34,0.32)); stroke-linecap: round; }
+      .capacity-line { stroke-width: 3.5; stroke-linecap: round; filter: drop-shadow(0 2px 6px rgba(0,0,204,0.22)); }
       .marker-group { cursor: pointer; transition: transform 0.15s ease; }
       .marker-group:hover { transform: scale(1.08); }
       .chart-element { opacity: 0; animation: chartFadeIn 0.6s ease forwards; }
@@ -528,7 +528,7 @@
       .flip-card-front, .flip-card-back { position: absolute; inset: 0; backface-visibility: hidden; border-radius: var(--radius); border: 1px solid var(--border-subtle); overflow: hidden; }
       .flip-card-front { background: white; display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 10px; padding: 0 16px; }
       .flip-card-back { background: #ffffff; color: #0A1C60; transform: rotateY(180deg); padding: 20px; display: flex; flex-direction: column; justify-content: space-between; border: 2px solid #0070F3; }
-      .flip-card-stat { font-size: 28px; font-weight: 800; background: linear-gradient(135deg, #0070F3, #0A1C60); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1; }
+      .flip-card-stat { font-size: 28px; font-weight: 800; background: linear-gradient(135deg, #0070F3, #0A1C60); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1; white-space: nowrap; }
       .flip-card-tap { font-size: 8px; color: #cbd5e1; opacity: 0; animation: fadeIn 1s ease 2s forwards; }
       @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
       .logo-ticker-wrap { overflow: hidden; position: relative; padding: 8px 0; }
@@ -547,18 +547,18 @@
          Primary blue #0000CC, Accent cyan #00BFFF, flat surfaces, Inter
          ══════════════════════════════════════════════════════════════ */
       :root {
-        /* Recast tokens — calibrated to the live marketing site */
-        --r-blue: #1E3A8A;           /* Navy — hero, headlines */
-        --r-blue-hover: #1E40AF;
-        --r-blue-bright: #2A7FFF;    /* Bright "Re" blue — accents, links */
-        --r-cyan: #2A7FFF;
-        --r-cyan-hover: #4F95FF;
-        --r-orange: #E07050;         /* Coral/orange accent underline */
-        --r-decorator: #2A4BB0;      /* Lighter-blue "pixel dots" on navy */
-        --r-decorator-2: #3A5FD9;
+        /* Recast Application Workspace tokens — true brand palette */
+        --r-blue: #0000CC;           /* Primary Brand Blue — hero, top bar, footer */
+        --r-blue-hover: #0000A8;
+        --r-blue-bright: #00BFFF;    /* Accent Cyan — CTAs, highlights, "+" energy */
+        --r-cyan: #00BFFF;
+        --r-cyan-hover: #33CCFF;
+        --r-orange: #00BFFF;
+        --r-decorator: rgba(0,191,255,0.35);  /* cyan "+" marks on hero — subtle, on-brand */
+        --r-decorator-2: rgba(0,191,255,0.25);
         --r-ink: #1A1A2E;
         --r-ink-2: #4A4A5A;
-        --r-muted-blue: #C7D2F7;
+        --r-muted-blue: #AABBEE;
         --r-surface: #FFFFFF;
         --r-surface-2: #F0F0F6;
         --r-surface-3: #FAFAFE;
@@ -669,21 +669,26 @@
         position: relative;
         margin-bottom: 0;
       }
-      /* Pixel-dot texture on the left and right of the hero, matching recastsoftware.com */
+      /* Signature "+" decoration on primary-blue hero — Recast brand mark.
+         Few, large, asymmetric; never overlapping content. */
       header.relative::before {
-        content: "";
+        content: "+";
         position: absolute;
-        inset: 0;
-        background-image:
-          radial-gradient(circle, var(--r-decorator) 1.5px, transparent 1.8px),
-          radial-gradient(circle, var(--r-decorator-2) 1.5px, transparent 1.8px);
-        background-size: 14px 14px, 14px 14px;
-        background-position: 0 0, 7px 7px;
-        -webkit-mask-image: linear-gradient(90deg, #000 0, #000 140px, transparent 260px, transparent calc(100% - 260px), #000 calc(100% - 140px), #000);
-                mask-image: linear-gradient(90deg, #000 0, #000 140px, transparent 260px, transparent calc(100% - 260px), #000 calc(100% - 140px), #000);
-        opacity: 0.7;
+        top: 18px;
+        right: 6%;
+        color: var(--r-decorator);
+        font-family: 'Inter', system-ui, sans-serif;
+        font-weight: 700;
+        font-size: 26px;
+        opacity: 0.9;
         pointer-events: none;
         z-index: 0;
+        text-shadow:
+          440px 24px 0 var(--r-decorator),
+          -120px 80px 0 var(--r-decorator),
+          280px 120px 0 var(--r-decorator),
+          -380px 8px 0 var(--r-decorator),
+          -480px 110px 0 var(--r-decorator);
       }
       header.relative::after {
         content: "";
@@ -692,8 +697,8 @@
 
       header.relative > div { position: relative; z-index: 1; }
       header.relative > div:first-child {
-        padding-top: 28px !important;
-        padding-bottom: 20px !important;
+        padding-top: 14px !important;
+        padding-bottom: 10px !important;
       }
       header.relative > div:last-child { padding-bottom: 0 !important; }
 
@@ -701,53 +706,61 @@
       .recast-eyebrow-row {
         display: flex;
         align-items: center;
-        gap: 14px;
-        margin-bottom: 14px;
+        gap: 8px;
+        margin-bottom: 6px;
       }
       .recast-eyebrow-mark {
-        width: 38px; height: 38px;
-        background: var(--r-blue-bright);
-        border-radius: 4px;
+        width: 22px; height: 22px;
+        background: #fff;
+        border-radius: 3px;
         display: grid; place-items: center;
-        color: #fff;
+        color: var(--r-blue);
+        font-weight: 800;
+        font-size: 11px;
+        letter-spacing: -0.04em;
         flex-shrink: 0;
+        line-height: 1;
       }
-      .recast-eyebrow-mark svg { width: 22px; height: 22px; }
+      .recast-eyebrow-mark svg { display: none; }
+      .recast-eyebrow-mark::before { content: "Re"; color: var(--r-blue); }
       .recast-eyebrow-label {
         color: #fff;
         font-weight: 600;
-        font-size: 15px;
-        letter-spacing: 0.01em;
+        font-size: 10px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        line-height: 1;
       }
+      .recast-eyebrow-label::before { content: ""; }
 
       header.relative h1 {
         color: #fff !important;
         font-weight: 700 !important;
         letter-spacing: -0.02em !important;
-        line-height: 1.08 !important;
+        line-height: 1.05 !important;
         margin: 0 !important;
-        font-size: 40px !important;
-        max-width: 20ch;
+        font-size: 30px !important;
+        max-width: 22ch;
       }
-      header.relative h1 span:first-child { color: var(--r-blue-bright) !important; }
-      header.relative h1 span:nth-child(2) { color: #fff !important; }
+      header.relative h1 span:first-child { color: var(--r-cyan) !important; font-weight: 400 !important; }
+      header.relative h1 span:nth-child(2) { color: #fff !important; font-weight: 700 !important; }
 
-      /* Orange accent bar under the headline */
+      /* Cyan accent bar under the headline */
       header.relative h1::after {
         content: "";
         display: block;
-        width: 56px;
-        height: 3px;
-        background: var(--r-orange);
-        margin-top: 14px;
+        width: 36px;
+        height: 2px;
+        background: var(--r-cyan);
+        margin-top: 8px;
       }
 
       header.relative p {
         color: var(--r-muted-blue) !important;
-        font-size: 15px !important;
-        line-height: 1.55 !important;
-        margin-top: 14px !important;
-        max-width: 60ch;
+        font-size: 12.5px !important;
+        line-height: 1.45 !important;
+        margin-top: 8px !important;
+        max-width: 56ch;
       }
 
       /* ── Top white nav bar (absolute, stuck above the blue hero) ── */
@@ -854,7 +867,7 @@
         align-items: stretch;
         gap: 0;
         border-top: 1px solid rgba(255,255,255,0.15);
-        margin-top: 24px;
+        margin-top: 12px;
         overflow-x: auto;
         scrollbar-width: none;
       }
@@ -862,14 +875,14 @@
       .recast-tab {
         display: inline-flex;
         align-items: center;
-        gap: 8px;
+        gap: 7px;
         color: rgba(255,255,255,0.72);
         font-weight: 600;
-        font-size: 14px;
-        padding: 14px 20px;
+        font-size: 13px;
+        padding: 10px 16px;
         background: transparent;
         border: 0;
-        border-bottom: 3px solid transparent;
+        border-bottom: 2px solid transparent;
         margin-bottom: -1px;
         white-space: nowrap;
         flex-shrink: 0;
@@ -879,8 +892,9 @@
       .recast-tab:hover { color: #fff; background: rgba(255,255,255,0.06); }
       .recast-tab.is-active {
         color: #fff;
-        border-bottom-color: var(--r-blue-bright);
+        border-bottom-color: var(--r-cyan);
       }
+      .recast-tab.is-active i, .recast-tab.is-active svg { color: var(--r-cyan) !important; }
 
       header.relative [role="tablist"] {
         background: transparent !important;
@@ -898,11 +912,11 @@
       header.relative [role="tablist"] button {
         color: rgba(255,255,255,0.72) !important;
         font-weight: 600 !important;
-        font-size: 14px !important;
-        padding: 16px 20px !important;
+        font-size: 13px !important;
+        padding: 10px 16px !important;
         border-radius: 0 !important;
         background: transparent !important;
-        border-bottom: 3px solid transparent !important;
+        border-bottom: 2px solid transparent !important;
         margin-bottom: -1px;
         transition: color 150ms, border-color 150ms, background 150ms !important;
         white-space: nowrap;
@@ -921,7 +935,7 @@
         background: rgba(255,255,255,0.06) !important;
       }
 
-      main.mx-auto { padding-top: 32px; }
+      main.mx-auto { padding-top: 18px; }
 
       /* ───── Typography polish ───── */
       h2, .text-lg, .text-xl, .text-2xl {
@@ -1011,6 +1025,50 @@
       }
       .cinema-caption .typing-cursor { background: var(--r-blue) !important; }
 
+      /* ───── Recast Approach: final brand-color sweep ─────
+         Targets remaining hex literals embedded in component CSS rules. */
+      .path-row.active-path,
+      .scenario-pill.active-scenario,
+      .view-toggle.active,
+      .lifecycle-label.lc-active,
+      .admin-row.row-active {
+        border-color: var(--r-blue) !important;
+        background: var(--r-quote-bg) !important;
+        color: var(--r-blue) !important;
+        box-shadow: 0 0 8px rgba(0,0,204,0.10) !important;
+      }
+      .lifecycle-dot.lifecycle-dot-active { background: var(--r-blue) !important; }
+      .lifecycle-play-btn {
+        border-color: var(--r-cyan) !important;
+        color: var(--r-blue) !important;
+      }
+      .lifecycle-play-btn:hover { background: var(--r-quote-bg) !important; }
+      .lifecycle-play-btn.playing {
+        background: rgba(220,38,38,0.08) !important;
+        border-color: #ef4444 !important;
+        color: #dc2626 !important;
+      }
+      /* Mini app-icons row in user/admin views */
+      .ap-device-header.workspace {
+        background: linear-gradient(135deg, var(--r-blue), var(--r-cyan)) !important;
+      }
+      .ap-device-header.autopilot {
+        background: linear-gradient(135deg, #475569, #94a3b8) !important;
+      }
+      /* Mid-flow active borders/backgrounds in catalog rows */
+      .catalog-app.clicked .app-icon {
+        box-shadow: 0 0 0 3px rgba(0,191,255,0.45) !important;
+      }
+      .catalog-browse-item:hover { border-color: var(--r-cyan) !important; }
+      /* dr-bar pulse glow */
+      @keyframes drPulseBrand {
+        0% { box-shadow: 0 0 0 0 rgba(0,0,204,0); }
+        50% { box-shadow: 0 0 12px 3px rgba(0,0,204,0.18); }
+        100% { box-shadow: 0 0 0 0 rgba(0,0,204,0); }
+      }
+      /* analyst trigger underline already cyan; ensure consistent */
+      .analyst-trigger { border-bottom-color: var(--r-cyan) !important; }
+
       /* Flow bar / keyframes tint */
       @keyframes tilePulse {
         0% { transform: scale(0.7); background: #e5e7eb; opacity: 0.4; }
@@ -1076,6 +1134,153 @@
 
       .ss-counter { font-family: ui-monospace, monospace; font-size: 22px; font-weight: 800;
         color: var(--r-blue); letter-spacing: -0.02em; }
+      .ss-counter-custom {
+        font-family: 'Fraktion Mono','Inter',ui-monospace,monospace;
+        font-size: 16px;
+        font-weight: 800;
+        color: var(--r-blue);
+        letter-spacing: -0.01em;
+        display: inline-flex;
+        align-items: center;
+      }
+
+      /* Mode toggle */
+      .ss-mode-toggle {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px;
+        border-radius: 999px;
+        background: var(--r-quote-bg);
+        border: 1px solid var(--r-divider);
+      }
+      .ss-mode-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 12px;
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--r-ink-2);
+        background: transparent;
+        border: 0;
+        border-radius: 999px;
+        cursor: pointer;
+        transition: background 150ms, color 150ms, box-shadow 150ms;
+        white-space: nowrap;
+      }
+      .ss-mode-pill:hover { color: var(--r-blue); }
+      .ss-mode-pill.is-active {
+        background: #fff;
+        color: var(--r-blue);
+        box-shadow: 0 1px 2px rgba(0,0,0,0.06), 0 0 0 1px var(--r-blue);
+      }
+      .ss-mode-pill .ss-mode-num {
+        font-family: ui-monospace, monospace;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+      }
+      .ss-mode-pill .ss-mode-label { font-weight: 600; }
+      .ss-mode-pill.is-active .ss-mode-label { font-weight: 700; }
+
+      /* Custom packaging rail (Phase 1 in custom mode) */
+      .ss-custom-rail {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 12px 10px;
+        background: linear-gradient(180deg, rgba(0,191,255,0.06), rgba(0,0,204,0.04));
+        border: 1px solid rgba(0,0,204,0.12);
+        border-radius: 8px;
+        margin: 6px 0 4px;
+        flex-wrap: wrap;
+      }
+      .ss-custom-source {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 10px;
+        background: var(--r-blue);
+        color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0,0,204,0.20);
+        opacity: 0; transform: translateY(2px);
+        transition: opacity 0.45s ease, transform 0.45s ease;
+      }
+      .ss-custom-source.ss-show { opacity: 1; transform: translateY(0); }
+      .ss-custom-source-icon {
+        width: 22px; height: 22px;
+        display: grid; place-items: center;
+        background: rgba(255,255,255,0.16);
+        border-radius: 5px;
+        color: #fff;
+      }
+      .ss-custom-source-name { font-size: 11px; font-weight: 800; line-height: 1; }
+      .ss-custom-source-version { font-size: 9px; font-weight: 600; opacity: 0.85; margin-top: 2px; }
+      .ss-custom-arrow {
+        display: inline-flex;
+        align-items: center;
+        color: #00BFFF;
+      }
+      .ss-custom-stage {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 10px;
+        background: #fff;
+        color: var(--r-ink);
+        font-size: 11px;
+        font-weight: 700;
+        border: 1px solid rgba(0,0,204,0.18);
+        border-radius: 999px;
+        opacity: 0; transform: translateY(2px);
+        transition: opacity 0.45s ease, transform 0.45s ease;
+      }
+      .ss-custom-stage.ss-show { opacity: 1; transform: translateY(0); }
+      .ss-custom-dot {
+        width: 6px; height: 6px;
+        border-radius: 50%;
+        background: #00BFFF;
+        box-shadow: 0 0 0 2px rgba(0,191,255,0.18);
+      }
+      .ss-custom-target {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 10px;
+        background: #fff;
+        color: var(--r-blue);
+        font-size: 11px;
+        font-weight: 800;
+        border: 1px dashed var(--r-blue);
+        border-radius: 8px;
+        opacity: 0; transform: translateY(2px);
+        transition: opacity 0.45s ease, transform 0.45s ease;
+      }
+      .ss-custom-target.ss-show { opacity: 1; transform: translateY(0); }
+
+      /* Custom package icon (Phase 2 in custom mode) */
+      .ss-package-icon-custom {
+        background: var(--r-blue) !important;
+        color: #fff !important;
+        position: relative;
+      }
+      .ss-package-icon-custom::after {
+        content: '';
+        position: absolute;
+        right: -2px; top: -2px;
+        width: 8px; height: 8px;
+        border-radius: 50%;
+        background: #00BFFF;
+        box-shadow: 0 0 0 2px #fff;
+      }
+      .ss-vendor-pulse-custom {
+        background: var(--r-blue) !important;
+        color: #fff !important;
+        display: grid;
+        place-items: center;
+      }
 
       /* Smooth height-reveal wrapper — @keyframes fires on element insert (unlike transition) */
       .ss-grow { display: grid; grid-template-rows: 0fr; overflow: hidden; }
@@ -1185,10 +1390,6 @@
       .ss-arrow-pending {
         color: var(--r-divider) !important;
       }
-      /* Custom-apps parallel track */
-      .ss-custom-track { background: white; border: 1.5px solid var(--r-divider); border-radius: 8px; padding: 10px 12px; }
-      .ss-custom-track .ss-dtap-bar { margin-top: 0; }
-      .ss-custom-app-icon { width: 28px; height: 28px; border-radius: 6px; display: grid; place-items: center; font-size: 13px; font-weight: 800; color: white; flex-shrink: 0; }
       @keyframes ssArrowPulse {
         0%, 100% { opacity: 0.4; }
         50% { opacity: 1; }
@@ -1519,6 +1720,7 @@
           color: var(--r-blue) !important;
           letter-spacing: -0.02em !important;
           line-height: 1 !important;
+          white-space: nowrap !important;
         }
         .flip-card-tap {
           margin-left: auto !important;
@@ -1539,7 +1741,7 @@
         /* Chart section card: compact, chart capped to fit viewport */
         #panel-problems > .section-card { padding: 14px 18px !important; }
         #panel-problems > .section-card > .grid {
-          grid-template-columns: 1fr 260px !important;
+          grid-template-columns: 1fr 220px !important;
           gap: 18px !important;
           align-items: stretch !important;
         }
@@ -2171,6 +2373,7 @@
         ssQueue: [],
         ssQueueIdx: 0,
         ssTimers: [],
+        ssMode: 'curated',
         showLabels: false,
         showSolutionCards: true,
         openWhy: null,
@@ -2683,7 +2886,7 @@
             ` : `
               <div class="flex items-center gap-3 mb-2">
                 <div class="flex-1 h-px bg-gradient-to-r from-transparent via-blue-200 to-transparent"></div>
-                <div class="bts-label bts-label-platform"><i data-lucide="boxes" class="w-3 h-3"></i> The Centralized Platform</div>
+                <div class="bts-label bts-label-platform"><i data-lucide="boxes" class="w-3 h-3"></i> The Application Lifecycle, on One Platform</div>
                 <div class="flex-1 h-px bg-gradient-to-r from-transparent via-blue-200 to-transparent"></div>
               </div>
 
@@ -3029,9 +3232,9 @@
             <div class="relative mx-auto max-w-6xl px-4 pt-8 pb-6">
               <div class="recast-eyebrow-row">
                 <div class="recast-eyebrow-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></div>
-                <div class="recast-eyebrow-label">Application Workspace</div>
+                <div class="recast-eyebrow-label">Recast Software</div>
               </div>
-              <h1 class="text-[40px] md:text-[56px] font-semibold leading-tight"><span>Re</span><span>cast</span> Software</h1>
+              <h1 class="text-[40px] md:text-[56px] font-semibold leading-tight"><span>Application</span> <span>Workspace</span></h1>
               <p class="mt-2 max-w-2xl text-[16px] leading-[1.5] text-[#4A5568]">
                 ${STATE.activeTab==='problems'
                   ? 'Same package, any workspace: laptops, Cloud PCs, and virtual desktops (AVD, Citrix, Omnissa).'
@@ -3054,7 +3257,7 @@
             </div>
           </header>
           <main class="mx-auto max-w-6xl px-4 pb-16">
-            <section class="mt-5">${renderActivePanel()}</section>
+            <section class="mt-3">${renderActivePanel()}</section>
           </main>
           ${renderModal()}
           ${renderWhyModal()}
@@ -3118,7 +3321,7 @@
             <div class="section-card cs-chart-card">
               <div class="grid grid-cols-1 lg:grid-cols-[1fr_220px] gap-3 items-stretch">
                 <div class="chart-container relative">
-                  <svg id="capacity-gap-chart" viewBox="0 0 800 420" preserveAspectRatio="xMidYMid meet"></svg>
+                  <svg id="capacity-gap-chart" viewBox="0 0 860 420" preserveAspectRatio="xMidYMid meet"></svg>
                 </div>
                 <div class="w-full bg-white/70 backdrop-blur-lg rounded-xl shadow-sm p-3 border border-slate-200 cs-challenges">
                   <h3 class="text-xs font-semibold uppercase tracking-wide text-[#0A1C60] mb-2">Modern IT Challenges</h3>
@@ -3138,21 +3341,25 @@
         const svg = document.getElementById('capacity-gap-chart');
         if (!svg) return;
         svg.innerHTML = '';
-        svg.setAttribute('viewBox', '0 0 800 420');
-        const width = 650, height = 310, margin = {left: 55, bottom: 50, top: 35, right: 95};
+        svg.setAttribute('viewBox', '0 0 860 420');
+        const width = 700, height = 310, margin = {left: 65, bottom: 50, top: 35, right: 95};
         const xScale = t => margin.left + t * width;
         const yScale = v => margin.top + height - v * height;
         const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
         defs.innerHTML = `
-          <linearGradient id="demandGradient" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#f87171"/><stop offset="100%" stop-color="#dc2626"/></linearGradient>
-          <linearGradient id="capacityGradient" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#0A1C60"/><stop offset="100%" stop-color="#0070F3"/></linearGradient>
-          <linearGradient id="gapGradient" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(239,68,68,0.12)"/><stop offset="100%" stop-color="rgba(10,28,96,0.04)"/></linearGradient>
-          <linearGradient id="capFillGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(10,28,96,0.07)"/><stop offset="100%" stop-color="rgba(10,28,96,0.02)"/></linearGradient>
+          <linearGradient id="demandGradient" x1="0" y1="1" x2="1" y2="0"><stop offset="0%" stop-color="#E04444"/><stop offset="100%" stop-color="#CC2222"/></linearGradient>
+          <linearGradient id="capacityGradient" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#0000CC"/><stop offset="100%" stop-color="#00BFFF"/></linearGradient>
+          <linearGradient id="gapGradient" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(204,34,34,0.14)"/><stop offset="100%" stop-color="rgba(0,0,204,0.04)"/></linearGradient>
+          <linearGradient id="capFillGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(0,0,204,0.08)"/><stop offset="100%" stop-color="rgba(0,0,204,0.01)"/></linearGradient>
+          <pattern id="gapHatch" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="9" stroke="#CC2222" stroke-width="1" stroke-opacity="0.10"/></pattern>
+          <filter id="pillShadow" x="-20%" y="-40%" width="140%" height="180%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#0000CC" flood-opacity="0.18"/></filter>
+          <filter id="pillShadowRed" x="-20%" y="-40%" width="140%" height="180%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#CC2222" flood-opacity="0.28"/></filter>
+          <filter id="pillShadowCyan" x="-20%" y="-40%" width="140%" height="180%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#0000CC" flood-opacity="0.18"/></filter>
         `;
         svg.appendChild(defs);
         // Gridlines
         const gridG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-        for (let i = 1; i <= 4; i++) { const y = margin.top + (height / 4) * i; gridG.innerHTML += '<line x1="'+margin.left+'" y1="'+y+'" x2="'+(margin.left+width)+'" y2="'+y+'" stroke="#f1f5f9" stroke-width="1"/>'; }
+        for (let i = 1; i <= 4; i++) { const y = margin.top + (height / 4) * i; gridG.innerHTML += '<line x1="'+margin.left+'" y1="'+y+'" x2="'+(margin.left+width)+'" y2="'+y+'" stroke="#EEF1FA" stroke-width="1"/>'; }
         svg.appendChild(gridG);
         // Axes
         const xAxis = document.createElementNS('http://www.w3.org/2000/svg', 'g');
@@ -3161,7 +3368,7 @@
         svg.appendChild(xAxis);
         const yAxis = document.createElementNS('http://www.w3.org/2000/svg', 'g');
         yAxis.classList.add('axis-element', 'chart-element');
-        yAxis.innerHTML = '<line x1="'+margin.left+'" y1="'+margin.top+'" x2="'+margin.left+'" y2="'+(margin.top+height)+'" class="chart-axis"/><text x="'+(margin.left-14)+'" y="'+(margin.top+height/2)+'" text-anchor="middle" class="chart-axis-label" transform="rotate(-90,'+(margin.left-14)+','+(margin.top+height/2)+')">'+STATE.chartConfig.yAxis+'</text>';
+        yAxis.innerHTML = '<line x1="'+margin.left+'" y1="'+margin.top+'" x2="'+margin.left+'" y2="'+(margin.top+height)+'" class="chart-axis"/><text x="'+(margin.left-22)+'" y="'+(margin.top+height/2)+'" text-anchor="middle" class="chart-axis-label" transform="rotate(-90,'+(margin.left-22)+','+(margin.top+height/2)+')">'+STATE.chartConfig.yAxis+'</text>';
         svg.appendChild(yAxis);
         // Curves
         const exp = STATE.currentDemandExponent;
@@ -3173,16 +3380,30 @@
         // Capacity area fill
         const capArea = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         capArea.setAttribute('d', capacityPath+' L '+xScale(1)+' '+yScale(0)+' L '+xScale(0)+' '+yScale(0)+' Z'); capArea.setAttribute('fill', 'url(#capFillGrad)'); capArea.classList.add('gap-element','chart-element'); svg.appendChild(capArea);
-        // Gap fill
+        // Gap fill (tinted)
         const gapD = dPts.map(function(p,i){return (i===0?'M':'L')+' '+p.x+' '+p.y;}).join(' ')+cPts.slice().reverse().map(function(p){return ' L '+p.x+' '+p.y;}).join('')+' Z';
         const gapEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         gapEl.setAttribute('d', gapD); gapEl.setAttribute('fill', 'url(#gapGradient)'); gapEl.classList.add('gap-element','chart-element'); svg.appendChild(gapEl);
+        // Gap hatch overlay (very subtle red diagonals — reads as "growing pressure")
+        const gapHatchEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        gapHatchEl.setAttribute('d', gapD); gapHatchEl.setAttribute('fill', 'url(#gapHatch)'); gapHatchEl.setAttribute('opacity', '0.85'); gapHatchEl.classList.add('gap-element','chart-element'); svg.appendChild(gapHatchEl);
         // Capacity line
         const capLine = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         capLine.setAttribute('d', capacityPath); capLine.setAttribute('stroke', 'url(#capacityGradient)'); capLine.setAttribute('fill', 'none'); capLine.classList.add('capacity-line','line-element','chart-element'); svg.appendChild(capLine);
         // Demand line (red)
         const demLine = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         demLine.setAttribute('d', demandPath); demLine.setAttribute('stroke', 'url(#demandGradient)'); demLine.setAttribute('fill', 'none'); demLine.classList.add('demand-line','line-element','chart-element'); svg.appendChild(demLine);
+        // (IT CAPACITY end pill removed per request)
+        // Subtle Recast "+" decorations (echoes app workspace branding)
+        const decoG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        decoG.setAttribute('opacity','0.20');
+        decoG.classList.add('chart-element');
+        [[0.18,0.18],[0.74,0.85],[0.30,0.92]].forEach(function(p){
+          const px = xScale(p[0]); const py = yScale(p[1]);
+          decoG.innerHTML += '<line x1="'+(px-5)+'" y1="'+py+'" x2="'+(px+5)+'" y2="'+py+'" stroke="#00BFFF" stroke-width="1.5" stroke-linecap="round"/>'
+            + '<line x1="'+px+'" y1="'+(py-5)+'" x2="'+px+'" y2="'+(py+5)+'" stroke="#00BFFF" stroke-width="1.5" stroke-linecap="round"/>';
+        });
+        svg.insertBefore(decoG, svg.firstChild.nextSibling); // behind grid
         // Gap label
         const gapLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         gapLabel.setAttribute('x', xScale(0.45)); gapLabel.setAttribute('y', yScale(0.48)); gapLabel.setAttribute('text-anchor', 'middle'); gapLabel.classList.add('chart-annotation','label-element','chart-element'); gapLabel.textContent = STATE.chartConfig.center; svg.appendChild(gapLabel);
@@ -3198,7 +3419,7 @@
             const lblW = d.label.length * 6 + 18;
             const flipLeft = (x + 14 + lblW) > (margin.left + width + 40);
             const lblX = flipLeft ? (x - 14 - lblW) : (x + 14);
-            g.innerHTML = '<title>'+d.short+'</title><circle cx="'+x+'" cy="'+y+'" r="18" fill="transparent" stroke="none"/><circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="#ef4444" stroke="white" stroke-width="2.5"/><rect x="'+lblX+'" y="'+(y-11)+'" width="'+lblW+'" height="22" rx="11" fill="#0A1C60" opacity="0.9"/><text x="'+(lblX+lblW/2)+'" y="'+(y+4)+'" text-anchor="middle" font-size="10" font-weight="600" fill="white" font-family="Inter, system-ui, sans-serif" class="label-element chart-element">'+d.label+'</text>';
+            g.innerHTML = '<title>'+d.short+'</title><circle cx="'+x+'" cy="'+y+'" r="18" fill="transparent" stroke="none"/><circle cx="'+x+'" cy="'+y+'" r="'+(r+3)+'" fill="#FFFFFF" opacity="0.85"/><circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="#CC2222" stroke="white" stroke-width="2"/><rect x="'+lblX+'" y="'+(y-12)+'" width="'+lblW+'" height="24" rx="12" fill="#0000CC" filter="url(#pillShadow)"/><text x="'+(lblX+lblW/2)+'" y="'+(y+4)+'" text-anchor="middle" font-size="10.5" font-weight="600" fill="white" font-family="Inter, system-ui, sans-serif" letter-spacing="0.01em" class="label-element chart-element">'+d.label+'</text>';
             g.addEventListener('click', function(){ openInsight(d); });
             g.addEventListener('keydown', function(e){ if(e.key==='Enter') openInsight(d); });
             svg.appendChild(g);
@@ -3209,12 +3430,12 @@
           const t = (STATE.tippingPointYear - 2025) / 3; const x = xScale(t);
           const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
           line.setAttribute('x1',x); line.setAttribute('y1',yScale(0)); line.setAttribute('x2',x); line.setAttribute('y2',yScale(1));
-          line.setAttribute('stroke','#ef4444'); line.setAttribute('stroke-width','2'); line.setAttribute('stroke-dasharray','8 4'); line.setAttribute('opacity','0.5');
+          line.setAttribute('stroke','#CC2222'); line.setAttribute('stroke-width','1.5'); line.setAttribute('stroke-dasharray','6 5'); line.setAttribute('opacity','0.55');
           line.classList.add('line-element','chart-element'); svg.appendChild(line);
-          const lblW = 160;
+          const lblW = 168;
           const lblG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
           lblG.classList.add('label-element','chart-element');
-          lblG.innerHTML = '<rect x="'+(x+6)+'" y="'+(yScale(1)-14)+'" width="'+lblW+'" height="24" rx="12" fill="#dc2626" opacity="0.9"/><text x="'+(x+6+lblW/2)+'" y="'+(yScale(1)+2)+'" text-anchor="middle" font-size="10" font-weight="600" fill="white" font-family="Inter, system-ui, sans-serif">Operational Breaking Point</text>';
+          lblG.innerHTML = '<rect x="'+(x+8)+'" y="'+(yScale(1)-15)+'" width="'+lblW+'" height="26" rx="13" fill="#CC2222" filter="url(#pillShadowRed)"/><text x="'+(x+8+lblW/2)+'" y="'+(yScale(1)+3)+'" text-anchor="middle" font-size="10.5" font-weight="700" fill="white" font-family="Inter, system-ui, sans-serif" letter-spacing="0.02em">Operational Breaking Point</text>';
           svg.appendChild(lblG);
           const hit = document.createElementNS('http://www.w3.org/2000/svg', 'g');
           hit.setAttribute('role','button'); hit.setAttribute('tabindex','0'); hit.setAttribute('aria-label','Learn more about Projected Tipping Point');
@@ -3496,7 +3717,7 @@
           <div class="h-full flex flex-col">
             <button type="button" class="w-full overflow-hidden ring-1 ring-slate-200 focus-ring transition hover:ring-slate-300 shadow-sm" data-action="open-why-modal" data-why="${id}" style="border-radius:var(--radius)">
               <div class="${cx('flex items-center justify-between px-4 py-3', headerTone)}" style="border-bottom:1px solid var(--border-subtle)">
-                <div class="flex items-center gap-2"><i data-lucide="${icon}" class="w-4 h-4 text-[#0A1C60]" aria-hidden="true"></i><span class="text-[18px] font-semibold tracking-normal text-[#0A1C60]">${label}</span></div>
+                <div class="flex items-center gap-2"><i data-lucide="${icon}" class="w-4 h-4 text-[#0A1C60]" aria-hidden="true"></i><span class="text-[16px] font-semibold tracking-normal text-[#0A1C60] whitespace-nowrap">${label}</span></div>
                 <i data-lucide="chevron-right" class="w-4 h-4 text-[#4A5568] transition-transform duration-150" aria-hidden="true"></i>
               </div>
             </button>
@@ -4009,7 +4230,7 @@
       /* ========== MULTI-TENANT VIEW ========== */
 
       const MT_SHARED_APPS = [
-        {icon:'chrome',label:'Google Chrome',type:'standard'},
+        {icon:'globe',label:'Google Chrome',type:'standard'},
         {icon:'archive',label:'7-Zip',type:'standard'},
         {icon:'shield',label:'VPN Client',type:'standard'},
       ];
@@ -4048,19 +4269,30 @@
       /* ========== SETUP STORE VIEW ========== */
       function renderSetupStoreView(){
         const p = STATE.ssPhase;
+        const mode = STATE.ssMode || 'curated';
         const past = (target) => {
-          const order = ['idle','catalog','package','cve','update','fanout','custom','done'];
+          const order = ['idle','catalog','package','cve','update','fanout','done'];
           return order.indexOf(p) >= order.indexOf(target);
         };
 
         return `
           <div class="section-card p-4" id="ss-panel">
-            <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center justify-between mb-3 gap-3 flex-wrap">
               <div class="bts-label bts-label-platform">
-                <i data-lucide="library" class="w-3 h-3"></i> Setup Store: The Curated Catalog
+                <i data-lucide="library" class="w-3 h-3"></i> Setup Store: ${mode === 'custom' ? 'Custom &amp; Internal Apps' : 'The Curated Catalog'}
                 ${past('catalog') ? `<span style="margin-left:8px;padding:2px 8px;border-radius:999px;background:var(--r-quote-bg);color:var(--r-blue);font-size:10px;font-weight:700">
-                  ${['catalog','package','cve','update','fanout','custom','done'].indexOf(p) + 1} of 7
+                  ${['catalog','package','cve','update','fanout','done'].indexOf(p) + 1} of 6
                 </span>` : ''}
+              </div>
+              <div class="ss-mode-toggle" role="tablist" aria-label="Package source">
+                <button type="button" role="tab" aria-selected="${mode === 'curated'}" class="ss-mode-pill ${mode === 'curated' ? 'is-active' : ''}" data-action="ss-mode" data-mode="curated">
+                  <span class="ss-mode-num">8,000+</span>
+                  <span class="ss-mode-label">Curated apps</span>
+                </button>
+                <button type="button" role="tab" aria-selected="${mode === 'custom'}" class="ss-mode-pill ${mode === 'custom' ? 'is-active' : ''}" data-action="ss-mode" data-mode="custom">
+                  <i data-lucide="box" class="w-3 h-3"></i>
+                  <span class="ss-mode-label">Custom packaging</span>
+                </button>
               </div>
               <div class="flex items-center gap-2 text-[12px]">
                 ${STATE.ssRunning ? `
@@ -4075,37 +4307,77 @@
 
             ${!past('catalog') ? `
               <div class="text-center py-6 text-sm text-slate-400">
-                <i data-lucide="library" class="w-8 h-8 mx-auto mb-2 text-slate-300"></i>
-                <div>Press <strong>Auto</strong> or <strong>Step</strong> to see the Setup Store</div>
-                <div class="text-[10px] text-slate-300 mt-1">A curated catalog you don't have to build</div>
+                <i data-lucide="${mode === 'custom' ? 'box' : 'library'}" class="w-8 h-8 mx-auto mb-2 text-slate-300"></i>
+                <div>Press <strong>Play</strong> or <strong>Step</strong> to see the ${mode === 'custom' ? 'custom-app pipeline' : 'Setup Store'}</div>
+                <div class="text-[10px] text-slate-300 mt-1">${mode === 'custom' ? 'Custom &amp; Internal apps follow the same path' : "A curated catalog you don't have to build"}</div>
               </div>
             ` : `
 
               <!-- PHASE 1: Catalog -->
               <div class="ss-zone ss-visible mb-2" style="background:var(--r-quote-bg);border:1px solid var(--r-divider)">
-                <div class="flex items-center justify-between mb-2">
-                  <div class="ss-counter">8,000+</div>
-                  <div class="text-[10px] text-[var(--r-ink-2)] text-right">
-                    <div class="font-semibold">pre-tested applications</div>
-                    <div>Adobe · Citrix · Google · Microsoft · Mozilla · VMware · 30+ languages</div>
-                  </div>
-                </div>
-                <div class="ss-vendor-grid">
-                  ${SS_VENDORS.map((v, i) => `
-                    <div class="ss-vendor-tile ss-show" style="transition-delay:${i * 0.04}s">
-                      <div class="ss-v-icon" style="background:${v.c}">${v.l}</div>
-                      <div class="ss-v-name">${v.n}</div>
+                ${mode === 'custom' ? `
+                  <div class="flex items-center justify-between mb-2">
+                    <div class="ss-counter ss-counter-custom"><i data-lucide="git-branch" class="w-4 h-4 inline" style="margin-right:4px;vertical-align:-2px"></i>Same path</div>
+                    <div class="text-[10px] text-[var(--r-ink-2)] text-right">
+                      <div class="font-semibold">Custom &amp; internal apps follow the same path</div>
+                      <div>One pipeline — DTAP, CVE scan, auto-update — regardless of origin</div>
                     </div>
-                  `).join('')}
-                </div>
-                <div class="ss-categories-row">
-                  <span class="ss-cat-pill">Productivity</span>
-                  <span class="ss-cat-pill">Security</span>
-                  <span class="ss-cat-pill">Browsers</span>
-                  <span class="ss-cat-pill">Communication</span>
-                  <span class="ss-cat-pill">Developer Tools</span>
-                </div>
-                <div class="text-[10px] text-center mt-2 text-[var(--r-blue)] font-semibold">Every one of these is hours of packaging work, already done.</div>
+                  </div>
+                  <div class="ss-custom-rail">
+                    <div class="ss-custom-source ss-show">
+                      <div class="ss-custom-source-icon"><i data-lucide="box" class="w-4 h-4"></i></div>
+                      <div class="ss-custom-source-meta">
+                        <div class="ss-custom-source-name">YourApp</div>
+                        <div class="ss-custom-source-version">v2.3</div>
+                      </div>
+                    </div>
+                    <div class="ss-custom-arrow"><i data-lucide="arrow-right" class="w-3 h-3"></i></div>
+                    <div class="ss-custom-stage ss-show" style="transition-delay:0.10s"><span class="ss-custom-dot"></span>Dev</div>
+                    <div class="ss-custom-arrow"><i data-lucide="arrow-right" class="w-3 h-3"></i></div>
+                    <div class="ss-custom-stage ss-show" style="transition-delay:0.20s"><span class="ss-custom-dot"></span>Test</div>
+                    <div class="ss-custom-arrow"><i data-lucide="arrow-right" class="w-3 h-3"></i></div>
+                    <div class="ss-custom-stage ss-show" style="transition-delay:0.30s"><span class="ss-custom-dot"></span>Acceptance</div>
+                    <div class="ss-custom-arrow"><i data-lucide="arrow-right" class="w-3 h-3"></i></div>
+                    <div class="ss-custom-stage ss-show" style="transition-delay:0.40s"><span class="ss-custom-dot"></span>Production</div>
+                    <div class="ss-custom-arrow"><i data-lucide="arrow-right" class="w-3 h-3"></i></div>
+                    <div class="ss-custom-target ss-show" style="transition-delay:0.50s">
+                      <i data-lucide="share-2" class="w-3 h-3"></i>
+                      <span>Same connectors</span>
+                    </div>
+                  </div>
+                  <div class="ss-categories-row">
+                    <span class="ss-cat-pill"><i data-lucide="check-circle-2" class="w-2.5 h-2.5 inline" style="margin-right:3px;vertical-align:-1px"></i>DTAP</span>
+                    <span class="ss-cat-pill"><i data-lucide="check-circle-2" class="w-2.5 h-2.5 inline" style="margin-right:3px;vertical-align:-1px"></i>CVE scan</span>
+                    <span class="ss-cat-pill"><i data-lucide="check-circle-2" class="w-2.5 h-2.5 inline" style="margin-right:3px;vertical-align:-1px"></i>Auto-update</span>
+                    <span class="ss-cat-pill"><i data-lucide="check-circle-2" class="w-2.5 h-2.5 inline" style="margin-right:3px;vertical-align:-1px"></i>Self-service</span>
+                    <span class="ss-cat-pill"><i data-lucide="check-circle-2" class="w-2.5 h-2.5 inline" style="margin-right:3px;vertical-align:-1px"></i>Same connectors</span>
+                  </div>
+                  <div class="text-[10px] text-center mt-2 text-[var(--r-blue)] font-semibold">Package once via the same pipeline — regardless of origin.</div>
+                ` : `
+                  <div class="flex items-center justify-between mb-2">
+                    <div class="ss-counter">8,000+</div>
+                    <div class="text-[10px] text-[var(--r-ink-2)] text-right">
+                      <div class="font-semibold">pre-tested applications</div>
+                      <div>Adobe · Citrix · Google · Microsoft · Mozilla · VMware · 30+ languages</div>
+                    </div>
+                  </div>
+                  <div class="ss-vendor-grid">
+                    ${SS_VENDORS.map((v, i) => `
+                      <div class="ss-vendor-tile ss-show" style="transition-delay:${i * 0.04}s">
+                        <div class="ss-v-icon" style="background:${v.c}">${v.l}</div>
+                        <div class="ss-v-name">${v.n}</div>
+                      </div>
+                    `).join('')}
+                  </div>
+                  <div class="ss-categories-row">
+                    <span class="ss-cat-pill">Productivity</span>
+                    <span class="ss-cat-pill">Security</span>
+                    <span class="ss-cat-pill">Browsers</span>
+                    <span class="ss-cat-pill">Communication</span>
+                    <span class="ss-cat-pill">Developer Tools</span>
+                  </div>
+                  <div class="text-[10px] text-center mt-2 text-[var(--r-blue)] font-semibold">Every one of these is hours of packaging work, already done.</div>
+                `}
               </div>
 
               <!-- PHASE 2: Package card — ss-grow prevents layout jump on insert -->
@@ -4113,14 +4385,24 @@
                 <div class="ss-grow-inner" style="padding-bottom:8px">
                   <div class="ss-package-card ss-pop">
                     <div class="ss-package-header">
-                      <div class="ss-package-icon" style="background:#ED2224">A</div>
-                      <div class="flex-1">
-                        <div class="ss-package-name">Adobe Acrobat Reader DC</div>
-                        <div class="ss-package-version">v24.001.20065 · Windows x64 + macOS</div>
-                      </div>
+                      ${mode === 'custom' ? `
+                        <div class="ss-package-icon ss-package-icon-custom"><i data-lucide="box" class="w-4 h-4"></i></div>
+                        <div class="flex-1">
+                          <div class="ss-package-name">YourApp <span style="font-weight:500;color:var(--r-ink-2)">·</span> Custom internal app</div>
+                          <div class="ss-package-version">v2.3 · Windows x64 + macOS</div>
+                        </div>
+                      ` : `
+                        <div class="ss-package-icon" style="background:#ED2224">A</div>
+                        <div class="flex-1">
+                          <div class="ss-package-name">Adobe Acrobat Reader DC</div>
+                          <div class="ss-package-version">v24.001.20065 · Windows x64 + macOS</div>
+                        </div>
+                      `}
                     </div>
                     <div class="text-[10px] text-[var(--r-ink-2)] mb-2" style="font-style: italic;">
-                      Each of these is a job your team would otherwise do by hand. Setup Store does it for you, on every package.
+                      ${mode === 'custom'
+                        ? 'Custom apps inherit the same packaging pipeline — define once, deliver everywhere.'
+                        : 'Each of these is a job your team would otherwise do by hand. Setup Store does it for you, on every package.'}
                     </div>
                     <div class="ss-fields">
                       ${SS_PACKAGE_FIELDS.map((f, i) => `
@@ -4133,20 +4415,36 @@
 
                     <!-- Security data — opacity only, no height change -->
                     <div class="ss-security-row ${past('cve') ? 'ss-show' : ''}">
-                      <div class="ss-badge ss-badge-clean"><i data-lucide="shield-check" class="w-3 h-3"></i> VirusTotal: 0/72 clean</div>
-                      <div class="ss-badge ss-badge-cve"><i data-lucide="alert-triangle" class="w-3 h-3"></i> CVE-2024-41869 · CVSS 7.8</div>
-                      <div class="ss-badge ss-badge-supersede">supersedes v23.x</div>
+                      ${mode === 'custom' ? `
+                        <div class="ss-badge ss-badge-clean"><i data-lucide="shield-check" class="w-3 h-3"></i> VirusTotal: 0/72 clean</div>
+                        <div class="ss-badge ss-badge-cve"><i data-lucide="alert-triangle" class="w-3 h-3"></i> Internal CVE policy applied</div>
+                        <div class="ss-badge ss-badge-supersede">supersedes v2.2</div>
+                      ` : `
+                        <div class="ss-badge ss-badge-clean"><i data-lucide="shield-check" class="w-3 h-3"></i> VirusTotal: 0/72 clean</div>
+                        <div class="ss-badge ss-badge-cve"><i data-lucide="alert-triangle" class="w-3 h-3"></i> CVE-2024-41869 · CVSS 7.8</div>
+                        <div class="ss-badge ss-badge-supersede">supersedes v23.x</div>
+                      `}
                     </div>
 
                     <!-- Update flow — opacity only, no height change -->
                     <div class="ss-update-flow ${past('update') ? 'ss-show' : ''}">
-                      <div class="ss-vendor-pulse ${p === 'update' ? 'ss-pulsing' : ''}">A</div>
-                      <i data-lucide="arrow-right" class="w-3 h-3 text-[var(--r-blue-bright)]"></i>
-                      <div class="text-[10px] text-[var(--r-ink)] flex-1">
-                        <span class="font-semibold">Adobe ships v24.002</span> →
-                        Recast packages, scans, scores, notifies →
-                        <span class="font-semibold">your team gets one email</span>
-                      </div>
+                      ${mode === 'custom' ? `
+                        <div class="ss-vendor-pulse ss-vendor-pulse-custom ${p === 'update' ? 'ss-pulsing' : ''}"><i data-lucide="box" class="w-3 h-3"></i></div>
+                        <i data-lucide="arrow-right" class="w-3 h-3 text-[var(--r-blue-bright)]"></i>
+                        <div class="text-[10px] text-[var(--r-ink)] flex-1">
+                          <span class="font-semibold">Your dev team ships v2.4</span> →
+                          Recast packages, scans, scores, notifies →
+                          <span class="font-semibold">your team gets one email</span>
+                        </div>
+                      ` : `
+                        <div class="ss-vendor-pulse ${p === 'update' ? 'ss-pulsing' : ''}">A</div>
+                        <i data-lucide="arrow-right" class="w-3 h-3 text-[var(--r-blue-bright)]"></i>
+                        <div class="text-[10px] text-[var(--r-ink)] flex-1">
+                          <span class="font-semibold">Adobe ships v24.002</span> →
+                          Recast packages, scans, scores, notifies →
+                          <span class="font-semibold">your team gets one email</span>
+                        </div>
+                      `}
                     </div>
 
                     <!-- DTAP bar — ss-grow prevents height jump inside card -->
@@ -4188,41 +4486,7 @@
                 </div>
               </div>
 
-              <!-- PHASE 6: Custom apps parallel track -->
-              <div class="ss-grow ${past('custom') ? (p === 'custom' ? 'ss-grow-active' : 'ss-grow-done') : ''}">
-                <div class="ss-grow-inner" style="padding-bottom:8px">
-                  <div class="ss-custom-track">
-                    <div class="text-[10px] font-semibold text-[var(--r-blue)] mb-2 flex items-center gap-1.5">
-                      <i data-lucide="box" class="w-3 h-3"></i>
-                      Custom &amp; internal apps follow the same path
-                    </div>
-                    <div class="flex items-center gap-2">
-                      <div class="flex flex-col items-center gap-1 flex-shrink-0">
-                        <div class="ss-custom-app-icon" style="background:#6366f1">⚙</div>
-                        <div style="font-size:8px;font-weight:700;color:var(--r-ink-2);text-align:center;line-height:1.2">YourApp<br>v2.1</div>
-                      </div>
-                      <i data-lucide="arrow-right" class="w-3 h-3 text-[var(--r-blue-bright)] flex-shrink-0"></i>
-                      <div class="ss-dtap-bar flex-1" style="margin-top:0">
-                        <div class="ss-dtap-stage ss-done">Dev</div>
-                        <span class="ss-dtap-arrow ss-arrow-active">→</span>
-                        <div class="ss-dtap-stage ss-done">Test</div>
-                        <span class="ss-dtap-arrow ss-arrow-active">→</span>
-                        <div class="ss-dtap-stage ss-current">Acceptance</div>
-                        <span class="ss-dtap-arrow ss-arrow-pending">→</span>
-                        <div class="ss-dtap-stage">Production</div>
-                      </div>
-                      <i data-lucide="arrow-right" class="w-3 h-3 text-[var(--r-blue-bright)] flex-shrink-0"></i>
-                      <div class="flex flex-col items-center gap-1 flex-shrink-0">
-                        <i data-lucide="library" class="w-4 h-4 text-[var(--r-blue)]"></i>
-                        <div style="font-size:8px;font-weight:700;color:var(--r-blue);text-align:center;line-height:1.2">Same<br>connectors</div>
-                      </div>
-                    </div>
-                    <div class="text-[9px] text-[var(--r-ink-2)] mt-2">Package once via the same pipeline — DTAP, CVE scan, auto-update — regardless of origin.</div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- PHASE 7: Done callouts — ss-grow prevents layout jump on insert -->
+              <!-- PHASE 6: Done callouts — ss-grow prevents layout jump on insert -->
               <div class="ss-grow ${past('done') ? (p === 'done' ? 'ss-grow-active' : 'ss-grow-done') : ''}">
                 <div class="ss-grow-inner">
                   <div class="ss-callouts">
@@ -4960,8 +5224,8 @@
 
       /* ========== SS ANIMATION ENGINE ========== */
       function buildSsQueue(){
-        const phases = ['catalog','package','cve','update','fanout','custom','done'];
-        const delays = [1200, 2000, 3500, 2000, 1800, 2500, 1500];
+        const phases = ['catalog','package','cve','update','fanout','done'];
+        const delays = [1200, 2000, 3500, 2000, 1800, 1500];
         const queue = [];
         phases.forEach((phase, i) => {
           queue.push({ delay: delays[i], fn(){ STATE.ssPhase = phase; scrollPreserveRender(); } });
@@ -5051,7 +5315,7 @@
             <div class="section-card p-4">
               <div class="flex items-center gap-3 mb-2">
                 <div class="flex-1 h-px bg-gradient-to-r from-transparent via-blue-200 to-transparent"></div>
-                <div class="bts-label bts-label-platform"><i data-lucide="boxes" class="w-3 h-3"></i> The Centralized Platform</div>
+                <div class="bts-label bts-label-platform"><i data-lucide="boxes" class="w-3 h-3"></i> The Application Lifecycle, on One Platform</div>
                 <div class="flex-1 h-px bg-gradient-to-r from-transparent via-blue-200 to-transparent"></div>
               </div>
               <div class="platform-bar" style="padding:10px 14px">
@@ -5111,17 +5375,12 @@
                     ${idx < arr.length - 1 ? '<div class="lifecycle-connector ' + connClass + '"></div>' : ''}
                   `;}).join('')}
                 </div>
-                <!-- Play lifecycle + Flow controls -->
+                <!-- Flow controls (icon-only) -->
                 <div class="flex items-center gap-2">
-                  ${STATE.lifecyclePlaying
-                    ? `<button type="button" data-action="play-lifecycle" class="lifecycle-play-btn playing" title="Stop the lifecycle tour"><i data-lucide="square" class="w-3 h-3"></i> Stop tour <span class="lc-step-badge">${STATE.lcStep + 1}/6</span></button>`
-                    : `<button type="button" data-action="play-lifecycle" class="lifecycle-play-btn"><i data-lucide="play-circle" class="w-3.5 h-3.5"></i> Play the lifecycle</button>`
-                  }
                   ${(STATE.solutionViewUser || STATE.solutionViewAdmin || STATE.solutionViewSetupStore || STATE.solutionViewMultiTenant || STATE.solutionViewDashboard || STATE.solutionViewOnboarding) ? `
-                  <!-- Flow controls -->
-                  <div class="flex items-center gap-2 text-[12px]">
-                    <button type="button" data-action="toggle-flow" class="bg-[#0070F3] text-white w-7 h-7 rounded-full hover:bg-[#005AD0] inline-flex items-center justify-center"><i data-lucide="${STATE.flowRunning && !STATE.flowPaused ? 'pause' : 'play'}" class="w-3.5 h-3.5"></i></button>
-                    <button type="button" data-action="reset-flow" class="bg-[#0A1C60] text-white w-7 h-7 rounded-full hover:bg-[#0070F3] inline-flex items-center justify-center" title="Reset"><i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i></button>
+                  <div class="flex items-center gap-1.5 text-[12px]">
+                    <button type="button" data-action="toggle-flow" title="${STATE.flowRunning && !STATE.flowPaused ? 'Pause' : 'Play'}" aria-label="${STATE.flowRunning && !STATE.flowPaused ? 'Pause' : 'Play'}" class="bg-[#0070F3] text-white w-8 h-8 rounded-full hover:bg-[#005AD0] inline-flex items-center justify-center transition shadow-sm"><i data-lucide="${STATE.flowRunning && !STATE.flowPaused ? 'pause' : 'play'}" class="w-3.5 h-3.5"></i></button>
+                    <button type="button" data-action="reset-flow" title="Reset" aria-label="Reset" class="bg-white text-[#0A1C60] border border-[#0A1C60]/30 w-8 h-8 rounded-full hover:bg-slate-50 hover:border-[#0A1C60] inline-flex items-center justify-center transition"><i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i></button>
                   </div>
                   ` : ''}
                 </div>
@@ -6056,12 +6315,12 @@
             STATE.lifecyclePlaying = true; STATE.lcStep = -1;
 
             // Dwell = sum of all animation phase delays + breathing room after "done"
-            // SS delays: [1200,2000,3500,2000,1800,2500,1500,2000] = 16500 + 1500 breathing
+            // SS delays: [1200,2000,3500,2000,1800,1500,2000] = 14000 + 1500 breathing
             // OB delays: [1000,2000,2000,2500,3500,2500,2500] = 16000 + 1500 breathing
             // DR delays: [800,1200,1000,1500,1400,1500,2000]  =  9400 + 1500 breathing
             // MT delays: [800,1200,1200,1500,1200,1500,2000]  =  9400 + 1500 breathing
             const lcSteps = [
-              { key: 'solutionViewSetupStore', start: () => startSs(), dwell: 18000 },
+              { key: 'solutionViewSetupStore', start: () => startSs(), dwell: 15500 },
               { key: 'solutionViewAdmin',       start: null,            dwell:  5000 },
               { key: 'solutionViewOnboarding',  start: () => startOb(), dwell: 17500 },
               { key: 'solutionViewUser',        start: null,            dwell:  5000 },
@@ -6120,6 +6379,18 @@
           if (action === 'start-ss') { startSs(); return; }
           if (action === 'step-ss') { stepSs(); return; }
           if (action === 'reset-ss') { resetSs(); return; }
+          if (action === 'ss-mode') {
+            const newMode = act.getAttribute('data-mode') || 'curated';
+            if (STATE.ssMode === newMode) return;
+            STATE.ssMode = newMode;
+            // Reset animation state so user starts fresh in the new mode
+            STATE.ssTimers.forEach(id => clearTimeout(id)); STATE.ssTimers = [];
+            STATE.ssRunning = false; STATE.ssPaused = false;
+            STATE.ssPhase = 'idle';
+            STATE.ssQueue = []; STATE.ssQueueIdx = 0;
+            scrollPreserveRender();
+            return;
+          }
           if (action === 'pause-ss') {
             if (STATE.ssPaused) { STATE.ssPaused = false; scrollPreserveRender(); runSsQueue(); }
             else { STATE.ssPaused = true; STATE.flowTimers.timeouts.forEach(id => clearTimeout(id)); STATE.flowTimers.timeouts = []; scrollPreserveRender(); }
