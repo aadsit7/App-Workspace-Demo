@@ -1004,6 +1004,98 @@
 
       /* ───── Logo ticker gradient masks use white — keep */
       /* ═════════════════════════════════════════════════════════════
+         SETUP STORE VIEW
+         ═════════════════════════════════════════════════════════════ */
+      .ss-zone { border-radius: 10px; padding: 12px; transition: opacity 0.5s ease, transform 0.5s ease; }
+      .ss-zone.ss-hidden { opacity: 0; transform: translateY(10px); }
+      .ss-zone.ss-visible { opacity: 1; transform: translateY(0); }
+
+      .ss-vendor-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
+      .ss-vendor-tile { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px;
+        border-radius: 6px; background: white; border: 1px solid var(--r-divider);
+        opacity: 0; transform: scale(0.8); transition: all 0.3s ease; }
+      .ss-vendor-tile.ss-show { opacity: 1; transform: scale(1); }
+      .ss-vendor-tile .ss-v-icon { width: 26px; height: 26px; border-radius: 6px;
+        display: grid; place-items: center; font-size: 9px; font-weight: 800; color: white; }
+      .ss-vendor-tile .ss-v-name { font-size: 8px; color: var(--r-ink-2); font-weight: 600; }
+
+      .ss-counter { font-family: ui-monospace, monospace; font-size: 22px; font-weight: 800;
+        color: var(--r-blue); letter-spacing: -0.02em; }
+
+      .ss-package-card { background: white; border: 2px solid var(--r-blue); border-radius: 8px;
+        padding: 14px; box-shadow: var(--shadow-elevated);
+        opacity: 0; transform: scale(0.95); transition: all 0.5s cubic-bezier(0.2,0.8,0.2,1); }
+      .ss-package-card.ss-pop { opacity: 1; transform: scale(1); }
+
+      .ss-package-header { display: flex; align-items: center; gap: 10px; padding-bottom: 10px;
+        border-bottom: 1px solid var(--r-divider); margin-bottom: 10px; }
+      .ss-package-icon { width: 32px; height: 32px; border-radius: 7px; display: grid; place-items: center;
+        font-size: 13px; font-weight: 800; color: white; }
+      .ss-package-name { font-size: 13px; font-weight: 700; color: var(--r-ink); }
+      .ss-package-version { font-size: 10px; color: var(--r-ink-2); font-family: ui-monospace, monospace; }
+
+      .ss-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+      .ss-field { display: flex; align-items: center; gap: 6px; padding: 5px 8px; border-radius: 4px;
+        background: var(--r-quote-bg); font-size: 10px; color: var(--r-ink);
+        opacity: 0; transform: translateX(-6px); transition: all 0.3s ease; }
+      .ss-field.ss-fill { opacity: 1; transform: translateX(0); }
+      .ss-field i[data-lucide] { width: 12px; height: 12px; color: var(--r-blue-bright); flex-shrink: 0; }
+
+      .ss-security-row { display: flex; gap: 8px; margin-top: 10px;
+        opacity: 0; transform: translateY(6px); transition: all 0.4s ease; }
+      .ss-security-row.ss-show { opacity: 1; transform: translateY(0); }
+      .ss-badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px;
+        border-radius: 4px; font-size: 10px; font-weight: 700; }
+      .ss-badge-clean { background: #ECFDF5; color: var(--r-green); border: 1px solid #A7F3D0; }
+      .ss-badge-cve { background: #FFF7ED; color: var(--r-amber); border: 1px solid #FED7AA; }
+      .ss-badge-supersede { background: var(--r-quote-bg); color: var(--r-blue); border: 1px solid var(--r-divider);
+        font-family: ui-monospace, monospace; }
+
+      .ss-update-flow { display: flex; align-items: center; gap: 8px; margin-top: 12px; padding: 10px;
+        border-radius: 6px; background: var(--r-quote-bg); border: 1px dashed var(--r-blue-bright);
+        opacity: 0; transition: opacity 0.4s ease; }
+      .ss-update-flow.ss-show { opacity: 1; }
+      .ss-vendor-pulse { width: 28px; height: 28px; border-radius: 6px; display: grid; place-items: center;
+        font-size: 10px; font-weight: 800; color: white; background: var(--r-blue); flex-shrink: 0; }
+      .ss-vendor-pulse.ss-pulsing { animation: ssPulse 1.5s ease-in-out infinite; }
+      @keyframes ssPulse { 0%,100% { box-shadow: 0 0 0 0 rgba(42,127,255,0); }
+                           50% { box-shadow: 0 0 0 6px rgba(42,127,255,0.25); } }
+
+      .ss-dtap-bar { display: flex; align-items: center; gap: 0; margin-top: 10px; }
+      .ss-dtap-stage { flex: 1; text-align: center; padding: 5px 4px; font-size: 9px; font-weight: 700;
+        color: var(--r-ink-2); border-bottom: 3px solid var(--r-divider); transition: all 0.4s ease; }
+      .ss-dtap-stage.ss-done { border-color: var(--r-green); color: var(--r-green); }
+      .ss-dtap-stage.ss-current { border-color: var(--r-blue); color: var(--r-blue); }
+      .ss-dtap-arrow { font-size: 10px; color: var(--r-divider); padding: 0 2px; }
+
+      .ss-fanout { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-top: 14px; }
+      .ss-fanout-source { padding: 6px 14px; border-radius: 6px; background: var(--r-blue); color: white;
+        font-size: 11px; font-weight: 700; }
+      .ss-fanout-lines { display: flex; justify-content: center; gap: 24px; }
+      .ss-fanout-line { width: 2px; height: 0; background: linear-gradient(180deg, var(--r-blue), var(--r-blue-bright));
+        border-radius: 2px; transition: height 0.6s ease; }
+      .ss-fanout-line.ss-drawn { height: 24px; }
+      .ss-fanout-targets { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+      .ss-target { padding: 4px 10px; border-radius: 4px; font-size: 10px; font-weight: 600;
+        background: white; border: 1px solid var(--r-divider); color: var(--r-ink-2);
+        opacity: 0; transform: translateY(4px); transition: all 0.4s ease; }
+      .ss-target.ss-show { opacity: 1; transform: translateY(0); }
+      .ss-target.ss-primary { border-color: var(--r-blue); color: var(--r-blue); font-weight: 700; }
+
+      .ss-callouts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 14px; }
+      .ss-callout { padding: 12px; border-radius: 6px; background: white; border: 1px solid var(--r-divider);
+        opacity: 0; transform: translateY(8px); transition: all 0.5s ease; }
+      .ss-callout.ss-show { opacity: 1; transform: translateY(0); }
+      .ss-callout i[data-lucide] { width: 18px; height: 18px; color: var(--r-blue-bright); margin-bottom: 6px; }
+      .ss-callout-title { font-size: 12px; font-weight: 700; color: var(--r-ink); margin-bottom: 3px; }
+      .ss-callout-body { font-size: 10px; color: var(--r-ink-2); line-height: 1.4; }
+
+      .ss-final-line { text-align: center; margin-top: 14px; padding: 10px; font-size: 13px; font-weight: 700;
+        color: var(--r-blue); background: var(--r-quote-bg); border-radius: 6px;
+        opacity: 0; transition: opacity 0.5s ease; }
+      .ss-final-line.ss-show { opacity: 1; }
+
+      /* ═════════════════════════════════════════════════════════════
          MOBILE — comprehensive overhaul for <= 900px
          Goal: every tab usable with a single vertical scroll, no overflow.
          ═════════════════════════════════════════════════════════════ */
@@ -1952,6 +2044,12 @@
         obPaused: false,
         obQueue: [],
         obQueueIdx: 0,
+        solutionViewSetupStore: false,
+        ssPhase: 'idle',
+        ssRunning: false,
+        ssPaused: false,
+        ssQueue: [],
+        ssQueueIdx: 0,
         showLabels: false,
         showSolutionCards: true,
         openWhy: null,
@@ -2014,7 +2112,7 @@
             intro: "Application Workspace doesn't replace your tools - it's the layer that makes them work together.",
             bullets: [
               "Define once, deliver everywhere = One definition deploys to Intune, SCCM, Citrix, AVD, and macOS automatically.",
-              "8,000+ apps ready to go = Setup Store handles most of your catalog. Your team only packages what's unique.",
+              "8,000+ apps ready to go = A curated catalog with verified sources, tested silent switches, CVE data, and virus scan scores — updated daily. Your team only packages what's genuinely unique to your business.",
               "Self-service replaces tickets = Users get approved apps in seconds. IT controls the catalog. Users control the timing.",
               "Patches land everywhere at once = Staged pipeline. Every environment. No per-platform rebuilds.",
               "Nothing gets ripped out = Works with what you already run. Additive, not replacement.",
@@ -2047,7 +2145,7 @@
               intro: "Application Workspace doesn't replace your tools - it's the layer that makes them work together.",
               bullets: [
                 "Define once, deliver everywhere = One definition deploys to Intune, SCCM, Citrix, AVD, and macOS automatically.",
-                "8,000+ apps ready to go = Setup Store handles most of your catalog. Your team only packages what's unique.",
+                "8,000+ apps ready to go = A curated catalog with verified sources, tested silent switches, CVE data, and virus scan scores — updated daily. Your team only packages what's genuinely unique to your business.",
                 "Self-service replaces tickets = Users get approved apps in seconds. IT controls the catalog. Users control the timing.",
                 "Patches land everywhere at once = Staged pipeline. Every environment. No per-platform rebuilds.",
                 "Nothing gets ripped out = Works with what you already run. Additive, not replacement.",
@@ -2119,7 +2217,7 @@
       const NEW_CARDS = [
         {
           id: 'core', icon: 'layers', title: 'How Recast Does It.',
-          bullets: ['<strong>Intake</strong> \u2014 One definition per app. From the Setup Store (8,000+) or custom-packaged by your team.','<strong>Deliver</strong> \u2014 Deploys to the right user, device, and path \u2014 local, VDI, SaaS, or Cloud PC \u2014 automatically.','<strong>Update</strong> \u2014 Patches flow through Dev, Test, Acceptance, Production \u2014 validated before reaching endpoints.','<strong>Govern</strong> \u2014 Every action logged. Compliance, versions, and health visible from one dashboard.','<strong>Retire</strong> \u2014 End-of-life apps removed cleanly across every environment. No orphaned installs.','<strong>Report</strong> \u2014 Real-time dashboards for compliance, licensing, and app health \u2014 no manual assembly.'],
+          bullets: ['<strong>Intake</strong> \u2014 Most apps come pre-packaged from the Setup Store with security and compliance data attached. Custom and internal apps get packaged once by your team and managed the same way.','<strong>Deliver</strong> \u2014 Deploys to the right user, device, and path \u2014 local, VDI, SaaS, or Cloud PC \u2014 automatically.','<strong>Update</strong> \u2014 Patches flow through Dev, Test, Acceptance, Production \u2014 validated before reaching endpoints.','<strong>Govern</strong> \u2014 Every action logged. Compliance, versions, and health visible from one dashboard.','<strong>Retire</strong> \u2014 End-of-life apps removed cleanly across every environment. No orphaned installs.','<strong>Report</strong> \u2014 Real-time dashboards for compliance, licensing, and app health \u2014 no manual assembly.'],
           closer: 'How one definition moves an app from intake to retirement.', timeline: false, bgHeader: 'bg-[#f9fafb]', bgContent: 'bg-[#f9fafb]'
         },
         {
@@ -2475,11 +2573,11 @@
                     <span class="text-sm font-bold tracking-wide">Application Workspace</span>
                   </div>
                   <div class="flex items-center gap-1">
-                    <div class="platform-stat"><div class="platform-stat-value">8,000+</div><div class="platform-stat-label">Pre-Tested Apps</div></div>
+                    <div class="platform-stat"><div class="platform-stat-value">8,000+</div><div class="platform-stat-label">Curated Apps</div></div>
                     <div class="platform-divider"></div>
-                    <div class="platform-stat"><div class="platform-stat-value">5</div><div class="platform-stat-label">Delivery Paths</div></div>
+                    <div class="platform-stat"><div class="platform-stat-value">Daily</div><div class="platform-stat-label">Updates</div></div>
                     <div class="platform-divider"></div>
-                    <div class="platform-stat"><div class="platform-stat-value">1</div><div class="platform-stat-label">Definition</div></div>
+                    <div class="platform-stat"><div class="platform-stat-value">CVE</div><div class="platform-stat-label">+ Scan Data</div></div>
                   </div>
                 </div>
                 <div class="flex flex-wrap gap-1.5">
@@ -3697,11 +3795,11 @@
                     <span class="text-xs font-bold tracking-wide">Application Workspace</span>
                   </div>
                   <div class="flex items-center gap-1">
-                    <div class="platform-stat" style="padding:3px 6px"><div class="platform-stat-value" style="font-size:13px">8,000+</div><div class="platform-stat-label">Apps</div></div>
+                    <div class="platform-stat" style="padding:3px 6px"><div class="platform-stat-value" style="font-size:13px">8,000+</div><div class="platform-stat-label">Curated Apps</div></div>
                     <div class="platform-divider" style="height:20px"></div>
-                    <div class="platform-stat" style="padding:3px 6px"><div class="platform-stat-value" style="font-size:13px">5</div><div class="platform-stat-label">Paths</div></div>
+                    <div class="platform-stat" style="padding:3px 6px"><div class="platform-stat-value" style="font-size:13px">Daily</div><div class="platform-stat-label">Updates</div></div>
                     <div class="platform-divider" style="height:20px"></div>
-                    <div class="platform-stat" style="padding:3px 6px"><div class="platform-stat-value" style="font-size:13px">1</div><div class="platform-stat-label">Definition</div></div>
+                    <div class="platform-stat" style="padding:3px 6px"><div class="platform-stat-value" style="font-size:13px">CVE</div><div class="platform-stat-label">+ Scan Data</div></div>
                   </div>
                 </div>
               </div>
@@ -3819,6 +3917,187 @@
       // Intune managed apps that slowly trickle in
       const OB_INTUNE_SLOW = [
         {l:'S',c:'#0070F3',n:'Security'},{l:'V',c:'#6366f1',n:'VPN'}
+      ];
+
+      /* ========== SETUP STORE VIEW ========== */
+      function renderSetupStoreView(){
+        const p = STATE.ssPhase;
+        const past = (target) => {
+          const order = ['idle','catalog','package','cve','update','fanout','done'];
+          return order.indexOf(p) >= order.indexOf(target);
+        };
+
+        return `
+          <div class="section-card p-4">
+            <div class="flex items-center justify-between mb-3">
+              <div class="bts-label bts-label-platform"><i data-lucide="library" class="w-3 h-3"></i> Setup Store: The Curated Catalog</div>
+              <div class="flex items-center gap-2 text-[12px]">
+                ${STATE.ssRunning ? `
+                  <button type="button" data-action="pause-ss" class="bg-[#0070F3] text-white px-2.5 py-1.5 text-[12px] font-semibold rounded hover:bg-[#005AD0] inline-flex items-center gap-1"><i data-lucide="${STATE.ssPaused ? 'play' : 'pause'}" class="w-3 h-3"></i> ${STATE.ssPaused ? 'Resume' : 'Pause'}</button>
+                ` : `
+                  <button type="button" data-action="start-ss" class="bg-[#0070F3] text-white px-2.5 py-1.5 text-[12px] font-semibold rounded hover:bg-[#005AD0] inline-flex items-center gap-1"><i data-lucide="play" class="w-3 h-3"></i> Auto</button>
+                  <button type="button" data-action="step-ss" class="bg-white text-[#0070F3] border border-[#0070F3] px-2.5 py-1.5 text-[12px] font-semibold rounded hover:bg-[#eff6ff] inline-flex items-center gap-1"><i data-lucide="skip-forward" class="w-3 h-3"></i> Step</button>
+                `}
+                <button type="button" data-action="reset-ss" class="bg-transparent text-[#0A1C60] border-2 border-[#0A1C60] px-2.5 py-1.5 rounded hover:text-[#0070F3] hover:border-[#0070F3]">Reset</button>
+              </div>
+            </div>
+
+            ${!past('catalog') ? `
+              <div class="text-center py-6 text-sm text-slate-400">
+                <i data-lucide="library" class="w-8 h-8 mx-auto mb-2 text-slate-300"></i>
+                <div>Press <strong>Auto</strong> or <strong>Step</strong> to see the Setup Store</div>
+                <div class="text-[10px] text-slate-300 mt-1">A curated catalog you don't have to build</div>
+              </div>
+            ` : `
+
+              <!-- PHASE 1: Catalog -->
+              <div class="ss-zone ss-visible mb-2" style="background:var(--r-quote-bg);border:1px solid var(--r-divider)">
+                <div class="flex items-center justify-between mb-2">
+                  <div class="ss-counter">${past('catalog') ? '8,000+' : '0'}</div>
+                  <div class="text-[10px] text-[var(--r-ink-2)] text-right">
+                    <div class="font-semibold">pre-tested applications</div>
+                    <div>Adobe · Citrix · Google · Microsoft · Mozilla · VMware · 30+ languages</div>
+                  </div>
+                </div>
+                <div class="ss-vendor-grid">
+                  ${SS_VENDORS.map((v, i) => `
+                    <div class="ss-vendor-tile ${past('catalog') ? 'ss-show' : ''}" style="transition-delay:${i * 0.04}s">
+                      <div class="ss-v-icon" style="background:${v.c}">${v.l}</div>
+                      <div class="ss-v-name">${v.n}</div>
+                    </div>
+                  `).join('')}
+                </div>
+                <div class="text-[10px] text-center mt-2 text-[var(--r-blue)] font-semibold">A curated catalog you don't have to build.</div>
+              </div>
+
+              <!-- PHASE 2: Package detail -->
+              ${past('package') ? `
+                <div class="ss-package-card ss-pop mb-2">
+                  <div class="ss-package-header">
+                    <div class="ss-package-icon" style="background:#ED2224">A</div>
+                    <div class="flex-1">
+                      <div class="ss-package-name">Adobe Acrobat Reader DC</div>
+                      <div class="ss-package-version">v24.001.20065 · Windows x64 + macOS</div>
+                    </div>
+                    <div class="text-[9px] text-[var(--r-ink-2)] text-right">
+                      <div class="font-semibold uppercase tracking-widest">Inside every package</div>
+                    </div>
+                  </div>
+                  <div class="ss-fields">
+                    ${SS_PACKAGE_FIELDS.map((f, i) => `
+                      <div class="ss-field ${past('package') ? 'ss-fill' : ''}" style="transition-delay:${i * 0.08}s">
+                        <i data-lucide="${f.icon}"></i>
+                        <span>${f.label}</span>
+                      </div>
+                    `).join('')}
+                  </div>
+
+                  <!-- PHASE 3: Security data -->
+                  <div class="ss-security-row ${past('cve') ? 'ss-show' : ''}">
+                    <div class="ss-badge ss-badge-clean"><i data-lucide="shield-check" class="w-3 h-3"></i> VirusTotal: 0/72 clean</div>
+                    <div class="ss-badge ss-badge-cve"><i data-lucide="alert-triangle" class="w-3 h-3"></i> CVE-2024-41869 · CVSS 7.8</div>
+                    <div class="ss-badge ss-badge-supersede">supersedes v23.x</div>
+                  </div>
+
+                  <!-- PHASE 4: Update flow + DTAP -->
+                  <div class="ss-update-flow ${past('update') ? 'ss-show' : ''}">
+                    <div class="ss-vendor-pulse ${past('update') && !past('fanout') ? 'ss-pulsing' : ''}">A</div>
+                    <i data-lucide="arrow-right" class="w-3 h-3 text-[var(--r-blue-bright)]"></i>
+                    <div class="text-[10px] text-[var(--r-ink)] flex-1">
+                      <span class="font-semibold">Adobe ships v24.002</span> →
+                      Recast packages, scans, scores, notifies →
+                      <span class="font-semibold">your team gets one email</span>
+                    </div>
+                  </div>
+
+                  ${past('update') ? `
+                    <div class="ss-dtap-bar">
+                      <div class="ss-dtap-stage ${past('update') ? 'ss-done' : ''}">Development</div>
+                      <span class="ss-dtap-arrow">→</span>
+                      <div class="ss-dtap-stage ${past('update') ? 'ss-done' : ''}">Test</div>
+                      <span class="ss-dtap-arrow">→</span>
+                      <div class="ss-dtap-stage ${past('update') ? 'ss-current' : ''}">Acceptance</div>
+                      <span class="ss-dtap-arrow">→</span>
+                      <div class="ss-dtap-stage">Production</div>
+                    </div>
+                  ` : ''}
+                </div>
+              ` : ''}
+
+              <!-- PHASE 5: Fanout to connectors -->
+              ${past('fanout') ? `
+                <div class="ss-fanout">
+                  <div class="ss-fanout-source"><i data-lucide="library" class="w-3 h-3 inline"></i> Setup Store</div>
+                  <div class="ss-fanout-lines">
+                    ${SS_CONNECTORS.map((_, i) => `
+                      <div class="ss-fanout-line ${past('fanout') ? 'ss-drawn' : ''}" style="transition-delay:${i * 0.1}s"></div>
+                    `).join('')}
+                  </div>
+                  <div class="ss-fanout-targets">
+                    ${SS_CONNECTORS.map((c, i) => `
+                      <div class="ss-target ${c.primary ? 'ss-primary' : ''} ${past('fanout') ? 'ss-show' : ''}" style="transition-delay:${0.3 + i * 0.08}s">${c.label}</div>
+                    `).join('')}
+                  </div>
+                  <div class="text-[10px] text-center mt-1 text-[var(--r-ink-2)]">One curated source. Every delivery system you run.</div>
+                </div>
+              ` : ''}
+
+              <!-- PHASE 6: Final callouts -->
+              ${past('done') ? `
+                <div class="ss-callouts">
+                  ${SS_CALLOUTS.map((c, i) => `
+                    <div class="ss-callout ${past('done') ? 'ss-show' : ''}" style="transition-delay:${i * 0.15}s">
+                      <i data-lucide="${c.icon}"></i>
+                      <div class="ss-callout-title">${c.title}</div>
+                      <div class="ss-callout-body">${c.body}</div>
+                    </div>
+                  `).join('')}
+                </div>
+                <div class="ss-final-line ss-show">The catalog is the work. We do it. You consume it.</div>
+              ` : ''}
+
+            `}
+          </div>
+        `;
+      }
+
+      const SS_VENDORS = [
+        {l:'A',c:'#ED2224',n:'Adobe'},     {l:'C',c:'#374151',n:'Citrix'},
+        {l:'G',c:'#4285F4',n:'Google'},    {l:'M',c:'#0067B8',n:'Microsoft'},
+        {l:'Mz',c:'#FF7139',n:'Mozilla'},  {l:'V',c:'#607078',n:'VMware'},
+        {l:'Z',c:'#0B5CFF',n:'Zoom'},      {l:'N',c:'#76B900',n:'Notepad++'},
+        {l:'7',c:'#1A8A1A',n:'7-Zip'},     {l:'O',c:'#0070F3',n:'OpenVPN'},
+        {l:'P',c:'#FB7299',n:'Python'},    {l:'J',c:'#5382A1',n:'Java'},
+      ];
+
+      const SS_PACKAGE_FIELDS = [
+        {icon:'shield-check', label:'Verified vendor source'},
+        {icon:'terminal',     label:'Tested silent switches'},
+        {icon:'wand-2',       label:'MSI Configuration Wizard (enterprise defaults)'},
+        {icon:'package-plus', label:'Install + uninstall actions'},
+        {icon:'scan-search',  label:'Detection filters'},
+        {icon:'link-2',       label:'Dependencies resolved'},
+        {icon:'image',        label:'Icon, description, website'},
+        {icon:'mouse-pointer-click', label:'Shortcuts (Launch / Help / Docs / License / Config)'},
+        {icon:'monitor',      label:'Platform: Windows x64 + macOS'},
+      ];
+
+      const SS_CONNECTORS = [
+        {label:'Application Workspace', primary:true},
+        {label:'Microsoft Intune'},
+        {label:'ConfigMgr / SCCM'},
+        {label:'MDT'},
+        {label:'Ivanti EPM'},
+        {label:'ZENworks'},
+      ];
+
+      const SS_CALLOUTS = [
+        {icon:'clock',    title:'Hours per app, already done',
+         body:'Hunting links, testing switches, scanning, packaging — done before you start.'},
+        {icon:'refresh-cw', title:'Continuous, not project-based',
+         body:'8,000+ apps · daily updates · 30+ languages · OEM-grade quality.'},
+        {icon:'unlock',   title:'Available standalone',
+         body:'Existing OEM customers license the catalog alone for their own delivery stack.'},
       ];
 
       function renderMultiTenantView(){
@@ -4474,12 +4753,73 @@
         render();
       }
 
+      /* ========== SS ANIMATION ENGINE ========== */
+      function buildSsQueue(){
+        const phases = ['catalog','package','cve','update','fanout','done'];
+        const delays = [1200, 2000, 1500, 2000, 1800, 1500];
+        const queue = [];
+        phases.forEach((phase, i) => {
+          queue.push({ delay: delays[i], fn(){ STATE.ssPhase = phase; render(); } });
+        });
+        queue.push({ delay: 2000, fn(){ STATE.ssRunning = false; STATE.ssPaused = false; render(); } });
+        return queue;
+      }
+
+      function runSsQueue(){
+        if (STATE.ssPaused || STATE.ssQueueIdx >= STATE.ssQueue.length) return;
+        const step = STATE.ssQueue[STATE.ssQueueIdx];
+        const tid = setTimeout(() => {
+          if (STATE.ssPaused) return;
+          step.fn();
+          STATE.ssQueueIdx++;
+          runSsQueue();
+        }, step.delay);
+        STATE.flowTimers.timeouts.push(tid);
+      }
+
+      function startSs(){
+        if (STATE.ssRunning) return;
+        STATE.flowTimers.timeouts.forEach(id => clearTimeout(id));
+        STATE.flowTimers.timeouts = [];
+        STATE.ssRunning = true;
+        STATE.ssPaused = false;
+        STATE.ssPhase = 'idle';
+        STATE.ssQueue = buildSsQueue();
+        STATE.ssQueueIdx = 0;
+        render();
+        runSsQueue();
+      }
+
+      function stepSs(){
+        if (STATE.ssRunning) return;
+        if (!STATE.ssQueue || STATE.ssQueue.length === 0) {
+          STATE.ssQueue = buildSsQueue();
+          STATE.ssQueueIdx = 0;
+          STATE.ssPhase = 'idle';
+        }
+        if (STATE.ssQueueIdx >= STATE.ssQueue.length) return;
+        const step = STATE.ssQueue[STATE.ssQueueIdx];
+        step.fn();
+        STATE.ssQueueIdx++;
+      }
+
+      function resetSs(){
+        STATE.flowTimers.timeouts.forEach(id => clearTimeout(id));
+        STATE.flowTimers.timeouts = [];
+        STATE.ssPhase = 'idle';
+        STATE.ssRunning = false;
+        STATE.ssPaused = false;
+        STATE.ssQueue = [];
+        STATE.ssQueueIdx = 0;
+        render();
+      }
+
       /* ========== SOLUTION TAB (3-zone layout) ========== */
       function renderSolution(){
         const sc = STATE.flowScenarioIdx;
         const phase = STATE.flowPhase;
         const scenario = sc >= 0 && sc < SCENARIOS.length ? SCENARIOS[sc] : null;
-        const activeViewCount = [STATE.solutionViewUser, STATE.solutionViewAdmin, STATE.solutionViewMultiTenant, STATE.solutionViewDashboard, STATE.solutionViewOnboarding].filter(Boolean).length;
+        const activeViewCount = [STATE.solutionViewUser, STATE.solutionViewAdmin, STATE.solutionViewSetupStore, STATE.solutionViewMultiTenant, STATE.solutionViewDashboard, STATE.solutionViewOnboarding].filter(Boolean).length;
         const multiCol = activeViewCount >= 2;
 
         return `
@@ -4504,11 +4844,11 @@
                     <span class="text-sm font-bold tracking-wide">Application Workspace</span>
                   </div>
                   <div class="flex items-center gap-1">
-                    <div class="platform-stat"><div class="platform-stat-value">8,000+</div><div class="platform-stat-label">Pre-Tested Apps</div></div>
+                    <div class="platform-stat"><div class="platform-stat-value">8,000+</div><div class="platform-stat-label">Curated Apps</div></div>
                     <div class="platform-divider"></div>
-                    <div class="platform-stat"><div class="platform-stat-value">5</div><div class="platform-stat-label">Delivery Paths</div></div>
+                    <div class="platform-stat"><div class="platform-stat-value">Daily</div><div class="platform-stat-label">Updates</div></div>
                     <div class="platform-divider"></div>
-                    <div class="platform-stat"><div class="platform-stat-value">1</div><div class="platform-stat-label">Definition</div></div>
+                    <div class="platform-stat"><div class="platform-stat-value">CVE</div><div class="platform-stat-label">+ Scan Data</div></div>
                   </div>
                 </div>
                 <div class="flex flex-wrap gap-1.5">
@@ -4535,11 +4875,12 @@
                   <span class="text-[11px] text-slate-400 font-medium hidden sm:inline">Select a view:</span>
                   <button type="button" data-action="toggle-solution-view" data-view="user" class="view-toggle ${STATE.solutionViewUser ? 'active' : ''}"><i data-lucide="monitor-smartphone" class="w-3.5 h-3.5"></i> User Experience</button>
                   <button type="button" data-action="toggle-solution-view" data-view="admin" class="view-toggle ${STATE.solutionViewAdmin ? 'active' : ''}"><i data-lucide="settings-2" class="w-3.5 h-3.5"></i> Admin Console</button>
+                  <button type="button" data-action="toggle-solution-view" data-view="setupstore" class="view-toggle ${STATE.solutionViewSetupStore ? 'active' : ''}"><i data-lucide="library" class="w-3.5 h-3.5"></i> Setup Store</button>
                   <button type="button" data-action="toggle-solution-view" data-view="onboarding" class="view-toggle ${STATE.solutionViewOnboarding ? 'active' : ''}"><i data-lucide="user-plus" class="w-3.5 h-3.5"></i> Onboarding</button>
                   <button type="button" data-action="toggle-solution-view" data-view="dashboard" class="view-toggle ${STATE.solutionViewDashboard ? 'active' : ''}"><i data-lucide="bar-chart-3" class="w-3.5 h-3.5"></i> Dashboard & Reporting</button>
                   <button type="button" data-action="toggle-solution-view" data-view="multitenant" class="view-toggle ${STATE.solutionViewMultiTenant ? 'active' : ''}"><i data-lucide="building-2" class="w-3.5 h-3.5"></i> Multi-Tenant</button>
                 </div>
-                ${(STATE.solutionViewUser || STATE.solutionViewAdmin || STATE.solutionViewMultiTenant || STATE.solutionViewDashboard || STATE.solutionViewOnboarding) ? `
+                ${(STATE.solutionViewUser || STATE.solutionViewAdmin || STATE.solutionViewSetupStore || STATE.solutionViewMultiTenant || STATE.solutionViewDashboard || STATE.solutionViewOnboarding) ? `
                 <!-- Flow controls -->
                 <div class="flex items-center gap-2 text-[12px]">
                   <button type="button" data-action="toggle-flow" class="bg-[#0070F3] text-white w-7 h-7 rounded-full hover:bg-[#005AD0] inline-flex items-center justify-center"><i data-lucide="${STATE.flowRunning && !STATE.flowPaused ? 'pause' : 'play'}" class="w-3.5 h-3.5"></i></button>
@@ -4554,6 +4895,7 @@
             <div class="grid grid-cols-1 ${multiCol ? 'lg:grid-cols-2' : ''} gap-3">
               ${STATE.solutionViewUser ? renderUserView() : ''}
               ${STATE.solutionViewAdmin ? renderAdminConsole() : ''}
+              ${STATE.solutionViewSetupStore ? renderSetupStoreView() : ''}
               ${STATE.solutionViewOnboarding ? renderOnboardingView() : ''}
               ${STATE.solutionViewDashboard ? renderDashboardView() : ''}
               ${STATE.solutionViewMultiTenant ? renderMultiTenantView() : ''}
@@ -5442,12 +5784,13 @@
           if (node) { const id = node.dataset.id; STATE.activePopover = STATE.activePopover === id ? null : id; render(); return; }
           if (!action) return;
 
-          if (action === 'switch-tab') { STATE.activeTab = act.getAttribute('data-tab'); STATE.visitedCards = []; STATE.activePopover = null; if (STATE.openWhyModal && STATE._savedDriverStates) { STATE.drivers.forEach((d, i) => { d.state = STATE._savedDriverStates[i]; }); STATE.showTippingPoint = STATE._savedTippingPoint; STATE.recastMode = STATE._savedRecastMode; STATE.targetDemandExponent = STATE._savedDemandExp; STATE.targetCapacitySlope = STATE._savedCapSlope; STATE._savedDriverStates = null; updateCurves(); } STATE.openWhyModal = null; STATE.insightContent = null; STATE.flowStep = -1; STATE.flowRunning = false; STATE.flowPaused = false; STATE.flowScenarioIdx = -1; STATE.flowPhase = 'idle'; STATE.flowAppOpened = false; STATE._firstOpenDone = false; STATE.showAdminView = false; STATE.showAutopilot = false; STATE.autopilotStep = -1; STATE.autopilotAppCount = 0; STATE.drPhase = 'idle'; STATE.drRunning = false; STATE.drPaused = false; STATE.drQueue = []; STATE.drQueueIdx = 0; STATE.obPhase = 'idle'; STATE.obRunning = false; STATE.obPaused = false; STATE.obQueue = []; STATE.obQueueIdx = 0; clearFlowTimers(); render(); return; }
+          if (action === 'switch-tab') { STATE.activeTab = act.getAttribute('data-tab'); STATE.visitedCards = []; STATE.activePopover = null; if (STATE.openWhyModal && STATE._savedDriverStates) { STATE.drivers.forEach((d, i) => { d.state = STATE._savedDriverStates[i]; }); STATE.showTippingPoint = STATE._savedTippingPoint; STATE.recastMode = STATE._savedRecastMode; STATE.targetDemandExponent = STATE._savedDemandExp; STATE.targetCapacitySlope = STATE._savedCapSlope; STATE._savedDriverStates = null; updateCurves(); } STATE.openWhyModal = null; STATE.insightContent = null; STATE.flowStep = -1; STATE.flowRunning = false; STATE.flowPaused = false; STATE.flowScenarioIdx = -1; STATE.flowPhase = 'idle'; STATE.flowAppOpened = false; STATE._firstOpenDone = false; STATE.showAdminView = false; STATE.showAutopilot = false; STATE.autopilotStep = -1; STATE.autopilotAppCount = 0; STATE.drPhase = 'idle'; STATE.drRunning = false; STATE.drPaused = false; STATE.drQueue = []; STATE.drQueueIdx = 0; STATE.obPhase = 'idle'; STATE.obRunning = false; STATE.obPaused = false; STATE.obQueue = []; STATE.obQueueIdx = 0; STATE.ssPhase = 'idle'; STATE.ssRunning = false; STATE.ssPaused = false; STATE.ssQueue = []; STATE.ssQueueIdx = 0; clearFlowTimers(); render(); return; }
           if (action === 'advance') { STATE.activeTab = act.getAttribute('data-next'); if (STATE.openWhyModal && STATE._savedDriverStates) { STATE.drivers.forEach((d, i) => { d.state = STATE._savedDriverStates[i]; }); STATE.showTippingPoint = STATE._savedTippingPoint; STATE.recastMode = STATE._savedRecastMode; STATE.targetDemandExponent = STATE._savedDemandExp; STATE.targetCapacitySlope = STATE._savedCapSlope; STATE._savedDriverStates = null; updateCurves(); } STATE.openWhyModal = null; if (STATE.activeTab === 'roi') { calculateImpact(); } render(); return; }
           if (action === 'toggle-solution-view') {
             const view = act.getAttribute('data-view');
             if (view === 'user') STATE.solutionViewUser = !STATE.solutionViewUser;
             if (view === 'admin') STATE.solutionViewAdmin = !STATE.solutionViewAdmin;
+            if (view === 'setupstore') STATE.solutionViewSetupStore = !STATE.solutionViewSetupStore;
             if (view === 'multitenant') STATE.solutionViewMultiTenant = !STATE.solutionViewMultiTenant;
             if (view === 'dashboard') STATE.solutionViewDashboard = !STATE.solutionViewDashboard;
             if (view === 'onboarding') STATE.solutionViewOnboarding = !STATE.solutionViewOnboarding;
@@ -5465,6 +5808,14 @@
           if (action === 'step-ob') { stepOb(); return; }
           if (action === 'reset-ob') { resetOb(); return; }
           if (action === 'pause-ob') { if (STATE.obPaused) { STATE.obPaused = false; render(); runObQueue(); } else { STATE.obPaused = true; STATE.flowTimers.timeouts.forEach(id => clearTimeout(id)); STATE.flowTimers.timeouts = []; render(); } return; }
+          if (action === 'start-ss') { startSs(); return; }
+          if (action === 'step-ss') { stepSs(); return; }
+          if (action === 'reset-ss') { resetSs(); return; }
+          if (action === 'pause-ss') {
+            if (STATE.ssPaused) { STATE.ssPaused = false; render(); runSsQueue(); }
+            else { STATE.ssPaused = true; STATE.flowTimers.timeouts.forEach(id => clearTimeout(id)); STATE.flowTimers.timeouts = []; render(); }
+            return;
+          }
           if (action === 'close-modal') { STATE.modalOpen = false; render(); return; }
           if (action === 'close-why-modal') {
             STATE.openWhyModal = null;
