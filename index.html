@@ -198,6 +198,352 @@
       .catalog-app.clicked .app-icon { box-shadow: 0 0 0 3px rgba(0,112,243,0.4); }
       @keyframes clickRing { 0% { transform: scale(0.8); opacity: 1; } 100% { transform: scale(1.8); opacity: 0; } }
       .click-ring { position: absolute; inset: 0; border-radius: 8px; border: 2px solid #0070F3; animation: clickRing 0.6s ease-out forwards; pointer-events: none; }
+
+      /* ============================================================
+         USER EXPERIENCE — Three synchronized device frames
+         Synchronicity is the message. All three frames advance in
+         lockstep with STATE.flowPhase. Cyan accent (#00BFFF) is the
+         brand thread that ties Windows · macOS · Cloud PC together.
+         ============================================================ */
+      .ux-tri-card { position: relative; }
+      .ux-tri {
+        display: grid; grid-template-columns: repeat(3, 1fr);
+        gap: 14px; position: relative; padding-bottom: 8px;
+      }
+      @media (max-width: 860px) { .ux-tri { grid-template-columns: 1fr; gap: 16px; } }
+
+      /* Each device card: tag → chrome → stage → chrome */
+      .ux-device {
+        display: flex; flex-direction: column; gap: 6px;
+        animation: uxDeviceIn 720ms cubic-bezier(0.22, 1, 0.36, 1) both;
+      }
+      .ux-device:nth-child(1) { animation-delay: 60ms; }
+      .ux-device:nth-child(2) { animation-delay: 60ms; }   /* sync — same delay */
+      .ux-device:nth-child(3) { animation-delay: 60ms; }   /* sync — same delay */
+      @keyframes uxDeviceIn {
+        from { opacity: 0; transform: translateY(18px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      .ux-device-tag {
+        display: inline-flex; align-items: center; gap: 6px;
+        font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+        text-transform: uppercase; color: #475569;
+        align-self: flex-start;
+      }
+      .ux-device-tag i { color: var(--r-blue, #0000CC); }
+
+      /* The frame is the OS-styled bezel + content stage */
+      .ux-frame {
+        background: #0f172a;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 10px 28px rgba(15, 23, 42, 0.18),
+                    0 1px 0 rgba(255,255,255,0.06) inset;
+        display: flex; flex-direction: column;
+        min-height: 260px;
+      }
+
+      /* Stage — the actual app content area, identical layout in every frame */
+      .ux-stage {
+        flex: 1; min-height: 180px;
+        display: flex; flex-direction: column; justify-content: center;
+        position: relative; overflow: hidden;
+      }
+
+      /* Frame body states */
+      .ux-frame-empty {
+        flex: 1; display: flex; flex-direction: column;
+        align-items: center; justify-content: center;
+        gap: 8px; color: rgba(255,255,255,0.6);
+        font-size: 11px; font-weight: 600; letter-spacing: 0.04em;
+      }
+      .ux-frame-launch {
+        flex: 1; display: flex; flex-direction: column;
+        align-items: center; justify-content: center; gap: 8px;
+        animation: uxLaunchIn 600ms ease-out;
+      }
+      @keyframes uxLaunchIn { from { opacity: 0; } to { opacity: 1; } }
+      .ux-frame-aw-mark {
+        width: 38px; height: 38px; border-radius: 9px;
+        background: linear-gradient(135deg, var(--r-blue, #0000CC), var(--r-cyan, #00BFFF));
+        display: grid; place-items: center;
+        box-shadow: 0 0 0 0 rgba(0, 191, 255, 0.55), 0 4px 14px rgba(0, 0, 204, 0.4);
+        animation: uxAwPulse 1.2s ease-out infinite;
+      }
+      @keyframes uxAwPulse {
+        0%, 100% { box-shadow: 0 0 0 0 rgba(0, 191, 255, 0.55), 0 4px 14px rgba(0, 0, 204, 0.4); }
+        50%      { box-shadow: 0 0 0 8px rgba(0, 191, 255, 0), 0 4px 14px rgba(0, 0, 204, 0.4); }
+      }
+      .ux-frame-launch-text {
+        font-size: 11px; font-weight: 700; color: white;
+        letter-spacing: 0.04em;
+      }
+      .ux-frame-launch-sub {
+        font-size: 9px; color: rgba(255,255,255,0.65);
+        letter-spacing: 0.06em; text-transform: uppercase;
+      }
+
+      .ux-frame-catalog {
+        flex: 1; padding: 10px 10px;
+        background: rgba(255,255,255,0.96);
+        display: flex; flex-direction: column;
+        animation: uxCatalogIn 400ms ease-out;
+      }
+      @keyframes uxCatalogIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+      .ux-catalog-grid {
+        display: grid; grid-template-columns: repeat(4, 1fr);
+        gap: 8px 6px;
+      }
+      .ux-cat-app {
+        display: flex; flex-direction: column; align-items: center;
+        gap: 3px; cursor: default;
+      }
+      .ux-cat-icon {
+        width: 28px; height: 28px; border-radius: 7px;
+        display: grid; place-items: center;
+        font-size: 11px; font-weight: 800; color: white;
+        position: relative; box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+      .ux-cat-name {
+        font-size: 8px; color: #334155; font-weight: 600;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        max-width: 100%; text-align: center;
+      }
+      /* Teams icon glow during catalog/clicking — synced across frames */
+      .ux-cat-teams-glow {
+        box-shadow: 0 0 0 2px rgba(0, 191, 255, 0.55),
+                    0 0 14px 2px rgba(0, 191, 255, 0.45),
+                    0 2px 6px rgba(0,0,0,0.12);
+        animation: uxTeamsGlow 1.4s ease-in-out infinite;
+      }
+      @keyframes uxTeamsGlow {
+        0%, 100% { box-shadow: 0 0 0 2px rgba(0,191,255,0.55), 0 0 12px 2px rgba(0,191,255,0.4), 0 2px 6px rgba(0,0,0,0.12); }
+        50%      { box-shadow: 0 0 0 3px rgba(0,191,255,0.85), 0 0 20px 4px rgba(0,191,255,0.6), 0 2px 6px rgba(0,0,0,0.12); }
+      }
+      .ux-cat-app.clicked .ux-cat-icon { transform: scale(1.06); }
+      /* Click pulse — cyan ring expanding from Teams icon. Identical timing in every frame. */
+      .ux-click-pulse {
+        position: absolute; inset: -2px; border-radius: 8px;
+        border: 2px solid var(--r-cyan, #00BFFF);
+        animation: uxClickPulse 700ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        pointer-events: none;
+      }
+      @keyframes uxClickPulse {
+        0%   { transform: scale(0.85); opacity: 1; }
+        100% { transform: scale(2.1); opacity: 0; }
+      }
+
+      /* Teams app inside frame */
+      .ux-frame-app {
+        flex: 1; background: #ffffff; display: flex;
+        opacity: 0; transform: translateY(8px) scale(0.985);
+        transition: opacity 360ms ease, transform 360ms cubic-bezier(0.22, 1, 0.36, 1);
+      }
+      .ux-frame-app.open, .ux-frame-app.open-instant { opacity: 1; transform: translateY(0) scale(1); }
+      .ux-frame-app.open-instant { transition: none; }
+
+      .ux-teams { display: flex; flex: 1; min-height: 0; }
+      .ux-teams-side {
+        background: #f3f2f1; padding: 6px 4px; display: flex; flex-direction: column;
+        gap: 4px; align-items: center; border-right: 1px solid #e5e5e5;
+      }
+      .ux-teams-side-dot {
+        width: 22px; height: 22px; border-radius: 5px;
+        display: grid; place-items: center; color: #6b7280;
+      }
+      .ux-teams-side-dot.active { background: rgba(91, 83, 214, 0.12); color: #5B53D6; }
+      .ux-teams-main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+      .ux-teams-header {
+        font-size: 10px; font-weight: 700; color: #334155;
+        padding: 6px 10px; border-bottom: 1px solid #e5e7eb;
+        display: inline-flex; align-items: center; gap: 4px;
+      }
+      .ux-teams-body {
+        flex: 1; padding: 8px; display: flex; flex-direction: column;
+        gap: 6px; background: #fafafa; overflow: hidden;
+      }
+      .ux-teams-msg {
+        display: flex; align-items: flex-start; gap: 6px;
+        opacity: 0; transform: translateY(6px);
+        transition: opacity 260ms ease, transform 260ms ease;
+      }
+      .ux-teams-msg.show { opacity: 1; transform: translateY(0); }
+      .ux-teams-msg.show-instant { opacity: 1; transform: translateY(0); transition: none; }
+      .ux-teams-avatar {
+        width: 18px; height: 18px; border-radius: 50%;
+        display: grid; place-items: center;
+        font-size: 8px; font-weight: 800; color: white;
+        flex-shrink: 0;
+      }
+      .ux-teams-bubble {
+        background: white; border: 1px solid #e5e7eb;
+        border-radius: 8px; padding: 4px 8px;
+        font-size: 9px; color: #1f2937; line-height: 1.35;
+        max-width: 85%;
+      }
+      .ux-teams-bubble.self {
+        margin-left: auto; background: #ede9fe; border-color: #ddd6fe;
+        color: #4c1d95;
+      }
+
+      /* ─── Windows chrome ─── */
+      .ux-chrome-win-titlebar {
+        background: #f3f3f3; height: 22px;
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 0 8px; border-bottom: 1px solid #e5e5e5;
+      }
+      .ux-chrome-win-titlebar .ux-titlebar-text {
+        font-size: 9px; font-weight: 600; color: #1f2937;
+      }
+      .ux-win-controls { display: flex; gap: 4px; }
+      .ux-win-controls span { width: 9px; height: 9px; background: #cbd5e1; border-radius: 1px; }
+      .ux-win-controls .ux-win-close { background: #e0383e; }
+      .ux-chrome-win-taskbar {
+        background: rgba(0, 0, 0, 0.78); backdrop-filter: blur(10px);
+        height: 26px; padding: 0 8px;
+        display: flex; align-items: center; gap: 5px;
+      }
+      .ux-win-start {
+        display: grid; grid-template-columns: 1fr 1fr; gap: 1px;
+        width: 12px; height: 12px;
+      }
+      .ux-win-start span { background: #00BFFF; border-radius: 1px; }
+      .ux-win-tb-icon {
+        width: 16px; height: 16px; border-radius: 3px;
+        display: grid; place-items: center;
+        font-size: 7px; font-weight: 800; color: white;
+      }
+      .ux-win-tb-aw {
+        background: linear-gradient(135deg, #0000CC, #00BFFF);
+      }
+      .ux-win-tb-aw.pulse { box-shadow: 0 0 0 2px rgba(0, 191, 255, 0.7); }
+      .ux-win-tb-spacer { flex: 1; }
+      .ux-win-tb-clock { font-size: 8px; font-weight: 600; color: white; letter-spacing: 0.02em; }
+
+      /* ─── macOS chrome ─── */
+      .ux-chrome-mac-menubar {
+        background: rgba(255,255,255,0.92); backdrop-filter: blur(10px);
+        height: 22px; padding: 0 8px;
+        display: flex; align-items: center; gap: 8px;
+        border-bottom: 1px solid rgba(0,0,0,0.06);
+        font-size: 9px; color: #1f2937;
+      }
+      .ux-chrome-mac-menubar .ux-mac-app { font-weight: 700; }
+      .ux-chrome-mac-menubar .ux-mac-menu { font-weight: 500; color: #374151; }
+      .ux-mac-spacer { flex: 1; }
+      .ux-mac-clock { font-size: 8px; font-weight: 500; }
+      .ux-chrome-mac-dock {
+        padding: 4px 0; display: flex; justify-content: center;
+        background: linear-gradient(180deg, transparent, rgba(0,0,0,0.06));
+      }
+      .ux-mac-dock-inner {
+        display: flex; align-items: center; gap: 4px;
+        padding: 3px 8px; background: rgba(255,255,255,0.55);
+        backdrop-filter: blur(14px);
+        border-radius: 8px; border: 1px solid rgba(255,255,255,0.6);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+      }
+      .ux-mac-dock-icon {
+        width: 16px; height: 16px; border-radius: 4px;
+        display: grid; place-items: center; color: white;
+      }
+      .ux-mac-dock-aw { background: linear-gradient(135deg, #0000CC, #00BFFF); }
+      .ux-mac-dock-aw.pulse { box-shadow: 0 0 0 2px rgba(0, 191, 255, 0.7); }
+
+      /* ─── Cloud PC / browser chrome ─── */
+      .ux-chrome-browser {
+        background: #e2e8f0; padding: 4px 6px 0;
+        border-bottom: 1px solid #cbd5e1;
+      }
+      .ux-browser-tabs { display: flex; gap: 3px; align-items: flex-end; }
+      .ux-browser-tab {
+        background: white; border-radius: 6px 6px 0 0;
+        padding: 3px 8px; font-size: 8px; font-weight: 600;
+        color: #1f2937; display: inline-flex; align-items: center; gap: 4px;
+        border: 1px solid #cbd5e1; border-bottom: none;
+      }
+      .ux-browser-tab.inactive { background: #cbd5e1; width: 18px; padding: 3px; }
+      .ux-browser-url {
+        background: white; padding: 4px 8px;
+        display: flex; align-items: center; gap: 6px;
+        border-top: 1px solid #cbd5e1;
+      }
+      .ux-browser-controls { display: flex; gap: 3px; }
+      .ux-browser-controls span { width: 7px; height: 7px; border-radius: 50%; background: #cbd5e1; }
+      .ux-browser-bar {
+        flex: 1; background: #f1f5f9; border-radius: 9999px;
+        padding: 2px 8px; font-size: 8px; font-weight: 500; color: #475569;
+        display: inline-flex; align-items: center; gap: 4px;
+      }
+      .ux-chrome-cloud-status {
+        background: #0f172a;
+        padding: 4px 8px; font-size: 8px; font-weight: 500; color: #cbd5e1;
+        display: flex; align-items: center; gap: 6px;
+        border-top: 1px solid rgba(255,255,255,0.06);
+      }
+      .ux-cloud-dot {
+        width: 6px; height: 6px; border-radius: 50%;
+        background: #00BFFF;
+        box-shadow: 0 0 6px rgba(0, 191, 255, 0.7);
+      }
+
+      /* ─── Cyan unifying thread (final phase) ─── */
+      .ux-thread {
+        position: absolute; left: 0; right: 0; bottom: -2px; height: 16px;
+        pointer-events: none; opacity: 0;
+        transition: opacity 200ms ease;
+      }
+      .ux-tri.is-final .ux-thread { opacity: 1; }
+      .ux-thread-line {
+        position: absolute; left: 8%; right: 8%; top: 50%;
+        height: 1.5px; background: linear-gradient(90deg, transparent 0%, var(--r-cyan, #00BFFF) 12%, var(--r-cyan, #00BFFF) 88%, transparent 100%);
+        transform-origin: left center; transform: scaleX(0);
+        box-shadow: 0 0 8px rgba(0, 191, 255, 0.6);
+      }
+      .ux-tri.is-final .ux-thread-line {
+        animation: uxThreadDraw 800ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      }
+      @keyframes uxThreadDraw { to { transform: scaleX(1); } }
+      .ux-thread-dot {
+        position: absolute; top: 50%; transform: translate(-50%, -50%);
+        width: 8px; height: 8px; border-radius: 50%;
+        background: var(--r-cyan, #00BFFF);
+        box-shadow: 0 0 0 3px rgba(0, 191, 255, 0.25), 0 0 10px rgba(0,191,255,0.7);
+        opacity: 0;
+      }
+      .ux-thread-dot-1 { left: calc(16.66% + 0px); }
+      .ux-thread-dot-2 { left: 50%; }
+      .ux-thread-dot-3 { left: calc(83.33% + 0px); }
+      .ux-tri.is-final .ux-thread-dot-1 { animation: uxDotPop 320ms ease-out 100ms forwards; }
+      .ux-tri.is-final .ux-thread-dot-2 { animation: uxDotPop 320ms ease-out 450ms forwards; }
+      .ux-tri.is-final .ux-thread-dot-3 { animation: uxDotPop 320ms ease-out 800ms forwards; }
+      @keyframes uxDotPop {
+        0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.4); }
+        60%  { opacity: 1; transform: translate(-50%, -50%) scale(1.3); }
+        100% { opacity: 1; transform: translate(-50%, -50%) scale(1);   }
+      }
+
+      /* ─── Closing label ─── */
+      .ux-closer {
+        margin-top: 18px; text-align: center;
+        opacity: 0; transform: translateY(6px);
+        transition: opacity 480ms ease 850ms, transform 480ms ease 850ms;
+      }
+      .ux-closer.show { opacity: 1; transform: translateY(0); }
+      .ux-closer-line {
+        display: inline-block;
+        font-size: 14px; font-weight: 700; letter-spacing: -0.005em;
+        color: #0F172A;
+      }
+      .ux-closer-line strong { color: var(--r-blue, #0000CC); }
+
+      /* Compact tweaks for the small UX frames on mobile */
+      @media (max-width: 860px) {
+        .ux-frame { min-height: 280px; }
+        .ux-thread { display: none; }
+      }
       .user-status { padding: 10px 16px; border-top: 1px solid #e2e8f0; display: flex; align-items: center; gap: 8px; min-height: 40px; transition: all 0.4s ease; font-size: 12px; color: #64748b; }
       .user-status.loading { color: #0070F3; }
       .user-status.success { color: #059669; background: #f0fdf4; }
@@ -3562,7 +3908,7 @@
 
       function stepFlow(){
         if (STATE.flowRunning) return;
-        if (!STATE.flowDevice) STATE.flowDevice = 'Windows';
+        if (!STATE.flowDevice) STATE.flowDevice = 'multi';
         if (!STATE.flowQueue || STATE.flowQueue.length === 0) {
           STATE.flowQueue = buildFlowQueue();
           STATE.flowQueueIdx = 0;
@@ -4228,163 +4574,188 @@
         `;
       }
 
-      /* ========== USER EXPERIENCE VIEW ========== */
+      /* ========== USER EXPERIENCE VIEW ==========
+         Three-frame synchronized story: Windows · macOS · Cloud PC.
+         Same Application Workspace catalog inside each. Same Teams click,
+         pulse, and chat — all driven by STATE.flowPhase so the three
+         frames advance in lockstep. Synchronicity IS the message. */
       function renderUserView(){
         const sc = STATE.flowScenarioIdx;
         const phase = STATE.flowPhase;
         const scenario = sc >= 0 && sc < SCENARIOS.length ? SCENARIOS[sc] : null;
         const appOpen = scenario && !['idle','launch','catalog','clicking'].includes(phase);
-        const showDesktop = !scenario || phase === 'idle' || phase === 'launch';
+        const showCatalog = scenario && (phase === 'catalog' || phase === 'clicking');
+        const showLaunch = scenario && phase === 'launch';
+        const idle = !scenario || phase === 'idle';
         const firstOpen = appOpen && !STATE._firstOpenDone;
         if (firstOpen) STATE._firstOpenDone = true;
         const appWindowClass = appOpen ? (firstOpen ? 'open' : 'open-instant') : '';
         const msgClass = appOpen ? (firstOpen ? 'show' : 'show-instant') : '';
+        const showThread = phase === 'final';
 
-        const phaseLabel = !scenario ? 'Ready' :
-          phase === 'idle' ? 'Waiting...' :
-          phase === 'launch' ? 'User opens Application Workspace...' :
-          phase === 'catalog' ? 'Browsing app catalog...' :
-          phase === 'clicking' ? 'User selects Teams...' :
-          phase === 'checking' ? 'Verifying identity & context...' :
-          phase === 'routing' ? 'Selecting delivery path...' :
-          phase === 'config' ? 'Applying configuration...' :
-          phase === 'done' ? 'App delivered' :
-          phase === 'final' ? 'Complete' : '';
+        // Compact Application Workspace catalog rendered inside each frame.
+        // 12 icons keeps the grid readable inside small frames.
+        const triCatalog = CATALOG_APPS.slice(0, 12);
+        const catalogGrid = (frameId) => `
+          <div class="ux-catalog-grid">
+            ${triCatalog.map(app => {
+              const isTeams = app.id === 'teams';
+              const teamsCls = isTeams && (phase === 'clicking' || phase === 'catalog') ? 'ux-cat-teams-glow' : '';
+              return `
+                <div class="ux-cat-app ${isTeams && phase === 'clicking' ? 'clicked' : ''}">
+                  <div class="ux-cat-icon ${teamsCls}" style="background:${app.color}">${app.letter}
+                    ${isTeams && phase === 'clicking' ? '<span class="ux-click-pulse"></span>' : ''}
+                  </div>
+                  <span class="ux-cat-name">${app.name}</span>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        `;
 
-        const phaseColor = !scenario || phase === 'idle' ? 'bg-slate-100 text-slate-400' :
-          ['done','final'].includes(phase) ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' :
-          'bg-blue-50 text-[#0070F3] border border-blue-200';
+        // Teams chat that fills each frame's content area.
+        // Avatars are slightly smaller and message text is identical across all frames.
+        const teamsContent = () => `
+          <div class="ux-teams">
+            <div class="ux-teams-side">
+              <div class="ux-teams-side-dot active"><i data-lucide="message-square" class="w-3 h-3"></i></div>
+              <div class="ux-teams-side-dot"><i data-lucide="users" class="w-3 h-3"></i></div>
+              <div class="ux-teams-side-dot"><i data-lucide="calendar" class="w-3 h-3"></i></div>
+              <div class="ux-teams-side-dot"><i data-lucide="phone" class="w-3 h-3"></i></div>
+            </div>
+            <div class="ux-teams-main">
+              <div class="ux-teams-header"><i data-lucide="hash" class="w-3 h-3 text-slate-400"></i> General</div>
+              <div class="ux-teams-body">
+                <div class="ux-teams-msg ${msgClass}" style="transition-delay:${firstOpen ? '0.3s' : '0s'}">
+                  <div class="ux-teams-avatar" style="background:#3b82f6">AK</div>
+                  <div class="ux-teams-bubble">Q3 deck is ready for review</div>
+                </div>
+                <div class="ux-teams-msg ${msgClass}" style="transition-delay:${firstOpen ? '0.6s' : '0s'}">
+                  <div class="ux-teams-avatar" style="background:#10b981">JR</div>
+                  <div class="ux-teams-bubble">Pulling it up now</div>
+                </div>
+                <div class="ux-teams-msg ${msgClass}" style="transition-delay:${firstOpen ? '0.9s' : '0s'}">
+                  <div class="ux-teams-bubble self">On it. Give me 5 min.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+
+        // The body of one frame switches with the global phase.
+        const frameBody = () => {
+          if (idle) {
+            return `<div class="ux-frame-empty"><i data-lucide="layout-grid" class="w-5 h-5 text-slate-300"></i><span>Ready</span></div>`;
+          }
+          if (showLaunch) {
+            return `<div class="ux-frame-launch">
+              <div class="ux-frame-aw-mark"><i data-lucide="layout-grid" class="w-4 h-4 text-white"></i></div>
+              <div class="ux-frame-launch-text">Application Workspace</div>
+              <div class="ux-frame-launch-sub">Opening\u2026</div>
+            </div>`;
+          }
+          if (showCatalog) {
+            return `<div class="ux-frame-catalog">${catalogGrid()}</div>`;
+          }
+          // checking / routing / config / done / final → Teams open
+          return `<div class="ux-frame-app ${appWindowClass}">${teamsContent()}</div>`;
+        };
+
+        // Build one device frame (variant determines OS-specific chrome).
+        const deviceFrame = (variant) => {
+          // variant: { id, label, sub, chromeTop, chromeBottom, accentBg }
+          return `
+            <div class="ux-device ux-device-${variant.id}" data-variant="${variant.id}">
+              <div class="ux-device-tag"><i data-lucide="${variant.icon}" class="w-3 h-3"></i> ${variant.label}</div>
+              <div class="ux-frame">
+                ${variant.chromeTop || ''}
+                <div class="ux-stage" style="${variant.stageBg ? 'background:' + variant.stageBg : ''}">
+                  ${frameBody()}
+                </div>
+                ${variant.chromeBottom || ''}
+              </div>
+            </div>
+          `;
+        };
+
+        const winChromeTop = `
+          <div class="ux-chrome-win-titlebar">
+            <span class="ux-titlebar-text">${appOpen ? 'Microsoft Teams' : 'Application Workspace'}</span>
+            <div class="ux-win-controls"><span></span><span></span><span class="ux-win-close"></span></div>
+          </div>`;
+        const winChromeBottom = `
+          <div class="ux-chrome-win-taskbar">
+            <div class="ux-win-start"><span></span><span></span><span></span><span></span></div>
+            ${['#185ABD','#107C41','#4285F4','#106EBE'].map(c=>`<div class="ux-win-tb-icon" style="background:${c}"></div>`).join('')}
+            <div class="ux-win-tb-icon ux-win-tb-aw ${showLaunch ? 'pulse' : ''}"><i data-lucide="layout-grid" class="w-2.5 h-2.5 text-white"></i></div>
+            <div class="ux-win-tb-spacer"></div>
+            <div class="ux-win-tb-clock">10:24</div>
+          </div>`;
+        const macChromeTop = `
+          <div class="ux-chrome-mac-menubar">
+            <i data-lucide="apple" class="w-3 h-3"></i>
+            <span class="ux-mac-app">${appOpen ? 'Teams' : 'Workspace'}</span>
+            <span class="ux-mac-menu">File</span><span class="ux-mac-menu">Edit</span><span class="ux-mac-menu">View</span>
+            <div class="ux-mac-spacer"></div>
+            <i data-lucide="wifi" class="w-3 h-3"></i>
+            <i data-lucide="battery" class="w-3 h-3"></i>
+            <span class="ux-mac-clock">Tue 10:24</span>
+          </div>`;
+        const macChromeBottom = `
+          <div class="ux-chrome-mac-dock">
+            <div class="ux-mac-dock-inner">
+              ${['#185ABD','#107C41','#4285F4','#106EBE'].map(c=>`<div class="ux-mac-dock-icon" style="background:${c}"></div>`).join('')}
+              <div class="ux-mac-dock-icon ux-mac-dock-aw ${showLaunch ? 'pulse' : ''}"><i data-lucide="layout-grid" class="w-2.5 h-2.5 text-white"></i></div>
+            </div>
+          </div>`;
+        const cloudChromeTop = `
+          <div class="ux-chrome-browser">
+            <div class="ux-browser-tabs">
+              <div class="ux-browser-tab active"><i data-lucide="cloud" class="w-2.5 h-2.5"></i> Cloud PC</div>
+              <div class="ux-browser-tab inactive"></div>
+            </div>
+            <div class="ux-browser-url">
+              <div class="ux-browser-controls"><span></span><span></span><span></span></div>
+              <div class="ux-browser-bar"><i data-lucide="lock" class="w-2.5 h-2.5"></i> cloudpc.windows365.com</div>
+            </div>
+          </div>`;
+        const cloudChromeBottom = `
+          <div class="ux-chrome-cloud-status">
+            <span class="ux-cloud-dot"></span>
+            <span>Connected \u2014 Windows 365 Cloud PC \u00b7 ${appOpen ? 'Teams running' : 'Workspace ready'}</span>
+          </div>`;
+
+        const variants = [
+          { id:'win',   label:'Windows',  icon:'monitor',          chromeTop:winChromeTop,   chromeBottom:winChromeBottom,   stageBg:'linear-gradient(135deg,#1e3a8a 0%,#0f172a 100%)' },
+          { id:'mac',   label:'macOS',    icon:'laptop',           chromeTop:macChromeTop,   chromeBottom:macChromeBottom,   stageBg:'linear-gradient(135deg,#fde68a 0%,#fca5a5 50%,#a78bfa 100%)' },
+          { id:'cloud', label:'Cloud PC', icon:'cloud',            chromeTop:cloudChromeTop, chromeBottom:cloudChromeBottom, stageBg:'linear-gradient(135deg,#0ea5e9 0%,#1e40af 100%)' },
+        ];
 
         return `
-          <div class="section-card p-4">
-            <!-- What the user sees -->
-            <div class="flex items-center gap-2 mb-3">
-              ${['done','final'].includes(phase) ? '<div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200"><i data-lucide="check-circle" class="w-4 h-4 text-emerald-500"></i><span class="text-xs font-semibold text-emerald-700">Same experience. Every device. Every time.</span></div>' : '<div class="bts-label bts-label-user"><i data-lucide="user" class="w-3 h-3"></i> What the user sees</div>'}
+          <div class="section-card p-4 ux-tri-card">
+            <div class="flex items-center justify-between mb-3 gap-2 flex-wrap">
+              <div class="flex items-center gap-2">
+                ${['done','final'].includes(phase)
+                  ? '<div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200"><i data-lucide="check-circle" class="w-4 h-4 text-emerald-500"></i><span class="text-xs font-semibold text-emerald-700">Same experience. Every device. Every time.</span></div>'
+                  : '<div class="bts-label bts-label-user"><i data-lucide="user" class="w-3 h-3"></i> What the user sees</div>'}
+              </div>
+              <div class="text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400">Three OS contexts \u00b7 one synchronized experience</div>
             </div>
 
-            <div class="device-frame" id="deviceFrame">
-              <div class="device-screen" style="position:relative">
-                <div class="device-titlebar">
-                  <div class="device-dot device-dot-r"></div>
-                  <div class="device-dot device-dot-y"></div>
-                  <div class="device-dot device-dot-g"></div>
-                  <span class="device-titlebar-text">${appOpen ? 'Microsoft Teams' : showDesktop ? (phase === 'launch' ? 'Opening Application Workspace...' : STATE.flowDevice ? STATE.flowDevice + ' -  Desktop' : 'Select a device') : phase === 'clicking' ? 'Application Workspace -  selecting Teams...' : 'Application Workspace'}</span>
-                </div>
-
-                ${showDesktop && !STATE.flowDevice ? `
-                <!-- Device picker: choose a device to start -->
-                <div style="background:linear-gradient(135deg,#e0e7ff 0%,#dbeafe 40%,#eff6ff 100%);min-height:180px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 16px;gap:14px">
-                  <div style="font-size:11px;font-weight:600;color:#0A1C60;text-transform:uppercase;letter-spacing:0.05em">Select a device to see the experience</div>
-                  <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:10px">
-                    ${DEVICE_OPTIONS.map(d => `
-                      <button type="button" data-action="select-device" data-device="${d.id}" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 14px;border-radius:12px;border:1.5px solid #cbd5e1;background:rgba(255,255,255,0.85);cursor:pointer;transition:all 0.15s ease;min-width:80px" onmouseover="this.style.borderColor='#0070F3';this.style.boxShadow='0 4px 16px rgba(0,112,243,0.15)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='#cbd5e1';this.style.boxShadow='none';this.style.transform='none'">
-                        <i data-lucide="${d.icon}" style="width:24px;height:24px;color:#0A1C60"></i>
-                        <span style="font-size:11px;font-weight:700;color:#0A1C60">${d.id}</span>
-                        <span style="font-size:8px;color:#64748b">${d.desc}</span>
-                      </button>
-                    `).join('')}
-                  </div>
-                </div>
-                ` : showDesktop ? `
-                <!-- Desktop view: user's device with app icons -->
-                <div style="background:linear-gradient(135deg,#e0e7ff 0%,#dbeafe 40%,#eff6ff 100%);min-height:180px;display:flex;flex-direction:column;position:relative">
-                  <!-- Desktop icons -->
-                  <div style="flex:1;padding:16px 20px;display:flex;flex-wrap:wrap;gap:16px;align-content:start">
-                    ${[
-                      {l:'W',c:'#185ABD',n:'Word'},
-                      {l:'X',c:'#107C41',n:'Excel'},
-                      {l:'C',c:'#4285F4',n:'Chrome'},
-                      {l:'O',c:'#106EBE',n:'Outlook'},
-                    ].map(a => `
-                      <div style="display:flex;flex-direction:column;align-items:center;gap:3px;width:48px">
-                        <div style="width:36px;height:36px;border-radius:10px;background:${a.c};display:grid;place-items:center;font-size:14px;font-weight:800;color:white;box-shadow:0 2px 8px rgba(0,0,0,0.15)">${a.l}</div>
-                        <span style="font-size:9px;color:#334155;text-align:center">${a.n}</span>
-                      </div>
-                    `).join('')}
-                    <!-- Application Workspace icon (hero) -->
-                    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;width:48px;position:relative">
-                      <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#0A1C60,#0070F3);display:grid;place-items:center;box-shadow:0 2px 12px rgba(0,112,243,0.3);${phase === 'launch' ? 'box-shadow:0 0 0 3px rgba(0,112,243,0.4),0 2px 12px rgba(0,112,243,0.3)' : ''}">
-                        <i data-lucide="layout-grid" class="w-4 h-4 text-white"></i>
-                      </div>
-                      ${phase === 'launch' ? '<div class="click-ring" style="width:36px;height:36px;border-radius:10px;position:absolute;top:0"></div>' : ''}
-                      <span style="font-size:9px;color:#0A1C60;font-weight:600;text-align:center">Workspace</span>
-                    </div>
-                  </div>
-                  <!-- Taskbar -->
-                  <div style="background:rgba(255,255,255,0.85);backdrop-filter:blur(8px);border-top:1px solid rgba(203,213,225,0.5);padding:4px 12px;display:flex;align-items:center;justify-content:center;gap:8px">
-                    ${[
-                      {c:'#185ABD',l:'W'},{c:'#107C41',l:'X'},{c:'#4285F4',l:'C'},{c:'#106EBE',l:'O'},
-                    ].map(a => `<div style="width:22px;height:22px;border-radius:5px;background:${a.c};display:grid;place-items:center;font-size:8px;font-weight:800;color:white">${a.l}</div>`).join('')}
-                    <div style="width:22px;height:22px;border-radius:5px;background:linear-gradient(135deg,#0A1C60,#0070F3);display:grid;place-items:center;${phase === 'launch' ? 'box-shadow:0 0 8px rgba(0,112,243,0.5)' : ''}"><i data-lucide="layout-grid" class="w-3 h-3 text-white"></i></div>
-                  </div>
-                </div>
-                ` : `
-                <!-- Catalog grid view -->
-                <div class="catalog-grid" id="catalogGrid">
-                  ${CATALOG_APPS.map(app => `
-                    <div class="catalog-app ${(appOpen && app.id === 'teams') ? 'clicked' : ''}" data-app="${app.id}">
-                      <div class="app-icon" style="background:${app.color}">
-                        ${app.letter}
-                        ${(phase === 'clicking' && app.id === 'teams') ? '<div class="click-ring"></div>' : ''}
-                      </div>
-                      <span class="app-name">${app.name}</span>
-                    </div>
-                  `).join('')}
-                </div>
-                `}
-
-                <div class="app-window-overlay ${appWindowClass}" id="appWindow">
-                  <div class="app-window-topbar">
-                    <div class="aw-icon" style="background:#5B53D6">T</div>
-                    <div>
-                      <div class="aw-title">Microsoft Teams</div>
-                      <div class="aw-subtitle">${scenario && scenario.id === 'backend' ? 'teams.microsoft.com -  routed by Workspace' : scenario && scenario.id === 'update' ? 'v2.2 -  auto-patched by Workspace' : 'Installed and configured by Workspace'}</div>
-                    </div>
-                  </div>
-                  <div class="app-window-body" style="flex-direction:row">
-                    <div class="teams-sidebar">
-                      <div class="teams-sidebar-dot active"><i data-lucide="message-square" class="w-3 h-3"></i></div>
-                      <div class="teams-sidebar-dot"><i data-lucide="users" class="w-3 h-3"></i></div>
-                      <div class="teams-sidebar-dot"><i data-lucide="calendar" class="w-3 h-3"></i></div>
-                      <div class="teams-sidebar-dot"><i data-lucide="phone" class="w-3 h-3"></i></div>
-                      <div class="teams-sidebar-dot"><i data-lucide="file" class="w-3 h-3"></i></div>
-                    </div>
-                    <div class="teams-chat-area">
-                      <div class="teams-chat-header"><i data-lucide="hash" class="w-3 h-3 text-slate-400"></i> General</div>
-                      <div class="teams-chat-body">
-                        <div class="teams-msg ${msgClass}" style="transition-delay:${firstOpen ? '0.3s' : '0s'}">
-                          <div class="teams-msg-avatar" style="background:#3b82f6">AK</div>
-                          <div class="teams-msg-bubble">Hey team, the Q3 deck is updated and ready for review</div>
-                        </div>
-                        <div class="teams-msg ${msgClass}" style="transition-delay:${firstOpen ? '0.6s' : '0s'}">
-                          <div class="teams-msg-avatar" style="background:#10b981">JR</div>
-                          <div class="teams-msg-bubble">Perfect timing -  pulling it up now</div>
-                        </div>
-                        <div class="teams-msg ${msgClass}" style="transition-delay:${firstOpen ? '0.9s' : '0s'}">
-                          <div class="teams-msg-bubble self">On it. Give me 5 min.</div>
-                        </div>
-                      </div>
-                      <div class="teams-chat-input">
-                        <div class="teams-chat-input-box">Type a message...</div>
-                        <i data-lucide="send" class="w-3 h-3 text-slate-300"></i>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                ${appOpen && ['checking','routing','config'].includes(phase) ? `
-                  <div style="position:absolute;bottom:6px;right:6px;z-index:10;display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:9999px;background:rgba(255,255,255,0.92);border:1px solid #a7f3d0;font-size:9px;font-weight:600;color:#059669;backdrop-filter:blur(4px)">
-                    <i data-lucide="check-circle" class="w-3 h-3"></i>
-                    User is working -  orchestration happens invisibly
-                  </div>
-                ` : ''}
+            <div class="ux-tri ${idle ? '' : 'is-running'} ${appOpen ? 'is-app-open' : ''} ${showThread ? 'is-final' : ''}">
+              ${variants.map(deviceFrame).join('')}
+              <!-- Cyan unifying thread (visible only on 'final') -->
+              <div class="ux-thread" aria-hidden="true">
+                <div class="ux-thread-line"></div>
+                <span class="ux-thread-dot ux-thread-dot-1"></span>
+                <span class="ux-thread-dot ux-thread-dot-2"></span>
+                <span class="ux-thread-dot ux-thread-dot-3"></span>
               </div>
             </div>
 
-            <!-- Device type strip -->
-            <div class="flex items-center justify-center gap-2 mt-2 flex-wrap">
-              <span class="text-[9px] ${['done','final'].includes(phase) ? 'text-emerald-600' : 'text-slate-400'} font-semibold uppercase tracking-wider">${['done','final'].includes(phase) ? 'Verified across:' : 'Same experience on:'}</span>
-              ${DEVICE_OPTIONS.map(d => `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border ${['done','final'].includes(phase) ? 'border-emerald-300 bg-emerald-50 text-emerald-700' : STATE.flowDevice === d.id ? 'border-[#0070F3] bg-blue-50 text-[#0070F3]' : 'border-slate-200 bg-white text-[#475569]'} text-[10px] font-medium">${d.id}</span>`).join('')}
+            <!-- Closing label appears with the thread -->
+            <div class="ux-closer ${showThread ? 'show' : ''}">
+              <div class="ux-closer-line"><strong>One platform.</strong> One experience. Three devices.</div>
             </div>
 
             ${scenario && !['idle','launch','catalog','clicking'].includes(phase) ? `
@@ -6933,7 +7304,7 @@
             targets.forEach(t => {
               if (t === 'flow') {
                 if (action === 'toggle-flow') {
-                  if (!STATE.flowRunning) { if (!STATE.flowDevice) STATE.flowDevice = 'Windows'; startFlow(); }
+                  if (!STATE.flowRunning) { if (!STATE.flowDevice) STATE.flowDevice = 'multi'; startFlow(); }
                   else if (anyActive) { pauseFlow(); }
                   else if (STATE.flowPaused) { resumeFlow(); }
                 } else if (action === 'step-flow') { stepFlow(); }
