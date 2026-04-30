@@ -2060,6 +2060,7 @@
         ssPaused: false,
         ssQueue: [],
         ssQueueIdx: 0,
+        ssTimers: [],
         showLabels: false,
         showSolutionCards: true,
         openWhy: null,
@@ -4793,18 +4794,26 @@
           STATE.ssQueueIdx++;
           runSsQueue();
         }, step.delay);
-        STATE.flowTimers.timeouts.push(tid);
+        STATE.ssTimers.push(tid);
       }
 
       function startSs(){
         if (STATE.ssRunning) return;
-        STATE.flowTimers.timeouts.forEach(id => clearTimeout(id));
-        STATE.flowTimers.timeouts = [];
+        STATE.ssTimers.forEach(id => clearTimeout(id));
+        STATE.ssTimers = [];
         STATE.ssRunning = true;
         STATE.ssPaused = false;
-        STATE.ssPhase = 'idle';
-        STATE.ssQueue = buildSsQueue();
-        STATE.ssQueueIdx = 0;
+        // If catalog is already visible, keep it showing and jump to package phase
+        const alreadyStarted = STATE.ssPhase !== 'idle';
+        if (alreadyStarted) {
+          STATE.ssPhase = 'catalog';
+          STATE.ssQueue = buildSsQueue();
+          STATE.ssQueueIdx = 1; // skip catalog step — it's already on screen
+        } else {
+          STATE.ssPhase = 'idle';
+          STATE.ssQueue = buildSsQueue();
+          STATE.ssQueueIdx = 0;
+        }
         render();
         runSsQueue();
       }
@@ -4823,8 +4832,8 @@
       }
 
       function resetSs(){
-        STATE.flowTimers.timeouts.forEach(id => clearTimeout(id));
-        STATE.flowTimers.timeouts = [];
+        STATE.ssTimers.forEach(id => clearTimeout(id));
+        STATE.ssTimers = [];
         STATE.ssPhase = 'idle';
         STATE.ssRunning = false;
         STATE.ssPaused = false;
@@ -4891,8 +4900,8 @@
               <div class="flex flex-wrap items-center justify-between gap-3">
                 <!-- View toggles -->
                 <div class="flex items-center gap-2">
-                  <button type="button" data-action="toggle-solution-view" data-view="setupstore" class="view-toggle ${STATE.solutionViewSetupStore ? 'active' : ''}"><i data-lucide="library" class="w-3.5 h-3.5"></i> Setup Store</button>
                   <button type="button" data-action="toggle-solution-view" data-view="admin" class="view-toggle ${STATE.solutionViewAdmin ? 'active' : ''}"><i data-lucide="settings-2" class="w-3.5 h-3.5"></i> Admin Console</button>
+                  <button type="button" data-action="toggle-solution-view" data-view="setupstore" class="view-toggle ${STATE.solutionViewSetupStore ? 'active' : ''}"><i data-lucide="library" class="w-3.5 h-3.5"></i> Setup Store</button>
                   <button type="button" data-action="toggle-solution-view" data-view="user" class="view-toggle ${STATE.solutionViewUser ? 'active' : ''}"><i data-lucide="monitor-smartphone" class="w-3.5 h-3.5"></i> User Experience</button>
                   <button type="button" data-action="toggle-solution-view" data-view="onboarding" class="view-toggle ${STATE.solutionViewOnboarding ? 'active' : ''}"><i data-lucide="user-plus" class="w-3.5 h-3.5"></i> Onboarding</button>
                   <button type="button" data-action="toggle-solution-view" data-view="dashboard" class="view-toggle ${STATE.solutionViewDashboard ? 'active' : ''}"><i data-lucide="bar-chart-3" class="w-3.5 h-3.5"></i> Dashboard & Reporting</button>
@@ -5802,7 +5811,7 @@
           if (node) { const id = node.dataset.id; STATE.activePopover = STATE.activePopover === id ? null : id; render(); return; }
           if (!action) return;
 
-          if (action === 'switch-tab') { STATE.activeTab = act.getAttribute('data-tab'); STATE.visitedCards = []; STATE.activePopover = null; if (STATE.openWhyModal && STATE._savedDriverStates) { STATE.drivers.forEach((d, i) => { d.state = STATE._savedDriverStates[i]; }); STATE.showTippingPoint = STATE._savedTippingPoint; STATE.recastMode = STATE._savedRecastMode; STATE.targetDemandExponent = STATE._savedDemandExp; STATE.targetCapacitySlope = STATE._savedCapSlope; STATE._savedDriverStates = null; updateCurves(); } STATE.openWhyModal = null; STATE.insightContent = null; STATE.flowStep = -1; STATE.flowRunning = false; STATE.flowPaused = false; STATE.flowScenarioIdx = -1; STATE.flowPhase = 'idle'; STATE.flowAppOpened = false; STATE._firstOpenDone = false; STATE.showAdminView = false; STATE.showAutopilot = false; STATE.autopilotStep = -1; STATE.autopilotAppCount = 0; STATE.drPhase = 'idle'; STATE.drRunning = false; STATE.drPaused = false; STATE.drQueue = []; STATE.drQueueIdx = 0; STATE.obPhase = 'idle'; STATE.obRunning = false; STATE.obPaused = false; STATE.obQueue = []; STATE.obQueueIdx = 0; STATE.ssPhase = 'idle'; STATE.ssRunning = false; STATE.ssPaused = false; STATE.ssQueue = []; STATE.ssQueueIdx = 0; clearFlowTimers(); render(); return; }
+          if (action === 'switch-tab') { STATE.activeTab = act.getAttribute('data-tab'); STATE.visitedCards = []; STATE.activePopover = null; if (STATE.openWhyModal && STATE._savedDriverStates) { STATE.drivers.forEach((d, i) => { d.state = STATE._savedDriverStates[i]; }); STATE.showTippingPoint = STATE._savedTippingPoint; STATE.recastMode = STATE._savedRecastMode; STATE.targetDemandExponent = STATE._savedDemandExp; STATE.targetCapacitySlope = STATE._savedCapSlope; STATE._savedDriverStates = null; updateCurves(); } STATE.openWhyModal = null; STATE.insightContent = null; STATE.flowStep = -1; STATE.flowRunning = false; STATE.flowPaused = false; STATE.flowScenarioIdx = -1; STATE.flowPhase = 'idle'; STATE.flowAppOpened = false; STATE._firstOpenDone = false; STATE.showAdminView = false; STATE.showAutopilot = false; STATE.autopilotStep = -1; STATE.autopilotAppCount = 0; STATE.drPhase = 'idle'; STATE.drRunning = false; STATE.drPaused = false; STATE.drQueue = []; STATE.drQueueIdx = 0; STATE.obPhase = 'idle'; STATE.obRunning = false; STATE.obPaused = false; STATE.obQueue = []; STATE.obQueueIdx = 0; STATE.ssPhase = 'idle'; STATE.ssRunning = false; STATE.ssPaused = false; STATE.ssQueue = []; STATE.ssQueueIdx = 0; STATE.ssTimers.forEach(id => clearTimeout(id)); STATE.ssTimers = []; clearFlowTimers(); render(); return; }
           if (action === 'advance') { STATE.activeTab = act.getAttribute('data-next'); if (STATE.openWhyModal && STATE._savedDriverStates) { STATE.drivers.forEach((d, i) => { d.state = STATE._savedDriverStates[i]; }); STATE.showTippingPoint = STATE._savedTippingPoint; STATE.recastMode = STATE._savedRecastMode; STATE.targetDemandExponent = STATE._savedDemandExp; STATE.targetCapacitySlope = STATE._savedCapSlope; STATE._savedDriverStates = null; updateCurves(); } STATE.openWhyModal = null; if (STATE.activeTab === 'roi') { calculateImpact(); } render(); return; }
           if (action === 'toggle-solution-view') {
             const view = act.getAttribute('data-view');
