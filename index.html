@@ -252,6 +252,112 @@
       .admin-row.row-active { opacity: 1; border-color: #0070F3; background: #eff6ff; }
       .admin-row.row-done { opacity: 1; border-color: #a7f3d0; background: #f0fdf4; }
       .admin-row.row-idle { opacity: 0.5; }
+
+      /* ─── Admin Console v2 (browser-framed app) ─── */
+      .ac-frame { border: 1px solid #cbd5e1; border-radius: 10px; overflow: hidden; background: #F5F8FF; box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06); }
+      .ac-titlebar { display: flex; align-items: center; gap: 8px; padding: 6px 10px; background: linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 100%); border-bottom: 1px solid #cbd5e1; }
+      .ac-dot { width: 10px; height: 10px; border-radius: 999px; flex-shrink: 0; }
+      .ac-dots { display: flex; gap: 5px; }
+      .ac-url { flex: 1; display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 4px; background: #fff; border: 1px solid #cbd5e1; font-size: 10px; color: #475569; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; min-width: 0; }
+      .ac-url i { width: 11px; height: 11px; color: #10b981; flex-shrink: 0; }
+      .ac-url .ac-url-path { color: #94a3b8; }
+      .ac-url .ac-url-page { color: #0A1C60; font-weight: 600; }
+      .ac-body { display: flex; min-height: 360px; background: #F5F8FF; }
+
+      /* Sidebar */
+      .ac-side { width: 150px; flex-shrink: 0; background: #0A1C60; color: rgba(255,255,255,0.65); display: flex; flex-direction: column; }
+      .ac-side-brand { display: flex; align-items: center; gap: 7px; padding: 10px 12px 8px; }
+      .ac-side-brand-mark { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5px; width: 14px; height: 14px; flex-shrink: 0; }
+      .ac-side-brand-mark span { background: #fff; border-radius: 1px; }
+      .ac-side-brand-mark span:nth-child(1) { background: #00BFFF; }
+      .ac-side-brand-text { font-size: 10px; font-weight: 600; color: #fff; letter-spacing: 0.01em; line-height: 1.1; }
+      .ac-side-divider { height: 1px; background: rgba(255,255,255,0.08); margin: 0 12px; }
+      .ac-side-nav { padding: 6px 0; flex: 1; }
+      .ac-side-item { display: flex; align-items: center; gap: 7px; padding: 5px 12px; font-size: 11px; line-height: 1.2; transition: opacity 0.4s ease, transform 0.4s ease; opacity: 0; transform: translateX(-4px); border-left: 2px solid transparent; }
+      .ac-side-item.ac-revealed { opacity: 1; transform: translateX(0); }
+      .ac-side-item i { width: 12px; height: 12px; flex-shrink: 0; opacity: 0.7; }
+      .ac-side-item.ac-active { color: #fff; background: rgba(255,255,255,0.08); border-left-color: #00BFFF; }
+      .ac-side-item.ac-active i { opacity: 1; color: #00BFFF; }
+      .ac-side-foot { padding: 8px 12px 10px; border-top: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; gap: 7px; }
+      .ac-side-avatar { width: 22px; height: 22px; border-radius: 999px; background: linear-gradient(135deg, #0070F3, #00BFFF); color: #fff; font-size: 9px; font-weight: 700; display: grid; place-items: center; flex-shrink: 0; }
+      .ac-side-foot-text { display: flex; flex-direction: column; line-height: 1.15; min-width: 0; }
+      .ac-side-foot-name { font-size: 10px; font-weight: 600; color: #fff; }
+      .ac-side-foot-role { font-size: 9px; color: rgba(255,255,255,0.55); }
+
+      /* Main */
+      .ac-main { flex: 1; padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+      .ac-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; opacity: 0; transform: translateY(-4px); }
+      .ac-header.ac-anim { transition: opacity 0.4s ease, transform 0.4s ease; }
+      .ac-header.ac-revealed { opacity: 1; transform: translateY(0); }
+      .ac-header-left { min-width: 0; flex: 1; }
+      .ac-crumb { font-size: 10px; color: #94a3b8; margin-bottom: 1px; display: flex; align-items: center; gap: 4px; }
+      .ac-crumb-sep { color: #cbd5e1; }
+      .ac-title { font-size: 16px; font-weight: 800; color: #0A1C60; letter-spacing: -0.01em; line-height: 1.2; }
+      .ac-meta { font-size: 10px; color: #64748b; margin-top: 2px; display: flex; align-items: center; gap: 6px; }
+      .ac-meta-dot { width: 5px; height: 5px; border-radius: 999px; background: #10b981; flex-shrink: 0; box-shadow: 0 0 0 2px rgba(16,185,129,0.18); }
+      .ac-actions { display: flex; gap: 6px; flex-shrink: 0; }
+      .ac-btn { display: inline-flex; align-items: center; gap: 5px; padding: 5px 11px; border-radius: 6px; font-size: 11px; font-weight: 600; line-height: 1.2; }
+      .ac-btn-primary { background: #0070F3; color: #fff; border: 1px solid #0070F3; }
+      .ac-btn-secondary { background: #fff; color: #0070F3; border: 1.5px solid #0070F3; }
+      .ac-btn-ghost { background: #fff; color: #64748b; border: 1px solid #e2e8f0; padding: 5px 8px; }
+      .ac-btn i { width: 11px; height: 11px; flex-shrink: 0; }
+
+      /* Tabs */
+      .ac-tabs { display: flex; gap: 18px; border-bottom: 1px solid #e2e8f0; padding: 0 2px; opacity: 0; }
+      .ac-tabs.ac-anim { transition: opacity 0.3s ease; }
+      .ac-tabs.ac-revealed { opacity: 1; }
+      .ac-tab { font-size: 11px; font-weight: 600; color: #64748b; padding: 6px 1px; border-bottom: 2px solid transparent; line-height: 1.2; }
+      .ac-tab.ac-tab-active { color: #0070F3; border-bottom-color: #0070F3; }
+
+      /* Panels */
+      .ac-panels { display: flex; flex-direction: column; gap: 8px; }
+      .ac-panel { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 9px 11px 10px; transition: box-shadow 0.4s ease, border-color 0.4s ease; }
+      .ac-panel.ac-pulse { animation: ac-pulse-anim 0.6s ease; }
+      @keyframes ac-pulse-anim { 0% { box-shadow: 0 0 0 0 rgba(0,112,243,0); } 30% { box-shadow: 0 0 0 4px rgba(0,112,243,0.18); border-color:#0070F3; } 100% { box-shadow: 0 0 0 0 rgba(0,112,243,0); } }
+      .ac-panel-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 7px; }
+      .ac-panel-title { font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #64748b; }
+      .ac-panel-aux { font-size: 10px; color: #94a3b8; display: inline-flex; align-items: center; gap: 4px; }
+      .ac-panel-aux button { font-size: 10px; color: #0070F3; font-weight: 600; }
+      .ac-panel-aux i { width: 10px; height: 10px; }
+
+      .ac-row { display: flex; align-items: center; gap: 9px; padding: 5px 0; font-size: 11px; color: #1e293b; opacity: 0; transform: translateY(2px); min-height: 22px; }
+      .ac-row.ac-row-anim { transition: opacity 0.35s ease, transform 0.35s ease; transition-delay: var(--ac-d, 0ms); }
+      .ac-row.ac-row-show { opacity: 1; transform: translateY(0); }
+      .ac-side-item.ac-side-reveal { animation: ac-side-fade 0.5s ease forwards; animation-delay: var(--ac-d, 0ms); opacity: 0; }
+      .ac-side-item.ac-revealed { opacity: 1; transform: translateX(0); }
+      @keyframes ac-side-fade { from { opacity: 0; transform: translateX(-4px); } to { opacity: 1; transform: translateX(0); } }
+      .ac-row + .ac-row { border-top: 1px solid #f1f5f9; }
+      .ac-row-icon { width: 16px; height: 16px; display: grid; place-items: center; flex-shrink: 0; color: #10b981; }
+      .ac-row-icon.ac-row-icon-radio { color: #cbd5e1; }
+      .ac-row-icon.ac-row-icon-radio.ac-active { color: #0070F3; }
+      .ac-row-icon i { width: 13px; height: 13px; }
+      .ac-row-label { flex: 1; min-width: 0; line-height: 1.25; }
+      .ac-row-label .ac-row-sub { color: #64748b; font-size: 10px; }
+      .ac-row-right { font-size: 10px; color: #64748b; flex-shrink: 0; display: inline-flex; align-items: center; gap: 6px; }
+      .ac-badge { display: inline-flex; align-items: center; padding: 2px 7px; border-radius: 4px; font-size: 9.5px; font-weight: 700; letter-spacing: 0.02em; line-height: 1.2; }
+      .ac-badge-required { background: #0A1C60; color: #fff; }
+      .ac-badge-match { background: #f1f5f9; color: #475569; }
+      .ac-badge-active { background: #10b981; color: #fff; }
+      .ac-badge-available { background: #e2e8f0; color: #475569; }
+      .ac-badge-info { background: #dbeafe; color: #1e40af; }
+      .ac-badge-applied { background: #d1fae5; color: #065f46; }
+
+      /* App icon (Teams placeholder) */
+      .ac-app-icon { width: 26px; height: 26px; border-radius: 6px; display: grid; place-items: center; color: #fff; font-size: 12px; font-weight: 800; flex-shrink: 0; box-shadow: 0 1px 2px rgba(91,83,214,0.4); }
+
+      /* Deployment counts (animated number) */
+      .ac-dep-num { font-variant-numeric: tabular-nums; font-weight: 600; color: #0A1C60; }
+      .ac-dep-pct { font-variant-numeric: tabular-nums; font-weight: 700; color: #10b981; min-width: 38px; text-align: right; }
+
+      /* Empty state */
+      .ac-empty { padding: 50px 20px; text-align: center; color: #94a3b8; }
+      .ac-empty i { width: 28px; height: 28px; margin-bottom: 8px; color: #cbd5e1; }
+
+      @media (max-width: 720px) {
+        .ac-side { width: 110px; }
+        .ac-title { font-size: 14px; }
+        .ac-actions .ac-btn { padding: 4px 8px; font-size: 10px; }
+      }
       /* Phase status label */
       .phase-status { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; transition: all 0.3s ease; }
       /* Multi-tenant view */
@@ -3220,6 +3326,7 @@
         STATE.flowPhase = 'idle';
         STATE.flowAppOpened = false;
         STATE._firstOpenDone = false;
+        STATE._acSeen = {};
         STATE.flowQueue = buildFlowQueue();
         STATE.flowQueueIdx = 0;
         scrollPreserveRender();
@@ -3276,6 +3383,7 @@
         STATE.flowQueueIdx = 0;
         STATE.flowAppOpened = false;
         STATE._firstOpenDone = false;
+        STATE._acSeen = {};
         STATE.flowDevice = null;
         render();
       }
@@ -4119,127 +4227,255 @@
         `;
       }
 
-      /* ========== ADMIN CONSOLE VIEW ========== */
+      /* ========== ADMIN CONSOLE VIEW (browser-framed app) ========== */
       function renderAdminConsole(){
         const sc = STATE.flowScenarioIdx;
         const phase = STATE.flowPhase;
         const scenario = sc >= 0 && sc < SCENARIOS.length ? SCENARIOS[sc] : null;
-        const checkDone = ['routing','config','done','final'].includes(phase);
-        const routingDone = ['config','done','final'].includes(phase);
-        const configDone = ['done','final'].includes(phase);
 
-        const rowState = (phases) => {
-          if (!scenario) return 'row-idle';
-          const idx = ['launch','catalog','clicking','checking','routing','config','done','final'];
-          const cur = idx.indexOf(phase);
-          const last = idx.indexOf(phases[phases.length - 1]);
-          if (cur < 0) return 'row-idle';
-          if (cur > last) return 'row-done';
-          if (phases.includes(phase)) return 'row-active';
-          return '';
+        // Phase-driven progressive reveal across the panel
+        const idx = ['idle','launch','catalog','clicking','checking','routing','config','done','final'];
+        const curIdx = scenario ? Math.max(0, idx.indexOf(phase)) : 0;
+        // Reveal thresholds (phase index ≥ N)
+        const tHeader = idx.indexOf('clicking');
+        const tTabs   = idx.indexOf('clicking');
+        const tRouting= idx.indexOf('checking');
+        const tDelivery=idx.indexOf('routing');
+        const tPolicy = idx.indexOf('config');
+        const tDeploy = idx.indexOf('done');
+        const tFinal  = idx.indexOf('final');
+        const showHeader  = curIdx >= tHeader;
+        const showTabs    = curIdx >= tTabs;
+        const showRouting = curIdx >= tRouting;
+        const showDelivery= curIdx >= tDelivery;
+        const showPolicy  = curIdx >= tPolicy;
+        const showDeploy  = curIdx >= tDeploy;
+        const allDone     = curIdx >= tFinal;
+
+        // Track first-reveal phase per element so re-renders within the same play
+        // session don't re-run the entry animation.
+        if (!STATE._acSeen) STATE._acSeen = {};
+        const seenAt = (key, threshold) => {
+          if (curIdx < threshold) return null;            // not yet revealed
+          if (STATE._acSeen[key] == null) STATE._acSeen[key] = curIdx;
+          return STATE._acSeen[key];
+        };
+        // Animate only when the panel is FIRST appearing right now.
+        const isAnimating = (key, threshold) => seenAt(key, threshold) === curIdx;
+        const aHeader  = isAnimating('header',  tHeader);
+        const aTabs    = isAnimating('tabs',    tTabs);
+        const aRouting = isAnimating('routing', tRouting);
+        const aDelivery= isAnimating('delivery',tDelivery);
+        const aPolicy  = isAnimating('policy',  tPolicy);
+        const aDeploy  = isAnimating('deploy',  tDeploy);
+        const aFinal   = isAnimating('final',   tFinal);
+        // Sidebar: animate once per session (first time we render with a scenario)
+        if (scenario && STATE._acSeen.sidebar == null) STATE._acSeen.sidebar = curIdx;
+        const aSidebar = scenario && STATE._acSeen.sidebar === curIdx;
+
+        // Sidebar items (Packages always active)
+        const navItems = [
+          {label:'Dashboard',     icon:'layout-dashboard'},
+          {label:'Packages',      icon:'package',          active:true},
+          {label:'Deployments',   icon:'rocket'},
+          {label:'Identities',    icon:'users'},
+          {label:'Configurations',icon:'sliders'},
+          {label:'Connectors',    icon:'plug'},
+          {label:'Reports',       icon:'bar-chart-3'},
+          {label:'Settings',      icon:'settings'},
+        ];
+
+        // Active scenario routes the Delivery Methods panel
+        const activeMethod = scenario?.activePath || 'local';
+        const methods = [
+          {id:'local',  icon:'hard-drive',     label:'Install + Configure (Local)', badge:'Active',    badgeClass:'ac-badge-active'},
+          {id:'vdi',    icon:'monitor',        label:'Stream via VDI',              badge:'Available', badgeClass:'ac-badge-available'},
+          {id:'saas',   icon:'globe',          label:'Open via SaaS / Web',         badge:'Available', badgeClass:'ac-badge-available'},
+          {id:'update', icon:'refresh-cw',     label:'Auto-Update',                  badge:'Always on', badgeClass:'ac-badge-info'},
+        ];
+        // Per-scenario active method override (active = filled cyan radio)
+        const methodActive = (m) => {
+          if (activeMethod === 'update') return m.id === 'local'; // update scenario: still installed locally
+          return m.id === activeMethod;
         };
 
-        return `
-          <div class="section-card p-4">
-            <div class="flex items-center gap-2 mb-3">
-              <div class="bts-label bts-label-engine"><i data-lucide="settings-2" class="w-3 h-3"></i> Admin Console</div>
+        // Routing rules
+        const rules = [
+          {label:'User identity verified',                                  badge:'Required',  badgeClass:'ac-badge-required'},
+          {label:'Group: Engineering · Marketing · Sales',                  badge:'Match any', badgeClass:'ac-badge-match'},
+          {label:'Device compliant',                                        badge:'Required',  badgeClass:'ac-badge-required'},
+          {label:'Network: Corporate · VPN',                                badge:'Match any', badgeClass:'ac-badge-match'},
+        ];
+
+        // Policies
+        const policies = [
+          {icon:'shield-check', label:'MFA Policy',                  badge:'Applied'},
+          {icon:'cloud',        label:'OneDrive Sync',               badge:'Applied'},
+          {icon:'printer',      label:'Default Printer (Floor 3)',   badge:'Mapped'},
+          {icon:'link',         label:'VPN Auto-Connect',            badge:'Active'},
+        ];
+
+        // Deployment status (animate counts up when allDone)
+        const deploys = [
+          {env:'Laptop',          icon:'laptop',     count:2847, total:2851, pct:99.9, unit:'devices'},
+          {env:'Virtual Desktop', icon:'monitor',    count:412,  total:412,  pct:100,  unit:'sessions'},
+          {env:'Cloud PC',        icon:'cloud',      count:189,  total:189,  pct:100,  unit:'instances'},
+          {env:'Browser',         icon:'globe',      count:null, total:null, pct:null, unit:'all entitled users'},
+        ];
+
+        if (!scenario) {
+          return `
+            <div class="section-card p-0 overflow-hidden">
+              <div class="ac-frame">
+                <div class="ac-titlebar">
+                  <div class="ac-dots"><span class="ac-dot" style="background:#FF5F57"></span><span class="ac-dot" style="background:#FEBC2E"></span><span class="ac-dot" style="background:#28C840"></span></div>
+                  <div class="ac-url"><i data-lucide="lock"></i><span class="ac-url-page">app-workspace.recastsoftware.com</span><span class="ac-url-path">/packages/microsoft-teams</span></div>
+                </div>
+                <div class="ac-empty">
+                  <i data-lucide="monitor-cog"></i>
+                  <div class="text-sm">Press <strong>Play</strong> or <strong>Step</strong> to see the admin console.</div>
+                </div>
+              </div>
             </div>
+          `;
+        }
 
-            ${!scenario ? `
-              <div class="text-center py-4 text-sm text-slate-400">
-                <i data-lucide="play-circle" class="w-6 h-6 mx-auto mb-2 text-slate-300"></i>
-                <div>Press <strong>Start</strong> or <strong>Step</strong> to see the admin perspective</div>
+        return `
+          <div class="section-card p-0 overflow-hidden">
+            <div class="ac-frame">
+              <!-- Browser title bar -->
+              <div class="ac-titlebar">
+                <div class="ac-dots"><span class="ac-dot" style="background:#FF5F57"></span><span class="ac-dot" style="background:#FEBC2E"></span><span class="ac-dot" style="background:#28C840"></span></div>
+                <div class="ac-url"><i data-lucide="lock"></i><span class="ac-url-page">app-workspace.recastsoftware.com</span><span class="ac-url-path">/ packages / microsoft-teams</span></div>
               </div>
-            ` : `
-              <!-- Platform stats strip -->
-              <div class="platform-bar mb-3" style="padding:8px 12px">
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center gap-2">
-                    <i data-lucide="layout-grid" class="w-3.5 h-3.5 text-blue-200"></i>
-                    <span class="text-xs font-bold tracking-wide">Application Workspace</span>
+
+              <div class="ac-body">
+                <!-- Sidebar -->
+                <aside class="ac-side">
+                  <div class="ac-side-brand">
+                    <div class="ac-side-brand-mark"><span></span><span></span><span></span><span></span></div>
+                    <div class="ac-side-brand-text">App<br/>Workspace</div>
                   </div>
-                  <div class="flex items-center gap-1">
-                    <div class="platform-stat" style="padding:3px 6px"><div class="platform-stat-value" style="font-size:13px">8,000+</div><div class="platform-stat-label">Curated Apps</div></div>
-                    <div class="platform-divider" style="height:20px"></div>
-                    <div class="platform-stat" style="padding:3px 6px"><div class="platform-stat-value" style="font-size:13px">Daily</div><div class="platform-stat-label">Updates</div></div>
-                    <div class="platform-divider" style="height:20px"></div>
-                    <div class="platform-stat" style="padding:3px 6px"><div class="platform-stat-value" style="font-size:13px">CVE</div><div class="platform-stat-label">+ Scan Data</div></div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Context checks -->
-              <div class="admin-row ${rowState(['checking'])} mb-2">
-                <div class="text-[10px] font-semibold text-[#0A1C60] uppercase tracking-wide mb-1.5 flex items-center gap-1.5">
-                  <i data-lucide="scan-search" class="w-3 h-3 text-[#0070F3]"></i> User Context
-                </div>
-                <div class="flex flex-wrap gap-1.5">
-                  ${scenario.checks.map((c, i) => `
-                    <div class="check-item ${checkDone ? 'pass' : ''}" id="admin-check-${i}" title="${c.a}">
-                      <i data-lucide="${checkDone ? 'check-circle' : 'circle'}" class="w-3 h-3"></i>
-                      <span>${c.q}</span>
-                      ${checkDone ? '<span style="color:#059669;font-weight:600;margin-left:2px">' + c.a + '</span>' : ''}
-                    </div>
-                  `).join('')}
-                </div>
-              </div>
-
-              <!-- Delivery routing -->
-              <div class="admin-row ${rowState(['routing'])} mb-2">
-                <div class="text-[10px] font-semibold text-[#0A1C60] uppercase tracking-wide mb-1.5 flex items-center gap-1.5">
-                  <i data-lucide="route" class="w-3 h-3 text-[#0070F3]"></i> Delivery Routing
-                </div>
-                <div class="flex flex-wrap gap-1.5">
-                  ${ALL_PATHS.map(p => {
-                    const isActive = p.id === scenario.activePath && routingDone;
-                    const isInactive = p.id !== scenario.activePath && routingDone;
-                    return `
-                      <div class="path-row ${isActive ? 'active-path' : ''} ${isInactive ? 'inactive-path' : ''}">
-                        <i data-lucide="${p.icon}" class="w-3 h-3"></i>
-                        <span>${p.id === scenario.activePath ? scenario.pathLabel : p.label}</span>
-                        ${isActive ? '<i data-lucide="check" class="w-3 h-3 text-green-500"></i>' : ''}
+                  <div class="ac-side-divider"></div>
+                  <nav class="ac-side-nav">
+                    ${navItems.map((it, i) => `
+                      <div class="ac-side-item ${aSidebar ? 'ac-side-reveal' : 'ac-revealed'} ${it.active ? 'ac-active' : ''}" style="--ac-d:${i*55}ms">
+                        <i data-lucide="${it.icon}"></i><span>${it.label}</span>
                       </div>
-                    `;
-                  }).join('')}
-                </div>
-              </div>
-
-              <!-- Configuration -->
-              <div class="admin-row ${rowState(['config'])} mb-2">
-                <div class="text-[10px] font-semibold text-[#0A1C60] uppercase tracking-wide mb-1.5 flex items-center gap-1.5">
-                  <i data-lucide="shield-check" class="w-3 h-3 text-amber-500"></i> Configuration & Policy
-                </div>
-                <div class="cfg-wrap ${configDone ? 'wrapped' : ''} flex items-center gap-2">
-                  <div style="background:#5B53D6;width:18px;height:18px;border-radius:5px;display:grid;place-items:center;font-size:8px;font-weight:800;color:white;flex-shrink:0">T</div>
-                  <span class="text-[10px] text-slate-400">+</span>
-                  <i data-lucide="settings" class="w-3 h-3 text-amber-500"></i>
-                  <span class="text-[10px] text-slate-400">=</span>
-                  <i data-lucide="check-circle" class="w-3 h-3 ${configDone ? 'text-green-500' : 'text-slate-300'}"></i>
-                  <span class="text-[10px] ${configDone ? 'text-slate-600 font-medium' : 'text-slate-300'}">${scenario.configNote}</span>
-                </div>
-                ${scenario.id === 'update' ? `
-                  <div class="flex items-center gap-2 mt-2">
-                    <span class="px-1.5 py-0.5 rounded bg-red-50 border border-red-200 text-red-600 text-[10px]">v2.1</span>
-                    <div class="flex-1"><div class="upd-bar ${configDone ? 'filling' : ''}"></div></div>
-                    <span class="px-1.5 py-0.5 rounded ${configDone ? 'bg-green-50 border border-green-200 text-green-600' : 'bg-slate-50 border border-slate-200 text-slate-400'} text-[10px]">v2.2</span>
+                    `).join('')}
+                  </nav>
+                  <div class="ac-side-foot">
+                    <div class="ac-side-avatar">SC</div>
+                    <div class="ac-side-foot-text">
+                      <span class="ac-side-foot-name">Sarah Chen</span>
+                      <span class="ac-side-foot-role">Admin</span>
+                    </div>
                   </div>
-                ` : ''}
-              </div>
+                </aside>
 
-              <!-- Environment distribution -->
-              <div class="admin-row ${rowState(['done','final'])}">
-                <div class="text-[10px] font-semibold text-[#0A1C60] uppercase tracking-wide mb-1.5 flex items-center gap-1.5">
-                  <i data-lucide="rocket" class="w-3 h-3 text-green-500"></i> One Definition → Every Environment
-                </div>
-                <div class="flex items-center gap-2">
-                  <div style="background:#5B53D6;width:16px;height:16px;border-radius:4px;display:grid;place-items:center;font-size:7px;font-weight:800;color:white;border:2px solid #0070F3;flex-shrink:0">T</div>
-                  ${['Laptop','VDI','Cloud PC','Browser'].map((env, i) => `
-                    <div class="orch-connector flex-1 ${['done','final'].includes(phase) ? 'drawn' : ''}" style="transition-delay:${i * 0.15}s"></div>
-                    <span class="text-[9px] text-slate-500 flex-shrink-0 font-medium">${env}</span>
-                  `).join('')}
+                <!-- Main -->
+                <div class="ac-main">
+                  <div class="ac-header ${showHeader ? 'ac-revealed' : ''} ${aHeader ? 'ac-anim' : ''}">
+                    <div class="ac-header-left">
+                      <div class="ac-crumb">Packages <span class="ac-crumb-sep">/</span> Microsoft Teams</div>
+                      <div class="ac-title">Microsoft Teams</div>
+                      <div class="ac-meta"><span class="ac-meta-dot"></span> v1.7.00.6058 · Updated 2h ago · Production</div>
+                    </div>
+                    <div class="ac-actions">
+                      <button class="ac-btn ac-btn-primary" type="button">Deploy <i data-lucide="chevron-down"></i></button>
+                      <button class="ac-btn ac-btn-secondary" type="button">Edit</button>
+                      <button class="ac-btn ac-btn-ghost" type="button" aria-label="More"><i data-lucide="more-horizontal"></i></button>
+                    </div>
+                  </div>
+
+                  <div class="ac-tabs ${showTabs ? 'ac-revealed' : ''} ${aTabs ? 'ac-anim' : ''}">
+                    <div class="ac-tab ac-tab-active">Overview</div>
+                    <div class="ac-tab">Action Sets</div>
+                    <div class="ac-tab">Entitlements</div>
+                    <div class="ac-tab">History</div>
+                    <div class="ac-tab">Compliance</div>
+                  </div>
+
+                  <div class="ac-panels">
+                    <!-- Panel 1: Smart Routing Rules -->
+                    <div class="ac-panel" data-panel="routing">
+                      <div class="ac-panel-head">
+                        <div class="ac-panel-title">Smart Routing Rules</div>
+                        <button class="ac-panel-aux" type="button"><i data-lucide="plus"></i> Add condition</button>
+                      </div>
+                      ${rules.map((r,i) => `
+                        <div class="ac-row ${showRouting ? 'ac-row-show' : ''} ${aRouting ? 'ac-row-anim' : ''}" style="--ac-d:${aRouting ? i*150 : 0}ms">
+                          <div class="ac-row-icon"><i data-lucide="check-circle-2"></i></div>
+                          <div class="ac-row-label">${r.label}</div>
+                          <div class="ac-row-right"><span class="ac-badge ${r.badgeClass}">${r.badge}</span></div>
+                        </div>
+                      `).join('')}
+                    </div>
+
+                    <!-- Panel 2: Delivery Methods -->
+                    <div class="ac-panel" data-panel="delivery">
+                      <div class="ac-panel-head">
+                        <div class="ac-panel-title">Delivery Methods</div>
+                        <span class="ac-panel-aux">Priority order</span>
+                      </div>
+                      ${methods.map((m,i) => {
+                        const isActive = methodActive(m);
+                        // Active method reveals LAST (after others) for emphasis
+                        const order = isActive ? methods.length - 1 : i;
+                        return `
+                          <div class="ac-row ${showDelivery ? 'ac-row-show' : ''} ${aDelivery ? 'ac-row-anim' : ''}" style="--ac-d:${aDelivery ? order*180 : 0}ms">
+                            <div class="ac-row-icon ac-row-icon-radio ${isActive ? 'ac-active' : ''}">
+                              <i data-lucide="${isActive ? 'circle-dot' : 'circle'}"></i>
+                            </div>
+                            <div class="ac-row-label">${m.label}</div>
+                            <div class="ac-row-right"><span class="ac-badge ${isActive ? 'ac-badge-active' : m.badgeClass}">${isActive ? '✓ Active' : m.badge}</span></div>
+                          </div>
+                        `;
+                      }).join('')}
+                    </div>
+
+                    <!-- Panel 3: Attached Policies -->
+                    <div class="ac-panel" data-panel="policy">
+                      <div class="ac-panel-head">
+                        <div class="ac-panel-title">Attached Policies</div>
+                        <span class="ac-panel-aux">4 attached</span>
+                      </div>
+                      ${policies.map((p,i) => `
+                        <div class="ac-row ${showPolicy ? 'ac-row-show' : ''} ${aPolicy ? 'ac-row-anim' : ''}" style="--ac-d:${aPolicy ? i*150 : 0}ms">
+                          <div class="ac-row-icon" style="color:#0070F3"><i data-lucide="${p.icon}"></i></div>
+                          <div class="ac-row-label">${p.label}</div>
+                          <div class="ac-row-right"><span class="ac-badge ac-badge-applied">${p.badge}</span></div>
+                        </div>
+                      `).join('')}
+                    </div>
+
+                    <!-- Panel 4: Deployment Status -->
+                    <div class="ac-panel ${aFinal ? 'ac-pulse' : ''}" data-panel="deploy">
+                      <div class="ac-panel-head">
+                        <div class="ac-panel-title">Deployment Status</div>
+                        <span class="ac-panel-aux"><i data-lucide="refresh-cw"></i> Last sync: 4 min ago</span>
+                      </div>
+                      ${deploys.map((d,i) => `
+                        <div class="ac-row ${showDeploy ? 'ac-row-show' : ''} ${aDeploy ? 'ac-row-anim' : ''}" style="--ac-d:${aDeploy ? i*200 : 0}ms">
+                          <div class="ac-row-icon"><i data-lucide="check-circle-2"></i></div>
+                          <div class="ac-row-label" style="display:flex;align-items:center;gap:8px">
+                            <i data-lucide="${d.icon}" class="w-3 h-3" style="color:#94a3b8;flex-shrink:0"></i>
+                            <span>${d.env}</span>
+                          </div>
+                          <div class="ac-row-right">
+                            ${d.count !== null ? `
+                              <span class="ac-dep-num"${aDeploy ? ` data-count-target="${d.count}"` : ''}>${showDeploy ? `${d.count.toLocaleString()} / ${d.total.toLocaleString()}` : `0 / ${d.total.toLocaleString()}`}</span>
+                              <span class="ac-dep-num" style="color:#94a3b8">${d.unit}</span>
+                              <span class="ac-dep-pct"${aDeploy ? ` data-pct-target="${d.pct}"` : ''}>${showDeploy ? d.pct + '%' : '0%'}</span>
+                            ` : `<span style="color:#64748b">Available to ${d.unit}</span>`}
+                          </div>
+                        </div>
+                      `).join('')}
+                    </div>
+                  </div>
                 </div>
               </div>
-            `}
+            </div>
           </div>
         `;
       }
@@ -5292,7 +5528,7 @@
           <section id="panel-solution" class="space-y-3">
 
             <!-- ZONE C: Solution cards (horizontal) -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3" style="align-items:start">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-2" style="align-items:start">
               ${NEW_CARDS.map(card => compactCard(card)).join('')}
             </div>
 
@@ -5628,19 +5864,19 @@
         const visited = STATE.visitedCards.includes(card.id);
         const contentId = `compact-content-${card.id}`;
         return `
-          <div class="section-card overflow-hidden flex flex-col" style="border-radius:12px">
+          <div class="section-card overflow-hidden flex flex-col" style="border-radius:10px">
             <button type="button" data-action="toggle-card" data-card="${card.id}"
               class="accordion-header w-full text-left focus-ring transition"
               aria-expanded="${expanded}" aria-controls="${contentId}">
-              <div class="px-4 py-3 flex items-center gap-3">
-                <div class="h-9 w-9 rounded-lg grid place-items-center flex-shrink-0" style="background:linear-gradient(135deg,#0A1C60,#0070F3)">
-                  <i data-lucide="${card.icon}" class="w-4 h-4 text-white" aria-hidden="true"></i>
+              <div class="px-3 py-2 flex items-center gap-2.5">
+                <div class="h-7 w-7 rounded-md grid place-items-center flex-shrink-0" style="background:linear-gradient(135deg,#0A1C60,#0070F3)">
+                  <i data-lucide="${card.icon}" class="w-3.5 h-3.5 text-white" aria-hidden="true"></i>
                 </div>
                 <div class="flex-1 min-w-0">
-                  <div class="text-sm font-semibold text-[#0A1C60] leading-tight">${card.title}</div>
-                  <div class="text-[11px] text-slate-400 mt-0.5 truncate">${card.closer}</div>
+                  <div class="text-[13px] font-semibold text-[#0A1C60] leading-tight">${card.title}</div>
+                  <div class="text-[10px] text-slate-400 mt-0.5 truncate">${card.closer}</div>
                 </div>
-                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 flex-shrink-0 transition-transform duration-200 ${expanded ? 'rotate-180' : ''}" aria-hidden="true"></i>
+                <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400 flex-shrink-0 transition-transform duration-200 ${expanded ? 'rotate-180' : ''}" aria-hidden="true"></i>
               </div>
             </button>
             <div id="${contentId}" class="overflow-hidden" style="max-height:${expanded?'1200px':'0'};opacity:${expanded?'1':'0'};transition:max-height 250ms cubic-bezier(.2,.8,.2,1),opacity 200ms ease">
