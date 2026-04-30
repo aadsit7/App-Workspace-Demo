@@ -611,6 +611,42 @@
       /* Lifecycle strip visually attached to the architecture diagram */
       .arch-fit-card { padding-bottom: 14px; }
       .arch-lifecycle-link { width: 1px; height: 14px; background: linear-gradient(180deg, rgba(0,112,243,0.5), rgba(0,112,243,0)); margin: 6px auto 4px; }
+
+      /* Card tabs (How Recast / Trusted / Onboarding) */
+      .cardtab {
+        background: #ffffff;
+        border: 1px solid #E2E8F0;
+        border-radius: 12px;
+        position: relative;
+        overflow: hidden;
+        transition: all 200ms cubic-bezier(.2,.8,.2,1);
+        cursor: pointer;
+      }
+      .cardtab:hover { border-color: #CBD5E1; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.04); }
+      .cardtab-active {
+        border-color: var(--r-cyan);
+        box-shadow: 0 0 0 3px rgba(0,191,255,0.12), 0 4px 12px rgba(0,0,0,0.06);
+        background: linear-gradient(180deg, #ffffff 0%, #F8FCFF 100%);
+      }
+      .cardtab-active::before {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; right: 0; height: 3px;
+        background: linear-gradient(90deg, var(--r-blue), var(--r-cyan));
+      }
+      .cardtab-icon {
+        background: #F1F5F9;
+        color: #64748B;
+        transition: all 200ms ease;
+      }
+      .cardtab-icon-active {
+        background: linear-gradient(135deg, var(--r-blue), var(--r-cyan));
+        color: #ffffff;
+      }
+      .cardtab-title { color: #64748B; }
+      .cardtab-active .cardtab-title { color: var(--r-blue); }
+      .cardtab-sub { color: #94A3B8; }
+      .cardtab-active .cardtab-sub { color: #475569; }
       .arch-lifecycle-strip { margin-top: 4px; padding: 8px 4px 2px; border-top: 1px dashed #E2E8F0; }
       .arch-lifecycle-eyebrow { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: #64748B; text-align: center; margin-bottom: 8px; }
       .arch-row { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 5px; }
@@ -2556,7 +2592,8 @@
         showSolutionCards: true,
         openWhy: null,
         openWhyModal: null,
-        openCards: { core: false, onboarding: false, trust: false },
+        openCards: { core: true, onboarding: false, trust: false },
+        activeCard: 'core',
         visitedCards: [],
         openBuckets: { one: false, zero: false, per: false },
         modalOpen: false,
@@ -2720,7 +2757,7 @@
         {
           id: 'core', icon: 'layers', title: 'How Recast Does It.',
           bullets: ['<strong>Intake.</strong> Every app gets the same treatment. 8,000+ apps come pre-packaged from the Setup Store with security and compliance data attached. Custom and internal apps get the same packaging structure, the same promotion pipeline, the same delivery logic, the same self-service catalog. The catalog is the head start, not the whole story.','<strong>Deliver</strong> \u2014 Deploys to the right user, device, and path \u2014 local, VDI, SaaS, or Cloud PC \u2014 automatically.','<strong>Update</strong> \u2014 Patches flow through Dev, Test, Acceptance, Production \u2014 validated before reaching endpoints.','<strong>Govern</strong> \u2014 Every action logged. Compliance, versions, and health visible from one dashboard.','<strong>Retire</strong> \u2014 End-of-life apps removed cleanly across every environment. No orphaned installs.','<strong>Report</strong> \u2014 Real-time dashboards for compliance, licensing, and app health \u2014 no manual assembly.'],
-          closer: 'How one definition moves an app from intake to retirement.', timeline: false, bgHeader: 'bg-[#f9fafb]', bgContent: 'bg-[#f9fafb]'
+          closer: 'Package once. Deliver everywhere. Update everything.', timeline: false, bgHeader: 'bg-[#f9fafb]', bgContent: 'bg-[#f9fafb]'
         },
         {
           id: 'trust', icon: 'shield-check', title: 'Trusted by Customers',
@@ -2729,7 +2766,7 @@
         },
         {
           id: 'onboarding', icon: 'clock', title: 'Onboard & Up to Speed Fast.',
-          bullets: ['Standard rollout in 4-6 weeks (Kickoff -  Implementation -  UAT -  Launch -  Enablement).','No new infrastructure -  integrates with your existing management tools.','Guided setup with dedicated Customer Success Manager.','Typical resource: 1-2 IT engineers part-time.','Enablement includes training, certification, and success planning.'],
+          bullets: ['Standard POC rollout in 4-6 weeks (Kickoff -  Implementation -  UAT -  Launch -  Enablement).','No new infrastructure -  integrates with your existing management tools.','Guided setup with dedicated Customer Success Manager.','Typical resource: 1-2 IT engineers part-time.','Enablement includes training, certification, and success planning.'],
           closer: 'From first call to production in weeks, not months.', timeline: true, bgHeader: 'bg-[#f9fafb]', bgContent: 'bg-[#f9fafb]'
         }
       ];
@@ -5549,11 +5586,12 @@
         return `
           <section id="panel-solution" class="space-y-3">
 
-            <!-- ZONE C: Solution cards (horizontal) -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-2" style="align-items:start">
+            <!-- ZONE C: Solution cards (horizontal) - now act as tabs -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-2" style="align-items:stretch">
               ${NEW_CARDS.map(card => compactCard(card)).join('')}
             </div>
 
+            ${STATE.activeCard === 'core' ? `
             <!-- ARCHITECTURE DIAGRAM (the centerpiece) -->
             <div class="section-card p-4 arch-fit-card">
               <div class="arch-fit">
@@ -5657,6 +5695,9 @@
               ${STATE.solutionViewDashboard ? renderDashboardView() : ''}
               ${STATE.solutionViewMultiTenant ? renderMultiTenantView() : ''}
             </div>
+            ` : ''}
+            ${STATE.activeCard === 'trust' ? renderTrustPanel() : ''}
+            ${STATE.activeCard === 'onboarding' ? renderOnboardingPanel() : ''}
 
             <div class="flex flex-col items-end gap-2 mt-2">
               <button type="button" class="bg-[#0070F3] text-white px-5 py-2.5 text-sm font-semibold rounded-full hover:bg-[#005AD0]" data-action="advance" data-next="roi">See Business Impact</button>
@@ -5881,35 +5922,63 @@
       }
 
       function compactCard(card){
-        const expanded = STATE.openCards[card.id];
-        const visited = STATE.visitedCards.includes(card.id);
-        const contentId = `compact-content-${card.id}`;
+        const isActive = STATE.activeCard === card.id;
         return `
-          <div class="section-card overflow-hidden flex flex-col" style="border-radius:10px">
-            <button type="button" data-action="toggle-card" data-card="${card.id}"
-              class="accordion-header w-full text-left focus-ring transition"
-              aria-expanded="${expanded}" aria-controls="${contentId}">
-              <div class="px-3 py-2 flex items-center gap-2.5">
-                <div class="h-7 w-7 rounded-md grid place-items-center flex-shrink-0" style="background:linear-gradient(135deg,#0A1C60,#0070F3)">
-                  <i data-lucide="${card.icon}" class="w-3.5 h-3.5 text-white" aria-hidden="true"></i>
-                </div>
-                <div class="flex-1 min-w-0">
-                  <div class="text-[13px] font-semibold text-[#0A1C60] leading-tight">${card.title}</div>
-                  <div class="text-[10px] text-slate-400 mt-0.5 truncate">${card.closer}</div>
-                </div>
-                <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400 flex-shrink-0 transition-transform duration-200 ${expanded ? 'rotate-180' : ''}" aria-hidden="true"></i>
+          <button type="button" data-action="select-card" data-card="${card.id}"
+            class="cardtab ${isActive ? 'cardtab-active' : ''} text-left focus-ring transition"
+            aria-pressed="${isActive}">
+            <div class="px-4 py-3 flex items-center gap-3">
+              <div class="cardtab-icon ${isActive ? 'cardtab-icon-active' : ''} h-9 w-9 rounded-md grid place-items-center flex-shrink-0">
+                <i data-lucide="${card.icon}" class="w-4 h-4" aria-hidden="true"></i>
               </div>
-            </button>
-            <div id="${contentId}" class="overflow-hidden" style="max-height:${expanded?'1200px':'0'};opacity:${expanded?'1':'0'};transition:max-height 250ms cubic-bezier(.2,.8,.2,1),opacity 200ms ease">
-              <div class="px-4 pb-4 pt-1 border-t border-slate-100">
-                <ul class="list-none space-y-2 text-[13px] leading-[1.5] text-[#4A5568]">
-                  ${card.bullets.map(b=>`<li class="flex items-start gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-[#0070F3] flex-shrink-0 mt-0.5"></i><span>${b}</span></li>`).join('')}
-                </ul>
-                ${card.timeline && onboardingMiniTimelineEnabled && expanded ? renderMiniTimeline() : ''}
-                <p class="mt-3 text-[12px] italic text-[#64748b] border-l-2 border-[#0070F3] pl-3">${card.closer}</p>
-                ${card.id === 'trust' && expanded ? renderLogoTicker() : ''}
+              <div class="flex-1 min-w-0">
+                <div class="cardtab-title text-[14px] font-semibold leading-tight">${card.title}</div>
+                <div class="cardtab-sub text-[11px] mt-0.5 truncate">${card.closer}</div>
+              </div>
+              ${isActive ? '<i data-lucide="check-circle-2" class="w-4 h-4 text-[var(--r-cyan)] flex-shrink-0" aria-hidden="true"></i>' : '<i data-lucide="chevron-right" class="w-4 h-4 text-slate-300 flex-shrink-0" aria-hidden="true"></i>'}
+            </div>
+          </button>
+        `;
+      }
+
+      function renderTrustPanel(){
+        const card = NEW_CARDS.find(c => c.id === 'trust');
+        return `
+          <div class="section-card p-6">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="h-10 w-10 rounded-md grid place-items-center" style="background:linear-gradient(135deg,var(--r-blue),var(--r-cyan))">
+                <i data-lucide="shield-check" class="w-5 h-5 text-white"></i>
+              </div>
+              <div>
+                <div class="text-[18px] font-semibold text-[var(--r-blue)] leading-tight">${card.title}</div>
+                <div class="text-[12px] text-slate-500">${card.closer}</div>
               </div>
             </div>
+            <ul class="list-none space-y-2.5 text-[14px] leading-[1.5] text-[#4A5568]">
+              ${card.bullets.map(b=>`<li class="flex items-start gap-2"><i data-lucide="check" class="w-4 h-4 text-[var(--r-cyan)] flex-shrink-0 mt-0.5"></i><span>${b}</span></li>`).join('')}
+            </ul>
+            ${renderLogoTicker()}
+          </div>
+        `;
+      }
+
+      function renderOnboardingPanel(){
+        const card = NEW_CARDS.find(c => c.id === 'onboarding');
+        return `
+          <div class="section-card p-6">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="h-10 w-10 rounded-md grid place-items-center" style="background:linear-gradient(135deg,var(--r-blue),var(--r-cyan))">
+                <i data-lucide="clock" class="w-5 h-5 text-white"></i>
+              </div>
+              <div>
+                <div class="text-[18px] font-semibold text-[var(--r-blue)] leading-tight">${card.title}</div>
+                <div class="text-[12px] text-slate-500">${card.closer}</div>
+              </div>
+            </div>
+            ${renderMiniTimeline()}
+            <ul class="list-none space-y-2.5 text-[14px] leading-[1.5] text-[#4A5568] mt-5">
+              ${card.bullets.map(b=>`<li class="flex items-start gap-2"><i data-lucide="check" class="w-4 h-4 text-[var(--r-cyan)] flex-shrink-0 mt-0.5"></i><span>${b}</span></li>`).join('')}
+            </ul>
           </div>
         `;
       }
@@ -6697,6 +6766,7 @@
 
           if (action === 'flip-card') { const cardId = act.getAttribute('data-card-id'); STATE.flippedCards[cardId] = !STATE.flippedCards[cardId]; const cardEl = act.closest('.flip-card'); if (cardEl) cardEl.classList.toggle('flipped'); return; }
           if (action === 'toggle-card') { const id = act.getAttribute('data-card'); const wasOpen = STATE.openCards[id]; Object.keys(STATE.openCards).forEach(k => STATE.openCards[k] = false); STATE.openCards[id] = !wasOpen; if (STATE.openCards[id] && !STATE.visitedCards.includes(id)) STATE.visitedCards.push(id); render(); if (STATE.openCards[id]) { setTimeout(() => act.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 200); } return; }
+          if (action === 'select-card') { const id = act.getAttribute('data-card'); if (STATE.activeCard !== id) { STATE.activeCard = id; if (!STATE.visitedCards.includes(id)) STATE.visitedCards.push(id); } render(); return; }
           if (action === 'expand-all') { Object.keys(STATE.openCards).forEach(k => STATE.openCards[k] = true); STATE.visitedCards = ['core','onboarding','trust']; render(); return; }
           if (action === 'calculate-impact') { calculateImpact(); render(); return; }
           if (action === 'toggle-assumptions') { STATE.showAssumptions = !STATE.showAssumptions; render(); return; }
