@@ -1069,6 +1069,11 @@
       .ss-vendor-pulse.ss-pulsing { animation: ssPulse 1.5s ease-in-out infinite; }
       @keyframes ssPulse { 0%,100% { box-shadow: 0 0 0 0 rgba(42,127,255,0); }
                            50% { box-shadow: 0 0 0 6px rgba(42,127,255,0.25); } }
+      @keyframes ssPulseCta {
+        0%, 100% { box-shadow: 0 2px 8px rgba(0, 0, 204, 0.25); }
+        50% { box-shadow: 0 2px 16px rgba(0, 191, 255, 0.55); }
+      }
+      .ss-pulse-cta { animation: ssPulseCta 2s ease-in-out infinite; }
 
       .ss-dtap-bar { display: flex; align-items: center; gap: 0; margin-top: 10px; }
       .ss-dtap-stage { flex: 1; text-align: center; padding: 5px 4px; font-size: 9px; font-weight: 700;
@@ -2049,7 +2054,7 @@
         obPaused: false,
         obQueue: [],
         obQueueIdx: 0,
-        solutionViewSetupStore: false,
+        solutionViewSetupStore: true,
         ssPhase: 'idle',
         ssRunning: false,
         ssPaused: false,
@@ -2222,7 +2227,7 @@
       const NEW_CARDS = [
         {
           id: 'core', icon: 'layers', title: 'How Recast Does It.',
-          bullets: ['<strong>Intake</strong> \u2014 Most apps come pre-packaged from the Setup Store with security and compliance data attached. Custom and internal apps get packaged once by your team and managed the same way.','<strong>Deliver</strong> \u2014 Deploys to the right user, device, and path \u2014 local, VDI, SaaS, or Cloud PC \u2014 automatically.','<strong>Update</strong> \u2014 Patches flow through Dev, Test, Acceptance, Production \u2014 validated before reaching endpoints.','<strong>Govern</strong> \u2014 Every action logged. Compliance, versions, and health visible from one dashboard.','<strong>Retire</strong> \u2014 End-of-life apps removed cleanly across every environment. No orphaned installs.','<strong>Report</strong> \u2014 Real-time dashboards for compliance, licensing, and app health \u2014 no manual assembly.'],
+          bullets: ['<strong>Intake.</strong> Every app gets the same treatment. 8,000+ apps come pre-packaged from the Setup Store with security and compliance data attached. Custom and internal apps get the same packaging structure, the same promotion pipeline, the same delivery logic, the same self-service catalog. The catalog is the head start, not the whole story.','<strong>Deliver</strong> \u2014 Deploys to the right user, device, and path \u2014 local, VDI, SaaS, or Cloud PC \u2014 automatically.','<strong>Update</strong> \u2014 Patches flow through Dev, Test, Acceptance, Production \u2014 validated before reaching endpoints.','<strong>Govern</strong> \u2014 Every action logged. Compliance, versions, and health visible from one dashboard.','<strong>Retire</strong> \u2014 End-of-life apps removed cleanly across every environment. No orphaned installs.','<strong>Report</strong> \u2014 Real-time dashboards for compliance, licensing, and app health \u2014 no manual assembly.'],
           closer: 'How one definition moves an app from intake to retirement.', timeline: false, bgHeader: 'bg-[#f9fafb]', bgContent: 'bg-[#f9fafb]'
         },
         {
@@ -3940,7 +3945,7 @@
                 ${STATE.ssRunning ? `
                   <button type="button" data-action="pause-ss" class="bg-[#0070F3] text-white px-2.5 py-1.5 text-[12px] font-semibold rounded hover:bg-[#005AD0] inline-flex items-center gap-1"><i data-lucide="${STATE.ssPaused ? 'play' : 'pause'}" class="w-3 h-3"></i> ${STATE.ssPaused ? 'Resume' : 'Pause'}</button>
                 ` : `
-                  <button type="button" data-action="start-ss" class="bg-[#0070F3] text-white px-2.5 py-1.5 text-[12px] font-semibold rounded hover:bg-[#005AD0] inline-flex items-center gap-1"><i data-lucide="play" class="w-3 h-3"></i> Auto</button>
+                  <button type="button" data-action="start-ss" class="bg-[#0070F3] text-white px-4 py-2 text-[13px] font-bold rounded-md hover:bg-[#005AD0] inline-flex items-center gap-1.5 shadow-md ss-pulse-cta"><i data-lucide="play" class="w-4 h-4"></i> Play</button>
                   <button type="button" data-action="step-ss" class="bg-white text-[#0070F3] border border-[#0070F3] px-2.5 py-1.5 text-[12px] font-semibold rounded hover:bg-[#eff6ff] inline-flex items-center gap-1"><i data-lucide="skip-forward" class="w-3 h-3"></i> Step</button>
                 `}
                 <button type="button" data-action="reset-ss" class="bg-transparent text-[#0A1C60] border-2 border-[#0A1C60] px-2.5 py-1.5 rounded hover:text-[#0070F3] hover:border-[#0070F3]">Reset</button>
@@ -3972,7 +3977,7 @@
                     </div>
                   `).join('')}
                 </div>
-                <div class="text-[10px] text-center mt-2 text-[var(--r-blue)] font-semibold">A curated catalog you don't have to build.</div>
+                <div class="text-[10px] text-center mt-2 text-[var(--r-blue)] font-semibold">Every one of these is hours of packaging work, already done.</div>
               </div>
 
               <!-- PHASE 2: Package card — ss-grow prevents layout jump on insert -->
@@ -3985,9 +3990,9 @@
                         <div class="ss-package-name">Adobe Acrobat Reader DC</div>
                         <div class="ss-package-version">v24.001.20065 · Windows x64 + macOS</div>
                       </div>
-                      <div class="text-[9px] text-[var(--r-ink-2)] text-right">
-                        <div class="font-semibold uppercase tracking-widest">Inside every package</div>
-                      </div>
+                    </div>
+                    <div class="text-[10px] text-[var(--r-ink-2)] mb-2" style="font-style: italic;">
+                      Each of these is a job your team would otherwise do by hand. Setup Store does it for you, on every package.
                     </div>
                     <div class="ss-fields">
                       ${SS_PACKAGE_FIELDS.map((f, i) => `
@@ -4049,7 +4054,7 @@
                         <div class="ss-target ${c.primary ? 'ss-primary' : ''} ss-show" style="transition-delay:${0.3 + i * 0.08}s">${c.label}</div>
                       `).join('')}
                     </div>
-                    <div class="text-[10px] text-center mt-1 text-[var(--r-ink-2)]">One curated source. Every delivery system you run.</div>
+                    <div class="text-[10px] text-center mt-1 text-[var(--r-ink-2)]">The same catalog feeds Application Workspace and the major delivery platforms. The supply chain is the product.</div>
                   </div>
                 </div>
               </div>
@@ -4770,7 +4775,7 @@
       /* ========== SS ANIMATION ENGINE ========== */
       function buildSsQueue(){
         const phases = ['catalog','package','cve','update','fanout','done'];
-        const delays = [1200, 2000, 1500, 2000, 1800, 1500];
+        const delays = [1200, 2000, 3500, 2000, 1800, 1500];
         const queue = [];
         phases.forEach((phase, i) => {
           queue.push({ delay: delays[i], fn(){ STATE.ssPhase = phase; render(); } });
@@ -4886,10 +4891,10 @@
               <div class="flex flex-wrap items-center justify-between gap-3">
                 <!-- View toggles -->
                 <div class="flex items-center gap-2">
-                  <span class="text-[11px] text-slate-400 font-medium hidden sm:inline">Select a view:</span>
-                  <button type="button" data-action="toggle-solution-view" data-view="user" class="view-toggle ${STATE.solutionViewUser ? 'active' : ''}"><i data-lucide="monitor-smartphone" class="w-3.5 h-3.5"></i> User Experience</button>
-                  <button type="button" data-action="toggle-solution-view" data-view="admin" class="view-toggle ${STATE.solutionViewAdmin ? 'active' : ''}"><i data-lucide="settings-2" class="w-3.5 h-3.5"></i> Admin Console</button>
+                  <span class="text-[11px] text-slate-500 font-medium hidden sm:inline">Walk the story in order, or jump anywhere:</span>
                   <button type="button" data-action="toggle-solution-view" data-view="setupstore" class="view-toggle ${STATE.solutionViewSetupStore ? 'active' : ''}"><i data-lucide="library" class="w-3.5 h-3.5"></i> Setup Store</button>
+                  <button type="button" data-action="toggle-solution-view" data-view="admin" class="view-toggle ${STATE.solutionViewAdmin ? 'active' : ''}"><i data-lucide="settings-2" class="w-3.5 h-3.5"></i> Admin Console</button>
+                  <button type="button" data-action="toggle-solution-view" data-view="user" class="view-toggle ${STATE.solutionViewUser ? 'active' : ''}"><i data-lucide="monitor-smartphone" class="w-3.5 h-3.5"></i> User Experience</button>
                   <button type="button" data-action="toggle-solution-view" data-view="onboarding" class="view-toggle ${STATE.solutionViewOnboarding ? 'active' : ''}"><i data-lucide="user-plus" class="w-3.5 h-3.5"></i> Onboarding</button>
                   <button type="button" data-action="toggle-solution-view" data-view="dashboard" class="view-toggle ${STATE.solutionViewDashboard ? 'active' : ''}"><i data-lucide="bar-chart-3" class="w-3.5 h-3.5"></i> Dashboard & Reporting</button>
                   <button type="button" data-action="toggle-solution-view" data-view="multitenant" class="view-toggle ${STATE.solutionViewMultiTenant ? 'active' : ''}"><i data-lucide="building-2" class="w-3.5 h-3.5"></i> Multi-Tenant</button>
