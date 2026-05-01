@@ -1343,6 +1343,166 @@
         position: relative;
         margin-bottom: 0;
       }
+
+      /* ═════════════════════════════════════════════════════════════
+         RS APPBAR — compact product strip + clean white tab rail.
+         Replaces the tall blue hero. The blue band is just a product
+         identifier; the tabs live on white below.
+         ═════════════════════════════════════════════════════════════ */
+      header.rs-appbar {
+        position: relative;
+        margin-bottom: 0;
+        background: #fff;
+        border-bottom: 1px solid #E2E8F0;
+      }
+      .rs-appbar-strip {
+        background: var(--r-blue);
+        color: #fff;
+      }
+      .rs-appbar-inner {
+        max-width: 1440px;
+        margin: 0 auto;
+        padding: 11px 24px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        min-height: 44px;
+      }
+      .rs-brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        flex-shrink: 0;
+      }
+      .rs-brand-mark {
+        display: inline-grid;
+        place-items: center;
+        width: 22px;
+        height: 22px;
+        background: #fff;
+        color: var(--r-blue);
+        border-radius: 3px;
+        font-weight: 800;
+        font-size: 11.5px;
+        letter-spacing: -0.01em;
+        line-height: 1;
+      }
+      .rs-brand-label {
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.005em;
+        color: #fff;
+        white-space: nowrap;
+      }
+      .rs-brand-label-soft {
+        color: rgba(255,255,255,0.7);
+        font-weight: 500;
+      }
+      .rs-appbar-divider {
+        width: 1px;
+        height: 18px;
+        background: rgba(255,255,255,0.22);
+        flex-shrink: 0;
+      }
+      .rs-product {
+        font-size: 14px;
+        font-weight: 700;
+        color: #fff;
+        letter-spacing: -0.005em;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+      .rs-em-dash {
+        color: rgba(255,255,255,0.45);
+        font-weight: 400;
+        flex-shrink: 0;
+        font-size: 14px;
+      }
+      .rs-subtitle {
+        font-size: 13px;
+        color: rgba(255,255,255,0.78);
+        font-weight: 400;
+        line-height: 1.3;
+        flex: 1 1 auto;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      /* White tab rail under the blue strip */
+      .rs-tabbar {
+        background: #fff;
+      }
+      .rs-tabbar-inner {
+        max-width: 1440px;
+        margin: 0 auto;
+        padding: 0 24px;
+        display: flex;
+        align-items: stretch;
+        gap: 0;
+        overflow-x: auto;
+        scrollbar-width: none;
+      }
+      .rs-tabbar-inner::-webkit-scrollbar { display: none; }
+      .rs-tab {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 12px 18px 11px;
+        font-size: 13.5px;
+        font-weight: 500;
+        color: #64748B;
+        background: transparent;
+        border: 0;
+        border-bottom: 2px solid transparent;
+        margin-bottom: -1px; /* overlap the appbar bottom border */
+        cursor: pointer;
+        white-space: nowrap;
+        flex-shrink: 0;
+        line-height: 1;
+        letter-spacing: -0.005em;
+        transition: color 140ms, border-color 140ms, background 140ms;
+      }
+      .rs-tab i, .rs-tab svg {
+        color: #94A3B8;
+        transition: color 140ms;
+      }
+      .rs-tab:hover:not(.is-active) {
+        color: var(--r-ink);
+        background: #F8FAFC;
+      }
+      .rs-tab:hover:not(.is-active) i, .rs-tab:hover:not(.is-active) svg {
+        color: var(--r-ink-2);
+      }
+      .rs-tab.is-active {
+        color: var(--r-blue);
+        border-bottom-color: var(--r-cyan);
+        font-weight: 600;
+      }
+      .rs-tab.is-active i, .rs-tab.is-active svg {
+        color: var(--r-blue) !important;
+      }
+      .rs-tab:focus-visible {
+        outline: 2px solid var(--r-cyan);
+        outline-offset: -2px;
+      }
+
+      /* Mobile: keep one row, allow horizontal scroll, tighten paddings */
+      @media (max-width: 720px) {
+        .rs-appbar-inner {
+          padding: 9px 14px;
+          gap: 10px;
+          min-height: 40px;
+        }
+        .rs-em-dash, .rs-appbar-divider { display: none; }
+        .rs-subtitle { display: none; }
+        .rs-product { font-size: 13px; }
+        .rs-brand-label { font-size: 12.5px; }
+        .rs-tabbar-inner { padding: 0 14px; }
+        .rs-tab { padding: 11px 14px 10px; font-size: 13px; }
+      }
+
       /* Signature "+" decoration on primary-blue hero — Recast brand mark.
          Few, large, asymmetric; never overlapping content. */
       header.relative::before {
@@ -2964,7 +3124,8 @@
       /* ───── Scroll-free shell: hero + tabs pinned, panel gets remaining viewport ───── */
       html, body { height: 100%; overflow: hidden; }
       body > #app { height: 100vh; display: flex; flex-direction: column; }
-      body > #app > header.relative { flex: 0 0 auto; }
+      body > #app > header.relative,
+      body > #app > header.rs-appbar { flex: 0 0 auto; }
       body > #app > .recast-topnav { flex: 0 0 auto; }
       body > #app > main.mx-auto {
         flex: 1 1 auto;
@@ -4647,35 +4808,37 @@
       function render(){
         const root=document.getElementById('app');
         root.innerHTML = `
-          <header class="relative">
-            <div class="relative mx-auto max-w-6xl px-4 pt-8 pb-6">
-              <div class="recast-eyebrow-row">
-                <div class="recast-eyebrow-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></div>
-                <div class="recast-eyebrow-label">Recast Software</div>
-              </div>
-              <div class="flex flex-wrap items-end gap-x-5 gap-y-2 mt-1">
-                <h1 class="text-[40px] md:text-[56px] font-semibold leading-[1.05] tracking-tight m-0 flex-shrink-0"><span>Application</span> <span>Workspace</span></h1>
-                <p class="text-[14px] leading-[1.45] text-[#4A5568] pb-2 md:pl-5 md:border-l md:border-slate-200 m-0 flex-1 min-w-[260px] whitespace-nowrap overflow-hidden text-ellipsis">
-                  ${STATE.activeTab==='problems'
+          <header class="rs-appbar">
+            <div class="rs-appbar-strip">
+              <div class="rs-appbar-inner">
+                <div class="rs-brand">
+                  <span class="rs-brand-mark">Re</span>
+                  <span class="rs-brand-label">Recast<span class="rs-brand-label-soft"> Software</span></span>
+                </div>
+                <div class="rs-appbar-divider" aria-hidden="true"></div>
+                <div class="rs-product">Application Workspace</div>
+                <div class="rs-em-dash" aria-hidden="true">&mdash;</div>
+                <div class="rs-subtitle">${
+                  STATE.activeTab==='problems'
                     ? 'One package, every workspace &mdash; laptop, Cloud PC, or VDI.'
                     : STATE.activeTab==='solution'
-                      ? "One model that stops multiplying work per platform."
-                      : 'Keep applications running smoothly as platforms change.'}
-                </p>
+                      ? 'One model that stops multiplying work per platform.'
+                      : 'Keep applications running smoothly as platforms change.'
+                }</div>
               </div>
             </div>
-            <div class="relative mx-auto max-w-6xl px-4">
-              <div role="tablist" aria-label="Demo sections" class="recast-tabs">
+            <nav class="rs-tabbar">
+              <div class="rs-tabbar-inner" role="tablist" aria-label="Demo sections">
                 ${TABS.map(t=>`
                   <button type="button"
-                    class="recast-tab ${STATE.activeTab===t.id ? 'is-active' : ''} focus-ring"
+                    class="rs-tab ${STATE.activeTab===t.id ? 'is-active' : ''} focus-ring"
                     data-action="switch-tab" data-tab="${t.id}"
                     aria-controls="panel-${t.id}" aria-selected="${STATE.activeTab===t.id}">
-                    <i data-lucide="${t.icon}" class="w-4 h-4"></i><span>${t.label}</span>
+                    <i data-lucide="${t.icon}" class="w-3.5 h-3.5"></i><span>${t.label}</span>
                   </button>
                 `).join('')}
               </div>
-            </div>
+            </nav>
           </header>
           <main class="mx-auto max-w-6xl px-4 pb-16">
             <section class="mt-3">${renderActivePanel()}</section>
