@@ -1112,18 +1112,18 @@
       .arch-lifecycle-eyebrow { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: #64748B; text-align: center; margin-bottom: 8px; }
       .arch-row { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 5px; }
       .arch-row-label { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: #64748B; text-align: center; margin-bottom: 4px; }
-      .arch-row-label-end { color: #0070F3; }
+      .arch-row-label-end { color: #0A1C60; }
       .arch-tool-pill { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 9999px; font-size: 11px; font-weight: 600; color: #FFFFFF; line-height: 1.2; }
       .arch-device-pill { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 8px; border: 1px solid #E2E8F0; background: #FFFFFF; font-size: 11px; font-weight: 500; color: #475569; line-height: 1.2; }
       .arch-bracket-up { width: 60%; max-width: 520px; height: 10px; margin: 3px auto 0; border: 2px dashed #CBD5E1; border-top: none; border-radius: 0 0 10px 10px; }
-      .arch-bracket-down { width: 60%; max-width: 520px; height: 10px; margin: 0 auto 3px; border: 2px solid #0070F3; border-top: none; border-radius: 0 0 10px 10px; }
+      .arch-bracket-down { width: 60%; max-width: 520px; height: 10px; margin: 0 auto 3px; border: 1.5px solid #93C5FD; border-top: none; border-radius: 0 0 10px 10px; }
       .arch-aw { position: relative; margin: 4px 14px; padding: 9px 14px 10px; border-radius: 10px; background: linear-gradient(180deg, #0A1C60 0%, #0E2585 60%, #1232A0 100%); color: #FFFFFF; overflow: hidden; box-shadow: 0 6px 20px -8px rgba(10,28,96,0.45); }
       .arch-aw::before { content: ''; position: absolute; top: -40%; right: -8%; width: 200px; height: 200px; background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%); pointer-events: none; }
       .arch-aw-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
       .arch-aw-brand { display: flex; flex-direction: column; gap: 1px; }
       .arch-aw-title { font-size: 15px; font-weight: 800; color: #FFFFFF; letter-spacing: -0.005em; line-height: 1.15; }
       .arch-aw-tagline { font-size: 10px; font-weight: 500; color: #BFDBFE; letter-spacing: 0.04em; }
-      .arch-aw-brand-mark { display: inline-flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.75); }
+      .arch-aw-brand-mark { display: inline-flex; align-items: center; gap: 6px; font-size: 9.5px; font-weight: 600; color: rgba(255,255,255,0.7); letter-spacing: 0.02em; white-space: nowrap; }
       .arch-aw-caps { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 7px; padding-top: 7px; border-top: 1px solid rgba(255,255,255,0.14); }
       .arch-aw-cap { display: inline-flex; align-items: center; gap: 5px; padding: 4px 9px; border-radius: 6px; font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.78); background: transparent; border: 1px solid rgba(255,255,255,0.18); }
       .arch-aw-cap i { width: 10px; height: 10px; opacity: 0.7; flex-shrink: 0; }
@@ -7316,7 +7316,7 @@
             <!-- ARCHITECTURE DIAGRAM (the centerpiece) -->
             <div class="section-card p-4 arch-fit-card">
               <div class="arch-fit">
-                <div class="arch-row-label">Your Existing Mgmt Tools</div>
+                <div class="arch-row-label">Your Existing Management Tools</div>
                 <div class="arch-row">
                   <span class="arch-tool-pill" style="background:#5B53D6">Intune</span>
                   <span class="arch-tool-pill" style="background:#E84D1A">ConfigMgr</span>
@@ -7329,11 +7329,7 @@
                 <div class="arch-aw">
                   <div class="arch-aw-head">
                     <div class="arch-aw-brand">
-                      <div class="arch-aw-title">End-to-End Application Lifecycle Management</div>
-                    </div>
-                    <div class="arch-aw-brand-mark">
-                      <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
-                      <span>Application Workspace</span>
+                      <div class="arch-aw-title">Recast End-to-End Application Lifecycle Management</div>
                     </div>
                   </div>
                   <div class="arch-aw-caps">
@@ -7362,7 +7358,7 @@
               <!-- Lifecycle rail visually attached to the diagram -->
               <div class="arch-lifecycle-link" aria-hidden="true"></div>
               <div class="arch-lifecycle-strip">
-                <div class="arch-lifecycle-eyebrow">Manages the full lifecycle</div>
+                <div class="arch-lifecycle-eyebrow">Inside Application Workspace</div>
                 <div class="flex items-end gap-1.5 flex-wrap">
                   ${[
                     {view:'setupstore', stage:'PACKAGE',   name:'Setup Store',          icon:'library',           active:STATE.solutionViewSetupStore},
