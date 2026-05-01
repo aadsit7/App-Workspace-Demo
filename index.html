@@ -2129,51 +2129,501 @@
       .ss-act-panel.ss-act-show { opacity: 1; }
       .ss-act-panel.ss-act-hide { opacity: 0; }
 
-      /* ── Act 1: counter + cascading vendor tiles ───────────────── */
+      /* ── Act 1: catalog scale ───────────────────────────────────
+         Top bar: counter "8,047" + small "+ yours" foreshadow + 5 category counts.
+         Below: a dense scrolling list of real apps so you can SEE the volume,
+         ending with a single "YourApp · custom" row that lives in the same list. */
+      .ss-act1-stage {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        background: white;
+        border: 1px solid var(--r-divider);
+        border-radius: 10px;
+        padding: 14px;
+      }
+
+      .ss-act1-top {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 28px;
+        align-items: center;
+      }
+      .ss-act1-headline {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .ss-act1-eyebrow {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--r-ink-2);
+      }
+      .ss-act1-count-row {
+        display: flex;
+        align-items: baseline;
+        gap: 12px;
+      }
       .ss-counter-big {
         font-family: ui-monospace, 'Fraktion Mono', monospace;
-        font-size: 32px;
+        font-size: 56px;
         font-weight: 800;
-        color: var(--r-blue);
-        letter-spacing: -0.03em;
+        color: var(--r-ink);
+        letter-spacing: -0.04em;
         line-height: 1;
         font-variant-numeric: tabular-nums;
       }
-      .ss-vendor-tile.ss-cascade {
-        opacity: 0;
-        transform: translateY(8px) scale(0.9);
-        animation: ssTileCascade 360ms cubic-bezier(0.2,0.8,0.2,1) forwards;
-        animation-delay: var(--cascade-delay, 0ms);
+      .ss-act1-plus {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 10px;
+        border: 1px dashed var(--r-divider);
+        border-radius: 8px;
+        background: var(--r-quote-bg);
       }
-      @keyframes ssTileCascade {
-        to { opacity: 1; transform: translateY(0) scale(1); }
+      .ss-act1-plus-sign {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--r-blue);
+        line-height: 1;
+        font-family: ui-monospace, monospace;
+      }
+      .ss-act1-plus-label {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--r-ink);
+      }
+      .ss-act1-cats {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 4px;
+      }
+      .ss-act1-cat {
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+        padding: 6px 8px;
+        border-left: 2px solid var(--r-divider);
+      }
+      .ss-act1-cat-num {
+        font-family: ui-monospace, monospace;
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--r-ink);
+        line-height: 1.1;
+        font-variant-numeric: tabular-nums;
+      }
+      .ss-act1-cat-name {
+        font-size: 10px;
+        color: var(--r-ink-2);
+        font-weight: 500;
       }
 
-      /* Streaming dots overlay — ambient volume cue */
-      .ss-stream-layer {
-        position: absolute;
-        inset: 0;
-        pointer-events: none;
+      /* Dense scrolling catalog list — the real evidence of volume */
+      .ss-catalog {
+        position: relative;
+        border: 1px solid var(--r-divider);
+        border-radius: 8px;
+        background: white;
         overflow: hidden;
       }
-      .ss-stream-dot {
+      .ss-catalog-head {
+        display: grid;
+        grid-template-columns: 1fr 130px 110px;
+        gap: 12px;
+        padding: 6px 12px;
+        background: var(--r-quote-bg);
+        border-bottom: 1px solid var(--r-divider);
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--r-ink-2);
+      }
+      .ss-catalog-viewport {
+        position: relative;
+        height: 180px;
+        overflow: hidden;
+      }
+      .ss-catalog-track {
+        display: flex;
+        flex-direction: column;
+        animation: ssCatalogScroll 28s linear infinite;
+      }
+      @keyframes ssCatalogScroll {
+        from { transform: translateY(0); }
+        /* The list is doubled at render time; scroll exactly half so it loops seamlessly */
+        to   { transform: translateY(-50%); }
+      }
+      .ss-catalog-row {
+        display: grid;
+        grid-template-columns: 1fr 130px 110px;
+        gap: 12px;
+        align-items: center;
+        padding: 7px 12px;
+        border-bottom: 1px solid var(--r-divider);
+        flex-shrink: 0;
+      }
+      .ss-catalog-row:last-child { border-bottom: 1px solid var(--r-divider); }
+      .ss-catalog-app {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 0;
+      }
+      .ss-catalog-icon {
+        width: 22px;
+        height: 22px;
+        border-radius: 5px;
+        display: grid;
+        place-items: center;
+        font-size: 10px;
+        font-weight: 800;
+        color: white;
+        flex-shrink: 0;
+      }
+      .ss-catalog-icon-custom {
+        background: white;
+        color: var(--r-blue);
+        border: 1.5px dashed var(--r-blue);
+      }
+      .ss-catalog-name {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--r-ink);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .ss-catalog-dim {
+        font-weight: 500;
+        color: var(--r-ink-2);
+      }
+      .ss-catalog-ver {
+        font-family: ui-monospace, monospace;
+        font-size: 11px;
+        color: var(--r-ink-2);
+        font-variant-numeric: tabular-nums;
+      }
+      .ss-catalog-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 10px;
+        font-weight: 600;
+        color: #15803d;
+      }
+      .ss-catalog-status [data-lucide] { color: #16a34a; }
+      .ss-catalog-row-custom {
+        background: var(--r-quote-bg);
+      }
+      .ss-catalog-status-custom {
+        color: var(--r-blue);
+      }
+      .ss-catalog-status-custom [data-lucide] { color: var(--r-blue); }
+
+      /* Top + bottom fade masks soften the marquee edges */
+      .ss-catalog-fade {
         position: absolute;
-        top: -8px;
-        left: var(--sx, 50%);
+        left: 0; right: 0;
+        height: 24px;
+        pointer-events: none;
+        z-index: 2;
+      }
+      .ss-catalog-fade-top {
+        top: 26px; /* sits below the header row */
+        background: linear-gradient(180deg, white 0%, rgba(255,255,255,0) 100%);
+      }
+      .ss-catalog-fade-bottom {
+        bottom: 0;
+        background: linear-gradient(0deg, white 0%, rgba(255,255,255,0) 100%);
+      }
+
+      /* ── FINAL beat: synthesis frame — two parallel columns + handoff ──
+         Static layout. No motion. The visual claim: Setup Store and Custom
+         Packaging are the same engine pointed at two different inputs, and
+         both flow into the same Admin Console. */
+      .ss-synth {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+      .ss-synth-header {
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .ss-synth-headline {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--r-ink);
+        letter-spacing: -0.01em;
+      }
+      .ss-synth-sub {
+        font-size: 12px;
+        color: var(--r-ink-2);
+        font-weight: 500;
+      }
+
+      .ss-synth-cols {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+        align-items: stretch;
+      }
+      .ss-synth-col {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding: 14px;
+        background: white;
+        border-radius: 10px;
+        border-width: 1px;
+        border-style: solid;
+        position: relative;
+      }
+      .ss-synth-col-store  { border-color: rgba(74, 100, 255, 0.35); box-shadow: 0 0 0 3px rgba(74, 100, 255, 0.05); }
+      .ss-synth-col-custom { border-color: rgba(0, 191, 255, 0.4);  box-shadow: 0 0 0 3px rgba(0, 191, 255, 0.06); }
+
+      .ss-synth-col-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid var(--r-divider);
+      }
+      .ss-synth-col-title {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--r-ink);
+        font-weight: 700;
+        font-size: 14px;
+      }
+      .ss-synth-col-store .ss-synth-col-title [data-lucide]  { color: var(--r-blue); }
+      .ss-synth-col-custom .ss-synth-col-title [data-lucide] { color: #00BFFF; }
+
+      .ss-synth-pill {
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        padding: 3px 8px;
+        border-radius: 999px;
+      }
+      .ss-synth-pill-store  { background: var(--r-quote-bg); color: var(--r-blue); }
+      .ss-synth-pill-custom { background: rgba(0, 191, 255, 0.12); color: #0288A8; }
+
+      .ss-synth-payload {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        min-height: 132px;
+      }
+      .ss-synth-num {
+        font-family: ui-monospace, 'Fraktion Mono', monospace;
+        font-size: 36px;
+        font-weight: 800;
+        color: var(--r-ink);
+        letter-spacing: -0.04em;
+        line-height: 1;
+        font-variant-numeric: tabular-nums;
+      }
+      .ss-synth-num-label {
+        font-size: 11px;
+        color: var(--r-ink-2);
+        font-weight: 500;
+      }
+      .ss-synth-vendors {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        margin-top: 4px;
+      }
+      .ss-synth-vendor {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 3px 8px 3px 3px;
+        background: white;
+        border: 1px solid var(--r-divider);
+        border-radius: 999px;
+        font-size: 10px;
+        font-weight: 600;
+        color: var(--r-ink);
+      }
+      .ss-synth-vendor .ss-v-icon {
+        width: 18px; height: 18px;
+        border-radius: 4px;
+        display: grid; place-items: center;
+        font-size: 8px; font-weight: 800;
+        color: white;
+      }
+      .ss-synth-vendor .ss-v-name { font-size: 10px; }
+      .ss-synth-vendor-more {
+        display: inline-flex;
+        align-items: center;
+        padding: 4px 8px;
+        font-size: 10px;
+        font-weight: 600;
+        color: var(--r-ink-2);
+        background: var(--r-quote-bg);
+        border-radius: 999px;
+      }
+
+      .ss-synth-custom-card {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        background: rgba(0, 191, 255, 0.06);
+        border: 1px dashed rgba(0, 191, 255, 0.4);
+        border-radius: 8px;
+      }
+      .ss-synth-custom-icon {
+        width: 36px; height: 36px;
+        border-radius: 7px;
+        background: white;
+        border: 1.5px dashed #00BFFF;
+        color: #00BFFF;
+        display: grid; place-items: center;
+      }
+      .ss-synth-custom-meta { display: flex; flex-direction: column; gap: 1px; }
+      .ss-synth-custom-name {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--r-ink);
+      }
+      .ss-synth-dim { font-weight: 500; color: var(--r-ink-2); }
+      .ss-synth-custom-sub {
+        font-size: 10px;
+        color: var(--r-ink-2);
+        font-family: ui-monospace, monospace;
+        font-variant-numeric: tabular-nums;
+      }
+      .ss-synth-custom-note {
+        font-size: 11px;
+        color: var(--r-ink-2);
+        line-height: 1.4;
+        margin-top: 2px;
+      }
+
+      .ss-synth-spine {
+        list-style: none;
+        margin: 0;
+        padding: 8px 0 0 0;
+        border-top: 1px dashed var(--r-divider);
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4px 12px;
+      }
+      .ss-synth-step {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 11px;
+        color: var(--r-ink);
+        font-weight: 500;
+        line-height: 1.3;
+      }
+      .ss-synth-check {
+        width: 12px; height: 12px;
+        flex-shrink: 0;
+      }
+      .ss-synth-step-store .ss-synth-check,
+      .ss-synth-step-custom .ss-synth-check    { color: #16a34a; }
+      .ss-synth-step-inherited .ss-synth-check { color: #00BFFF; }
+      .ss-synth-step-inherited                  { color: var(--r-ink); }
+      .ss-synth-badge-inherit {
+        font-size: 8px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: #0288A8;
+        margin-left: auto;
+      }
+
+      .ss-synth-foot {
+        font-size: 11px;
+        color: var(--r-ink-2);
+        font-style: italic;
+        padding-top: 8px;
+        border-top: 1px dashed var(--r-divider);
+        margin-top: auto;
+      }
+
+      .ss-synth-handoff {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 4px 0 0 0;
+      }
+      .ss-synth-handoff-line {
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(90deg, transparent 0%, var(--r-divider) 50%, transparent 100%);
+      }
+      .ss-synth-handoff-label {
+        font-size: 12px;
+        color: var(--r-ink);
+        font-weight: 500;
+        white-space: nowrap;
+      }
+      .ss-synth-handoff-label strong {
+        font-weight: 700;
+        color: var(--r-blue);
+      }
+      .ss-synth-handoff-label [data-lucide] {
+        color: var(--r-blue);
+      }
+
+      /* Act progress bar (replaces "(1 of 4)" pill in header) */
+      .ss-act-progress {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 8px;
+        background: white;
+        border: 1px solid var(--r-divider);
+        border-radius: 999px;
+      }
+      .ss-act-step {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 2px 6px;
+        border-radius: 999px;
+        font-size: 9px;
+        font-weight: 700;
+        color: var(--r-ink-2);
+        letter-spacing: 0.04em;
+        transition: all 180ms ease;
+      }
+      .ss-act-step-dot {
         width: 6px;
         height: 6px;
-        border-radius: 2px;
-        background: var(--sc, var(--r-blue));
-        opacity: 0;
-        animation: ssStreamFall 1.6s linear infinite;
-        animation-delay: var(--sd, 0s);
-        box-shadow: 0 0 6px rgba(0,0,0,0.06);
+        border-radius: 50%;
+        background: var(--r-divider);
+        transition: all 180ms ease;
       }
-      @keyframes ssStreamFall {
-        0%   { transform: translateY(0); opacity: 0; }
-        15%  { opacity: 0.8; }
-        85%  { opacity: 0.6; }
-        100% { transform: translateY(420%); opacity: 0; }
+      .ss-act-step.is-done {
+        color: var(--r-ink-2);
+      }
+      .ss-act-step.is-done .ss-act-step-dot {
+        background: #22c55e;
+      }
+      .ss-act-step.is-active {
+        background: var(--r-quote-bg);
+        color: var(--r-blue);
+      }
+      .ss-act-step.is-active .ss-act-step-dot {
+        background: var(--r-blue);
+        box-shadow: 0 0 0 3px rgba(74, 100, 255, 0.18);
       }
 
       /* ── Acts 2 + 3: cards stage ─────────────────────────────── */
@@ -2623,14 +3073,23 @@
           color: #94a3b8 !important;
         }
 
-        /* Panel heading — compact inline row with edit button */
+        /* Panel heading — clean inline title with edit button */
         #panel-problems > .flex { margin-bottom: 0 !important; padding-bottom: 0 !important; }
-        #panel-problems > .flex h2 {
-          font-size: 11px !important;
+        #panel-problems > .flex h2.cs-panel-title {
+          font-size: 17px !important;
           font-weight: 700 !important;
-          color: var(--r-ink-2) !important;
-          text-transform: uppercase;
-          letter-spacing: 0.1em;
+          color: #0A1C60 !important;
+          text-transform: none !important;
+          letter-spacing: -0.005em !important;
+          line-height: 1.35 !important;
+          background: transparent !important;
+          border: none !important;
+          padding: 2px 0 !important;
+          box-shadow: none !important;
+        }
+        #panel-problems > .flex h2.cs-panel-title .cs-panel-title-accent {
+          color: #0070F3;
+          font-weight: 700;
         }
 
         /* Chart section card: compact, chart capped to fit viewport */
@@ -4255,7 +4714,7 @@
         return `
           <section id="panel-problems" class="space-y-2 cs-panel">
             <div class="flex items-center justify-between gap-3">
-              <h2 class="flex-1 flex items-center gap-3 bg-white border border-slate-200 rounded-lg px-4 py-3 shadow-sm"><span class="inline-grid place-items-center w-8 h-8 rounded-md flex-shrink-0" style="background:linear-gradient(135deg,#0A1C60,#0070F3)"><i data-lucide="alert-triangle" class="w-4 h-4 text-white"></i></span><span class="text-[18px] md:text-[20px] font-bold text-[#0A1C60] leading-snug tracking-tight">The application layer is now the <span style="color:#0070F3">#1 primary constraint</span> in modern <span class="analyst-trigger" data-action="open-analyst-modal">IT.</span></span></h2>
+              <h2 class="cs-panel-title flex-1">The application layer is now the <span class="cs-panel-title-accent">#1 primary constraint</span> in modern <span class="analyst-trigger" data-action="open-analyst-modal">IT.</span></h2>
               <button type="button" data-action="open-currentstate-editor" class="w-7 h-7 rounded-full border-2 border-gray-300 bg-transparent text-gray-400 inline-flex items-center justify-center hover:text-[#0070F3] hover:border-[#0070F3] transition flex-shrink-0" title="Edit Current State"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
             </div>
             <div class="grid grid-cols-2 gap-2 sm:grid-cols-4 cs-stats">
@@ -5315,22 +5774,18 @@
           <div class="section-card p-4" id="ss-panel">
             <div class="flex items-center justify-between mb-3 gap-3 flex-wrap">
               <div class="bts-label bts-label-platform">
-                <i data-lucide="library" class="w-3 h-3"></i> Setup Store: ${mode === 'custom' ? 'Custom &amp; Internal Apps' : 'The Curated Catalog'}
-                ${animating ? `<span style="margin-left:8px;padding:2px 8px;border-radius:999px;background:var(--r-quote-bg);color:var(--r-blue);font-size:10px;font-weight:700">
-                  ${actLabel} (${actNum} of 4)
-                </span>` : ''}
+                <i data-lucide="library" class="w-3 h-3"></i> Setup Store
               </div>
-              <div class="ss-mode-toggle" role="tablist" aria-label="Package source">
-                <button type="button" role="tab" aria-selected="${mode === 'curated'}" class="ss-mode-pill ${mode === 'curated' ? 'is-active' : ''}" data-action="ss-mode" data-mode="curated">
-                  <span class="ss-mode-num">8,000+</span>
-                  <span class="ss-mode-label">Curated apps</span>
-                </button>
-                <button type="button" role="tab" aria-selected="${mode === 'custom'}" class="ss-mode-pill ${mode === 'custom' ? 'is-active' : ''}" data-action="ss-mode" data-mode="custom">
-                  <i data-lucide="box" class="w-3 h-3"></i>
-                  <span class="ss-mode-label">Custom packaging</span>
-                </button>
-              </div>
-
+              ${animating ? `
+                <div class="ss-act-progress" role="progressbar" aria-valuemin="1" aria-valuemax="4" aria-valuenow="${actNum}">
+                  ${[1,2,3,4].map(n => `
+                    <span class="ss-act-step ${n < actNum ? 'is-done' : ''} ${n === actNum ? 'is-active' : ''}">
+                      <span class="ss-act-step-dot"></span>
+                      <span class="ss-act-step-label">${n === 1 ? 'Catalog' : n === 2 ? 'Package' : n === 3 ? 'Custom' : 'Deliver'}</span>
+                    </span>
+                  `).join('')}
+                </div>
+              ` : ''}
             </div>
 
             ${animating ? renderSsActStage() : renderSsIdleStage(mode)}
@@ -5366,48 +5821,84 @@
         const showAct1 = act === '1';
         const showAct2or3 = act === '2' || act === '3';
 
-        // Caption stream above visual (Act 1: ticker, Act 2/3: per-field)
-        const captionHtml = caption ? `
-          <div class="ss-caption-stream ${captionFinal ? 'ss-caption-final' : ''} ${showAct1 && !captionFinal ? 'ss-caption-flicker' : ''}">
+        // Caption stream above visual — Act 2/3 show running captions; Act 1 only shows the closing line.
+        // Final/done has its own synthesis headline so the floating caption is suppressed there.
+        const showCaption = caption && !showFinal && (!showAct1 || captionFinal);
+        const captionHtml = showCaption ? `
+          <div class="ss-caption-stream ${captionFinal ? 'ss-caption-final' : ''}">
             ${captionFinal ? `<i data-lucide="sparkles" class="w-3.5 h-3.5 inline" style="margin-right:6px;vertical-align:-2px"></i>` : ''}
             ${caption}
           </div>
-        ` : `<div class="ss-caption-stream ss-caption-empty">&nbsp;</div>`;
+        ` : ((showAct1 || showFinal) ? '' : `<div class="ss-caption-stream ss-caption-empty">&nbsp;</div>`);
+
+        // Act 1 ticker rail — last 4 packaged apps as a feed
+        const tickerHistory = (STATE.ssTickerHistory || []).slice(-4);
 
         return `
           <div class="ss-act-stage">
             ${captionHtml}
 
-            <!-- ACT 1: Catalog scale (vendor grid + counter) -->
+            <!-- ACT 1: Catalog scale — counter, category breakdown, and a dense scrolling list of real apps -->
             <div class="ss-act-panel ${showAct1 ? 'ss-act-show' : 'ss-act-hide'}" style="${showAct1 ? '' : 'display:none'}">
-              <div class="ss-zone ss-visible" style="background:var(--r-quote-bg);border:1px solid var(--r-divider);position:relative;overflow:hidden">
-                <div class="flex items-center justify-between mb-2">
-                  <div class="ss-counter-big">${counter.toLocaleString()}</div>
-                  <div class="text-[11px] text-[var(--r-ink-2)] text-right">
-                    <div class="font-semibold text-[var(--r-ink)]">pre-tested applications</div>
-                    <div>Adobe · Citrix · Google · Microsoft · Mozilla · VMware · 30+ languages</div>
+              <div class="ss-act1-stage">
+                <!-- TOP ROW: counter + small "+ yours" foreshadow + category counts -->
+                <div class="ss-act1-top">
+                  <div class="ss-act1-headline">
+                    <div class="ss-act1-eyebrow">Setup Store · pre-packaged catalog</div>
+                    <div class="ss-act1-count-row">
+                      <div class="ss-counter-big">${counter.toLocaleString()}</div>
+                      <div class="ss-act1-plus">
+                        <span class="ss-act1-plus-sign">+</span>
+                        <span class="ss-act1-plus-label">your custom apps</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="ss-act1-cats">
+                    <div class="ss-act1-cat"><span class="ss-act1-cat-num">1,840</span><span class="ss-act1-cat-name">Productivity</span></div>
+                    <div class="ss-act1-cat"><span class="ss-act1-cat-num">1,103</span><span class="ss-act1-cat-name">Developer tools</span></div>
+                    <div class="ss-act1-cat"><span class="ss-act1-cat-num">612</span><span class="ss-act1-cat-name">Security &amp; VPN</span></div>
+                    <div class="ss-act1-cat"><span class="ss-act1-cat-num">290</span><span class="ss-act1-cat-name">Communication</span></div>
+                    <div class="ss-act1-cat"><span class="ss-act1-cat-num">47</span><span class="ss-act1-cat-name">Browsers</span></div>
                   </div>
                 </div>
-                <div class="ss-vendor-grid">
-                  ${SS_VENDORS.map((v, i) => `
-                    <div class="ss-vendor-tile ss-cascade" style="--cascade-delay:${i * 70}ms">
-                      <div class="ss-v-icon" style="background:${v.c}">${v.l}</div>
-                      <div class="ss-v-name">${v.n}</div>
+
+                <!-- DENSE SCROLLING CATALOG — communicates volume by showing real rows in motion -->
+                <div class="ss-catalog">
+                  <div class="ss-catalog-head">
+                    <span>App</span>
+                    <span>Version</span>
+                    <span>Status</span>
+                  </div>
+                  <div class="ss-catalog-viewport">
+                    <div class="ss-catalog-track">
+                      ${[...SS_CATALOG_APPS, ...SS_CATALOG_APPS].map((a) => `
+                        <div class="ss-catalog-row">
+                          <div class="ss-catalog-app">
+                            <div class="ss-catalog-icon" style="background:${a.c}">${a.l}</div>
+                            <div class="ss-catalog-name">${a.n}</div>
+                          </div>
+                          <div class="ss-catalog-ver">${a.v}</div>
+                          <div class="ss-catalog-status">
+                            <i data-lucide="check" class="w-3 h-3"></i> Packaged
+                          </div>
+                        </div>
+                      `).join('')}
+                      <!-- "+ yours" custom slot — sits as a natural row in the catalog, not a separate card -->
+                      <div class="ss-catalog-row ss-catalog-row-custom">
+                        <div class="ss-catalog-app">
+                          <div class="ss-catalog-icon ss-catalog-icon-custom"><i data-lucide="box" class="w-3.5 h-3.5"></i></div>
+                          <div class="ss-catalog-name">YourApp <span class="ss-catalog-dim">· custom internal</span></div>
+                        </div>
+                        <div class="ss-catalog-ver">v2.3</div>
+                        <div class="ss-catalog-status ss-catalog-status-custom">
+                          <i data-lucide="plus" class="w-3 h-3"></i> Yours
+                        </div>
+                      </div>
                     </div>
-                  `).join('')}
-                </div>
-                <!-- Streaming app icons overlay (CSS-driven, low-fidelity volume cue) -->
-                <div class="ss-stream-layer" aria-hidden="true">
-                  ${Array.from({length: 18}).map((_, i) => `
-                    <span class="ss-stream-dot" style="--sx:${(i*53)%100}%;--sd:${i*0.18}s;--sc:${SS_VENDORS[i % SS_VENDORS.length].c}"></span>
-                  `).join('')}
-                </div>
-                <div class="ss-categories-row">
-                  <span class="ss-cat-pill">Productivity</span>
-                  <span class="ss-cat-pill">Security</span>
-                  <span class="ss-cat-pill">Browsers</span>
-                  <span class="ss-cat-pill">Communication</span>
-                  <span class="ss-cat-pill">Developer Tools</span>
+                  </div>
+                  <!-- Top + bottom fade masks for the scrolling list -->
+                  <div class="ss-catalog-fade ss-catalog-fade-top" aria-hidden="true"></div>
+                  <div class="ss-catalog-fade ss-catalog-fade-bottom" aria-hidden="true"></div>
                 </div>
               </div>
             </div>
@@ -5470,31 +5961,98 @@
               </div>
             </div>
 
-            <!-- FINAL beat: connector fanout from combined source -->
+            <!-- FINAL beat: synthesis — two parallel columns showing one engine, two inputs -->
             <div class="ss-act-panel ${showFinal ? 'ss-act-show' : 'ss-act-hide'}" style="${showFinal ? '' : 'display:none'}">
-              <div class="ss-fanout">
-                <div class="ss-fanout-source ss-fanout-source-combined">
-                  <i data-lucide="library" class="w-3.5 h-3.5 inline" style="margin-right:4px;vertical-align:-2px"></i>
-                  Setup Store
-                  <span class="ss-fanout-source-badges">
-                    <span class="ss-fanout-mini-badge ss-fanout-mini-adobe">A</span>
-                    <span class="ss-fanout-mini-badge ss-fanout-mini-your"><i data-lucide="box" class="w-2.5 h-2.5"></i></span>
+              <div class="ss-synth">
+                <div class="ss-synth-header">
+                  <div class="ss-synth-headline">One packaging engine. Two sources of apps.</div>
+                  <div class="ss-synth-sub">Everything Recast builds. Everything you build. Same eight steps, same quality bar.</div>
+                </div>
+
+                <div class="ss-synth-cols">
+                  <!-- LEFT: Setup Store -->
+                  <div class="ss-synth-col ss-synth-col-store">
+                    <div class="ss-synth-col-head">
+                      <div class="ss-synth-col-title">
+                        <i data-lucide="library" class="w-4 h-4"></i>
+                        <span>Setup Store</span>
+                      </div>
+                      <span class="ss-synth-pill ss-synth-pill-store">Maintained by Recast</span>
+                    </div>
+
+                    <div class="ss-synth-payload">
+                      <div class="ss-synth-num">8,047</div>
+                      <div class="ss-synth-num-label">commercial applications, packaged and current</div>
+                      <div class="ss-synth-vendors">
+                        ${SS_VENDORS.slice(0, 6).map(v => `
+                          <div class="ss-synth-vendor" title="${v.n}">
+                            <span class="ss-v-icon" style="background:${v.c}">${v.l}</span>
+                            <span class="ss-v-name">${v.n}</span>
+                          </div>
+                        `).join('')}
+                        <div class="ss-synth-vendor-more">+ 8,041 more</div>
+                      </div>
+                    </div>
+
+                    <ul class="ss-synth-spine">
+                      ${SS_PACKAGE_FIELDS.map(f => `
+                        <li class="ss-synth-step ss-synth-step-store">
+                          <i data-lucide="check" class="ss-synth-check"></i>
+                          <span>${f.label}</span>
+                        </li>
+                      `).join('')}
+                    </ul>
+
+                    <div class="ss-synth-foot">Refreshed daily. Available the moment Recast is installed.</div>
+                  </div>
+
+                  <!-- RIGHT: Custom Packaging -->
+                  <div class="ss-synth-col ss-synth-col-custom">
+                    <div class="ss-synth-col-head">
+                      <div class="ss-synth-col-title">
+                        <i data-lucide="box" class="w-4 h-4"></i>
+                        <span>Custom Packaging</span>
+                      </div>
+                      <span class="ss-synth-pill ss-synth-pill-custom">Built by your team</span>
+                    </div>
+
+                    <div class="ss-synth-payload">
+                      <div class="ss-synth-custom-card">
+                        <div class="ss-synth-custom-icon"><i data-lucide="box" class="w-4 h-4"></i></div>
+                        <div class="ss-synth-custom-meta">
+                          <div class="ss-synth-custom-name">YourApp <span class="ss-synth-dim">· internal LOB tool</span></div>
+                          <div class="ss-synth-custom-sub">v2.3 · Windows + macOS</div>
+                        </div>
+                      </div>
+                      <div class="ss-synth-custom-note">Same packaging structure. Same security and compliance fields. Same delivery pipeline.</div>
+                    </div>
+
+                    <ul class="ss-synth-spine">
+                      ${SS_PACKAGE_FIELDS.map((f, i) => {
+                        // First 4 inherited from engine (cyan), last 4 configured by team (green)
+                        const inherited = i < 4;
+                        return `
+                        <li class="ss-synth-step ${inherited ? 'ss-synth-step-inherited' : 'ss-synth-step-custom'}">
+                          <i data-lucide="check" class="ss-synth-check"></i>
+                          <span>${f.label}</span>
+                          ${inherited ? `<span class="ss-synth-badge-inherit">inherited</span>` : ''}
+                        </li>
+                      `;}).join('')}
+                    </ul>
+
+                    <div class="ss-synth-foot">You build it once. The engine handles the rest.</div>
+                  </div>
+                </div>
+
+                <!-- Footer: handoff to Admin Console -->
+                <div class="ss-synth-handoff">
+                  <span class="ss-synth-handoff-line"></span>
+                  <span class="ss-synth-handoff-label">
+                    Both flow into the same <strong>Admin Console</strong>
+                    <i data-lucide="arrow-right" class="w-3.5 h-3.5 inline" style="margin-left:6px;vertical-align:-2px"></i>
                   </span>
+                  <span class="ss-synth-handoff-line"></span>
                 </div>
-                <div class="ss-fanout-lines">
-                  ${SS_CONNECTORS.map((_, i) => `
-                    <div class="ss-fanout-line ${showFinal ? 'ss-drawn' : ''}" style="transition-delay:${i * 80}ms"></div>
-                  `).join('')}
-                </div>
-                <div class="ss-connectors-label">Connectors</div>
-                <div class="ss-fanout-targets">
-                  ${SS_CONNECTORS.map((c, i) => `
-                    <div class="ss-target ${c.primary ? 'ss-primary' : ''} ${showFinal ? 'ss-show' : ''}" style="transition-delay:${(SS_CONNECTORS.length * 80) + i * 70}ms">${c.label}</div>
-                  `).join('')}
-                </div>
-                ${act === 'done' ? `
-                  <div class="ss-final-line">One pipeline. Commercial apps and yours. Same delivery, same quality, same speed.</div>
-                ` : ''}
               </div>
             </div>
 
@@ -5551,6 +6109,41 @@
         'VMware Horizon: packaged',
         'Python 3.12: packaged',
         'Java JDK 21: packaged',
+      ];
+
+      // Real catalog rows — 30+ app names with versions for the dense scrolling column.
+      // Doubled at render time to make the marquee loop seamlessly.
+      const SS_CATALOG_APPS = [
+        {l:'A',  c:'#ED2224', n:'Adobe Acrobat Reader DC',   v:'24.001.20065'},
+        {l:'M',  c:'#0067B8', n:'Microsoft Teams',            v:'1.7.00.31566'},
+        {l:'G',  c:'#4285F4', n:'Google Chrome',              v:'130.0.6723.92'},
+        {l:'Mz', c:'#FF7139', n:'Mozilla Firefox ESR',        v:'128.4.0'},
+        {l:'Z',  c:'#0B5CFF', n:'Zoom Workplace',             v:'6.2.10'},
+        {l:'7',  c:'#1A8A1A', n:'7-Zip',                      v:'24.07'},
+        {l:'N',  c:'#76B900', n:'Notepad++',                  v:'8.7'},
+        {l:'V',  c:'#607078', n:'VMware Horizon Client',      v:'2406'},
+        {l:'C',  c:'#374151', n:'Citrix Workspace',           v:'2402.10'},
+        {l:'O',  c:'#0070F3', n:'OpenVPN Connect',            v:'3.5.0'},
+        {l:'P',  c:'#FB7299', n:'Python',                     v:'3.12.7'},
+        {l:'J',  c:'#5382A1', n:'Java JDK',                   v:'21.0.4'},
+        {l:'V',  c:'#5C6BC0', n:'Visual Studio Code',         v:'1.93.1'},
+        {l:'G',  c:'#F05033', n:'Git',                        v:'2.46.0'},
+        {l:'S',  c:'#36C5F0', n:'Slack',                      v:'4.40.133'},
+        {l:'D',  c:'#5865F2', n:'Docker Desktop',             v:'4.34.2'},
+        {l:'A',  c:'#1A73E8', n:'Adobe Creative Cloud',       v:'6.4.0'},
+        {l:'M',  c:'#107C10', n:'Microsoft Office 365',       v:'2410'},
+        {l:'P',  c:'#A4373A', n:'PowerShell',                 v:'7.4.5'},
+        {l:'R',  c:'#198CE7', n:'Postman',                    v:'11.16.0'},
+        {l:'F',  c:'#0061FF', n:'Foxit PDF Reader',           v:'2024.3'},
+        {l:'W',  c:'#25D366', n:'WhatsApp Desktop',           v:'2.2447.7'},
+        {l:'D',  c:'#FB7300', n:'Dropbox',                    v:'212.4.5946'},
+        {l:'O',  c:'#0F9D58', n:'OneDrive',                   v:'24.190.0921'},
+        {l:'E',  c:'#0078D4', n:'Microsoft Edge',             v:'130.0.2849.46'},
+        {l:'B',  c:'#0F62FE', n:'Box Drive',                  v:'2.40.323'},
+        {l:'P',  c:'#34495E', n:'PuTTY',                      v:'0.81'},
+        {l:'W',  c:'#01A4EF', n:'WinSCP',                     v:'6.3.5'},
+        {l:'V',  c:'#499CD3', n:'VLC Media Player',           v:'3.0.21'},
+        {l:'A',  c:'#5B89C7', n:'Audacity',                   v:'3.6.4'},
       ];
 
       const SS_CONNECTORS = [
@@ -6262,6 +6855,7 @@
           STATE.ssBadgesAdobe = false;
           STATE.ssYourCardIn = false;
           STATE.ssAdobeShifted = false;
+          STATE.ssTickerHistory = [];
           STATE.ssInheritStep = 0;
           STATE.ssBadgesYour = false;
           scrollPreserveRender();
@@ -6382,20 +6976,33 @@
         STATE.ssCounterRaf = requestAnimationFrame(tick);
       }
 
-      /* Ticker — flickers app names ~50ms each during Act 1 */
+      /* Ticker — pushes a vendor-tagged "packaged" entry into the live rail every ~700ms */
       function ssTickerStart(){
         ssTickerStop();
+        STATE.ssTickerHistory = STATE.ssTickerHistory || [];
         let i = 0;
         const tick = () => {
           if (STATE.ssAct !== '1' || STATE.ssCaptionFinal || STATE.ssPaused) return;
-          STATE.ssCaption = SS_TICKER_APPS[i % SS_TICKER_APPS.length];
-          // Update only the caption text node (avoid full re-render)
-          const el = document.querySelector('.ss-caption-stream');
-          if (el && !el.classList.contains('ss-caption-final')) {
-            el.textContent = STATE.ssCaption;
+          const vendor = SS_VENDORS[i % SS_VENDORS.length];
+          const appName = SS_TICKER_APPS[i % SS_TICKER_APPS.length].replace(/:\s*packaged$/i, '');
+          STATE.ssTickerHistory.push({ l: vendor.l, c: vendor.c, n: appName });
+          // Keep only last 6 to bound memory; render shows last 4
+          if (STATE.ssTickerHistory.length > 6) STATE.ssTickerHistory.shift();
+          // Targeted DOM update — re-render only the ticker list
+          const list = document.querySelector('.ss-ticker-list');
+          if (list) {
+            const recent = STATE.ssTickerHistory.slice(-4);
+            list.innerHTML = recent.map((e, ri) => `
+              <div class="ss-ticker-row" style="--row-idx:${ri};--row-total:${recent.length}">
+                <div class="ss-ticker-icon" style="background:${e.c}">${e.l}</div>
+                <div class="ss-ticker-name">${e.n}</div>
+                <i data-lucide="check-circle-2" class="ss-ticker-check w-3 h-3"></i>
+              </div>
+            `).join('');
+            if (window.lucide) lucide.createIcons({ nameAttr: 'data-lucide', attrs: { class: 'lucide' } });
           }
           i++;
-          STATE._ssTickerTimer = setTimeout(tick, 80);
+          STATE._ssTickerTimer = setTimeout(tick, 700);
         };
         tick();
       }
@@ -6479,6 +7086,7 @@
         STATE.ssBadgesYour = false;
         STATE.ssYourCardIn = false;
         STATE.ssAdobeShifted = false;
+        STATE.ssTickerHistory = [];
         STATE.ssQueue = buildSsQueue();
         STATE.ssQueueIdx = 0;
         scrollPreserveRender();
@@ -6517,6 +7125,7 @@
         STATE.ssBadgesYour = false;
         STATE.ssYourCardIn = false;
         STATE.ssAdobeShifted = false;
+        STATE.ssTickerHistory = [];
         STATE.ssRunning = false;
         STATE.ssPaused = false;
         STATE.ssQueue = [];
@@ -7588,7 +8197,7 @@
             STATE.ssRunning = false; STATE.ssPaused = false; STATE.ssPhase = 'idle'; STATE.ssQueue = []; STATE.ssQueueIdx = 0;
             STATE.ssAct = 'idle'; STATE.ssCounter = 0; STATE.ssCaption = ''; STATE.ssCaptionFinal = false;
             STATE.ssFieldStep = 0; STATE.ssInheritStep = 0; STATE.ssBadgesAdobe = false; STATE.ssBadgesYour = false;
-            STATE.ssYourCardIn = false; STATE.ssAdobeShifted = false;
+            STATE.ssYourCardIn = false; STATE.ssAdobeShifted = false; STATE.ssTickerHistory = [];
             if (STATE.ssCounterRaf) { cancelAnimationFrame(STATE.ssCounterRaf); STATE.ssCounterRaf = null; }
             if (typeof ssTickerStop === 'function') ssTickerStop();
             STATE.obRunning = false; STATE.obPaused = false; STATE.obPhase = 'idle'; STATE.obQueue = []; STATE.obQueueIdx = 0;
