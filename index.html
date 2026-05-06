@@ -108,6 +108,12 @@
       .interactive-node:hover { opacity: 0.9; transform: scale(1.05); }
       .chart-container { width: 100%; height: auto; aspect-ratio: 860 / 420; background: #ffffff; border-radius: 16px; padding: 8px; }
       #capacity-gap-chart { width: 100%; height: 100%; }
+      .chart-nav-arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 32px; height: 32px; border-radius: 999px; background: white; border: 1px solid #cbd5e1; box-shadow: 0 2px 6px rgba(10,28,96,0.12); display: flex; align-items: center; justify-content: center; color: #0A1C60; cursor: pointer; z-index: 10; transition: all 0.15s ease; }
+      .chart-nav-arrow:hover { background: #0A1C60; color: white; border-color: #0A1C60; box-shadow: 0 4px 10px rgba(10,28,96,0.25); }
+      .chart-nav-prev { left: 6px; }
+      .chart-nav-next { right: 6px; }
+      .insight-nav-arrow { width: 36px; height: 36px; border-radius: 999px; background: white; border: 1px solid #cbd5e1; display: flex; align-items: center; justify-content: center; color: #0A1C60; cursor: pointer; transition: all 0.15s ease; }
+      .insight-nav-arrow:hover { background: #0A1C60; color: white; border-color: #0A1C60; box-shadow: 0 2px 8px rgba(10,28,96,0.2); }
       .chart-text { font-size: 11px; font-weight: 600; fill: var(--r-ink); letter-spacing: 0.01em; font-family: Inter, system-ui, sans-serif; }
       .chart-axis { stroke: #DDDDEE; stroke-width: 1; }
       .chart-axis-label { font-size: 17px; font-weight: 800; fill: var(--r-blue); font-family: Inter, system-ui, sans-serif; letter-spacing: 0.10em; text-transform: uppercase; }
@@ -1392,6 +1398,154 @@
       .flip-card-stat { font-size: 28px; font-weight: 800; background: linear-gradient(135deg, #0070F3, #0A1C60); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1; white-space: nowrap; }
       .flip-card-tap { font-size: 8px; color: #cbd5e1; opacity: 0; animation: fadeIn 1s ease 2s forwards; }
       @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+      /* ── Modal narrative reveal animations: Change Velocity & Platform Multiplication ─ */
+      /* Both animate the existing static composition so it unfolds over time, then settles on the final state. */
+
+      /* === Continuous Change Velocity — chart draws itself === */
+      .cv-anim-wrap .cv-frame   { opacity: 0; animation: cvFade 0.5s ease-out 0.1s forwards; }
+      .cv-anim-wrap .cv-grid    { opacity: 0; animation: cvFade 0.5s ease-out 0.3s forwards; }
+      .cv-anim-wrap .cv-xlabels { opacity: 0; animation: cvFade 0.4s ease-out 0.4s forwards; }
+      .cv-anim-wrap .cv-ylabel  { opacity: 0; animation: cvFade 0.4s ease-out 0.4s forwards; }
+      .cv-anim-wrap .cv-cap     { opacity: 0; animation: cvCapIn 0.6s ease-out 0.7s forwards; }
+      @keyframes cvFade  { 0% { opacity: 0; } 100% { opacity: 1; } }
+      @keyframes cvCapIn { 0% { opacity: 0; transform: translateX(-20px); } 100% { opacity: 1; transform: translateX(0); } }
+      /* Sweep clip rect grows from x=ml to ml+cw over ~3.5s — reveals stacked areas left to right */
+      .cv-anim-wrap .cv-sweep-rect { animation: cvSweep 3.5s cubic-bezier(.4,.05,.4,1) 1.1s forwards; }
+      @keyframes cvSweep { 0% { width: 0; } 100% { width: 645px; } }
+      /* Milestone dots pop in at their year along the sweep timeline.
+         Sweep starts at 1.1s and runs 3.5s; the three milestones land at year-indices 4,5,7 of 11 →
+         t ≈ 4/11, 5/11, 7/11 of sweep duration. */
+      .cv-anim-wrap .cv-mile { opacity: 0; transform: scale(0.4); transform-box: fill-box; transform-origin: center; }
+      .cv-anim-wrap .cv-mile-0 { animation: cvMile 0.5s cubic-bezier(.34,1.56,.64,1) 2.4s forwards; }
+      .cv-anim-wrap .cv-mile-1 { animation: cvMile 0.5s cubic-bezier(.34,1.56,.64,1) 2.7s forwards; }
+      .cv-anim-wrap .cv-mile-2 { animation: cvMile 0.5s cubic-bezier(.34,1.56,.64,1) 3.4s forwards; }
+      @keyframes cvMile { 0% { opacity: 0; transform: scale(0.4); } 100% { opacity: 1; transform: scale(1); } }
+      .cv-anim-wrap .cv-detail { opacity: 0; transform: translateY(6px); animation: cvSlideUp 0.6s ease-out 4.8s forwards; }
+      .cv-anim-wrap .cv-legend { opacity: 0; animation: cvFade 0.6s ease-out 5.1s forwards; }
+      @keyframes cvSlideUp { 0% { opacity: 0; transform: translateY(6px); } 100% { opacity: 1; transform: translateY(0); } }
+
+      /* === Platform Multiplication — silos drop in left-to-right, then disconnect Xs pop === */
+      .pm-anim-wrap .pm-title   { opacity: 0; animation: cvFade 0.5s ease-out 0.1s forwards; }
+      .pm-anim-wrap .pm-context { opacity: 0; transform: translateY(-4px); animation: cvSlideUp 0.5s ease-out 0.3s forwards; }
+      .pm-anim-wrap .pm-silo    { opacity: 0; transform: translateY(12px) scale(0.96); }
+      .pm-anim-wrap .pm-silo-0  { animation: pmSiloIn 0.5s cubic-bezier(.4,.05,.4,1) 0.8s forwards; }
+      .pm-anim-wrap .pm-silo-1  { animation: pmSiloIn 0.5s cubic-bezier(.4,.05,.4,1) 1.0s forwards; }
+      .pm-anim-wrap .pm-silo-2  { animation: pmSiloIn 0.5s cubic-bezier(.4,.05,.4,1) 1.2s forwards; }
+      .pm-anim-wrap .pm-silo-3  { animation: pmSiloIn 0.5s cubic-bezier(.4,.05,.4,1) 1.4s forwards; }
+      .pm-anim-wrap .pm-silo-4  { animation: pmSiloIn 0.5s cubic-bezier(.4,.05,.4,1) 1.6s forwards; }
+      @keyframes pmSiloIn { 0% { opacity: 0; transform: translateY(12px) scale(0.96); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+      /* Disconnect Xs pop in AFTER all silos have landed — the disconnection is the punchline. */
+      .pm-anim-wrap .pm-x       { opacity: 0; transform: translateY(-50%) scale(0.2); }
+      .pm-anim-wrap .pm-x-0     { animation: pmXPop 0.45s cubic-bezier(.34,1.56,.64,1) 2.1s forwards; }
+      .pm-anim-wrap .pm-x-1     { animation: pmXPop 0.45s cubic-bezier(.34,1.56,.64,1) 2.25s forwards; }
+      .pm-anim-wrap .pm-x-2     { animation: pmXPop 0.45s cubic-bezier(.34,1.56,.64,1) 2.4s forwards; }
+      .pm-anim-wrap .pm-x-3     { animation: pmXPop 0.45s cubic-bezier(.34,1.56,.64,1) 2.55s forwards; }
+      @keyframes pmXPop { 0% { opacity: 0; transform: translateY(-50%) scale(0.2); } 70% { transform: translateY(-50%) scale(1.15); } 100% { opacity: 1; transform: translateY(-50%) scale(1); } }
+      .pm-anim-wrap .pm-callout { opacity: 0; transform: translateY(4px); animation: cvSlideUp 0.5s ease-out 3.0s forwards; }
+      .pm-anim-wrap .pm-impact  { opacity: 0; transform: translateX(8px); animation: pmImpactIn 0.6s ease-out 3.3s forwards; }
+      @keyframes pmImpactIn { 0% { opacity: 0; transform: translateX(8px); } 100% { opacity: 1; transform: translateX(0); } }
+      .pm-anim-wrap .pm-quote   { opacity: 0; animation: cvFade 0.5s ease-out 3.7s forwards; }
+
+      /* ─── Impact sidebar: 5 rows, each with its own micro-animation ─── */
+      .pm-imp-row { opacity: 0; transform: translateY(4px); }
+      .pm-imp-row-0 { animation: impRowIn 0.4s ease-out 3.5s forwards; }
+      .pm-imp-row-1 { animation: impRowIn 0.4s ease-out 4.1s forwards; }
+      .pm-imp-row-2 { animation: impRowIn 0.4s ease-out 4.7s forwards; }
+      .pm-imp-row-3 { animation: impRowIn 0.4s ease-out 5.3s forwards; }
+      .pm-imp-row-4 { animation: impRowIn 0.4s ease-out 5.9s forwards; }
+      @keyframes impRowIn { to { opacity: 1; transform: translateY(0); } }
+
+      /* All impact visuals share a uniform 64×40 viz frame for consistent rhythm */
+      .imp-viz { width: 64px; height: 40px; position: relative; display: flex; align-items: center; justify-content: center; }
+
+      /* Row 1: 5× duplication — one app card clones into 5 stacked copies */
+      .imp-dup { position: relative; width: 64px; height: 40px; }
+      .imp-dup-card { position: absolute; width: 22px; height: 28px; border-radius: 3px; background: #fff; border: 1.5px solid #ef4444; left: 6px; top: 6px; box-shadow: 0 1px 2px rgba(239,68,68,0.15); }
+      .imp-dup-card::before { content: ''; position: absolute; left: 3px; right: 3px; top: 4px; height: 3px; border-radius: 1.5px; background: #ef4444; }
+      .imp-dup-card::after { content: ''; position: absolute; left: 3px; right: 3px; top: 11px; height: 2px; background: #fca5a5; border-radius: 1px; box-shadow: 0 4px 0 #fca5a5, 0 8px 0 #fca5a5; }
+      .imp-dup-card-0 { z-index: 5; animation: impDupOrigin 4s ease-in-out 3.7s infinite; }
+      .imp-dup-card-1 { z-index: 4; animation: impDupClone1 4s ease-in-out 3.7s infinite; }
+      .imp-dup-card-2 { z-index: 3; animation: impDupClone2 4s ease-in-out 3.7s infinite; }
+      .imp-dup-card-3 { z-index: 2; animation: impDupClone3 4s ease-in-out 3.7s infinite; }
+      .imp-dup-card-4 { z-index: 1; animation: impDupClone4 4s ease-in-out 3.7s infinite; }
+      @keyframes impDupOrigin { 0%, 100% { opacity: 1; transform: translate(0,0); } }
+      @keyframes impDupClone1 { 0%, 10% { opacity: 0; transform: translate(0,0); } 20%, 90% { opacity: 1; transform: translate(7px, -3px); } 100% { opacity: 1; transform: translate(7px, -3px); } }
+      @keyframes impDupClone2 { 0%, 15% { opacity: 0; transform: translate(0,0); } 25%, 90% { opacity: 1; transform: translate(14px, -1px); } 100% { opacity: 1; transform: translate(14px, -1px); } }
+      @keyframes impDupClone3 { 0%, 20% { opacity: 0; transform: translate(0,0); } 30%, 90% { opacity: 1; transform: translate(21px, 2px); } 100% { opacity: 1; transform: translate(21px, 2px); } }
+      @keyframes impDupClone4 { 0%, 25% { opacity: 0; transform: translate(0,0); } 35%, 90% { opacity: 1; transform: translate(28px, 5px); } 100% { opacity: 1; transform: translate(28px, 5px); } }
+
+      /* Row 2: 5–10 day patch cycle — calendar grid filling day by day */
+      .imp-cal { width: 56px; height: 36px; background: #fff; border: 1.5px solid #ef4444; border-radius: 4px; padding: 7px 4px 4px; position: relative; box-shadow: 0 1px 2px rgba(239,68,68,0.15); }
+      .imp-cal::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 5px; background: #ef4444; border-radius: 2.5px 2.5px 0 0; }
+      .imp-cal-grid { display: grid; grid-template-columns: repeat(5, 1fr); grid-auto-rows: 1fr; gap: 2px; width: 100%; height: 100%; }
+      .imp-cal-cell { background: #fee2e2; border-radius: 1px; }
+      .imp-cal-cell-0 { animation: impCalFill 5s ease-in-out 3.7s infinite; }
+      .imp-cal-cell-1 { animation: impCalFill 5s ease-in-out 3.85s infinite; }
+      .imp-cal-cell-2 { animation: impCalFill 5s ease-in-out 4.0s infinite; }
+      .imp-cal-cell-3 { animation: impCalFill 5s ease-in-out 4.15s infinite; }
+      .imp-cal-cell-4 { animation: impCalFill 5s ease-in-out 4.3s infinite; }
+      .imp-cal-cell-5 { animation: impCalFill 5s ease-in-out 4.45s infinite; }
+      .imp-cal-cell-6 { animation: impCalFill 5s ease-in-out 4.6s infinite; }
+      .imp-cal-cell-7 { animation: impCalFill 5s ease-in-out 4.75s infinite; }
+      .imp-cal-cell-8 { animation: impCalFill 5s ease-in-out 4.9s infinite; }
+      .imp-cal-cell-9 { animation: impCalFill 5s ease-in-out 5.05s infinite; }
+      @keyframes impCalFill {
+        0%, 5% { background: #fee2e2; }
+        15%, 90% { background: #ef4444; }
+        100% { background: #ef4444; }
+      }
+
+      /* Row 3: 30–65% reactive work — donut filling to 65% */
+      .imp-donut { width: 36px; height: 36px; }
+      .imp-donut svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+      .imp-donut .ring-bg { fill: none; stroke: #fee2e2; stroke-width: 6; }
+      .imp-donut .ring-fg { fill: none; stroke: #ef4444; stroke-width: 6; stroke-linecap: round; stroke-dasharray: 75.4; stroke-dashoffset: 75.4; animation: impDonutFill 4s ease-in-out 3.9s infinite; }
+      .imp-donut-label { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 800; color: #ef4444; letter-spacing: -0.02em; }
+      @keyframes impDonutFill {
+        0% { stroke-dashoffset: 75.4; }
+        40%, 90% { stroke-dashoffset: 26.4; }
+        100% { stroke-dashoffset: 26.4; }
+      }
+
+      /* Row 4: Manual compliance evidence — page with check being drawn by a pen */
+      .imp-page { width: 38px; height: 38px; background: #fff; border: 1.5px solid #ef4444; border-radius: 3px; position: relative; padding: 5px; box-shadow: 0 1px 2px rgba(239,68,68,0.15); }
+      .imp-page::before { content: ''; position: absolute; top: 6px; left: 5px; right: 14px; height: 2px; background: #fecaca; border-radius: 1px; box-shadow: 0 5px 0 #fecaca; }
+      .imp-page-check { position: absolute; left: 50%; bottom: 4px; transform: translateX(-50%); width: 22px; height: 18px; }
+      .imp-page-check path { fill: none; stroke: #ef4444; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 32; stroke-dashoffset: 32; animation: impCheckDraw 4s ease-in-out 4.1s infinite; }
+      @keyframes impCheckDraw {
+        0%, 5% { stroke-dashoffset: 32; }
+        25%, 90% { stroke-dashoffset: 0; }
+        100% { stroke-dashoffset: 0; }
+      }
+
+      /* Row 5: No single pane of glass — fragmented monitor with prohibition slash */
+      .imp-glass { position: relative; width: 56px; height: 38px; }
+      .imp-glass-monitor { width: 100%; height: 30px; background: #fff; border: 1.5px solid #ef4444; border-radius: 3px; padding: 3px; box-shadow: 0 1px 2px rgba(239,68,68,0.15); }
+      .imp-glass-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: 1fr 1fr; gap: 2px; width: 100%; height: 100%; }
+      .imp-glass-cell { background: #fee2e2; border-radius: 1.5px; }
+      .imp-glass-stand { width: 14px; height: 4px; background: #ef4444; border-radius: 0 0 2px 2px; margin: 0 auto; }
+      .imp-glass-stand::after { content: ''; display: block; width: 22px; height: 2px; background: #ef4444; border-radius: 1px; margin: 2px auto 0; }
+      .imp-glass-slash { position: absolute; top: -2px; left: -2px; width: 60px; height: 42px; pointer-events: none; }
+      .imp-glass-slash circle { fill: none; stroke: #ef4444; stroke-width: 2.5; stroke-linecap: round; stroke-dasharray: 110; stroke-dashoffset: 110; animation: impSlashCirc 4s ease-in-out 4.3s infinite; }
+      .imp-glass-slash line { stroke: #ef4444; stroke-width: 2.5; stroke-linecap: round; stroke-dasharray: 50; stroke-dashoffset: 50; animation: impSlashLine 4s ease-in-out 4.65s infinite; }
+      @keyframes impSlashCirc { 0%, 5% { stroke-dashoffset: 110; } 30%, 90% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: 0; } }
+      @keyframes impSlashLine { 0%, 15% { stroke-dashoffset: 50; } 35%, 90% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: 0; } }
+
+      @media (prefers-reduced-motion: reduce) {
+        .cv-anim-wrap .cv-frame, .cv-anim-wrap .cv-grid, .cv-anim-wrap .cv-xlabels, .cv-anim-wrap .cv-ylabel,
+        .cv-anim-wrap .cv-cap, .cv-anim-wrap .cv-mile, .cv-anim-wrap .cv-detail, .cv-anim-wrap .cv-legend,
+        .pm-anim-wrap .pm-title, .pm-anim-wrap .pm-context, .pm-anim-wrap .pm-silo, .pm-anim-wrap .pm-x,
+        .pm-anim-wrap .pm-callout, .pm-anim-wrap .pm-impact, .pm-anim-wrap .pm-quote,
+        .pm-anim-wrap .pm-imp-row,
+        .pm-anim-wrap .imp-dup-card, .pm-anim-wrap .imp-cal-cell, .pm-anim-wrap .imp-bar-fill,
+        .pm-anim-wrap .imp-page-check path, .pm-anim-wrap .imp-glass-slash circle, .pm-anim-wrap .imp-glass-slash line {
+          animation-duration: 0.001s !important; animation-delay: 0s !important;
+          opacity: 1 !important; transform: none !important; stroke-dashoffset: 0 !important;
+        }
+        .cv-anim-wrap .cv-sweep-rect { animation-duration: 0.001s !important; animation-delay: 0s !important; width: 645px !important; }
+      }
+
       .logo-ticker-wrap { overflow: hidden; position: relative; padding: 8px 0; }
       .logo-ticker-wrap::before, .logo-ticker-wrap::after { content: ''; position: absolute; top: 0; bottom: 0; width: 48px; z-index: 1; pointer-events: none; }
       .logo-ticker-wrap::before { left: 0; background: linear-gradient(90deg, white 0%, transparent 100%); }
@@ -5246,6 +5400,204 @@
         `;
       }
 
+      // ────────────────────────────────────────────────────────────────
+      // Continuous Change Velocity — animated narrative.
+      // Story: workload compounds across 5 categories while IT team capacity
+      // stays flat. The gap IS the trajectory. Five colored "demand streams"
+      // flow leftward into a fixed-width "IT TEAM" pipe; backlog accumulates
+      // visibly underneath while a year clock advances 2015 → 2026.
+      function renderChangeVelocityAnimation(){
+        // Metaphor: Rising water vs. fixed wall.
+        // A single glass labeled "IT TEAM CAPACITY" with a hard top edge.
+        // Water (workload) rises in 4 beats — each beat adds a new colored
+        // layer triggered by a milestone. After the 4th beat, water hits the
+        // ceiling and starts spilling over the rim as red droplets. Plays
+        // once, settles on overflow state.
+        const W = 720, H = 360;
+        // Glass geometry
+        const gx = 200, gy = 56, gw = 320, gh = 248; // glass body
+        const rim = gy + 8;                          // ceiling y inside the glass
+        const floor = gy + gh - 4;                   // water rests on this y
+        // Beat copy
+        const beats = [
+          {label:'2015 \u2014 baseline',          color:'#1a6b8a', sub:'on-prem desktops, predictable cycle'},
+          {label:'2019 \u2014 AVD launches',      color:'#2d8a5e', sub:'+ a whole new platform'},
+          {label:'2020 \u2014 COVID, remote work',color:'#b8860b', sub:'every app, anywhere'},
+          {label:'2022 \u2014 W365 + Intune',     color:'#9e4a5a', sub:'co-management on top'},
+        ];
+        // Droplets that spill over the rim once full
+        let spill = '';
+        for (let i = 0; i < 14; i++) {
+          const dx = gx + 30 + (i * 18);
+          const delay = (10 + (i * 0.18)).toFixed(2);
+          spill += '<circle class="csv-drop" cx="'+dx+'" cy="'+rim+'" r="3.5" fill="#CC2222" style="animation-delay:'+delay+'s"/>';
+        }
+        // Beat callouts on the right rail
+        let callouts = '';
+        beats.forEach((b, i) => {
+          const cy = 88 + i * 60;
+          const delay = (1.4 + i * 2.2).toFixed(2);
+          callouts += '<g class="csv-beat" style="animation-delay:'+delay+'s">'
+            + '<rect x="556" y="'+(cy-18)+'" width="148" height="50" rx="6" fill="white" stroke="'+b.color+'" stroke-width="1.5"/>'
+            + '<rect x="556" y="'+(cy-18)+'" width="4" height="50" fill="'+b.color+'"/>'
+            + '<text x="568" y="'+(cy-2)+'" font-size="10.5" font-weight="700" fill="#0A1C60" font-family="Inter,system-ui,sans-serif">'+b.label+'</text>'
+            + '<text x="568" y="'+(cy+14)+'" font-size="9" font-weight="500" fill="#475569" font-family="Inter,system-ui,sans-serif">'+b.sub+'</text>'
+            + '<text x="568" y="'+(cy+27)+'" font-size="8" font-weight="700" fill="'+b.color+'" font-family="Inter,system-ui,sans-serif" letter-spacing="0.10em">+ WORKLOAD</text>'
+            + '</g>';
+        });
+        // Four water layers that rise in sequence. Each is a rect that grows
+        // upward by animating its y down → up over a brief beat. We stack
+        // them in z-order so the latest layer paints on top.
+        const layers = beats.map((b, i) => {
+          const fillTop = floor - ((i + 1) * 56);   // y the top of this layer ends at
+          const delay = (1.6 + i * 2.2).toFixed(2);
+          return '<rect class="csv-layer csv-layer-'+i+'" x="'+(gx+6)+'" y="'+floor+'" width="'+(gw-12)+'" height="0" '
+               + 'fill="'+b.color+'" opacity="0.85" style="animation-delay:'+delay+'s; --layer-top:'+fillTop+'px;"/>';
+        }).join('');
+        // Wave shimmer on top of the highest layer
+        return ''
+          + '<div class="csv-anim" aria-label="Animation: workload water rises in four beats, hits the IT capacity ceiling, then spills over as backlog">'
+          +   '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid meet">'
+          +     '<defs>'
+          +       '<clipPath id="glassClip"><rect x="'+(gx+6)+'" y="'+rim+'" width="'+(gw-12)+'" height="'+(floor-rim)+'" rx="4"/></clipPath>'
+          +     '</defs>'
+          // Title strip
+          +     '<text x="32" y="30" font-size="11" font-weight="800" fill="#0A1C60" font-family="Inter,system-ui,sans-serif" letter-spacing="0.04em">WORKLOAD vs. TEAM CAPACITY</text>'
+          +     '<text x="32" y="46" font-size="9" font-weight="500" fill="#94A3B8" font-family="Inter,system-ui,sans-serif">2015 \u2192 2026 \u2014 capacity ceiling stays the same</text>'
+          // The glass (the team's capacity container)
+          +     '<rect x="'+gx+'" y="'+gy+'" width="'+gw+'" height="'+gh+'" rx="8" fill="#F8FAFD" stroke="#0A1C60" stroke-width="2"/>'
+          // Ceiling line (fixed, always visible)
+          +     '<line x1="'+(gx-12)+'" y1="'+rim+'" x2="'+(gx+gw+12)+'" y2="'+rim+'" stroke="#0A1C60" stroke-width="2" stroke-dasharray="6 4"/>'
+          +     '<text x="'+(gx-16)+'" y="'+(rim+4)+'" text-anchor="end" font-size="9" font-weight="700" fill="#0A1C60" font-family="Inter,system-ui,sans-serif">CEILING</text>'
+          +     '<text x="'+(gx-16)+'" y="'+(rim+16)+'" text-anchor="end" font-size="8" font-weight="500" fill="#475569" font-family="Inter,system-ui,sans-serif">fixed headcount</text>'
+          // Glass label (bottom)
+          +     '<text x="'+(gx+gw/2)+'" y="'+(gy+gh+22)+'" text-anchor="middle" font-size="10" font-weight="700" fill="#0A1C60" font-family="Inter,system-ui,sans-serif" letter-spacing="0.08em">IT TEAM CAPACITY</text>'
+          // Water layers, clipped to the glass interior
+          +     '<g clip-path="url(#glassClip)">' + layers + '</g>'
+          // Spill droplets falling over the rim
+          +     spill
+          // Backlog pool below the glass — appears once spill begins
+          +     '<rect class="csv-pool" x="'+(gx-20)+'" y="'+(gy+gh+34)+'" width="'+(gw+40)+'" height="14" rx="4" fill="#CC2222" opacity="0"/>'
+          +     '<text class="csv-pool-t" x="'+(gx+gw/2)+'" y="'+(gy+gh+44)+'" text-anchor="middle" font-size="9" font-weight="700" fill="white" font-family="Inter,system-ui,sans-serif" letter-spacing="0.10em" opacity="0">BACKLOG \u2014 OVERFLOW</text>'
+          // Beat callouts on the right
+          +     callouts
+          // Final verdict (appears at end)
+          +     '<g class="csv-verdict">'
+          +       '<rect x="32" y="312" width="488" height="36" rx="6" fill="#0A1C60"/>'
+          +       '<text x="48" y="335" font-size="12" font-weight="800" fill="white" font-family="Inter,system-ui,sans-serif">Workload exceeds capacity \u2014 the gap is the trajectory.</text>'
+          +     '</g>'
+          +   '</svg>'
+          + '</div>';
+      }
+
+      // ────────────────────────────────────────────────────────────────
+      // Platform Multiplication — animated narrative.
+      // Story: same app, five rebuilds, no shared intelligence. A single app
+      // ("Chrome v118") drops in at top. It splits into 5 packets that flow
+      // down 5 parallel pipelines, each stepping through Package → Deploy →
+      // Test → Patch on its own clock. Counter tallies duplicate effort.
+      function renderPlatformMultAnimation(){
+        // Metaphor: Factory assembly line.
+        // ONE input box (Chrome v118) rides a top conveyor into a SPLITTER,
+        // which fans into 5 parallel identical conveyor belts. 5 identical
+        // boxes ride down each belt, each passing through 4 stamps
+        // (Package/Deploy/Test/Patch). Each stamp presses (squashes) the box
+        // as it arrives. At the end, 5 finished crates emerge labeled with
+        // their platform-specific format. Plays once, settles on final state.
+        const W = 720, H = 380;
+        const lanes = [
+          {name:'Intune',     fmt:'.intunewin',  color:'#5B53D6'},
+          {name:'ConfigMgr',  fmt:'.msi',        color:'#E84D1A'},
+          {name:'Citrix',     fmt:'App Layer',   color:'#452170'},
+          {name:'AVD / W365', fmt:'MSIX',        color:'#0078D4'},
+          {name:'Jamf',       fmt:'.pkg',        color:'#475569'},
+        ];
+        const stages = ['Package','Deploy','Test','Patch'];
+        const laneW = 116;
+        const startX = 84;
+        const beltY = 188;            // y of horizontal conveyor belts
+        const stageX = [180, 280, 380, 480]; // local x offsets for stamps along belt — recomputed per lane below
+        // Build each lane (header pill + horizontal belt + 4 stamps + box + output crate)
+        let lanesSvg = '';
+        lanes.forEach((p, i) => {
+          const ly = 110 + i * 44;          // y of this lane's belt
+          const lxStart = 240;              // belt left edge (after splitter)
+          const lxEnd = 660;                // belt right edge
+          const stampXs = [320, 400, 480, 560];
+          // Belt
+          lanesSvg += '<rect x="'+lxStart+'" y="'+(ly-4)+'" width="'+(lxEnd-lxStart)+'" height="8" rx="4" fill="#E5E9F2"/>';
+          // Belt direction ticks (subtle)
+          for (let t = 0; t < 8; t++) {
+            const tx = lxStart + 12 + t * 50;
+            lanesSvg += '<line x1="'+tx+'" y1="'+(ly-3)+'" x2="'+(tx+6)+'" y2="'+(ly+3)+'" stroke="#CBD3E1" stroke-width="1"/>';
+          }
+          // Lane label (left of belt)
+          lanesSvg += '<rect x="84" y="'+(ly-12)+'" width="148" height="24" rx="4" fill="'+p.color+'"/>';
+          lanesSvg += '<text x="96" y="'+(ly+4)+'" font-size="10" font-weight="700" fill="white" font-family="Inter,system-ui,sans-serif">'+p.name+'</text>';
+          lanesSvg += '<text x="220" y="'+(ly+4)+'" text-anchor="end" font-size="8" font-weight="500" fill="rgba(255,255,255,0.82)" font-family="Inter,system-ui,sans-serif" font-style="italic">'+p.fmt+'</text>';
+          // 4 stamps above the belt — vertical bars that descend onto the box
+          stages.forEach((s, si) => {
+            const sx = stampXs[si];
+            const stampDelay = (3.4 + i * 0.18 + si * 1.0).toFixed(2);
+            // Stamp head (above belt)
+            lanesSvg += '<g class="cmp-stamp" style="animation-delay:'+stampDelay+'s; --sx:'+sx+'px; --sy:'+(ly-26)+'px;">'
+              + '<rect x="'+(sx-12)+'" y="'+(ly-44)+'" width="24" height="18" rx="3" fill="'+p.color+'"/>'
+              + '<rect x="'+(sx-2)+'" y="'+(ly-26)+'" width="4" height="6" fill="'+p.color+'"/>'
+              + '</g>';
+            // Stage label (above stamp)
+            lanesSvg += '<text x="'+sx+'" y="'+(ly-50)+'" text-anchor="middle" font-size="7.5" font-weight="700" fill="#94A3B8" font-family="Inter,system-ui,sans-serif" letter-spacing="0.08em">'+s.toUpperCase()+'</text>';
+          });
+          // The traveling box on the belt
+          const boxDelay = (1.6 + i * 0.18).toFixed(2);
+          lanesSvg += '<g class="cmp-box" style="animation-delay:'+boxDelay+'s; --x0:'+lxStart+'px; --x1:'+lxEnd+'px;">'
+            + '<rect x="-10" y="'+(ly-12)+'" width="20" height="20" rx="3" fill="white" stroke="'+p.color+'" stroke-width="2"/>'
+            + '<line x1="-10" y1="'+(ly-2)+'" x2="10" y2="'+(ly-2)+'" stroke="'+p.color+'" stroke-width="1" opacity="0.4"/>'
+            + '</g>';
+          // Output crate at end of belt
+          const crateDelay = (8.2 + i * 0.18).toFixed(2);
+          lanesSvg += '<g class="cmp-crate" style="animation-delay:'+crateDelay+'s">'
+            + '<rect x="'+(lxEnd+8)+'" y="'+(ly-12)+'" width="44" height="24" rx="3" fill="'+p.color+'"/>'
+            + '<text x="'+(lxEnd+30)+'" y="'+(ly+4)+'" text-anchor="middle" font-size="8" font-weight="700" fill="white" font-family="Inter,system-ui,sans-serif">DONE</text>'
+            + '</g>';
+        });
+        return ''
+          + '<div class="cmp-anim" aria-label="Animation: one input app splits into five identical parallel assembly lines, each running Package, Deploy, Test, and Patch independently">'
+          +   '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid meet">'
+          +     '<defs>'
+          +       '<linearGradient id="cmpSrcG" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0070F3"/><stop offset="100%" stop-color="#0A1C60"/></linearGradient>'
+          +     '</defs>'
+          // Title
+          +     '<text x="32" y="28" font-size="11" font-weight="800" fill="#0A1C60" font-family="Inter,system-ui,sans-serif" letter-spacing="0.04em">ONE INPUT \u2192 FIVE PARALLEL ASSEMBLY LINES</text>'
+          +     '<text x="32" y="44" font-size="9" font-weight="500" fill="#94A3B8" font-family="Inter,system-ui,sans-serif">Same app. Five identical pipelines. Five times the work.</text>'
+          // Source box on top conveyor
+          +     '<g class="cmp-input">'
+          +       '<rect x="84" y="62" width="132" height="32" rx="6" fill="url(#cmpSrcG)"/>'
+          +       '<rect x="92" y="70" width="16" height="16" rx="2" fill="white" opacity="0.92"/>'
+          +       '<text x="116" y="82" font-size="11" font-weight="700" fill="white" font-family="Inter,system-ui,sans-serif">Chrome v118</text>'
+          +     '</g>'
+          // Top conveyor & splitter junction
+          +     '<rect x="216" y="74" width="60" height="8" rx="4" fill="#E5E9F2"/>'
+          +     '<g class="cmp-splitter">'
+          +       '<rect x="276" y="62" width="36" height="32" rx="4" fill="#0A1C60"/>'
+          +       '<text x="294" y="82" text-anchor="middle" font-size="9" font-weight="700" fill="white" font-family="Inter,system-ui,sans-serif">5\u00d7</text>'
+          +     '</g>'
+          // Splitter fan-out paths to each lane belt start
+          +     lanes.map((p, i) => {
+                  const ly = 110 + i * 44;
+                  const delay = (0.6 + i * 0.12).toFixed(2);
+                  return '<path class="cmp-fan" d="M 312 78 C 220 78, 220 '+ly+', 240 '+ly+'" stroke="'+p.color+'" stroke-width="1.5" fill="none" opacity="0" style="animation-delay:'+delay+'s"/>';
+                }).join('')
+          // Lanes
+          +     lanesSvg
+          // Final tally banner
+          +     '<g class="cmp-final">'
+          +       '<rect x="32" y="332" width="656" height="32" rx="6" fill="#0A1C60"/>'
+          +       '<text x="48" y="353" font-size="12" font-weight="800" fill="white" font-family="Inter,system-ui,sans-serif">1 input \u00b7 5 identical pipelines \u00b7 20 manual steps \u00b7 no shared intelligence</text>'
+          +     '</g>'
+          +   '</svg>'
+          + '</div>';
+      }
+
       function renderCapacityGapChart(){
         const svg = document.getElementById('capacity-gap-chart');
         if (!svg) return;
@@ -5391,12 +5743,26 @@
         const modalWidth = isPlatformMult ? 'max-w-6xl' : isChangeVelocity ? 'max-w-5xl' : 'max-w-4xl';
         const modalStyle = isPlatformMult ? 'max-height:95vh;display:flex;flex-direction:column' : '';
         const bodyStyle = isPlatformMult ? 'flex:1;min-height:0;overflow-y:auto' : '';
+        // Driver navigation: show prev/next arrows when this is a driver insight (has an id from drivers list)
+        const pool = (STATE.drivers || []).filter(d => d.id);
+        const curIdx = pool.findIndex(d => d.id === c.id);
+        const showNav = curIdx !== -1 && pool.length > 1;
+        const prevLabel = showNav ? pool[(curIdx - 1 + pool.length) % pool.length].label : '';
+        const nextLabel = showNav ? pool[(curIdx + 1) % pool.length].label : '';
         return `
           <div class="fixed inset-0 z-50 flex items-center justify-center modal-overlay" role="dialog" aria-modal="true" aria-labelledby="insight-modal-title">
             <div class="w-full ${modalWidth} mx-4 rounded-2xl overflow-hidden transform modal-content glass" style="${modalStyle}">
               <div class="bg-white/40 backdrop-blur-lg px-8 py-6 flex items-center justify-between flex-shrink-0" style="border-bottom:1px solid var(--border-subtle)">
                 <div class="flex items-center gap-3"><i data-lucide="lightbulb" class="w-8 h-8 text-[#0A1C60]" aria-hidden="true"></i><h2 id="insight-modal-title" class="text-3xl font-bold tracking-tight text-[#0A1C60]">${title}</h2></div>
-                <button type="button" class="text-slate-500 hover:text-slate-700 focus-ring p-2" data-action="close-insight-modal" aria-label="Close"><i data-lucide="x" class="w-6 h-6"></i></button>
+                <div class="flex items-center gap-2">
+                  ${showNav ? `
+                    <button type="button" class="insight-nav-arrow" data-action="step-driver" data-dir="-1" aria-label="Previous: ${prevLabel}" title="Previous: ${prevLabel}"><i data-lucide="chevron-left" class="w-5 h-5"></i></button>
+                    <span class="text-xs font-semibold text-slate-400 px-1 tabular-nums">${curIdx + 1} / ${pool.length}</span>
+                    <button type="button" class="insight-nav-arrow" data-action="step-driver" data-dir="1" aria-label="Next: ${nextLabel}" title="Next: ${nextLabel}"><i data-lucide="chevron-right" class="w-5 h-5"></i></button>
+                    <span class="w-px h-6 bg-slate-200 mx-1"></span>
+                  ` : ''}
+                  <button type="button" class="text-slate-500 hover:text-slate-700 focus-ring p-2" data-action="close-insight-modal" aria-label="Close"><i data-lucide="x" class="w-6 h-6"></i></button>
+                </div>
               </div>
               <div class="${isPlatformMult ? 'px-6 py-4' : 'p-8'} bg-white/35 backdrop-blur-lg" style="${bodyStyle}">
                 ${isPlatformMult ? renderPlatformSiloDiagram(intro) : isChangeVelocity ? renderChangeVelocityChart() : isTippingPoint ? `
@@ -5420,44 +5786,52 @@
       function renderPlatformSiloDiagram(intro){
         const silos = [
           {name:'Microsoft Intune', sub:'Cloud Endpoints', color:'#5B53D6', pkg:'.intunewin', deploy:'Intune Portal', test:'Manual / per-platform', patch:'Manual cycle'},
-          {name:'SCCM / ConfigMgr', sub:'On-Prem / Co-Mgmt', color:'#E84D1A', pkg:'.msi / .application', deploy:'Task Sequences', test:'Manual / per-platform', patch:'Manual cycle'},
-          {name:'Citrix Apps', sub:'Published / VDI', color:'#374151', pkg:'App Layers / Profile', deploy:'StoreFront', test:'Manual / per-platform', patch:'Manual cycle'},
+          {name:'SCCM / ConfigMgr', sub:'On-Prem / Co-Mgmt', color:'#E84D1A', pkg:'.msi / .exe', deploy:'Task Sequences', test:'Manual / per-platform', patch:'Manual cycle'},
+          {name:'Citrix', sub:'Published / VDI', color:'#374151', pkg:'Remote App', deploy:'StoreFront', test:'Manual / per-platform', patch:'Manual cycle'},
           {name:'Azure VD / W365', sub:'Virtual Desktops', color:'#4B5563', pkg:'MSIX / Image Mgmt', deploy:'Host Pools', test:'Manual / per-platform', patch:'Manual cycle'},
           {name:'Jamf Pro', sub:'macOS Endpoints', color:'#6B7280', pkg:'.pkg / .dmg', deploy:'Self Service', test:'Manual / per-platform', patch:'Manual cycle'},
         ];
         const ops = ['Package','Deploy','Test','Patch'];
         const impacts = [
-          {stat:'5\u00d7', desc:'packaging duplication'},
-          {stat:'5\u201310 day', desc:'patch cycles'},
-          {stat:'30\u201365%', desc:'reactive work'},
-          {stat:'Manual', desc:'compliance evidence'},
-          {stat:'No', desc:'single pane of glass'},
+          {stat:'5\u00d7', desc:'packaging duplication', viz:'dup'},
+          {stat:'5\u201310 day', desc:'patch cycles', viz:'cal'},
+          {stat:'30\u201365%', desc:'reactive work', viz:'bar'},
+          {stat:'Manual', desc:'compliance evidence', viz:'page'},
+          {stat:'No', desc:'single pane of glass', viz:'glass'},
         ];
+        const impactViz = (k) => {
+          if (k === 'dup') return `<div class="imp-dup" aria-hidden="true">${[0,1,2,3,4].map(i=>`<div class="imp-dup-card imp-dup-card-${i}"></div>`).join('')}</div>`;
+          if (k === 'cal') return `<div class="imp-cal" aria-hidden="true"><div class="imp-cal-grid">${[0,1,2,3,4,5,6,7,8,9].map(i=>`<div class="imp-cal-cell imp-cal-cell-${i}"></div>`).join('')}</div></div>`;
+          if (k === 'bar') return `<div class="imp-donut" aria-hidden="true"><svg viewBox="0 0 30 30"><circle class="ring-bg" cx="15" cy="15" r="12"/><circle class="ring-fg" cx="15" cy="15" r="12"/></svg><div class="imp-donut-label">65%</div></div>`;
+          if (k === 'page') return `<div class="imp-page" aria-hidden="true"><svg class="imp-page-check" viewBox="0 0 22 18"><path d="M3 10 L9 16 L19 3"/></svg></div>`;
+          if (k === 'glass') return `<div class="imp-glass" aria-hidden="true"><div class="imp-glass-monitor"><div class="imp-glass-grid">${[0,1,2,3,4,5].map(()=>`<div class="imp-glass-cell"></div>`).join('')}</div></div><div class="imp-glass-stand"></div><svg class="imp-glass-slash" viewBox="0 0 60 42"><circle cx="28" cy="18" r="17"/><line x1="17" y1="7" x2="39" y2="29"/></svg></div>`;
+          return '';
+        };
 
         return `
           ${intro ? `<p class="text-sm leading-relaxed text-[#4A5568] mb-3">${intro}</p>` : ''}
-          <div class="rounded-xl border border-slate-200 bg-white/80 p-4">
+          <div class="pm-anim-wrap rounded-xl border border-slate-200 bg-white/80 p-4">
 
             <!-- Title -->
-            <div class="text-[11px] font-bold text-[#0A1C60] text-center uppercase tracking-wider mb-3">Without a Unified Application Management Layer &mdash; Every Platform Is a Silo</div>
+            <div class="pm-title text-[11px] font-bold text-[#0A1C60] text-center uppercase tracking-wider mb-3">Without a Unified Application Management Layer &mdash; Every Platform Is a Silo</div>
 
             <!-- Compact context row: Business Requests → Identity → Devices -->
-            <div class="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 mb-3 text-[9px] text-slate-400">
+            <div class="pm-context flex flex-wrap items-center justify-center gap-x-4 gap-y-1 mb-3 text-[9px] text-slate-400">
               <div class="flex items-center gap-1.5"><i data-lucide="briefcase" class="w-3 h-3"></i> <span class="font-semibold text-slate-500">Requests:</span> New hires, AI rollouts, patches, migrations, new apps</div>
               <div class="flex items-center gap-1.5"><i data-lucide="user-check" class="w-3 h-3"></i> <span class="font-semibold text-slate-500">Identity:</span> AD, Entra ID, Okta <span class="text-red-400 font-bold">&mdash; no unified layer</span></div>
               <div class="flex items-center gap-1.5"><i data-lucide="monitor" class="w-3 h-3"></i> <span class="font-semibold text-slate-500">Devices:</span> Windows, Windows on ARM, macOS, VDI, Cloud PC, BYOD</div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-[1fr_170px] gap-3">
+            <div class="grid grid-cols-1 md:grid-cols-[1fr_220px] gap-3">
               <!-- LEFT: The 5 Silos (the focal point) -->
               <div>
                 <div class="rounded-xl p-3" style="background:linear-gradient(135deg, #fef2f2 0%, #fff7ed 50%, #fefce8 100%); border:1px solid #fecaca">
                   <div class="text-[9px] font-bold uppercase tracking-widest text-red-500 mb-2 flex items-center gap-1.5"><i data-lucide="alert-triangle" class="w-3 h-3"></i> Management Tools &mdash; Each Operating as Its Own Silo</div>
                   <div class="overflow-x-auto">
                     <div class="relative" style="min-width:520px">
-                      <div class="grid grid-cols-5 gap-2">
-                        ${silos.map(s => `
-                          <div class="border-2 border-dashed border-red-300 rounded-lg p-2 bg-white flex flex-col shadow-sm">
+                      <div class="grid grid-cols-5 gap-2 pm-silos">
+                        ${silos.map((s, si) => `
+                          <div class="pm-silo pm-silo-${si} border-2 border-dashed border-red-300 rounded-lg p-2 bg-white flex flex-col shadow-sm">
                             <div class="rounded-md px-2 py-1.5 text-center mb-2" style="background:${s.color}">
                               <div class="text-[10px] font-bold text-white leading-tight">${s.name}</div>
                               <div class="text-[7px] text-white/70">${s.sub}</div>
@@ -5472,13 +5846,13 @@
                         `).join('')}
                       </div>
                       <!-- X indicators between silos -->
-                      <div class="hidden md:flex absolute inset-0 pointer-events-none" style="z-index:2">
-                        ${[1,2,3,4].map(n => `<div class="absolute flex items-center justify-center" style="left:calc(${n * 20}% - 7px);top:50%;transform:translateY(-50%)"><div class="w-3.5 h-3.5 rounded-full bg-red-100 border border-red-300 flex items-center justify-center"><i data-lucide="x" class="w-2.5 h-2.5 text-red-500"></i></div></div>`).join('')}
+                      <div class="hidden md:flex absolute inset-0 pointer-events-none pm-xs" style="z-index:2">
+                        ${[1,2,3,4].map(n => `<div class="pm-x pm-x-${n-1} absolute flex items-center justify-center" style="left:calc(${n * 20}% - 7px);top:50%;transform:translateY(-50%)"><div class="w-3.5 h-3.5 rounded-full bg-red-100 border border-red-300 flex items-center justify-center"><i data-lucide="x" class="w-2.5 h-2.5 text-red-500"></i></div></div>`).join('')}
                       </div>
                     </div>
                   </div>
                   <!-- Red callout -->
-                  <div class="text-center mt-2 px-2 py-1.5 rounded-lg bg-white/80 border border-red-200">
+                  <div class="pm-callout text-center mt-2 px-2 py-1.5 rounded-lg bg-white/80 border border-red-200">
                     <span class="text-[10px] italic text-red-600 font-medium">Same application (e.g. Chrome) &rarr; packaged, tested, deployed, and patched separately through each tool</span>
                   </div>
                 </div>
@@ -5491,16 +5865,19 @@
               </div>
 
               <!-- RIGHT: Operational Impact sidebar (streamlined) -->
-              <div class="rounded-xl border border-red-200 bg-red-50/50 p-3 h-fit">
+              <div class="pm-impact rounded-xl border border-red-200 bg-red-50/50 p-3 h-fit">
                 <div class="flex items-center gap-1.5 mb-2.5">
                   <i data-lucide="trending-up" class="w-3.5 h-3.5 text-red-500"></i>
                   <span class="text-[10px] font-bold text-red-700 uppercase tracking-wide">Impact</span>
                 </div>
-                <div class="space-y-2">
-                  ${impacts.map(imp => `
-                    <div class="flex items-baseline gap-1.5">
-                      <span class="text-[12px] font-bold text-red-600 leading-none">${imp.stat}</span>
-                      <span class="text-[9px] text-red-500 leading-tight">${imp.desc}</span>
+                <div class="space-y-2.5">
+                  ${impacts.map((imp, i) => `
+                    <div class="pm-imp-row pm-imp-row-${i} flex items-center justify-between gap-2">
+                      <div class="min-w-0 flex-1">
+                        <div class="text-[12px] font-bold text-red-600 leading-none">${imp.stat}</div>
+                        <div class="text-[9px] text-red-500 leading-tight mt-0.5">${imp.desc}</div>
+                      </div>
+                      <div class="flex-shrink-0 imp-viz">${impactViz(imp.viz)}</div>
                     </div>
                   `).join('')}
                 </div>
@@ -5509,7 +5886,7 @@
             </div>
 
             <!-- Bottom quote -->
-            <div class="mt-3 bg-slate-50 border border-slate-200 rounded-lg p-3 text-center">
+            <div class="pm-quote mt-3 bg-slate-50 border border-slate-200 rounded-lg p-3 text-center">
               <p class="text-[11px] italic text-[#4A5568]"><i data-lucide="quote" class="w-3.5 h-3.5 inline text-slate-300 mr-1"></i>The ceiling is structural, not operational. Your team isn&rsquo;t underperforming &mdash; the per-platform model was built for two platforms. Most organizations now manage five or six.</p>
             </div>
 
@@ -5575,43 +5952,50 @@
         const capY = 0.22;
 
         return `
-          <div class="rounded-xl border border-slate-200 bg-white/80 p-4">
+          <div class="cv-anim-wrap rounded-xl border border-slate-200 bg-white/80 p-4">
             <svg viewBox="0 0 ${W} ${H}" class="w-full" style="max-height:360px" aria-label="Stacked area chart showing IT workload growth from 2015 to 2026">
               <defs>
                 <clipPath id="cv-clip"><rect x="${ml}" y="${mt}" width="${cw}" height="${ch}"/></clipPath>
+                <clipPath id="cv-sweep"><rect class="cv-sweep-rect" x="${ml}" y="${mt}" width="0" height="${ch}"/></clipPath>
               </defs>
               <!-- Background -->
-              <rect x="${ml}" y="${mt}" width="${cw}" height="${ch}" fill="#f9fafb" rx="4"/>
+              <rect class="cv-frame" x="${ml}" y="${mt}" width="${cw}" height="${ch}" fill="#f9fafb" rx="4"/>
               <!-- Grid lines -->
-              ${[0.2,0.4,0.6,0.8].map(v => `<line x1="${ml}" y1="${yP(v)}" x2="${ml+cw}" y2="${yP(v)}" stroke="#e5e7eb" stroke-width="0.5"/>`).join('')}
-              <!-- Stacked areas (clip to chart area) -->
+              <g class="cv-grid">${[0.2,0.4,0.6,0.8].map(v => `<line x1="${ml}" y1="${yP(v)}" x2="${ml+cw}" y2="${yP(v)}" stroke="#e5e7eb" stroke-width="0.5"/>`).join('')}</g>
+              <!-- Stacked areas: revealed by horizontal sweep clip -->
               <g clip-path="url(#cv-clip)">
-                ${stacks.map(([bot,top],i) => `<path d="${areaPath(bot,top)}" fill="${colors[i].fill}" stroke="${colors[i].stroke}" stroke-width="1.5"/>`).join('')}
+                <g class="cv-areas" clip-path="url(#cv-sweep)">
+                  ${stacks.map(([bot,top],i) => `<path d="${areaPath(bot,top)}" fill="${colors[i].fill}" stroke="${colors[i].stroke}" stroke-width="1.5"/>`).join('')}
+                </g>
               </g>
-              <!-- Capacity line (dashed red) -->
-              <line x1="${ml}" y1="${yP(capY)}" x2="${ml+cw}" y2="${yP(capY)}" stroke="#dc2626" stroke-width="2.5" stroke-dasharray="8 5" opacity="0.7"/>
-              <text x="${ml+4}" y="${yP(capY)-6}" font-size="9" fill="#dc2626" font-weight="600" font-family="Inter, system-ui, sans-serif">IT capacity (headcount)</text>
-              <!-- Milestone dots -->
-              ${milestones.map(m => {
+              <!-- Capacity line (dashed red) — slides in from the left -->
+              <g class="cv-cap">
+                <line x1="${ml}" y1="${yP(capY)}" x2="${ml+cw}" y2="${yP(capY)}" stroke="#dc2626" stroke-width="2.5" stroke-dasharray="8 5" opacity="0.7"/>
+                <text x="${ml+4}" y="${yP(capY)-6}" font-size="9" fill="#dc2626" font-weight="600" font-family="Inter, system-ui, sans-serif">IT capacity (headcount)</text>
+              </g>
+              <!-- Milestone dots — pop in at their year positions -->
+              ${milestones.map((m, mi) => {
                 const mx = x[m.yi];
                 const my = yP(S5[m.yi]);
-                return `<circle cx="${mx}" cy="${my}" r="5" fill="${m.dotColor}" stroke="white" stroke-width="2.5"/>
-                  <text x="${mx+8}" y="${my+3}" font-size="8" fill="#64748b" font-weight="600" font-family="Inter, system-ui, sans-serif">${m.label}</text>`;
+                return `<g class="cv-mile cv-mile-${mi}">
+                  <circle cx="${mx}" cy="${my}" r="5" fill="${m.dotColor}" stroke="white" stroke-width="2.5"/>
+                  <text x="${mx+8}" y="${my+3}" font-size="8" fill="#64748b" font-weight="600" font-family="Inter, system-ui, sans-serif">${m.label}</text>
+                </g>`;
               }).join('')}
               <!-- X axis labels -->
-              ${years.filter((y,i) => i % 2 === 0).map((y,i) => `<text x="${x[i*2]}" y="${mt+ch+20}" text-anchor="middle" font-size="10" fill="#94a3b8" font-weight="500" font-family="Inter, system-ui, sans-serif">${y}</text>`).join('')}
+              <g class="cv-xlabels">${years.filter((y,i) => i % 2 === 0).map((y,i) => `<text x="${x[i*2]}" y="${mt+ch+20}" text-anchor="middle" font-size="10" fill="#94a3b8" font-weight="500" font-family="Inter, system-ui, sans-serif">${y}</text>`).join('')}</g>
               <!-- Y axis label -->
-              <text x="14" y="${mt + ch/2}" text-anchor="middle" font-size="9" fill="#94a3b8" font-weight="600" font-family="Inter, system-ui, sans-serif" transform="rotate(-90,14,${mt+ch/2})">WORKLOAD</text>
+              <text class="cv-ylabel" x="14" y="${mt + ch/2}" text-anchor="middle" font-size="9" fill="#94a3b8" font-weight="600" font-family="Inter, system-ui, sans-serif" transform="rotate(-90,14,${mt+ch/2})">WORKLOAD</text>
             </svg>
 
             <!-- Milestone detail card -->
-            <div class="mt-3 bg-slate-50 border border-slate-200 rounded-lg p-3">
+            <div class="cv-detail mt-3 bg-slate-50 border border-slate-200 rounded-lg p-3">
               <div class="text-xs font-bold text-[#0A1C60] mb-1">2022 &mdash; W365 + Intune co-management goes mainstream</div>
               <div class="text-[11px] text-[#64748b] leading-relaxed">IT adds cloud PC delivery alongside existing SCCM, Citrix, and Intune. Platform count: 4+. Every app now requires testing across all environments.</div>
             </div>
 
             <!-- Legend -->
-            <div class="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 mt-3">
+            <div class="cv-legend flex flex-wrap items-center justify-center gap-x-4 gap-y-1 mt-3">
               ${colors.map(c => `<div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-sm" style="background:${c.stroke}"></div><span class="text-[10px] text-slate-500 font-medium">${c.label}</span></div>`).join('')}
               <div class="flex items-center gap-1.5"><span class="inline-block w-5 border-t-2 border-dashed border-red-500"></span><span class="text-[10px] text-slate-500 font-medium">IT capacity (headcount)</span></div>
             </div>
@@ -9128,6 +9512,16 @@
           if (action === 'close-ai-agent') { STATE.showAIAgent = false; render(); return; }
           if (action === 'close-insight-modal') { STATE.insightContent = null; STATE.highlightDriverId = null; render(); return; }
           if (action === 'why-nav') { STATE.openWhyModal = act.getAttribute('data-to'); render(); return; }
+          if (action === 'step-driver') {
+            const dir = parseInt(act.getAttribute('data-dir'), 10) || 1;
+            const pool = (STATE.drivers || []).filter(d => d.id);
+            if (!pool.length) return;
+            const curId = STATE.insightContent?.id || STATE.highlightDriverId;
+            const curIdx = pool.findIndex(d => d.id === curId);
+            const nextIdx = curIdx === -1 ? (dir > 0 ? 0 : pool.length - 1) : (curIdx + dir + pool.length) % pool.length;
+            openInsight(pool[nextIdx]);
+            return;
+          }
 
           if (action === 'open-why-modal') {
             const id = act.getAttribute('data-why');
@@ -9339,7 +9733,23 @@
       deriveFromEmployees(STATE.calcInputs.users);
       calculateImpact();
       document.addEventListener('DOMContentLoaded', render);
-      document.addEventListener('keydown',(e)=>{ if(e.key==='Escape' && (STATE.modalOpen || STATE.openWhyModal || STATE.insightContent || STATE.showAnalystModal || STATE.showAIAgent)){ if (STATE.openWhyModal && STATE._savedDriverStates) { STATE.drivers.forEach((d, i) => { d.state = STATE._savedDriverStates[i]; }); STATE.showTippingPoint = STATE._savedTippingPoint; STATE.recastMode = STATE._savedRecastMode; STATE.targetDemandExponent = STATE._savedDemandExp; STATE.targetCapacitySlope = STATE._savedCapSlope; STATE._savedDriverStates = null; updateCurves(); requestAnimationFrame(animateCurves); } STATE.modalOpen=false; STATE.openWhyModal=null; STATE.insightContent=null; STATE.highlightDriverId=null; STATE.showAnalystModal=false; STATE.showAIAgent=false; render(); } });
+      document.addEventListener('keydown',(e)=>{
+        if (STATE.insightContent && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
+          const tag = (e.target && e.target.tagName) || '';
+          if (tag === 'INPUT' || tag === 'TEXTAREA' || (e.target && e.target.isContentEditable)) return;
+          const pool = (STATE.drivers || []).filter(d => d.id);
+          if (!pool.length) return;
+          const dir = e.key === 'ArrowRight' ? 1 : -1;
+          const curId = STATE.insightContent.id || STATE.highlightDriverId;
+          const curIdx = pool.findIndex(d => d.id === curId);
+          if (curIdx === -1) return;
+          const nextIdx = (curIdx + dir + pool.length) % pool.length;
+          openInsight(pool[nextIdx]);
+          e.preventDefault();
+          return;
+        }
+        if(e.key==='Escape' && (STATE.modalOpen || STATE.openWhyModal || STATE.insightContent || STATE.showAnalystModal || STATE.showAIAgent)){ if (STATE.openWhyModal && STATE._savedDriverStates) { STATE.drivers.forEach((d, i) => { d.state = STATE._savedDriverStates[i]; }); STATE.showTippingPoint = STATE._savedTippingPoint; STATE.recastMode = STATE._savedRecastMode; STATE.targetDemandExponent = STATE._savedDemandExp; STATE.targetCapacitySlope = STATE._savedCapSlope; STATE._savedDriverStates = null; updateCurves(); requestAnimationFrame(animateCurves); } STATE.modalOpen=false; STATE.openWhyModal=null; STATE.insightContent=null; STATE.highlightDriverId=null; STATE.showAnalystModal=false; STATE.showAIAgent=false; render(); }
+      });
     </script>
   </body>
 </html>
