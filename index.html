@@ -4114,8 +4114,8 @@
         min-width: 2px;
         transition: width 800ms cubic-bezier(.2,.8,.2,1);
       }
-      .bi-compare-bar-fill.is-old { background: #E0784F; }
-      .bi-compare-bar-fill.is-new { background: #10B981; }
+      .bi-compare-bar-fill.is-old { background: var(--r-red); }
+      .bi-compare-bar-fill.is-new { background: var(--r-blue); }
       .bi-compare-bar-value {
         font-size: 12px;
         font-weight: 700;
@@ -4183,26 +4183,26 @@
         margin-top: 2px;
       }
       .bi-kpi-old {
-        background: #FEE7E0;
-        border-color: #F5B5A0;
-        color: #8B2E0E;
+        background: #FEE2E2;
+        border-color: #FCA5A5;
+        color: #7F1D1D;
       }
-      .bi-kpi-old .bi-kpi-label { color: #B33D14; }
-      .bi-kpi-old .bi-kpi-sub { color: #7A2A0D; }
+      .bi-kpi-old .bi-kpi-label { color: var(--r-red); }
+      .bi-kpi-old .bi-kpi-sub { color: #991B1B; }
       .bi-kpi-new {
-        background: #D7F4E5;
-        border-color: #7DD3A4;
-        color: #065F33;
-      }
-      .bi-kpi-new .bi-kpi-label { color: #047857; }
-      .bi-kpi-new .bi-kpi-sub { color: #065F33; }
-      .bi-kpi-strategy {
-        background: #E0E7FF;
+        background: #DDE6FF;
         border-color: #A5B4FC;
-        color: #3730A3;
+        color: #1E1B96;
       }
-      .bi-kpi-strategy .bi-kpi-label { color: #4338CA; }
-      .bi-kpi-strategy .bi-kpi-sub { color: #312E81; }
+      .bi-kpi-new .bi-kpi-label { color: var(--r-blue); }
+      .bi-kpi-new .bi-kpi-sub { color: #312E81; }
+      .bi-kpi-strategy {
+        background: #CFF4FA;
+        border-color: #7DD3FC;
+        color: #075985;
+      }
+      .bi-kpi-strategy .bi-kpi-label { color: #0369A1; }
+      .bi-kpi-strategy .bi-kpi-sub { color: #0C4A6E; }
 
       /* Action bar */
       .bi-actionbar {
@@ -9137,8 +9137,8 @@
                 <div class="bi-compare-sub">Modeled for ${num(ci.users)} employees, ${num(ci.apps)} active apps, ${ci.envs} environment${ci.envs===1?'':'s'} · ${a.label} scenario</div>
               </div>
               <div class="bi-compare-legend">
-                <span class="bi-compare-legend-item"><span class="bi-compare-legend-swatch" style="background:#E0784F"></span>Old way</span>
-                <span class="bi-compare-legend-item"><span class="bi-compare-legend-swatch" style="background:#10B981"></span>With Application Workspace</span>
+                <span class="bi-compare-legend-item"><span class="bi-compare-legend-swatch" style="background:var(--r-red)"></span>Old way</span>
+                <span class="bi-compare-legend-item"><span class="bi-compare-legend-swatch" style="background:var(--r-blue)"></span>With Application Workspace</span>
               </div>
             </div>
             <div class="bi-compare-body">
