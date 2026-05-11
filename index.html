@@ -3783,32 +3783,24 @@
         #panel-roi .bi-input-cta { padding: 9px 16px !important; font-size: 13px !important; }
         #panel-roi .bi-input-advanced { padding: 8px 12px !important; font-size: 12px !important; }
 
-        /* Hero: tighter */
-        #panel-roi .bi-hero { padding: 18px 24px !important; gap: 22px !important; grid-template-columns: 1fr 280px !important; }
-        #panel-roi .bi-hero-eyebrow { font-size: 10px !important; margin-bottom: 6px !important; }
-        #panel-roi .bi-hero-number { font-size: 54px !important; }
-        #panel-roi .bi-hero-unit { font-size: 16px !important; }
-        #panel-roi .bi-hero-sub { font-size: 13px !important; margin-top: 8px !important; }
-        #panel-roi .bi-hero-secondary { padding-left: 20px !important; gap: 10px !important; }
-        #panel-roi .bi-hero-stat-value { font-size: 18px !important; }
-        #panel-roi .bi-hero-stat-label { font-size: 10px !important; }
+        /* Before/after comparison chart: compact */
+        #panel-roi .bi-compare { padding: 14px 18px !important; }
+        #panel-roi .bi-compare-head { margin-bottom: 10px !important; padding-bottom: 8px !important; }
+        #panel-roi .bi-compare-title { font-size: 13px !important; }
+        #panel-roi .bi-compare-sub { font-size: 11px !important; }
+        #panel-roi .bi-compare-legend-item { font-size: 11px !important; }
+        #panel-roi .bi-compare-row { grid-template-columns: 120px 1fr !important; padding: 6px 0 !important; }
+        #panel-roi .bi-compare-label { font-size: 12px !important; }
+        #panel-roi .bi-compare-bar-fill { height: 12px !important; }
+        #panel-roi .bi-compare-bar-value { font-size: 11px !important; }
+        #panel-roi .bi-compare-axis { grid-template-columns: 120px 1fr !important; margin-top: 6px !important; padding-top: 6px !important; }
 
-        /* Breakdown + Reinvest: compact padding */
-        #panel-roi .bi-breakdown, #panel-roi .bi-reinvest { padding: 14px 18px !important; }
-        #panel-roi .bi-section-head { margin-bottom: 10px !important; padding-bottom: 8px !important; }
-        #panel-roi .bi-section-title { font-size: 13px !important; }
-        #panel-roi .bi-section-sub { font-size: 11px !important; }
-        #panel-roi .bi-bars { gap: 8px !important; }
-        #panel-roi .bi-bar-row { grid-template-columns: 260px 1fr 110px !important; }
-        #panel-roi .bi-bar-name { font-size: 12px !important; }
-        #panel-roi .bi-bar-note { font-size: 10px !important; }
-        #panel-roi .bi-bar-track { height: 8px !important; }
-        #panel-roi .bi-bar-value { font-size: 15px !important; }
-
-        /* Reinvest tiles compact */
-        #panel-roi .bi-reinvest-tile { padding: 10px !important; font-size: 11px !important; gap: 5px !important; }
-        #panel-roi .bi-reinvest-tile i[data-lucide] { width: 15px !important; height: 15px !important; }
-        #panel-roi .bi-reinvest-grid { gap: 8px !important; }
+        /* KPI cards: compact */
+        #panel-roi .bi-kpi { padding: 12px 16px !important; gap: 4px !important; }
+        #panel-roi .bi-kpi-label { font-size: 10px !important; }
+        #panel-roi .bi-kpi-value { font-size: 26px !important; }
+        #panel-roi .bi-kpi-unit { font-size: 13px !important; }
+        #panel-roi .bi-kpi-sub { font-size: 11px !important; }
 
         /* Action bar compact */
         #panel-roi .bi-actionbar { padding-top: 0 !important; }
@@ -4044,171 +4036,173 @@
       .bi-toosmall-title { font-size: 14px; font-weight: 700; color: var(--r-ink); margin-bottom: 4px; }
       .bi-toosmall-body { font-size: 13px; color: var(--r-ink-2); line-height: 1.5; }
 
-      /* Hero metric block */
-      .bi-hero {
-        background: var(--r-blue);
-        color: #fff;
-        border-radius: 8px;
-        padding: 28px 32px;
-        display: grid;
-        grid-template-columns: 1fr 320px;
-        gap: 32px;
-        align-items: center;
-        position: relative;
-        overflow: hidden;
-      }
-      .bi-hero::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background-image:
-          radial-gradient(circle, var(--r-decorator) 1.5px, transparent 1.8px);
-        background-size: 14px 14px;
-        opacity: 0.4;
-        -webkit-mask-image: linear-gradient(90deg, transparent 0, transparent 70%, #000);
-                mask-image: linear-gradient(90deg, transparent 0, transparent 70%, #000);
-        pointer-events: none;
-      }
-      .bi-hero > * { position: relative; }
-      .bi-hero-eyebrow {
-        font-size: 11px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.12em;
-        color: var(--r-muted-blue);
-        margin-bottom: 10px;
-      }
-      .bi-hero-number {
-        font-size: 72px;
-        font-weight: 800;
-        line-height: 1;
-        letter-spacing: -0.03em;
-        color: #fff;
-      }
-      .bi-hero-unit {
-        font-size: 20px;
-        font-weight: 600;
-        color: var(--r-muted-blue);
-        margin-left: 10px;
-        letter-spacing: 0;
-      }
-      .bi-hero-sub {
-        margin-top: 12px;
-        font-size: 14px;
-        line-height: 1.55;
-        color: var(--r-muted-blue);
-        max-width: 46ch;
-      }
-      .bi-hero-sub strong { color: #fff; font-weight: 700; }
-      .bi-hero-secondary {
-        display: flex;
-        flex-direction: column;
-        gap: 14px;
-        border-left: 1px solid rgba(255,255,255,0.2);
-        padding-left: 24px;
-      }
-      .bi-hero-stat { }
-      .bi-hero-stat-value {
-        font-size: 22px;
-        font-weight: 700;
-        color: #fff;
-        line-height: 1.1;
-      }
-      .bi-hero-stat-label {
-        font-size: 11px;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        color: var(--r-muted-blue);
-        margin-top: 2px;
-      }
-
-      /* Breakdown */
-      .bi-breakdown, .bi-reinvest {
+      /* Before/After comparison chart */
+      .bi-compare {
         background: #fff;
         border: 1px solid var(--r-divider);
         border-radius: 8px;
         padding: 20px 24px;
         box-shadow: var(--shadow-card);
       }
-      .bi-section-head {
+      .bi-compare-head {
         display: flex;
-        align-items: baseline;
+        align-items: flex-start;
         justify-content: space-between;
         gap: 16px;
         margin-bottom: 16px;
         padding-bottom: 12px;
         border-bottom: 1px solid var(--r-divider);
+        flex-wrap: wrap;
       }
-      .bi-section-title {
+      .bi-compare-title {
         font-size: 15px;
         font-weight: 700;
         color: var(--r-ink);
       }
-      .bi-section-sub {
+      .bi-compare-sub {
         font-size: 12px;
         color: var(--r-ink-2);
+        margin-top: 2px;
       }
-      .bi-bars { display: flex; flex-direction: column; gap: 14px; }
-      .bi-bar-row {
+      .bi-compare-legend {
+        display: inline-flex;
+        align-items: center;
+        gap: 18px;
+        flex-shrink: 0;
+      }
+      .bi-compare-legend-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--r-ink-2);
+      }
+      .bi-compare-legend-swatch {
+        width: 12px;
+        height: 12px;
+        border-radius: 2px;
+        flex-shrink: 0;
+      }
+      .bi-compare-body { display: flex; flex-direction: column; }
+      .bi-compare-row {
         display: grid;
-        grid-template-columns: 280px 1fr 130px;
+        grid-template-columns: 140px 1fr;
         gap: 16px;
         align-items: center;
+        padding: 10px 0;
       }
-      .bi-bar-label { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
-      .bi-bar-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-      .bi-bar-name { font-size: 13px; font-weight: 700; color: var(--r-ink); }
-      .bi-bar-note { font-size: 11px; color: var(--r-ink-2); flex-basis: 100%; margin-left: 18px; }
-      .bi-bar-track {
-        height: 10px;
-        background: var(--r-surface-2);
-        border-radius: 5px;
-        overflow: hidden;
+      .bi-compare-row + .bi-compare-row {
+        border-top: 1px solid var(--r-surface-2);
       }
-      .bi-bar-fill {
-        height: 100%;
-        border-radius: 5px;
-        transition: width 700ms cubic-bezier(.2,.8,.2,1);
-      }
-      .bi-bar-value {
-        font-size: 18px;
-        font-weight: 700;
+      .bi-compare-label {
+        font-size: 13px;
+        font-weight: 600;
         color: var(--r-ink);
         text-align: right;
+        line-height: 1.3;
       }
-      .bi-bar-value span {
-        font-size: 11px;
+      .bi-compare-pair { display: flex; flex-direction: column; gap: 6px; }
+      .bi-compare-bar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .bi-compare-bar-fill {
+        height: 14px;
+        border-radius: 2px;
+        min-width: 2px;
+        transition: width 800ms cubic-bezier(.2,.8,.2,1);
+      }
+      .bi-compare-bar-fill.is-old { background: #E0784F; }
+      .bi-compare-bar-fill.is-new { background: #10B981; }
+      .bi-compare-bar-value {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--r-ink);
+        white-space: nowrap;
+      }
+      .bi-compare-axis {
+        display: grid;
+        grid-template-columns: 140px 1fr;
+        gap: 16px;
+        margin-top: 10px;
+        padding-top: 8px;
+        border-top: 1px solid var(--r-divider);
+      }
+      .bi-compare-axis-track {
+        position: relative;
+        height: 14px;
+      }
+      .bi-compare-axis-tick {
+        position: absolute;
+        top: 0;
+        transform: translateX(-50%);
+        font-size: 10px;
         font-weight: 600;
         color: var(--r-ink-2);
-        margin-left: 4px;
+        white-space: nowrap;
       }
 
-      /* Reinvest tiles */
-      .bi-reinvest-grid {
+      /* KPI summary cards */
+      .bi-kpis {
         display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        gap: 10px;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
       }
-      .bi-reinvest-tile {
+      .bi-kpi {
+        border-radius: 8px;
+        padding: 18px 20px;
+        border: 1px solid;
+        box-shadow: var(--shadow-card);
         display: flex;
         flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
-        padding: 14px;
-        background: var(--r-quote-bg);
-        border: 1px solid var(--r-divider);
-        border-radius: 6px;
-        font-size: 12px;
+        gap: 6px;
+      }
+      .bi-kpi-label {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+      }
+      .bi-kpi-value {
+        font-size: 32px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        line-height: 1;
+      }
+      .bi-kpi-unit {
+        font-size: 15px;
         font-weight: 600;
-        color: var(--r-ink);
-        line-height: 1.35;
+        margin-left: 4px;
       }
-      .bi-reinvest-tile i[data-lucide] {
-        width: 18px;
-        height: 18px;
-        color: var(--r-blue-bright);
+      .bi-kpi-sub {
+        font-size: 12px;
+        font-weight: 500;
+        line-height: 1.4;
+        margin-top: 2px;
       }
+      .bi-kpi-old {
+        background: #FEE7E0;
+        border-color: #F5B5A0;
+        color: #8B2E0E;
+      }
+      .bi-kpi-old .bi-kpi-label { color: #B33D14; }
+      .bi-kpi-old .bi-kpi-sub { color: #7A2A0D; }
+      .bi-kpi-new {
+        background: #D7F4E5;
+        border-color: #7DD3A4;
+        color: #065F33;
+      }
+      .bi-kpi-new .bi-kpi-label { color: #047857; }
+      .bi-kpi-new .bi-kpi-sub { color: #065F33; }
+      .bi-kpi-strategy {
+        background: #E0E7FF;
+        border-color: #A5B4FC;
+        color: #3730A3;
+      }
+      .bi-kpi-strategy .bi-kpi-label { color: #4338CA; }
+      .bi-kpi-strategy .bi-kpi-sub { color: #312E81; }
 
       /* Action bar */
       .bi-actionbar {
@@ -4279,16 +4273,13 @@
       .bi-pdf-cancel { color: #94a3b8; font-size: 14px; cursor: pointer; padding: 0 4px; }
 
       @media (max-width: 900px) {
-        .bi-hero { grid-template-columns: 1fr !important; padding: 20px !important; gap: 20px !important; }
-        .bi-hero-secondary { border-left: 0 !important; border-top: 1px solid rgba(255,255,255,0.2); padding-left: 0 !important; padding-top: 16px; flex-direction: row !important; flex-wrap: wrap; gap: 18px !important; }
-        .bi-hero-number { font-size: 52px !important; }
         .bi-input-row { flex-direction: column; align-items: stretch !important; }
         .bi-input-field { flex-wrap: wrap; }
         .bi-input-cta, .bi-input-advanced { width: 100%; justify-content: center; }
         .bi-assumptions-grid, .bi-assumptions-grid.four { grid-template-columns: repeat(2, 1fr) !important; }
-        .bi-bar-row { grid-template-columns: 1fr !important; gap: 6px !important; }
-        .bi-bar-value { text-align: left !important; }
-        .bi-reinvest-grid { grid-template-columns: repeat(2, 1fr) !important; }
+        .bi-compare-row, .bi-compare-axis { grid-template-columns: 1fr !important; gap: 6px !important; }
+        .bi-compare-label { text-align: left !important; }
+        .bi-kpis { grid-template-columns: 1fr !important; }
         .bi-actionbar { flex-direction: column; align-items: stretch; }
         .bi-action-primary, .bi-action-secondary { width: 100%; justify-content: center; }
       }
@@ -8701,9 +8692,9 @@
       }
 
       const ROI_ASSUMPTIONS = {
-        conservative: { ticketReduction: 0.20, pkgReduction: 0.35, patchReduction: 0.30, strategicRealloc: 0.40, fteHours: 1920, label: 'Conservative' },
-        expected:     { ticketReduction: 0.70, pkgReduction: 0.50, patchReduction: 0.45, strategicRealloc: 0.50, fteHours: 1920, label: 'Expected' },
-        high:         { ticketReduction: 0.90, pkgReduction: 0.65, patchReduction: 0.60, strategicRealloc: 0.70, fteHours: 1920, label: 'High' },
+        conservative: { ticketReduction: 0.20, pkgReduction: 0.35, patchReduction: 0.30, strategicRealloc: 0.40, fteHours: 1920, uxShare: 0.55, dashShare: 0.20, mtShare: 0.25, label: 'Conservative' },
+        expected:     { ticketReduction: 0.70, pkgReduction: 0.50, patchReduction: 0.45, strategicRealloc: 0.50, fteHours: 1920, uxShare: 0.55, dashShare: 0.20, mtShare: 0.25, label: 'Expected' },
+        high:         { ticketReduction: 0.90, pkgReduction: 0.65, patchReduction: 0.60, strategicRealloc: 0.70, fteHours: 1920, uxShare: 0.55, dashShare: 0.20, mtShare: 0.25, label: 'High' },
       };
 
       function roiInput(id, icon, label, hint, placeholder, val, extra){
@@ -9007,6 +8998,12 @@
                     <label class="bi-rate"><span>Patching reduction</span><input type="number" id="asn-patch" min="0" max="100" value="${Math.round(a.patchReduction * 100)}"></label>
                     <label class="bi-rate"><span>Strategic reallocation</span><input type="number" id="asn-strategic" min="0" max="100" value="${Math.round(a.strategicRealloc * 100)}"></label>
                   </div>
+                  <div class="bi-assumptions-title" style="margin-top:16px">Support-hours allocation (%) — drives UX / Dashboarding / Multi-tenant bars</div>
+                  <div class="bi-assumptions-grid">
+                    <label class="bi-rate"><span>User experience</span><input type="number" id="asn-ux" min="0" max="100" value="${Math.round(a.uxShare * 100)}"></label>
+                    <label class="bi-rate"><span>Dashboarding</span><input type="number" id="asn-dash" min="0" max="100" value="${Math.round(a.dashShare * 100)}"></label>
+                    <label class="bi-rate"><span>Multi-tenant</span><input type="number" id="asn-mt" min="0" max="100" value="${Math.round(a.mtShare * 100)}"></label>
+                  </div>
                   <div class="bi-assumptions-actions">
                     <button type="button" data-action="save-assumptions" class="bi-assumptions-save">Save &amp; Recalculate</button>
                     <button type="button" data-action="toggle-assumptions" class="bi-assumptions-close">Close</button>
@@ -9068,94 +9065,109 @@
         const r = STATE.calcResult;
         const a = ROI_ASSUMPTIONS[STATE.calcScenario];
         const ci = STATE.calcInputs;
-        const supportPct = Math.round(a.ticketReduction * 100);
-        const pkgPct = Math.round(a.pkgReduction * 100);
-        const patchPct = Math.round(a.patchReduction * 100);
-        const total = r.ticketHoursReturned + r.pkgHoursReturned + r.patchHoursReturned;
-        const ticketShare = total ? Math.round((r.ticketHoursReturned / total) * 100) : 0;
-        const pkgShare = total ? Math.round((r.pkgHoursReturned / total) * 100) : 0;
-        const patchShare = 100 - ticketShare - pkgShare;
+
+        // ── 5-bar distribution, derived entirely from the calculator's truth ──
+        // Catalog vs custom share of packaging + patching, driven by inputs.
+        const apps = Math.max(1, ci.apps);
+        const customShare = Math.min(1, ci.customApps / apps);
+        const catalogShare = 1 - customShare;
+        // Support hours split across UX, dashboarding, multi-tenant — from assumptions.
+        // Normalized so the three always sum to 1, even if the user enters off-totals.
+        const rawSum = (a.uxShare + a.dashShare + a.mtShare) || 1;
+        const uxShare = a.uxShare / rawSum;
+        const dashShare = a.dashShare / rawSum;
+        const mtShare = a.mtShare / rawSum;
+
+        const pkgPatchOld = ci.pkgHours + ci.patchHours;
+        const pkgPatchRet = r.pkgHoursReturned + r.patchHoursReturned;
+        const sup = r.currentSupportHours;
+        const supRet = r.ticketHoursReturned;
+
+        const bars = [
+          { label: 'Managed apps',     old: pkgPatchOld * catalogShare, ret: pkgPatchRet * catalogShare },
+          { label: 'Custom packaging', old: pkgPatchOld * customShare,  ret: pkgPatchRet * customShare  },
+          { label: 'User experience',  old: sup * uxShare,              ret: supRet * uxShare           },
+          { label: 'Dashboarding',     old: sup * dashShare,            ret: supRet * dashShare         },
+          { label: 'Multi-tenant',     old: sup * mtShare,              ret: supRet * mtShare           },
+        ].map(b => {
+          const oldR = Math.round(b.old);
+          const retR = Math.round(b.ret);
+          return { label: b.label, old: oldR, neww: Math.max(0, oldR - retR) };
+        });
+
+        const oldTotal = bars.reduce((s,b) => s + b.old,  0);
+        const newTotal = bars.reduce((s,b) => s + b.neww, 0);
+        const totalReturned = Math.max(0, oldTotal - newTotal);
+        const pctReduction = oldTotal ? Math.round((totalReturned / oldTotal) * 100) : 0;
+        const ftesAbsorbed = oldTotal ? (oldTotal * 12 / a.fteHours).toFixed(1) : '0.0';
+
+        // Nice axis ceiling for the chart (round up to a clean tick).
+        const axisMax = Math.max(...bars.map(b => b.old), 10);
+        const niceCeil = (n) => {
+          const tiers = [10, 20, 50, 100, 150, 200, 300, 500, 1000];
+          for (const t of tiers) { if (n <= t) return t; }
+          return Math.ceil(n / 500) * 500;
+        };
+        const axisCeil = niceCeil(axisMax);
+        const tickCount = axisCeil <= 50 ? 6 : (axisCeil <= 150 ? 8 : 6);
+        const tickStep = axisCeil / (tickCount - 1);
+        const ticks = Array.from({length: tickCount}, (_, i) => Math.round(i * tickStep));
+
+        const barRow = (b) => `
+          <div class="bi-compare-row">
+            <div class="bi-compare-label">${b.label}</div>
+            <div class="bi-compare-pair">
+              <div class="bi-compare-bar">
+                <div class="bi-compare-bar-fill is-old" style="width:${(b.old / axisCeil) * 100}%"></div>
+                <div class="bi-compare-bar-value">${num(b.old)} hrs</div>
+              </div>
+              <div class="bi-compare-bar">
+                <div class="bi-compare-bar-fill is-new" style="width:${(b.neww / axisCeil) * 100}%"></div>
+                <div class="bi-compare-bar-value">${num(b.neww)} hrs</div>
+              </div>
+            </div>
+          </div>`;
+
         return `
-          <!-- HERO METRIC — one clear takeaway -->
-          <div class="bi-hero dash-animate">
-            <div class="bi-hero-primary">
-              <div class="bi-hero-eyebrow">Estimated annual impact for ${num(ci.users)} employees</div>
-              <div class="bi-hero-number">${num(r.totalHoursYear)}<span class="bi-hero-unit">hours</span></div>
-              <div class="bi-hero-sub">returned to your team every year — the equivalent of <strong>${r.fteCapacity} full-time engineers</strong> freed from routine work.</div>
-            </div>
-            <div class="bi-hero-secondary">
-              <div class="bi-hero-stat">
-                <div class="bi-hero-stat-value">${fmtDollars(r.totalRecoveredAnnual)}</div>
-                <div class="bi-hero-stat-label">Annual capacity value</div>
+          <!-- BEFORE / AFTER — five-bar comparison -->
+          <div class="bi-compare dash-animate">
+            <div class="bi-compare-head">
+              <div>
+                <div class="bi-compare-title">Hours per month: before and after</div>
+                <div class="bi-compare-sub">Modeled for ${num(ci.users)} employees, ${num(ci.apps)} active apps, ${ci.envs} environment${ci.envs===1?'':'s'} · ${a.label} scenario</div>
               </div>
-              <div class="bi-hero-stat">
-                <div class="bi-hero-stat-value">4–6 wk</div>
-                <div class="bi-hero-stat-label">Time to first value</div>
-              </div>
-              <div class="bi-hero-stat">
-                <div class="bi-hero-stat-value">${num(r.strategicHours)} h</div>
-                <div class="bi-hero-stat-label">Reinvested in strategy</div>
+              <div class="bi-compare-legend">
+                <span class="bi-compare-legend-item"><span class="bi-compare-legend-swatch" style="background:#E0784F"></span>Old way</span>
+                <span class="bi-compare-legend-item"><span class="bi-compare-legend-swatch" style="background:#10B981"></span>With Application Workspace</span>
               </div>
             </div>
-          </div>
-
-          <!-- BREAKDOWN — where the hours come from -->
-          <div class="bi-breakdown dash-animate">
-            <div class="bi-section-head">
-              <div class="bi-section-title">Where the hours come from</div>
-              <div class="bi-section-sub">Monthly hours returned, by workflow</div>
+            <div class="bi-compare-body">
+              ${bars.map(barRow).join('')}
             </div>
-            <div class="bi-bars">
-              <div class="bi-bar-row">
-                <div class="bi-bar-label">
-                  <span class="bi-bar-dot" style="background:#10B981"></span>
-                  <span class="bi-bar-name">Support &amp; tickets</span>
-                  <span class="bi-bar-note">${num(r.ticketsAvoided)} tickets avoided/mo · ${supportPct}% reduction</span>
-                </div>
-                <div class="bi-bar-track">
-                  <div class="bi-bar-fill" style="width:${supportPct}%;background:#10B981"></div>
-                </div>
-                <div class="bi-bar-value">${num(r.ticketHoursReturned)} <span>hrs/mo</span></div>
-              </div>
-              <div class="bi-bar-row">
-                <div class="bi-bar-label">
-                  <span class="bi-bar-dot" style="background:var(--r-blue-bright)"></span>
-                  <span class="bi-bar-name">Packaging</span>
-                  <span class="bi-bar-note">Across ${ci.envs} environments · ${pkgPct}% reduction</span>
-                </div>
-                <div class="bi-bar-track">
-                  <div class="bi-bar-fill" style="width:${pkgPct}%;background:var(--r-blue-bright)"></div>
-                </div>
-                <div class="bi-bar-value">${num(r.pkgHoursReturned)} <span>hrs/mo</span></div>
-              </div>
-              <div class="bi-bar-row">
-                <div class="bi-bar-label">
-                  <span class="bi-bar-dot" style="background:var(--r-blue)"></span>
-                  <span class="bi-bar-name">Patching</span>
-                  <span class="bi-bar-note">Staged pipeline replaces rebuilds · ${patchPct}% reduction</span>
-                </div>
-                <div class="bi-bar-track">
-                  <div class="bi-bar-fill" style="width:${patchPct}%;background:var(--r-blue)"></div>
-                </div>
-                <div class="bi-bar-value">${num(r.patchHoursReturned)} <span>hrs/mo</span></div>
+            <div class="bi-compare-axis">
+              <div></div>
+              <div class="bi-compare-axis-track">
+                ${ticks.map((t, i) => `<span class="bi-compare-axis-tick" style="left:${(i / (tickCount - 1)) * 100}%">${t} hrs</span>`).join('')}
               </div>
             </div>
           </div>
 
-          <!-- WHERE IT GOES — strategic reallocation -->
-          <div class="bi-reinvest dash-animate">
-            <div class="bi-section-head">
-              <div class="bi-section-title">Where the recovered capacity goes</div>
-              <div class="bi-section-sub">${num(r.strategicHours)} hours / year · ${r.fteCapacity} FTE reallocated, not eliminated</div>
+          <!-- THREE-KPI SUMMARY — mirrors the image bottom row -->
+          <div class="bi-kpis dash-animate">
+            <div class="bi-kpi bi-kpi-old">
+              <div class="bi-kpi-label">Old way</div>
+              <div><span class="bi-kpi-value">${num(oldTotal)}</span><span class="bi-kpi-unit">hrs/mo</span></div>
+              <div class="bi-kpi-sub">≈ ${ftesAbsorbed} FTEs absorbed</div>
             </div>
-            <div class="bi-reinvest-grid">
-              ${[
-                {icon:'sparkles', label:'AI &amp; Copilot rollouts'},
-                {icon:'cloud', label:'Cloud &amp; endpoint migrations'},
-                {icon:'shield-check', label:'Compliance &amp; security posture'},
-                {icon:'zap', label:'Automation &amp; self-service'},
-                {icon:'flag', label:'Pilot programs &amp; modernization'}
-              ].map(t => `<div class="bi-reinvest-tile"><i data-lucide="${t.icon}"></i><span>${t.label}</span></div>`).join('')}
+            <div class="bi-kpi bi-kpi-new">
+              <div class="bi-kpi-label">With Application Workspace</div>
+              <div><span class="bi-kpi-value">${num(newTotal)}</span><span class="bi-kpi-unit">hrs/mo</span></div>
+              <div class="bi-kpi-sub">${pctReduction}% reduction in repetitive work</div>
+            </div>
+            <div class="bi-kpi bi-kpi-strategy">
+              <div class="bi-kpi-label">Returned to strategy</div>
+              <div><span class="bi-kpi-value">${num(totalReturned)}</span><span class="bi-kpi-unit">hrs/mo</span></div>
+              <div class="bi-kpi-sub">Capacity for AI, migrations, security</div>
             </div>
           </div>
         `;
@@ -9548,7 +9560,9 @@
           if (action === 'save-assumptions') {
             const sc = STATE.calcScenario; const clamp = (v) => Math.max(0, Math.min(100, cleanNum(v))) / 100;
             const t = document.getElementById('asn-ticket'); const p = document.getElementById('asn-pkg'); const pa = document.getElementById('asn-patch'); const s = document.getElementById('asn-strategic');
+            const ux = document.getElementById('asn-ux'); const dh = document.getElementById('asn-dash'); const mt = document.getElementById('asn-mt');
             if (t) ROI_ASSUMPTIONS[sc].ticketReduction = clamp(t.value); if (p) ROI_ASSUMPTIONS[sc].pkgReduction = clamp(p.value); if (pa) ROI_ASSUMPTIONS[sc].patchReduction = clamp(pa.value); if (s) ROI_ASSUMPTIONS[sc].strategicRealloc = clamp(s.value);
+            if (ux) ROI_ASSUMPTIONS[sc].uxShare = clamp(ux.value); if (dh) ROI_ASSUMPTIONS[sc].dashShare = clamp(dh.value); if (mt) ROI_ASSUMPTIONS[sc].mtShare = clamp(mt.value);
             calculateImpact(); STATE.showAssumptions = false; render(); return;
           }
           if (action === 'toggle-regulated') { STATE.calcInputs.regulated = act.getAttribute('data-val') === 'true'; render(); return; }
