@@ -8692,9 +8692,9 @@
       }
 
       const ROI_ASSUMPTIONS = {
-        conservative: { ticketReduction: 0.20, pkgReduction: 0.35, patchReduction: 0.30, strategicRealloc: 0.40, fteHours: 1920, label: 'Conservative' },
-        expected:     { ticketReduction: 0.70, pkgReduction: 0.50, patchReduction: 0.45, strategicRealloc: 0.50, fteHours: 1920, label: 'Expected' },
-        high:         { ticketReduction: 0.90, pkgReduction: 0.65, patchReduction: 0.60, strategicRealloc: 0.70, fteHours: 1920, label: 'High' },
+        conservative: { ticketReduction: 0.20, pkgReduction: 0.35, patchReduction: 0.30, strategicRealloc: 0.40, fteHours: 1920, uxShare: 0.55, dashShare: 0.20, mtShare: 0.25, label: 'Conservative' },
+        expected:     { ticketReduction: 0.70, pkgReduction: 0.50, patchReduction: 0.45, strategicRealloc: 0.50, fteHours: 1920, uxShare: 0.55, dashShare: 0.20, mtShare: 0.25, label: 'Expected' },
+        high:         { ticketReduction: 0.90, pkgReduction: 0.65, patchReduction: 0.60, strategicRealloc: 0.70, fteHours: 1920, uxShare: 0.55, dashShare: 0.20, mtShare: 0.25, label: 'High' },
       };
 
       function roiInput(id, icon, label, hint, placeholder, val, extra){
@@ -8998,6 +8998,12 @@
                     <label class="bi-rate"><span>Patching reduction</span><input type="number" id="asn-patch" min="0" max="100" value="${Math.round(a.patchReduction * 100)}"></label>
                     <label class="bi-rate"><span>Strategic reallocation</span><input type="number" id="asn-strategic" min="0" max="100" value="${Math.round(a.strategicRealloc * 100)}"></label>
                   </div>
+                  <div class="bi-assumptions-title" style="margin-top:16px">Support-hours allocation (%) — drives UX / Dashboarding / Multi-tenant bars</div>
+                  <div class="bi-assumptions-grid">
+                    <label class="bi-rate"><span>User experience</span><input type="number" id="asn-ux" min="0" max="100" value="${Math.round(a.uxShare * 100)}"></label>
+                    <label class="bi-rate"><span>Dashboarding</span><input type="number" id="asn-dash" min="0" max="100" value="${Math.round(a.dashShare * 100)}"></label>
+                    <label class="bi-rate"><span>Multi-tenant</span><input type="number" id="asn-mt" min="0" max="100" value="${Math.round(a.mtShare * 100)}"></label>
+                  </div>
                   <div class="bi-assumptions-actions">
                     <button type="button" data-action="save-assumptions" class="bi-assumptions-save">Save &amp; Recalculate</button>
                     <button type="button" data-action="toggle-assumptions" class="bi-assumptions-close">Close</button>
@@ -9065,8 +9071,12 @@
         const apps = Math.max(1, ci.apps);
         const customShare = Math.min(1, ci.customApps / apps);
         const catalogShare = 1 - customShare;
-        // Support hours split across UX, dashboarding, multi-tenant.
-        const uxShare = 0.55, dashShare = 0.20, mtShare = 0.25;
+        // Support hours split across UX, dashboarding, multi-tenant — from assumptions.
+        // Normalized so the three always sum to 1, even if the user enters off-totals.
+        const rawSum = (a.uxShare + a.dashShare + a.mtShare) || 1;
+        const uxShare = a.uxShare / rawSum;
+        const dashShare = a.dashShare / rawSum;
+        const mtShare = a.mtShare / rawSum;
 
         const pkgPatchOld = ci.pkgHours + ci.patchHours;
         const pkgPatchRet = r.pkgHoursReturned + r.patchHoursReturned;
@@ -9550,7 +9560,9 @@
           if (action === 'save-assumptions') {
             const sc = STATE.calcScenario; const clamp = (v) => Math.max(0, Math.min(100, cleanNum(v))) / 100;
             const t = document.getElementById('asn-ticket'); const p = document.getElementById('asn-pkg'); const pa = document.getElementById('asn-patch'); const s = document.getElementById('asn-strategic');
+            const ux = document.getElementById('asn-ux'); const dh = document.getElementById('asn-dash'); const mt = document.getElementById('asn-mt');
             if (t) ROI_ASSUMPTIONS[sc].ticketReduction = clamp(t.value); if (p) ROI_ASSUMPTIONS[sc].pkgReduction = clamp(p.value); if (pa) ROI_ASSUMPTIONS[sc].patchReduction = clamp(pa.value); if (s) ROI_ASSUMPTIONS[sc].strategicRealloc = clamp(s.value);
+            if (ux) ROI_ASSUMPTIONS[sc].uxShare = clamp(ux.value); if (dh) ROI_ASSUMPTIONS[sc].dashShare = clamp(dh.value); if (mt) ROI_ASSUMPTIONS[sc].mtShare = clamp(mt.value);
             calculateImpact(); STATE.showAssumptions = false; render(); return;
           }
           if (action === 'toggle-regulated') { STATE.calcInputs.regulated = act.getAttribute('data-val') === 'true'; render(); return; }
