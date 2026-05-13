@@ -4134,6 +4134,22 @@
         position: relative;
         height: 14px;
       }
+      .bi-compare-summary {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 14px;
+        margin-top: 12px;
+        padding-top: 10px;
+        border-top: 1px solid var(--r-divider);
+        font-size: 12px;
+        color: var(--r-ink-2);
+        flex-wrap: wrap;
+        line-height: 1.4;
+      }
+      .bi-compare-summary b { color: var(--r-ink); font-weight: 800; }
+      .bi-compare-summary .is-positive { color: #047857; font-weight: 600; }
+      .bi-compare-summary .is-positive b { color: #047857; }
       .bi-compare-axis-tick {
         position: absolute;
         top: 0;
@@ -4311,7 +4327,15 @@
         border-bottom: 1px solid var(--r-divider);
         flex-wrap: wrap;
       }
-      .bi-compound-title { font-size: 15px; font-weight: 700; color: var(--r-ink); }
+      .bi-compound-title { font-size: 13px; font-weight: 700; color: var(--r-ink-2); text-transform: uppercase; letter-spacing: 0.06em; }
+      .bi-compound-hero {
+        font-size: 36px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        color: #047857;
+        line-height: 1;
+        margin: 6px 0 4px;
+      }
       .bi-compound-sub { font-size: 12px; color: var(--r-ink-2); margin-top: 2px; line-height: 1.45; }
       .bi-compound-legend { display: inline-flex; align-items: center; gap: 14px; flex-shrink: 0; flex-wrap: wrap; }
       .bi-compound-legend-item {
@@ -9708,24 +9732,9 @@
                 ${ticks.map((t, i) => `<span class="bi-compare-axis-tick" style="left:${(i / (tickCount - 1)) * 100}%">${t} hrs</span>`).join('')}
               </div>
             </div>
-          </div>
-
-          <!-- THREE-KPI SUMMARY — mirrors the image bottom row -->
-          <div class="bi-kpis dash-animate">
-            <div class="bi-kpi bi-kpi-old">
-              <div class="bi-kpi-label">Old way</div>
-              <div><span class="bi-kpi-value">${num(oldTotal)}</span><span class="bi-kpi-unit">hrs/mo</span></div>
-              <div class="bi-kpi-sub">≈ ${ftesAbsorbed} FTEs absorbed</div>
-            </div>
-            <div class="bi-kpi bi-kpi-new">
-              <div class="bi-kpi-label">With Application Workspace</div>
-              <div><span class="bi-kpi-value">${num(newTotal)}</span><span class="bi-kpi-unit">hrs/mo</span></div>
-              <div class="bi-kpi-sub">${pctReduction}% reduction in repetitive work</div>
-            </div>
-            <div class="bi-kpi bi-kpi-strategy">
-              <div class="bi-kpi-label">Returned to strategy</div>
-              <div><span class="bi-kpi-value">${num(totalReturned)}</span><span class="bi-kpi-unit">hrs/mo</span></div>
-              <div class="bi-kpi-sub">Capacity for AI, migrations, security</div>
+            <div class="bi-compare-summary">
+              <span><b>${num(oldTotal)}</b> hrs/mo today &rarr; <b>${num(newTotal)}</b> hrs/mo with App Workspace</span>
+              <span class="is-positive">${pctReduction}% reduction &middot; <b>${num(totalReturned)} hrs/mo</b> returned to strategy</span>
             </div>
           </div>
 
@@ -9735,7 +9744,7 @@
             <div class="bi-pkg-head">
               <div>
                 <div class="bi-pkg-title">
-                  Packaging cycle ROI &mdash; package your full catalog once
+                  Package your full catalog once
                   <span class="bi-pkg-badge">Field-test benchmarks</span>
                 </div>
                 <div class="bi-pkg-sub">
@@ -9775,7 +9784,7 @@
                 <div></div>
                 <div class="bi-pkg-savings-tag">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
-                  <span><b>${num(Math.round(hrsSaved))} hrs saved</b> &middot; ${pctLess}% less effort</span>
+                  <span><b>${num(Math.round(hrsSaved))} hrs saved</b> &middot; ${pctLess}% less effort &middot; <b>${timeMultStr}&times; faster</b></span>
                 </div>
               </div>` : ''}
               <div class="bi-pkg-row">
@@ -9785,26 +9794,6 @@
                   <div class="bi-pkg-bar-value${awOutside ? ' is-outside' : ''}" style="${awOutside ? `left:calc(${awPct}% + 8px); right:auto;` : ''}">${awVal}</div>
                 </div>
               </div>
-            </div>
-            <div class="bi-pkg-kpis">
-              <div class="bi-pkg-kpi bi-pkg-kpi-hours">
-                <div class="bi-pkg-kpi-label">Engineering hours saved</div>
-                <div class="bi-pkg-kpi-value">${num(Math.round(hrsSaved))}<span class="bi-pkg-kpi-unit">hrs</span></div>
-                <div class="bi-pkg-kpi-sub">Across ${num(cycleStdApps)} standard &middot; ${num(cycleCmpApps)} complex apps</div>
-              </div>
-              <div class="bi-pkg-kpi bi-pkg-kpi-mult">
-                <div class="bi-pkg-kpi-label">Time multiple</div>
-                <div class="bi-pkg-kpi-value">${timeMultStr}${timeMultUnit ? `<span class="bi-pkg-kpi-unit">${timeMultUnit}</span>` : ''}</div>
-                <div class="bi-pkg-kpi-sub">${hasCycle ? 'vs. traditional per-platform path' : 'Enter apps to see the multiplier'}</div>
-              </div>
-              <div class="bi-pkg-kpi bi-pkg-kpi-dollars">
-                <div class="bi-pkg-kpi-label">Engineering capacity reclaimed</div>
-                <div class="bi-pkg-kpi-value">${hasCycle ? (hrsSaved / 160).toFixed(1) : '—'}${hasCycle ? `<span class="bi-pkg-kpi-unit">engineer-months</span>` : ''}</div>
-                <div class="bi-pkg-kpi-sub">${hasCycle ? `&asymp; ${fmtDollars($saved)} of fully-loaded engineering time, freed for AI, security &amp; modernization` : 'Enter apps to see the impact'}</div>
-              </div>
-            </div>
-            <div class="bi-pkg-foot">
-              Benchmarks from the Recast field test: <b>standard apps</b> &mdash; ${PACKAGING_BENCHMARKS.awStdHrs} hrs in App Workspace vs ${PACKAGING_BENCHMARKS.tradStdHrs} hrs traditional &middot; <b>complex apps</b> &mdash; ${PACKAGING_BENCHMARKS.awComplexHrs} hrs in App Workspace vs ${PACKAGING_BENCHMARKS.tradComplexHrs} hrs traditional. Adjust the per-app benchmarks in Assumptions.
             </div>
           </div>
 
@@ -9819,6 +9808,7 @@
             const otPct  = (oneTime / max) * 100;
             const recPct = (recur   / max) * 100;
             const labelInside = (pct, value) => pct >= 7 ? `+${fmtDollars(value)}` : '';
+            const engMonths = hasCycle ? (hrsSaved / 160).toFixed(1) : '0';
             return `
           <!-- COMPOUNDING VALUE OVER 3 YEARS -->
           <div class="bi-section-eyebrow is-compound">Year 1 &rarr; Year 3 &mdash; how the value compounds</div>
@@ -9826,7 +9816,8 @@
             <div class="bi-compound-head">
               <div>
                 <div class="bi-compound-title">Cumulative reclaimed value over 3 years</div>
-                <div class="bi-compound-sub">The one-time packaging onboarding stacks with each year of recurring operational savings.</div>
+                <div class="bi-compound-hero">${fmtDollars(yr3Total)}</div>
+                <div class="bi-compound-sub">Returned to your team for AI, security, and modernization work.</div>
               </div>
               <div class="bi-compound-legend">
                 <span class="bi-compound-legend-item"><span class="bi-compound-legend-swatch is-onetime"></span>One-time packaging</span>
@@ -9863,7 +9854,7 @@
               </div>
             </div>
             <div class="bi-compound-foot">
-              The one-time packaging onboarding (<b>${fmtDollars(oneTime)}</b>) plus three years of recurring operational savings (<b>${fmtDollars(recur)}/yr</b>) compound to <b>${fmtDollars(yr3Total)}</b> in total reclaimed value by the end of Year 3.
+              One-time packaging onboarding (<b>${fmtDollars(oneTime)}</b>, &asymp; <b>${engMonths} engineer-months</b>) + recurring ops savings of <b>${fmtDollars(recur)}/yr</b>.
             </div>
           </div>`;
           })()}
