@@ -9329,7 +9329,7 @@
         const kpis = [
           { label: 'Hrs saved', val: num(Math.round(r.cycleHoursSaved || 0)), unit: 'hrs', col: PB },
           { label: 'Time multiple', val: (r.cycleTimeMultiple || 0).toFixed(1), unit: '\u00d7 faster', col: GR },
-          { label: 'Reclaimed value', val: fmtDollars(r.cycleDollarsSaved || 0), unit: '', col: GR }
+          { label: 'Capacity reclaimed', val: ((r.cycleHoursSaved || 0) / 160).toFixed(1), unit: 'engineer-months', col: GR }
         ];
         kpis.forEach((k, i) => {
           const kx = ML + (kpiW + 4) * i;
@@ -9690,9 +9690,9 @@
                 <div class="bi-pkg-kpi-sub">${hasCycle ? 'vs. traditional per-platform path' : 'Enter apps to see the multiplier'}</div>
               </div>
               <div class="bi-pkg-kpi bi-pkg-kpi-dollars">
-                <div class="bi-pkg-kpi-label">Reclaimed capacity value</div>
-                <div class="bi-pkg-kpi-value">${fmtDollars($saved)}</div>
-                <div class="bi-pkg-kpi-sub">On this packaging cycle alone</div>
+                <div class="bi-pkg-kpi-label">Engineering capacity reclaimed</div>
+                <div class="bi-pkg-kpi-value">${hasCycle ? (hrsSaved / 160).toFixed(1) : '—'}${hasCycle ? `<span class="bi-pkg-kpi-unit">engineer-months</span>` : ''}</div>
+                <div class="bi-pkg-kpi-sub">${hasCycle ? `&asymp; ${fmtDollars($saved)} of fully-loaded engineering time, freed for AI, security &amp; modernization` : 'Enter apps to see the impact'}</div>
               </div>
             </div>
             <div class="bi-pkg-foot">
