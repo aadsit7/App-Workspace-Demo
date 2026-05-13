@@ -9748,28 +9748,6 @@
                 <div class="bi-roi-kpi-sub">Cumulative value reclaimed by Year 3</div>
               </div>
             </div>
-            <div class="bi-roi-breakdown">
-              <div class="bi-roi-row is-add">
-                <span>Recurring annual savings (monthly hours returned &times; loaded rate)</span>
-                <span><b>${fmtDollars(recurAnn)}</b></span>
-              </div>
-              <div class="bi-roi-row is-add">
-                <span>One-time packaging cycle savings (catalog onboarded with App Workspace)</span>
-                <span><b>${fmtDollars(oneTime)}</b></span>
-              </div>
-              <div class="bi-roi-row is-add">
-                <span>Total Year 1 value</span>
-                <span><b>${fmtDollars(yr1Val)}</b></span>
-              </div>
-              <div class="bi-roi-row is-sub">
-                <span>Year 1 Application Workspace subscription (list pricing)</span>
-                <span>&minus; ${fmtDollars(awInv)}</span>
-              </div>
-              <div class="bi-roi-row is-net">
-                <span>Net benefit in Year 1</span>
-                <span class="${netClass}">${netSign} ${fmtDollars(Math.abs(yr1Net))}</span>
-              </div>
-            </div>
             <div class="bi-roi-foot">
               Investment based on Recast Software list pricing: graduated per-user/month tiers from $4.00 (sub-1K users) to $1.50 (50K+). Value uses the ${a.label.toLowerCase()} scenario and a $${ci.loadedRate || 95}/hr loaded engineer rate. Conservative &mdash; does not include strategic capacity reclaimed, productivity gains, FTE hires avoided, or risk reduction.
             </div>
