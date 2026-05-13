@@ -4291,6 +4291,113 @@
         border-radius: 1px;
       }
       .bi-section-eyebrow.is-cycle::before { background: #B45309; }
+      .bi-section-eyebrow.is-roi::before { background: #047857; }
+
+      /* Investment vs Return card — pays-for-itself summary */
+      .bi-roi {
+        background: #fff;
+        border: 1px solid var(--r-divider);
+        border-radius: 8px;
+        padding: 20px 24px;
+        box-shadow: var(--shadow-card);
+      }
+      .bi-roi-headline {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        padding-bottom: 16px;
+        margin-bottom: 16px;
+        border-bottom: 1px solid var(--r-divider);
+      }
+      .bi-roi-headline-eyebrow {
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--r-ink-2);
+      }
+      .bi-roi-headline-text {
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--r-ink);
+        letter-spacing: -0.01em;
+        line-height: 1.2;
+      }
+      .bi-roi-headline-text b {
+        color: #047857;
+        font-weight: 800;
+      }
+      .bi-roi-kpis {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+      .bi-roi-kpi {
+        border-radius: 8px;
+        padding: 14px 16px;
+        border: 1px solid;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .bi-roi-kpi-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; }
+      .bi-roi-kpi-value { font-size: 24px; font-weight: 800; letter-spacing: -0.02em; line-height: 1; }
+      .bi-roi-kpi-sub { font-size: 11px; font-weight: 500; line-height: 1.35; margin-top: 2px; }
+      .bi-roi-kpi-invest { background: #F1F5F9; border-color: #CBD5E1; color: #334155; }
+      .bi-roi-kpi-invest .bi-roi-kpi-label, .bi-roi-kpi-invest .bi-roi-kpi-value { color: #334155; }
+      .bi-roi-kpi-invest .bi-roi-kpi-sub { color: #64748B; }
+      .bi-roi-kpi-year1 { background: #ECFDF5; border-color: #6EE7B7; color: #064E3B; }
+      .bi-roi-kpi-year1 .bi-roi-kpi-label, .bi-roi-kpi-year1 .bi-roi-kpi-value { color: #047857; }
+      .bi-roi-kpi-year1 .bi-roi-kpi-sub { color: #065F46; }
+      .bi-roi-kpi-3yr { background: #DBEAFE; border-color: #93C5FD; color: #1E3A8A; }
+      .bi-roi-kpi-3yr .bi-roi-kpi-label, .bi-roi-kpi-3yr .bi-roi-kpi-value { color: #1D4ED8; }
+      .bi-roi-kpi-3yr .bi-roi-kpi-sub { color: #1E40AF; }
+      .bi-roi-breakdown {
+        background: var(--r-surface-3);
+        border: 1px solid var(--r-divider);
+        border-radius: 6px;
+        padding: 12px 16px;
+        margin-bottom: 10px;
+      }
+      .bi-roi-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 5px 0;
+        font-size: 12px;
+        color: var(--r-ink-2);
+        gap: 12px;
+      }
+      .bi-roi-row b { color: var(--r-ink); font-weight: 700; }
+      .bi-roi-row.is-add { color: #065F46; }
+      .bi-roi-row.is-sub { color: #334155; }
+      .bi-roi-row.is-net {
+        border-top: 1px solid var(--r-divider);
+        padding-top: 10px;
+        margin-top: 4px;
+        font-weight: 700;
+        color: var(--r-ink);
+        font-size: 13px;
+      }
+      .bi-roi-row .is-positive { color: #047857; font-weight: 800; }
+      .bi-roi-row .is-negative { color: var(--r-red); font-weight: 800; }
+      .bi-roi-foot {
+        font-size: 10px;
+        color: var(--r-ink-2);
+        line-height: 1.5;
+        margin-top: 0;
+      }
+
+      @media (max-height: 900px) {
+        #panel-roi .bi-roi { padding: 14px 18px !important; }
+        #panel-roi .bi-roi-headline-text { font-size: 18px !important; }
+        #panel-roi .bi-roi-kpi { padding: 10px 14px !important; }
+        #panel-roi .bi-roi-kpi-value { font-size: 22px !important; }
+        #panel-roi .bi-roi-kpi-label { font-size: 9px !important; }
+        #panel-roi .bi-roi-kpi-sub { font-size: 10px !important; }
+        #panel-roi .bi-roi-row { font-size: 11px !important; }
+      }
 
       /* Packaging cycle ROI card — field-test benchmark visualization */
       .bi-pkg {
@@ -4473,6 +4580,7 @@
         .bi-pkg-row, .bi-pkg-savings { grid-template-columns: 1fr !important; gap: 4px !important; }
         .bi-pkg-row-label { text-align: left !important; }
         .bi-pkg-kpis { grid-template-columns: 1fr !important; }
+        .bi-roi-kpis { grid-template-columns: 1fr !important; }
       }
       /* (Removed viewFadeIn — re-rendering during sub-animations caused the cards to flicker
          because the keyframe animation restarted on every render. Crisp swap is smoother.) */
@@ -8914,6 +9022,29 @@
         tradComplexHrs: 14.0
       };
 
+      // Application Workspace pricing — graduated per-user/month list pricing from the Recast partner estimator.
+      // Each tier applies only to the users in its band (not the whole quantity).
+      const AW_PRICING_TIERS = [
+        { max: 999,      rate: 4.00 },
+        { max: 4999,     rate: 3.50 },
+        { max: 9999,     rate: 3.00 },
+        { max: 24999,    rate: 2.50 },
+        { max: 49999,    rate: 2.00 },
+        { max: Infinity, rate: 1.50 }
+      ];
+      function awAnnualCost(users){
+        let rem = Math.max(250, Math.floor(users || 0));
+        let from = 0, monthly = 0;
+        for (const t of AW_PRICING_TIERS){
+          if (rem <= 0) break;
+          const chunk = Math.min(rem, t.max - from);
+          monthly += chunk * t.rate;
+          rem -= chunk;
+          from = t.max;
+        }
+        return monthly * 12;
+      }
+
       function roiInput(id, icon, label, hint, placeholder, val, extra){
         return `<div><div class="text-[10px] font-semibold text-[#64748b] uppercase tracking-wide mb-1 flex items-center gap-1.5"><i data-lucide="${icon}" class="w-3 h-3 text-[#0070F3]"></i> ${label}</div><div class="text-[10px] text-[#94a3b8] mb-1.5">${hint}</div><div class="input-field"><input type="${extra === 'bool' ? 'hidden' : 'number'}" id="${id}" placeholder="${placeholder}" value="${val}" class="focus-ring" ${extra || ''}>${extra === 'bool' ? `<div class="flex gap-2"><button type="button" data-action="toggle-regulated" data-val="true" class="px-3 py-1.5 text-xs rounded-lg border ${STATE.calcInputs.regulated ? 'bg-[#0070F3] text-white border-[#0070F3]' : 'bg-white text-slate-500 border-slate-200'}">Yes</button><button type="button" data-action="toggle-regulated" data-val="false" class="px-3 py-1.5 text-xs rounded-lg border ${!STATE.calcInputs.regulated ? 'bg-[#0070F3] text-white border-[#0070F3]' : 'bg-white text-slate-500 border-slate-200'}">No</button></div>` : ''}</div></div>`;
       }
@@ -9144,12 +9275,35 @@
         doc.setFont('Helvetica','normal'); doc.setFontSize(8.5); setC(MG);
         doc.text('AI & Copilot rollouts  \u00b7  Cloud migrations  \u00b7  Compliance & security  \u00b7  Automation & self-service  \u00b7  Pilot programs', ML + CW/2, y + 4, { align: 'center' });
         y += 18;
-        setD([230,230,236]); doc.setLineWidth(1); doc.rect(ML, y, CW, 24, 'S');
-        doc.setFont('Helvetica','bold'); doc.setFontSize(10.5); setC(GR);
-        doc.text('Annual capacity value: ' + fmtDollars(r.totalRecoveredAnnual), ML + 12, y + 15);
-        doc.setFont('Helvetica','normal'); doc.setFontSize(9); setC(RR);
-        doc.text('Monthly cost of waiting: ' + fmtDollars(r.monthlyCostOfWaiting), W - MR - 12, y + 15, { align: 'right' });
-        y += 32;
+        // ── INVESTMENT VS RETURN — the financial bottom line ──
+        y = secBarFull(y, 'INVESTMENT VS RETURN — WHY IT PAYS OFF');
+        y += 4;
+        const roiH = 46;
+        const roiKpiW = (CW - 8) / 3;
+        const yr1RoiNet = r.year1Net || 0;
+        const paybackM  = r.paybackMonths || 0;
+        const paybackText = paybackM <= 0 ? 'Immediate'
+          : paybackM < 1 ? 'Under a month'
+          : paybackM.toFixed(1) + ' months';
+        const roiKpis = [
+          { label: 'ANNUAL INVESTMENT', val: fmtDollars(r.awAnnualInvestment || 0), sub: num(ci.users) + ' users · list pricing', bg: [241,245,249], fg: [51,65,85], sfg: [100,116,139] },
+          { label: 'YEAR 1 NET BENEFIT', val: (yr1RoiNet >= 0 ? '+' : '−') + fmtDollars(Math.abs(yr1RoiNet)), sub: (r.year1ROIMultiple || 0).toFixed(1) + '× return on investment', bg: [236,253,245], fg: [4,120,87], sfg: [6,95,70] },
+          { label: 'PAYBACK PERIOD', val: paybackText, sub: 'Then it keeps returning value', bg: [219,234,254], fg: [29,78,216], sfg: [30,64,175] },
+        ];
+        roiKpis.forEach((k, i) => {
+          const kx = ML + (roiKpiW + 4) * i;
+          setF(k.bg); doc.rect(kx, y, roiKpiW, roiH, 'F');
+          doc.setFont('Helvetica','bold'); doc.setFontSize(6.5); setC(k.sfg);
+          doc.text(k.label, kx + 9, y + 11);
+          doc.setFont('Helvetica','bold'); doc.setFontSize(14); setC(k.fg);
+          doc.text(k.val, kx + 9, y + 28);
+          doc.setFont('Helvetica','normal'); doc.setFontSize(7); setC(k.sfg);
+          doc.text(k.sub, kx + 9, y + 40);
+        });
+        y += roiH + 5;
+        doc.setFont('Helvetica','italic'); doc.setFontSize(7.5); setC(MG);
+        doc.text('Year 1 value: ' + fmtDollars(r.year1Value || 0) + ' (' + fmtDollars(r.recurringAnnualValue || 0) + ' recurring + ' + fmtDollars(r.oneTimePackagingValue || 0) + ' one-time packaging) vs ' + fmtDollars(r.awAnnualInvestment || 0) + ' subscription. 3-year net: ' + (r.threeYearNet >= 0 ? '+' : '−') + fmtDollars(Math.abs(r.threeYearNet || 0)) + '.', ML, y + 4);
+        y += 14;
 
         // \u2500\u2500 PACKAGING CYCLE ROI \u2014 field-test benchmarks \u2500\u2500
         y = secBarFull(y, 'PACKAGING CYCLE ROI \u2014 ONE-TIME CATALOG VALUE');
@@ -9545,6 +9699,82 @@
               Benchmarks from the Recast field test: <b>standard apps</b> &mdash; ${PACKAGING_BENCHMARKS.awStdHrs} hrs in App Workspace vs ${PACKAGING_BENCHMARKS.tradStdHrs} hrs traditional &middot; <b>complex apps</b> &mdash; ${PACKAGING_BENCHMARKS.awComplexHrs} hrs in App Workspace vs ${PACKAGING_BENCHMARKS.tradComplexHrs} hrs traditional. Adjust the per-app benchmarks in Assumptions.
             </div>
           </div>
+
+          ${(() => {
+            const awInv     = r.awAnnualInvestment ?? 0;
+            const yr1Val    = r.year1Value         ?? 0;
+            const yr1Net    = r.year1Net           ?? 0;
+            const yr1ROI    = r.year1ROIMultiple   ?? 0;
+            const recurAnn  = r.recurringAnnualValue ?? 0;
+            const oneTime   = r.oneTimePackagingValue ?? 0;
+            const payback   = r.paybackMonths      ?? 0;
+            const yr3Net    = r.threeYearNet       ?? 0;
+            const blendedMo = r.awBlendedPerUserMonth ?? 0;
+            const blendedStr = blendedMo >= 1
+              ? '$' + blendedMo.toFixed(2)
+              : '$' + blendedMo.toFixed(3);
+            const paybackStr = payback <= 0
+              ? 'Immediate'
+              : payback < 1
+                ? 'Under a month'
+                : payback.toFixed(1) + ' months';
+            const headlineMath = payback > 0 && payback < 36
+              ? `Application Workspace pays for itself in <b>${paybackStr}</b>, then keeps returning value every year.`
+              : `Application Workspace returns <b>${yr1ROI.toFixed(1)}&times;</b> your investment in Year 1.`;
+            const netClass = yr1Net >= 0 ? 'is-positive' : 'is-negative';
+            const netSign = yr1Net >= 0 ? '+' : '&minus;';
+            return `
+          <!-- INVESTMENT VS RETURN -->
+          <div class="bi-section-eyebrow is-roi">Investment vs return &mdash; why it pays off</div>
+          <div class="bi-roi dash-animate">
+            <div class="bi-roi-headline">
+              <div class="bi-roi-headline-eyebrow">The bottom line</div>
+              <div class="bi-roi-headline-text">${headlineMath}</div>
+            </div>
+            <div class="bi-roi-kpis">
+              <div class="bi-roi-kpi bi-roi-kpi-invest">
+                <div class="bi-roi-kpi-label">Annual investment</div>
+                <div class="bi-roi-kpi-value">${fmtDollars(awInv)}</div>
+                <div class="bi-roi-kpi-sub">${num(ci.users)} users &middot; ${blendedStr}/user/mo blended</div>
+              </div>
+              <div class="bi-roi-kpi bi-roi-kpi-year1">
+                <div class="bi-roi-kpi-label">Year 1 net benefit</div>
+                <div class="bi-roi-kpi-value">${yr1Net >= 0 ? '+' : '&minus;'}${fmtDollars(Math.abs(yr1Net))}</div>
+                <div class="bi-roi-kpi-sub">${yr1ROI.toFixed(1)}&times; return on Year 1 investment</div>
+              </div>
+              <div class="bi-roi-kpi bi-roi-kpi-3yr">
+                <div class="bi-roi-kpi-label">3-year net benefit</div>
+                <div class="bi-roi-kpi-value">${yr3Net >= 0 ? '+' : '&minus;'}${fmtDollars(Math.abs(yr3Net))}</div>
+                <div class="bi-roi-kpi-sub">Cumulative value reclaimed by Year 3</div>
+              </div>
+            </div>
+            <div class="bi-roi-breakdown">
+              <div class="bi-roi-row is-add">
+                <span>Recurring annual savings (monthly hours returned &times; loaded rate)</span>
+                <span><b>${fmtDollars(recurAnn)}</b></span>
+              </div>
+              <div class="bi-roi-row is-add">
+                <span>One-time packaging cycle savings (catalog onboarded with App Workspace)</span>
+                <span><b>${fmtDollars(oneTime)}</b></span>
+              </div>
+              <div class="bi-roi-row is-add">
+                <span>Total Year 1 value</span>
+                <span><b>${fmtDollars(yr1Val)}</b></span>
+              </div>
+              <div class="bi-roi-row is-sub">
+                <span>Year 1 Application Workspace subscription (list pricing)</span>
+                <span>&minus; ${fmtDollars(awInv)}</span>
+              </div>
+              <div class="bi-roi-row is-net">
+                <span>Net benefit in Year 1</span>
+                <span class="${netClass}">${netSign} ${fmtDollars(Math.abs(yr1Net))}</span>
+              </div>
+            </div>
+            <div class="bi-roi-foot">
+              Investment based on Recast Software list pricing: graduated per-user/month tiers from $4.00 (sub-1K users) to $1.50 (50K+). Value uses the ${a.label.toLowerCase()} scenario and a $${ci.loadedRate || 95}/hr loaded engineer rate. Conservative &mdash; does not include strategic capacity reclaimed, productivity gains, FTE hires avoided, or risk reduction.
+            </div>
+          </div>`;
+          })()}
         `;
       }
 
@@ -9589,7 +9819,26 @@
         const cycleTimeMultiple = awCycleHours > 0 ? (tradCycleHours / awCycleHours) : 0;
         const cycleDollarsSaved = Math.round(cycleHoursSaved * (ci.loadedRate || 95));
 
-        STATE.calcResult = { currentSupportHours, ticketHoursReturned, ticketsAvoided, pkgHoursReturned, patchHoursReturned, totalHoursMonth, totalHoursYear, fteCapacity, strategicHours, reqsDeferred, delayedInitiatives, supportCostAnnual, engineeringCostAnnual, wasteCostAnnual, totalBurnAnnual, totalRecoveredAnnual, monthlyCostOfWaiting, cycleStandardApps, cycleComplexApps, awCycleHours, tradCycleHours, cycleHoursSaved, cycleTimeMultiple, cycleDollarsSaved };
+        // ── Investment vs Return (full 3-year financial model) ──
+        // Investment is real list pricing; value is recurring annual savings + one-time packaging cycle savings.
+        // Payback nets the one-time packaging windfall against the first-year subscription, then divides by monthly recurring savings.
+        const awAnnualInvestment = awAnnualCost(ci.users);
+        const recurringAnnualValue = totalRecoveredAnnual;
+        const oneTimePackagingValue = cycleDollarsSaved;
+        const year1Value = recurringAnnualValue + oneTimePackagingValue;
+        const year1Net = year1Value - awAnnualInvestment;
+        const year1ROIMultiple = awAnnualInvestment > 0 ? (year1Value / awAnnualInvestment) : 0;
+        const recurringROIMultiple = awAnnualInvestment > 0 ? (recurringAnnualValue / awAnnualInvestment) : 0;
+        const netUpfrontCost = Math.max(0, awAnnualInvestment - oneTimePackagingValue);
+        const paybackMonths = recurringAnnualValue > 0
+          ? (netUpfrontCost / (recurringAnnualValue / 12))
+          : 0;
+        const threeYearValue = (recurringAnnualValue * 3) + oneTimePackagingValue;
+        const threeYearInvestment = awAnnualInvestment * 3;
+        const threeYearNet = threeYearValue - threeYearInvestment;
+        const awBlendedPerUserMonth = ci.users > 0 ? (awAnnualInvestment / 12 / ci.users) : 0;
+
+        STATE.calcResult = { currentSupportHours, ticketHoursReturned, ticketsAvoided, pkgHoursReturned, patchHoursReturned, totalHoursMonth, totalHoursYear, fteCapacity, strategicHours, reqsDeferred, delayedInitiatives, supportCostAnnual, engineeringCostAnnual, wasteCostAnnual, totalBurnAnnual, totalRecoveredAnnual, monthlyCostOfWaiting, cycleStandardApps, cycleComplexApps, awCycleHours, tradCycleHours, cycleHoursSaved, cycleTimeMultiple, cycleDollarsSaved, awAnnualInvestment, recurringAnnualValue, oneTimePackagingValue, year1Value, year1Net, year1ROIMultiple, recurringROIMultiple, paybackMonths, threeYearValue, threeYearInvestment, threeYearNet, awBlendedPerUserMonth };
       }
 
       const USER_ID = String(window.APP_USER_ID || "guest");
