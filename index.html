@@ -4272,6 +4272,104 @@
       }
       .bi-pdf-cancel { color: #94a3b8; font-size: 14px; cursor: pointer; padding: 0 4px; }
 
+      /* Packaging cycle ROI card — field-test benchmark visualization */
+      .bi-pkg {
+        background: #fff;
+        border: 1px solid var(--r-divider);
+        border-radius: 8px;
+        padding: 20px 24px;
+        box-shadow: var(--shadow-card);
+      }
+      .bi-pkg-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 14px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--r-divider);
+        flex-wrap: wrap;
+      }
+      .bi-pkg-title { font-size: 15px; font-weight: 700; color: var(--r-ink); display: flex; align-items: center; gap: 8px; }
+      .bi-pkg-title .bi-pkg-badge {
+        font-size: 9px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase;
+        background: var(--r-quote-bg); color: var(--r-blue);
+        padding: 3px 7px; border-radius: 999px;
+      }
+      .bi-pkg-sub { font-size: 12px; color: var(--r-ink-2); margin-top: 2px; line-height: 1.45; }
+      .bi-pkg-mix {
+        display: inline-flex; align-items: center; gap: 8px; flex-shrink: 0;
+        font-size: 11px; font-weight: 600; color: var(--r-ink-2);
+        background: var(--r-surface-3); border: 1px solid var(--r-divider);
+        border-radius: 999px; padding: 4px 12px;
+      }
+      .bi-pkg-mix b { color: var(--r-ink); font-weight: 700; }
+      .bi-pkg-bars { display: flex; flex-direction: column; gap: 10px; }
+      .bi-pkg-row { display: grid; grid-template-columns: 110px 1fr; gap: 14px; align-items: center; }
+      .bi-pkg-row-label {
+        font-size: 12px; font-weight: 700; color: var(--r-ink);
+        text-align: right; line-height: 1.25;
+      }
+      .bi-pkg-row-label small { display: block; font-weight: 500; font-size: 10px; color: var(--r-ink-2); margin-top: 2px; }
+      .bi-pkg-bar { position: relative; height: 28px; background: var(--r-surface-3); border-radius: 4px; overflow: hidden; }
+      .bi-pkg-bar-fill {
+        position: absolute; inset: 0 auto 0 0;
+        border-radius: 4px;
+        transition: width 800ms cubic-bezier(.2,.8,.2,1);
+      }
+      .bi-pkg-bar-fill.is-old { background: var(--r-red); }
+      .bi-pkg-bar-fill.is-new { background: var(--r-blue); }
+      .bi-pkg-bar-value {
+        position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+        font-size: 12px; font-weight: 800; color: #fff;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.25);
+        white-space: nowrap;
+      }
+      .bi-pkg-bar-value.is-outside { color: var(--r-ink); text-shadow: none; }
+      .bi-pkg-kpis {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin-top: 16px;
+      }
+      .bi-pkg-kpi {
+        border-radius: 8px;
+        padding: 14px 16px;
+        border: 1px solid;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .bi-pkg-kpi-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; }
+      .bi-pkg-kpi-value { font-size: 26px; font-weight: 800; letter-spacing: -0.02em; line-height: 1; }
+      .bi-pkg-kpi-value .bi-pkg-kpi-unit { font-size: 13px; font-weight: 600; margin-left: 4px; }
+      .bi-pkg-kpi-sub { font-size: 11px; font-weight: 500; line-height: 1.35; margin-top: 2px; }
+      .bi-pkg-kpi-hours { background: #DDE6FF; border-color: #A5B4FC; color: #1E1B96; }
+      .bi-pkg-kpi-hours .bi-pkg-kpi-label, .bi-pkg-kpi-hours .bi-pkg-kpi-value { color: var(--r-blue); }
+      .bi-pkg-kpi-hours .bi-pkg-kpi-sub { color: #312E81; }
+      .bi-pkg-kpi-mult { background: #ECFDF5; border-color: #6EE7B7; color: #064E3B; }
+      .bi-pkg-kpi-mult .bi-pkg-kpi-label, .bi-pkg-kpi-mult .bi-pkg-kpi-value { color: #047857; }
+      .bi-pkg-kpi-mult .bi-pkg-kpi-sub { color: #065F46; }
+      .bi-pkg-kpi-dollars { background: #FEF3C7; border-color: #FCD34D; color: #78350F; }
+      .bi-pkg-kpi-dollars .bi-pkg-kpi-label, .bi-pkg-kpi-dollars .bi-pkg-kpi-value { color: #B45309; }
+      .bi-pkg-kpi-dollars .bi-pkg-kpi-sub { color: #92400E; }
+      .bi-pkg-foot { font-size: 10px; color: var(--r-ink-2); margin-top: 10px; line-height: 1.45; }
+
+      /* Compact mode for short-viewport rules already used by panel-roi */
+      @media (max-height: 900px) {
+        #panel-roi .bi-pkg { padding: 14px 18px !important; }
+        #panel-roi .bi-pkg-head { margin-bottom: 10px !important; padding-bottom: 8px !important; }
+        #panel-roi .bi-pkg-title { font-size: 13px !important; }
+        #panel-roi .bi-pkg-sub { font-size: 11px !important; }
+        #panel-roi .bi-pkg-row { grid-template-columns: 100px 1fr !important; }
+        #panel-roi .bi-pkg-bar { height: 22px !important; }
+        #panel-roi .bi-pkg-bar-value { font-size: 11px !important; }
+        #panel-roi .bi-pkg-kpi { padding: 10px 14px !important; }
+        #panel-roi .bi-pkg-kpi-value { font-size: 22px !important; }
+        #panel-roi .bi-pkg-kpi-label { font-size: 9px !important; }
+        #panel-roi .bi-pkg-kpi-sub { font-size: 10px !important; }
+      }
+
       @media (max-width: 900px) {
         .bi-input-row { flex-direction: column; align-items: stretch !important; }
         .bi-input-field { flex-wrap: wrap; }
@@ -4282,6 +4380,9 @@
         .bi-kpis { grid-template-columns: 1fr !important; }
         .bi-actionbar { flex-direction: column; align-items: stretch; }
         .bi-action-primary, .bi-action-secondary { width: 100%; justify-content: center; }
+        .bi-pkg-row { grid-template-columns: 1fr !important; gap: 4px !important; }
+        .bi-pkg-row-label { text-align: left !important; }
+        .bi-pkg-kpis { grid-template-columns: 1fr !important; }
       }
       /* (Removed viewFadeIn — re-rendering during sub-animations caused the cards to flicker
          because the keyframe animation restarted on every render. Crisp swap is smoother.) */
@@ -4478,7 +4579,8 @@
         calcInputs: {
           users: 5000, endpoints: 6000, envs: 3, apps: 150, customApps: 30,
           monthlyTickets: 600, avgTicketMins: 18, pkgHours: 80, patchHours: 60,
-          openReqs: 0, delayedInitiatives: 0, regulated: false
+          openReqs: 0, delayedInitiatives: 0, regulated: false,
+          complexMixPct: 20, loadedRate: 95
         },
         calcScenario: 'expected',
         calcResult: null,
@@ -8697,6 +8799,15 @@
         high:         { ticketReduction: 0.90, pkgReduction: 0.65, patchReduction: 0.60, strategicRealloc: 0.70, fteHours: 1920, uxShare: 0.55, dashShare: 0.20, mtShare: 0.25, label: 'High' },
       };
 
+      // Field-test packaging benchmarks. AW: 3 standard apps in 38 min = 0.21 hrs each; 3.0 hrs per complex app.
+      // Traditional: 27 hrs total − 14 hrs (complex) = 13 hrs across 3 standard apps = 4.33 hrs each; 14.0 hrs per complex.
+      const PACKAGING_BENCHMARKS = {
+        awStdHrs: 0.21,
+        awComplexHrs: 3.0,
+        tradStdHrs: 4.33,
+        tradComplexHrs: 14.0
+      };
+
       function roiInput(id, icon, label, hint, placeholder, val, extra){
         return `<div><div class="text-[10px] font-semibold text-[#64748b] uppercase tracking-wide mb-1 flex items-center gap-1.5"><i data-lucide="${icon}" class="w-3 h-3 text-[#0070F3]"></i> ${label}</div><div class="text-[10px] text-[#94a3b8] mb-1.5">${hint}</div><div class="input-field"><input type="${extra === 'bool' ? 'hidden' : 'number'}" id="${id}" placeholder="${placeholder}" value="${val}" class="focus-ring" ${extra || ''}>${extra === 'bool' ? `<div class="flex gap-2"><button type="button" data-action="toggle-regulated" data-val="true" class="px-3 py-1.5 text-xs rounded-lg border ${STATE.calcInputs.regulated ? 'bg-[#0070F3] text-white border-[#0070F3]' : 'bg-white text-slate-500 border-slate-200'}">Yes</button><button type="button" data-action="toggle-regulated" data-val="false" class="px-3 py-1.5 text-xs rounded-lg border ${!STATE.calcInputs.regulated ? 'bg-[#0070F3] text-white border-[#0070F3]' : 'bg-white text-slate-500 border-slate-200'}">No</button></div>` : ''}</div></div>`;
       }
@@ -8932,7 +9043,52 @@
         doc.text('Annual capacity value: ' + fmtDollars(r.totalRecoveredAnnual), ML + 12, y + 15);
         doc.setFont('Helvetica','normal'); doc.setFontSize(9); setC(RR);
         doc.text('Monthly cost of waiting: ' + fmtDollars(r.monthlyCostOfWaiting), W - MR - 12, y + 15, { align: 'right' });
-        y += 36;
+        y += 32;
+
+        // \u2500\u2500 PACKAGING CYCLE ROI \u2014 field-test benchmarks \u2500\u2500
+        y = secBarFull(y, 'PACKAGING CYCLE ROI \u2014 ONE-TIME CATALOG VALUE');
+        y += 4;
+        const pkgScale = Math.max(r.tradCycleHours || 0, r.awCycleHours || 0, 1);
+        const pkgBarX = ML + 90, pkgBarW = CW - 240, pkgBarH = 12, pkgRowH = 17;
+        // Traditional bar
+        doc.setFont('Helvetica','bold'); doc.setFontSize(8); setC(DT); doc.text('Traditional', ML, y + 8);
+        setF([230,230,236]); doc.rect(pkgBarX, y + 2, pkgBarW, pkgBarH, 'F');
+        setF(RR); doc.rect(pkgBarX, y + 2, pkgBarW * ((r.tradCycleHours || 0) / pkgScale), pkgBarH, 'F');
+        doc.setFont('Helvetica','bold'); doc.setFontSize(8.5); setC(RR);
+        doc.text(num(Math.round(r.tradCycleHours || 0)) + ' hrs', W - MR, y + 8, { align: 'right' });
+        y += pkgRowH;
+        // AW bar
+        doc.setFont('Helvetica','bold'); doc.setFontSize(8); setC(DT); doc.text('App Workspace', ML, y + 8);
+        setF([230,230,236]); doc.rect(pkgBarX, y + 2, pkgBarW, pkgBarH, 'F');
+        setF(PB); doc.rect(pkgBarX, y + 2, pkgBarW * ((r.awCycleHours || 0) / pkgScale), pkgBarH, 'F');
+        doc.setFont('Helvetica','bold'); doc.setFontSize(8.5); setC(PB);
+        doc.text(num(Math.round(r.awCycleHours || 0)) + ' hrs', W - MR, y + 8, { align: 'right' });
+        y += pkgRowH + 4;
+        // KPI strip
+        const kpiH = 28, kpiW = (CW - 8) / 3;
+        const kpis = [
+          { label: 'Hrs saved', val: num(Math.round(r.cycleHoursSaved || 0)), unit: 'hrs', col: PB },
+          { label: 'Time multiple', val: (r.cycleTimeMultiple || 0).toFixed(1), unit: '\u00d7 faster', col: GR },
+          { label: 'Reclaimed value', val: fmtDollars(r.cycleDollarsSaved || 0), unit: '', col: GR }
+        ];
+        kpis.forEach((k, i) => {
+          const kx = ML + (kpiW + 4) * i;
+          setF([245,247,252]); setD([225,228,235]); doc.setLineWidth(0.5); doc.rect(kx, y, kpiW, kpiH, 'FD');
+          doc.setFont('Helvetica','normal'); doc.setFontSize(6.5); setC(MG);
+          doc.text(k.label.toUpperCase(), kx + 8, y + 9);
+          doc.setFont('Helvetica','bold'); doc.setFontSize(13); setC(k.col);
+          doc.text(k.val, kx + 8, y + 22);
+          if (k.unit) {
+            const vw = doc.getTextWidth(k.val);
+            doc.setFont('Helvetica','normal'); doc.setFontSize(7.5); setC(MG);
+            doc.text(k.unit, kx + 8 + vw + 3, y + 22);
+          }
+        });
+        y += kpiH + 4;
+        doc.setFont('Helvetica','italic'); doc.setFontSize(7); setC(MG);
+        doc.text(num(ci.apps) + ' apps at ' + Math.round(100 - (ci.complexMixPct ?? 20)) + '/' + Math.round(ci.complexMixPct ?? 20) + ' standard/complex \u00b7 loaded at ' + fmtDollars(ci.loadedRate || 95) + '/hr \u00b7 field-test benchmarks: AW ' + PACKAGING_BENCHMARKS.awStdHrs + '/' + PACKAGING_BENCHMARKS.awComplexHrs + ' hrs vs Traditional ' + PACKAGING_BENCHMARKS.tradStdHrs + '/' + PACKAGING_BENCHMARKS.tradComplexHrs + ' hrs per std/complex app.', ML, y + 4);
+        y += 10;
+
         setD(CO); doc.setLineWidth(0.5); doc.line(ML, y, ML + CW * 0.3, y);
         y += 8;
         doc.setFont('Helvetica','normal'); doc.setFontSize(7.5); setC(MG);
@@ -9003,6 +9159,18 @@
                     <label class="bi-rate"><span>User experience</span><input type="number" id="asn-ux" min="0" max="100" value="${Math.round(a.uxShare * 100)}"></label>
                     <label class="bi-rate"><span>Dashboarding</span><input type="number" id="asn-dash" min="0" max="100" value="${Math.round(a.dashShare * 100)}"></label>
                     <label class="bi-rate"><span>Multi-tenant</span><input type="number" id="asn-mt" min="0" max="100" value="${Math.round(a.mtShare * 100)}"></label>
+                  </div>
+                  <div class="bi-assumptions-title" style="margin-top:16px">Packaging cycle inputs — drives Packaging cycle ROI card</div>
+                  <div class="bi-assumptions-grid">
+                    <label class="bi-rate"><span>Complex-app mix (%)</span><input type="number" id="asn-complex-mix" min="0" max="100" value="${Math.round(ci.complexMixPct ?? 20)}"></label>
+                    <label class="bi-rate"><span>Loaded engineer rate ($/hr)</span><input type="number" id="asn-loaded-rate" min="0" value="${ci.loadedRate || 95}"></label>
+                  </div>
+                  <div class="bi-assumptions-title" style="margin-top:16px">Per-app benchmarks (hrs) — defaults from Recast field test</div>
+                  <div class="bi-assumptions-grid four">
+                    <label class="bi-rate"><span>AW · standard app</span><input type="number" id="asn-aw-std" min="0" step="0.01" value="${PACKAGING_BENCHMARKS.awStdHrs}"></label>
+                    <label class="bi-rate"><span>AW · complex app</span><input type="number" id="asn-aw-cmp" min="0" step="0.1" value="${PACKAGING_BENCHMARKS.awComplexHrs}"></label>
+                    <label class="bi-rate"><span>Traditional · standard</span><input type="number" id="asn-trad-std" min="0" step="0.01" value="${PACKAGING_BENCHMARKS.tradStdHrs}"></label>
+                    <label class="bi-rate"><span>Traditional · complex</span><input type="number" id="asn-trad-cmp" min="0" step="0.1" value="${PACKAGING_BENCHMARKS.tradComplexHrs}"></label>
                   </div>
                   <div class="bi-assumptions-actions">
                     <button type="button" data-action="save-assumptions" class="bi-assumptions-save">Save &amp; Recalculate</button>
@@ -9128,6 +9296,23 @@
             </div>
           </div>`;
 
+        // ── Packaging cycle ROI (field-test benchmarks) ──
+        const awCycle    = r.awCycleHours      ?? 0;
+        const tradCycle  = r.tradCycleHours    ?? 0;
+        const hrsSaved   = r.cycleHoursSaved   ?? 0;
+        const timeMult   = r.cycleTimeMultiple ?? 0;
+        const $saved     = r.cycleDollarsSaved ?? 0;
+        const cycleScale = Math.max(tradCycle, awCycle, 1);
+        const awPct      = (awCycle   / cycleScale) * 100;
+        const tradPct    = (tradCycle / cycleScale) * 100;
+        const tradVal    = `${num(Math.round(tradCycle))} hrs`;
+        const awVal      = `${num(Math.round(awCycle))} hrs`;
+        // If the bar is too short to fit text inside, render the value outside.
+        const tradOutside = tradPct < 18;
+        const awOutside   = awPct < 18;
+        const cycleStdApps = r.cycleStandardApps ?? 0;
+        const cycleCmpApps = r.cycleComplexApps  ?? 0;
+
         return `
           <!-- BEFORE / AFTER — five-bar comparison -->
           <div class="bi-compare dash-animate">
@@ -9170,6 +9355,62 @@
               <div class="bi-kpi-sub">Capacity for AI, migrations, security</div>
             </div>
           </div>
+
+          <!-- PACKAGING CYCLE ROI — field-test benchmark model -->
+          <div class="bi-pkg dash-animate">
+            <div class="bi-pkg-head">
+              <div>
+                <div class="bi-pkg-title">
+                  Packaging cycle ROI
+                  <span class="bi-pkg-badge">Field-test benchmarks</span>
+                </div>
+                <div class="bi-pkg-sub">
+                  Total effort to package ${num(ci.apps)} apps end-to-end &mdash; ${num(cycleStdApps)} standard &middot; ${num(cycleCmpApps)} complex &middot; loaded at ${fmtDollars(ci.loadedRate || 95)}/hr.
+                </div>
+              </div>
+              <div class="bi-pkg-mix">
+                <span><b>${Math.round(100 - (ci.complexMixPct ?? 20))}%</b> standard</span>
+                <span style="opacity:0.4">·</span>
+                <span><b>${Math.round(ci.complexMixPct ?? 20)}%</b> complex</span>
+              </div>
+            </div>
+            <div class="bi-pkg-bars">
+              <div class="bi-pkg-row">
+                <div class="bi-pkg-row-label">Traditional<small>per-platform packaging</small></div>
+                <div class="bi-pkg-bar">
+                  <div class="bi-pkg-bar-fill is-old" style="width:${tradPct}%"></div>
+                  <div class="bi-pkg-bar-value${tradOutside ? ' is-outside' : ''}" style="${tradOutside ? `left:calc(${tradPct}% + 8px); right:auto;` : ''}">${tradVal}</div>
+                </div>
+              </div>
+              <div class="bi-pkg-row">
+                <div class="bi-pkg-row-label">App Workspace<small>package once, deliver everywhere</small></div>
+                <div class="bi-pkg-bar">
+                  <div class="bi-pkg-bar-fill is-new" style="width:${awPct}%"></div>
+                  <div class="bi-pkg-bar-value${awOutside ? ' is-outside' : ''}" style="${awOutside ? `left:calc(${awPct}% + 8px); right:auto;` : ''}">${awVal}</div>
+                </div>
+              </div>
+            </div>
+            <div class="bi-pkg-kpis">
+              <div class="bi-pkg-kpi bi-pkg-kpi-hours">
+                <div class="bi-pkg-kpi-label">Engineering hours saved</div>
+                <div class="bi-pkg-kpi-value">${num(Math.round(hrsSaved))}<span class="bi-pkg-kpi-unit">hrs</span></div>
+                <div class="bi-pkg-kpi-sub">Reclaimed in a single packaging cycle</div>
+              </div>
+              <div class="bi-pkg-kpi bi-pkg-kpi-mult">
+                <div class="bi-pkg-kpi-label">Time multiple</div>
+                <div class="bi-pkg-kpi-value">${timeMult >= 10 ? timeMult.toFixed(1) : timeMult.toFixed(1)}<span class="bi-pkg-kpi-unit">× faster</span></div>
+                <div class="bi-pkg-kpi-sub">vs. traditional per-platform path</div>
+              </div>
+              <div class="bi-pkg-kpi bi-pkg-kpi-dollars">
+                <div class="bi-pkg-kpi-label">Reclaimed capacity value</div>
+                <div class="bi-pkg-kpi-value">${fmtDollars($saved)}</div>
+                <div class="bi-pkg-kpi-sub">On this packaging cycle alone</div>
+              </div>
+            </div>
+            <div class="bi-pkg-foot">
+              Benchmarks from the Recast field test: <b>standard apps</b> &mdash; ${PACKAGING_BENCHMARKS.awStdHrs} hrs in App Workspace vs ${PACKAGING_BENCHMARKS.tradStdHrs} hrs traditional &middot; <b>complex apps</b> &mdash; ${PACKAGING_BENCHMARKS.awComplexHrs} hrs in App Workspace vs ${PACKAGING_BENCHMARKS.tradComplexHrs} hrs traditional. Adjust the mix, rate, or benchmarks in Assumptions.
+            </div>
+          </div>
         `;
       }
 
@@ -9197,7 +9438,24 @@
         const totalBurnAnnual = supportCostAnnual + engineeringCostAnnual + wasteCostAnnual;
         const totalRecoveredAnnual = Math.round((ticketHoursReturned * 90 + (pkgHoursReturned + patchHoursReturned) * 120) * 12);
         const monthlyCostOfWaiting = Math.round(totalRecoveredAnnual / 12);
-        STATE.calcResult = { currentSupportHours, ticketHoursReturned, ticketsAvoided, pkgHoursReturned, patchHoursReturned, totalHoursMonth, totalHoursYear, fteCapacity, strategicHours, reqsDeferred, delayedInitiatives, supportCostAnnual, engineeringCostAnnual, wasteCostAnnual, totalBurnAnnual, totalRecoveredAnnual, monthlyCostOfWaiting };
+
+        // ── Packaging cycle ROI (field-test model) ──
+        // Standard_Apps  = Total_Apps × (1 − complex%);   Complex_Apps = Total_Apps × complex%
+        // AW_Hours       = (Std × awStd) + (Complex × awComplex)
+        // Trad_Hours     = (Std × tradStd) + (Complex × tradComplex)
+        // Hours_Saved    = Trad − AW;   Time_Multiple = Trad ÷ AW;   $_Saved = Hours_Saved × loadedRate
+        const pb = PACKAGING_BENCHMARKS;
+        const complexMix = Math.max(0, Math.min(1, (ci.complexMixPct ?? 20) / 100));
+        const standardMix = 1 - complexMix;
+        const cycleStandardApps = Math.round(ci.apps * standardMix);
+        const cycleComplexApps  = Math.max(0, ci.apps - cycleStandardApps);
+        const awCycleHours      = (cycleStandardApps * pb.awStdHrs)   + (cycleComplexApps * pb.awComplexHrs);
+        const tradCycleHours    = (cycleStandardApps * pb.tradStdHrs) + (cycleComplexApps * pb.tradComplexHrs);
+        const cycleHoursSaved   = Math.max(0, tradCycleHours - awCycleHours);
+        const cycleTimeMultiple = awCycleHours > 0 ? (tradCycleHours / awCycleHours) : 0;
+        const cycleDollarsSaved = Math.round(cycleHoursSaved * (ci.loadedRate || 95));
+
+        STATE.calcResult = { currentSupportHours, ticketHoursReturned, ticketsAvoided, pkgHoursReturned, patchHoursReturned, totalHoursMonth, totalHoursYear, fteCapacity, strategicHours, reqsDeferred, delayedInitiatives, supportCostAnnual, engineeringCostAnnual, wasteCostAnnual, totalBurnAnnual, totalRecoveredAnnual, monthlyCostOfWaiting, cycleStandardApps, cycleComplexApps, awCycleHours, tradCycleHours, cycleHoursSaved, cycleTimeMultiple, cycleDollarsSaved };
       }
 
       const USER_ID = String(window.APP_USER_ID || "guest");
@@ -9563,6 +9821,16 @@
             const ux = document.getElementById('asn-ux'); const dh = document.getElementById('asn-dash'); const mt = document.getElementById('asn-mt');
             if (t) ROI_ASSUMPTIONS[sc].ticketReduction = clamp(t.value); if (p) ROI_ASSUMPTIONS[sc].pkgReduction = clamp(p.value); if (pa) ROI_ASSUMPTIONS[sc].patchReduction = clamp(pa.value); if (s) ROI_ASSUMPTIONS[sc].strategicRealloc = clamp(s.value);
             if (ux) ROI_ASSUMPTIONS[sc].uxShare = clamp(ux.value); if (dh) ROI_ASSUMPTIONS[sc].dashShare = clamp(dh.value); if (mt) ROI_ASSUMPTIONS[sc].mtShare = clamp(mt.value);
+            // Packaging cycle inputs + per-app benchmarks
+            const cmix = document.getElementById('asn-complex-mix'); const lrate = document.getElementById('asn-loaded-rate');
+            const awS = document.getElementById('asn-aw-std'); const awC = document.getElementById('asn-aw-cmp');
+            const trS = document.getElementById('asn-trad-std'); const trC = document.getElementById('asn-trad-cmp');
+            if (cmix)  STATE.calcInputs.complexMixPct = Math.max(0, Math.min(100, cleanNum(cmix.value)));
+            if (lrate) STATE.calcInputs.loadedRate    = Math.max(0, cleanNum(lrate.value));
+            if (awS)   PACKAGING_BENCHMARKS.awStdHrs      = Math.max(0, cleanNum(awS.value));
+            if (awC)   PACKAGING_BENCHMARKS.awComplexHrs  = Math.max(0, cleanNum(awC.value));
+            if (trS)   PACKAGING_BENCHMARKS.tradStdHrs    = Math.max(0, cleanNum(trS.value));
+            if (trC)   PACKAGING_BENCHMARKS.tradComplexHrs= Math.max(0, cleanNum(trC.value));
             calculateImpact(); STATE.showAssumptions = false; render(); return;
           }
           if (action === 'toggle-regulated') { STATE.calcInputs.regulated = act.getAttribute('data-val') === 'true'; render(); return; }
@@ -9716,6 +9984,8 @@
           if (e.target?.id === 'roi-patchhrs') { STATE.calcInputs.patchHours = cleanNum(e.target.value); return; }
           if (e.target?.id === 'roi-reqs') { STATE.calcInputs.openReqs = cleanNum(e.target.value); return; }
           if (e.target?.id === 'roi-initiatives') { STATE.calcInputs.delayedInitiatives = cleanNum(e.target.value); return; }
+          if (e.target?.id === 'asn-complex-mix') { STATE.calcInputs.complexMixPct = Math.max(0, Math.min(100, cleanNum(e.target.value))); return; }
+          if (e.target?.id === 'asn-loaded-rate') { STATE.calcInputs.loadedRate = Math.max(0, cleanNum(e.target.value)); return; }
           const buf = e.target.closest('[data-action="edit-buffer"]');
           if (buf) { const key = buf.getAttribute('data-key'); const sub = buf.getAttribute('data-subkey'); if (STATE.editBuffers?.[key]) STATE.editBuffers[key][sub] = e.target.value; }
           if (STATE.modalOpen && STATE.editTab === 'chart') { STATE.editChartBuffer = readChartFieldsRaw(); }
