@@ -4298,7 +4298,7 @@
         letter-spacing: 0.14em;
         text-transform: uppercase;
         color: var(--r-ink-2);
-        margin: 4px 0 -4px 2px;
+        margin: 0 0 6px 2px;
       }
       .bi-section-eyebrow::before {
         content: "";
@@ -4322,22 +4322,35 @@
         align-items: flex-start;
         justify-content: space-between;
         gap: 16px;
-        margin-bottom: 16px;
-        padding-bottom: 12px;
+        margin-bottom: 18px;
+        padding-bottom: 14px;
         border-bottom: 1px solid var(--r-divider);
         flex-wrap: wrap;
       }
-      .bi-compound-title { font-size: 13px; font-weight: 700; color: var(--r-ink-2); text-transform: uppercase; letter-spacing: 0.06em; }
+      .bi-compound-head-main { min-width: 0; flex: 1 1 320px; }
       .bi-compound-hero {
-        font-size: 30px;
-        font-weight: 800;
-        letter-spacing: -0.02em;
-        color: #047857;
-        line-height: 1.1;
-        margin: 6px 0 4px;
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin: 0 0 4px;
       }
+      .bi-compound-hero-num {
+        font-size: 40px;
+        font-weight: 800;
+        letter-spacing: -0.025em;
+        color: #047857;
+        line-height: 1;
+      }
+      .bi-compound-hero-unit {
+        font-size: 16px;
+        font-weight: 700;
+        letter-spacing: -0.005em;
+        color: #047857;
+        line-height: 1.2;
+      }
+      .bi-compound-sub { font-size: 13px; color: var(--r-ink-2); margin-top: 4px; line-height: 1.5; max-width: 540px; }
       .bi-compound-sub b { color: var(--r-ink); font-weight: 700; }
-      .bi-compound-sub { font-size: 12px; color: var(--r-ink-2); margin-top: 2px; line-height: 1.45; }
       .bi-compound-legend { display: inline-flex; align-items: center; gap: 14px; flex-shrink: 0; flex-wrap: wrap; }
       .bi-compound-legend-item {
         display: inline-flex; align-items: center; gap: 6px;
@@ -4349,7 +4362,7 @@
       .bi-compound-rows { display: flex; flex-direction: column; gap: 11px; }
       .bi-compound-row {
         display: grid;
-        grid-template-columns: 64px 1fr 130px;
+        grid-template-columns: 64px 1fr 160px;
         gap: 14px;
         align-items: center;
       }
@@ -4368,7 +4381,7 @@
       .bi-compound-seg {
         display: flex;
         align-items: center;
-        padding: 0 8px;
+        padding: 0 10px;
         font-size: 11px;
         font-weight: 700;
         color: #fff;
@@ -4377,9 +4390,9 @@
         overflow: hidden;
         transition: width 800ms cubic-bezier(.2,.8,.2,1);
         min-width: 0;
-        border-right: 1px solid rgba(255,255,255,0.35);
+        box-shadow: inset -1px 0 0 rgba(255,255,255,0.18);
       }
-      .bi-compound-seg:last-child { border-right: 0; }
+      .bi-compound-seg:last-child { box-shadow: none; }
       .bi-compound-seg-onetime { background: #D97706; }
       .bi-compound-seg-rec { background: var(--r-blue); }
       .bi-compound-seg-rec.is-yr2 { background: #2563EB; }
@@ -4402,25 +4415,27 @@
         margin-top: 3px;
       }
       .bi-compound-foot {
-        font-size: 11px;
+        font-size: 12px;
         color: var(--r-ink-2);
-        line-height: 1.5;
-        margin-top: 14px;
-        padding-top: 10px;
+        line-height: 1.55;
+        margin-top: 16px;
+        padding-top: 12px;
         border-top: 1px solid var(--r-divider);
       }
-      .bi-compound-foot b { color: var(--r-ink); font-weight: 800; }
+      .bi-compound-foot b { color: var(--r-ink); font-weight: 700; }
+      .bi-compound-foot b:first-of-type { color: #047857; }
 
       @media (max-height: 900px) {
         #panel-roi .bi-compound { padding: 14px 18px !important; }
-        #panel-roi .bi-compound-title { font-size: 13px !important; }
-        #panel-roi .bi-compound-sub { font-size: 11px !important; }
-        #panel-roi .bi-compound-row { grid-template-columns: 56px 1fr 110px !important; gap: 10px !important; }
+        #panel-roi .bi-compound-hero-num { font-size: 32px !important; }
+        #panel-roi .bi-compound-hero-unit { font-size: 14px !important; }
+        #panel-roi .bi-compound-sub { font-size: 12px !important; }
+        #panel-roi .bi-compound-row { grid-template-columns: 56px 1fr 130px !important; gap: 10px !important; }
         #panel-roi .bi-compound-bar { height: 24px !important; }
         #panel-roi .bi-compound-seg { font-size: 10px !important; padding: 0 6px !important; }
-        #panel-roi .bi-compound-total { font-size: 15px !important; }
+        #panel-roi .bi-compound-total { font-size: 16px !important; }
         #panel-roi .bi-compound-total small { font-size: 9px !important; }
-        #panel-roi .bi-compound-foot { font-size: 10px !important; }
+        #panel-roi .bi-compound-foot { font-size: 11px !important; }
       }
       .bi-section-eyebrow.is-roi::before { background: #047857; }
 
@@ -4543,7 +4558,7 @@
         align-items: flex-start;
         justify-content: space-between;
         gap: 16px;
-        margin-bottom: 14px;
+        margin-bottom: 16px;
         padding-bottom: 12px;
         border-bottom: 1px solid var(--r-divider);
         flex-wrap: wrap;
@@ -9810,7 +9825,9 @@
             const recPct = (recurHrs   / max) * 100;
             const labelInside = (pct, value, unit) => pct >= 7 ? `+${num(value)} ${unit}` : '';
             const engYears = yr3Hrs / 1920;
-            const engYearsStr = engYears >= 1 ? engYears.toFixed(1) + ' engineer-years' : (engYears * 12).toFixed(1) + ' engineer-months';
+            const useYears = engYears >= 1;
+            const heroNum  = useYears ? engYears.toFixed(1) : (engYears * 12).toFixed(1);
+            const heroUnit = useYears ? 'engineer-years over 3 years' : 'engineer-months over 3 years';
             const envCount = ci.envs || 1;
             const ticketsAnnual = Math.round((r.ticketsAvoided || 0) * 12);
             const ticketsTotal  = ticketsAnnual * 3;
@@ -9821,10 +9838,12 @@
           <div class="bi-section-eyebrow is-compound">Year 1 &rarr; Year 3 &mdash; how your operations compound</div>
           <div class="bi-compound dash-animate">
             <div class="bi-compound-head">
-              <div>
-                <div class="bi-compound-title">Cumulative team capacity returned</div>
-                <div class="bi-compound-hero">${engYearsStr}</div>
-                <div class="bi-compound-sub">Returned across <b>${envCount} environment${envCount===1?'':'s'}</b> &mdash; handle more apps and platforms with the same headcount.</div>
+              <div class="bi-compound-head-main">
+                <div class="bi-compound-hero">
+                  <span class="bi-compound-hero-num">${heroNum}</span>
+                  <span class="bi-compound-hero-unit">${heroUnit}</span>
+                </div>
+                <div class="bi-compound-sub">Team capacity returned across <b>${envCount} environment${envCount===1?'':'s'}</b> &mdash; handle more apps and platforms with the same headcount.</div>
               </div>
               <div class="bi-compound-legend">
                 <span class="bi-compound-legend-item"><span class="bi-compound-legend-swatch is-onetime"></span>One-time packaging onboarding</span>
