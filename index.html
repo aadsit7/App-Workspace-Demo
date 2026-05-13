@@ -9699,60 +9699,6 @@
               Benchmarks from the Recast field test: <b>standard apps</b> &mdash; ${PACKAGING_BENCHMARKS.awStdHrs} hrs in App Workspace vs ${PACKAGING_BENCHMARKS.tradStdHrs} hrs traditional &middot; <b>complex apps</b> &mdash; ${PACKAGING_BENCHMARKS.awComplexHrs} hrs in App Workspace vs ${PACKAGING_BENCHMARKS.tradComplexHrs} hrs traditional. Adjust the per-app benchmarks in Assumptions.
             </div>
           </div>
-
-          ${(() => {
-            const awInv     = r.awAnnualInvestment ?? 0;
-            const yr1Val    = r.year1Value         ?? 0;
-            const yr1Net    = r.year1Net           ?? 0;
-            const yr1ROI    = r.year1ROIMultiple   ?? 0;
-            const recurAnn  = r.recurringAnnualValue ?? 0;
-            const oneTime   = r.oneTimePackagingValue ?? 0;
-            const payback   = r.paybackMonths      ?? 0;
-            const yr3Net    = r.threeYearNet       ?? 0;
-            const blendedMo = r.awBlendedPerUserMonth ?? 0;
-            const blendedStr = blendedMo >= 1
-              ? '$' + blendedMo.toFixed(2)
-              : '$' + blendedMo.toFixed(3);
-            const paybackStr = payback <= 0
-              ? 'Immediate'
-              : payback < 1
-                ? 'Under a month'
-                : payback.toFixed(1) + ' months';
-            const headlineMath = payback > 0 && payback < 36
-              ? `Application Workspace pays for itself in <b>${paybackStr}</b>, then keeps returning value every year.`
-              : `Application Workspace returns <b>${yr1ROI.toFixed(1)}&times;</b> your investment in Year 1.`;
-            const netClass = yr1Net >= 0 ? 'is-positive' : 'is-negative';
-            const netSign = yr1Net >= 0 ? '+' : '&minus;';
-            return `
-          <!-- INVESTMENT VS RETURN -->
-          <div class="bi-section-eyebrow is-roi">Investment vs return &mdash; why it pays off</div>
-          <div class="bi-roi dash-animate">
-            <div class="bi-roi-headline">
-              <div class="bi-roi-headline-eyebrow">The bottom line</div>
-              <div class="bi-roi-headline-text">${headlineMath}</div>
-            </div>
-            <div class="bi-roi-kpis">
-              <div class="bi-roi-kpi bi-roi-kpi-invest">
-                <div class="bi-roi-kpi-label">Annual investment</div>
-                <div class="bi-roi-kpi-value">${fmtDollars(awInv)}</div>
-                <div class="bi-roi-kpi-sub">${num(ci.users)} users &middot; ${blendedStr}/user/mo blended</div>
-              </div>
-              <div class="bi-roi-kpi bi-roi-kpi-year1">
-                <div class="bi-roi-kpi-label">Year 1 net benefit</div>
-                <div class="bi-roi-kpi-value">${yr1Net >= 0 ? '+' : '&minus;'}${fmtDollars(Math.abs(yr1Net))}</div>
-                <div class="bi-roi-kpi-sub">${yr1ROI.toFixed(1)}&times; return on Year 1 investment</div>
-              </div>
-              <div class="bi-roi-kpi bi-roi-kpi-3yr">
-                <div class="bi-roi-kpi-label">3-year net benefit</div>
-                <div class="bi-roi-kpi-value">${yr3Net >= 0 ? '+' : '&minus;'}${fmtDollars(Math.abs(yr3Net))}</div>
-                <div class="bi-roi-kpi-sub">Cumulative value reclaimed by Year 3</div>
-              </div>
-            </div>
-            <div class="bi-roi-foot">
-              Investment based on Recast Software list pricing: graduated per-user/month tiers from $4.00 (sub-1K users) to $1.50 (50K+). Value uses the ${a.label.toLowerCase()} scenario and a $${ci.loadedRate || 95}/hr loaded engineer rate. Conservative &mdash; does not include strategic capacity reclaimed, productivity gains, FTE hires avoided, or risk reduction.
-            </div>
-          </div>`;
-          })()}
         `;
       }
 
