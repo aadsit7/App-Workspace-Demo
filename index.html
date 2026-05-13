@@ -4305,9 +4305,44 @@
         width: 18px; height: 2px;
         background: var(--r-blue);
         border-radius: 1px;
+        flex-shrink: 0;
       }
       .bi-section-eyebrow.is-cycle::before { background: #B45309; }
       .bi-section-eyebrow.is-compound::before { background: #047857; }
+      .bi-section-eyebrow.is-toggle {
+        background: none;
+        border: 0;
+        cursor: pointer;
+        font: inherit;
+        color: inherit;
+        letter-spacing: inherit;
+        text-transform: inherit;
+        text-align: left;
+        padding: 4px 8px 4px 0;
+        width: fit-content;
+        border-radius: 4px;
+        transition: color 150ms;
+      }
+      .bi-section-eyebrow.is-toggle:hover { color: var(--r-ink); }
+      .bi-section-eyebrow.is-toggle:focus-visible {
+        outline: 2px solid var(--r-blue);
+        outline-offset: 2px;
+      }
+      .bi-section-chevron {
+        width: 12px;
+        height: 12px;
+        stroke: currentColor;
+        stroke-width: 2.5;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        fill: none;
+        transition: transform 200ms cubic-bezier(.2,.8,.2,1);
+        flex-shrink: 0;
+      }
+      .bi-section-eyebrow.is-toggle[aria-expanded="false"] .bi-section-chevron {
+        transform: rotate(-90deg);
+      }
+      .bi-section-content.is-collapsed { display: none; }
 
       /* Compounding-value card — stacks one-time + recurring across Year 1, 2, 3 */
       .bi-compound {
@@ -4931,6 +4966,7 @@
         calcScenario: 'expected',
         calcResult: null,
         showAssumptions: false,
+        collapsedSections: { packaging: false, compound: false },
         editingAssumptions: false,
         pdfCompanyInput: false,
         pdfCompanyName: '',
@@ -9755,7 +9791,11 @@
           </div>
 
           <!-- ONE-TIME PROJECT — packaging cycle ROI -->
-          <div class="bi-section-eyebrow is-cycle">One-time &mdash; packaging the catalog</div>
+          <button class="bi-section-eyebrow is-cycle is-toggle" type="button" data-action="toggle-section" data-section="packaging" aria-expanded="${STATE.collapsedSections.packaging ? 'false' : 'true'}" aria-controls="section-packaging">
+            <span class="bi-section-eyebrow-label">One-time &mdash; packaging the catalog</span>
+            <svg class="bi-section-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <div class="bi-section-content${STATE.collapsedSections.packaging ? ' is-collapsed' : ''}" id="section-packaging">
           <div class="bi-pkg dash-animate">
             <div class="bi-pkg-head">
               <div>
@@ -9812,6 +9852,7 @@
               </div>
             </div>
           </div>
+          </div>
 
           ${(() => {
             const oneTimeHrs = Math.round(hasCycle ? hrsSaved : 0);
@@ -9835,7 +9876,11 @@
             const engMonths = hasCycle ? (hrsSaved / 160).toFixed(1) : '0';
             return `
           <!-- COMPOUNDING OPERATIONAL CAPACITY OVER 3 YEARS -->
-          <div class="bi-section-eyebrow is-compound">Year 1 &rarr; Year 3 &mdash; how your operations compound</div>
+          <button class="bi-section-eyebrow is-compound is-toggle" type="button" data-action="toggle-section" data-section="compound" aria-expanded="${STATE.collapsedSections.compound ? 'false' : 'true'}" aria-controls="section-compound">
+            <span class="bi-section-eyebrow-label">Year 1 &rarr; Year 3 &mdash; how your operations compound</span>
+            <svg class="bi-section-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <div class="bi-section-content${STATE.collapsedSections.compound ? ' is-collapsed' : ''}" id="section-compound">
           <div class="bi-compound dash-animate">
             <div class="bi-compound-head">
               <div class="bi-compound-head-main">
@@ -9882,6 +9927,7 @@
             <div class="bi-compound-foot">
               <b>+ ${num(ticketsTotal)} end-user tickets prevented</b> over 3 years &mdash; <b>${tixReductionPct}% fewer helpdesk calls</b>. Users self-serve their apps across all ${envCount} environment${envCount===1?'':'s'} instead of waiting for IT, and the one-time packaging onboarding (&asymp; <b>${engMonths} engineer-months</b>) stays returned forever.
             </div>
+          </div>
           </div>`;
           })()}
         `;
@@ -10307,6 +10353,14 @@
           if (action === 'expand-all') { Object.keys(STATE.openCards).forEach(k => STATE.openCards[k] = true); STATE.visitedCards = ['core','onboarding','trust']; render(); return; }
           if (action === 'calculate-impact') { calculateImpact(); render(); return; }
           if (action === 'toggle-assumptions') { STATE.showAssumptions = !STATE.showAssumptions; render(); return; }
+          if (action === 'toggle-section') {
+            const section = act.getAttribute('data-section');
+            if (section && STATE.collapsedSections.hasOwnProperty(section)) {
+              STATE.collapsedSections[section] = !STATE.collapsedSections[section];
+              render();
+            }
+            return;
+          }
           if (action === 'save-assumptions') {
             const sc = STATE.calcScenario; const clamp = (v) => Math.max(0, Math.min(100, cleanNum(v))) / 100;
             const t = document.getElementById('asn-ticket'); const p = document.getElementById('asn-pkg'); const pa = document.getElementById('asn-patch'); const s = document.getElementById('asn-strategic');
