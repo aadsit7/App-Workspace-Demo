@@ -4291,6 +4291,112 @@
         border-radius: 1px;
       }
       .bi-section-eyebrow.is-cycle::before { background: #B45309; }
+      .bi-section-eyebrow.is-compound::before { background: #047857; }
+
+      /* Compounding-value card — stacks one-time + recurring across Year 1, 2, 3 */
+      .bi-compound {
+        background: #fff;
+        border: 1px solid var(--r-divider);
+        border-radius: 8px;
+        padding: 20px 24px;
+        box-shadow: var(--shadow-card);
+      }
+      .bi-compound-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 16px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--r-divider);
+        flex-wrap: wrap;
+      }
+      .bi-compound-title { font-size: 15px; font-weight: 700; color: var(--r-ink); }
+      .bi-compound-sub { font-size: 12px; color: var(--r-ink-2); margin-top: 2px; line-height: 1.45; }
+      .bi-compound-legend { display: inline-flex; align-items: center; gap: 14px; flex-shrink: 0; flex-wrap: wrap; }
+      .bi-compound-legend-item {
+        display: inline-flex; align-items: center; gap: 6px;
+        font-size: 11px; font-weight: 600; color: var(--r-ink-2);
+      }
+      .bi-compound-legend-swatch { width: 12px; height: 12px; border-radius: 2px; flex-shrink: 0; }
+      .bi-compound-legend-swatch.is-onetime { background: #D97706; }
+      .bi-compound-legend-swatch.is-recurring { background: var(--r-blue); }
+      .bi-compound-rows { display: flex; flex-direction: column; gap: 11px; }
+      .bi-compound-row {
+        display: grid;
+        grid-template-columns: 64px 1fr 130px;
+        gap: 14px;
+        align-items: center;
+      }
+      .bi-compound-row-label {
+        font-size: 13px; font-weight: 800; color: var(--r-ink);
+        letter-spacing: -0.01em;
+      }
+      .bi-compound-bar {
+        display: flex;
+        height: 30px;
+        background: var(--r-surface-3);
+        border-radius: 5px;
+        overflow: hidden;
+        align-items: stretch;
+      }
+      .bi-compound-seg {
+        display: flex;
+        align-items: center;
+        padding: 0 8px;
+        font-size: 11px;
+        font-weight: 700;
+        color: #fff;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.25);
+        white-space: nowrap;
+        overflow: hidden;
+        transition: width 800ms cubic-bezier(.2,.8,.2,1);
+        min-width: 0;
+        border-right: 1px solid rgba(255,255,255,0.35);
+      }
+      .bi-compound-seg:last-child { border-right: 0; }
+      .bi-compound-seg-onetime { background: #D97706; }
+      .bi-compound-seg-rec { background: var(--r-blue); }
+      .bi-compound-seg-rec.is-yr2 { background: #2563EB; }
+      .bi-compound-seg-rec.is-yr3 { background: #1D4ED8; }
+      .bi-compound-total {
+        font-size: 18px;
+        font-weight: 800;
+        color: var(--r-ink);
+        letter-spacing: -0.02em;
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+        line-height: 1.05;
+      }
+      .bi-compound-total small {
+        display: block;
+        font-size: 10px;
+        font-weight: 600;
+        color: var(--r-ink-2);
+        letter-spacing: normal;
+        margin-top: 3px;
+      }
+      .bi-compound-foot {
+        font-size: 11px;
+        color: var(--r-ink-2);
+        line-height: 1.5;
+        margin-top: 14px;
+        padding-top: 10px;
+        border-top: 1px solid var(--r-divider);
+      }
+      .bi-compound-foot b { color: var(--r-ink); font-weight: 800; }
+
+      @media (max-height: 900px) {
+        #panel-roi .bi-compound { padding: 14px 18px !important; }
+        #panel-roi .bi-compound-title { font-size: 13px !important; }
+        #panel-roi .bi-compound-sub { font-size: 11px !important; }
+        #panel-roi .bi-compound-row { grid-template-columns: 56px 1fr 110px !important; gap: 10px !important; }
+        #panel-roi .bi-compound-bar { height: 24px !important; }
+        #panel-roi .bi-compound-seg { font-size: 10px !important; padding: 0 6px !important; }
+        #panel-roi .bi-compound-total { font-size: 15px !important; }
+        #panel-roi .bi-compound-total small { font-size: 9px !important; }
+        #panel-roi .bi-compound-foot { font-size: 10px !important; }
+      }
       .bi-section-eyebrow.is-roi::before { background: #047857; }
 
       /* Investment vs Return card — pays-for-itself summary */
@@ -4581,6 +4687,8 @@
         .bi-pkg-row-label { text-align: left !important; }
         .bi-pkg-kpis { grid-template-columns: 1fr !important; }
         .bi-roi-kpis { grid-template-columns: 1fr !important; }
+        .bi-compound-row { grid-template-columns: 1fr !important; gap: 6px !important; }
+        .bi-compound-total { text-align: left !important; }
       }
       /* (Removed viewFadeIn — re-rendering during sub-animations caused the cards to flicker
          because the keyframe animation restarted on every render. Crisp swap is smoother.) */
@@ -9699,6 +9807,66 @@
               Benchmarks from the Recast field test: <b>standard apps</b> &mdash; ${PACKAGING_BENCHMARKS.awStdHrs} hrs in App Workspace vs ${PACKAGING_BENCHMARKS.tradStdHrs} hrs traditional &middot; <b>complex apps</b> &mdash; ${PACKAGING_BENCHMARKS.awComplexHrs} hrs in App Workspace vs ${PACKAGING_BENCHMARKS.tradComplexHrs} hrs traditional. Adjust the per-app benchmarks in Assumptions.
             </div>
           </div>
+
+          ${(() => {
+            const oneTime = r.oneTimePackagingValue || 0;
+            const recur   = r.recurringAnnualValue   || 0;
+            if ((oneTime + recur) <= 0) return '';
+            const yr1Total = oneTime + recur;
+            const yr2Total = oneTime + recur * 2;
+            const yr3Total = oneTime + recur * 3;
+            const max = Math.max(yr3Total, 1);
+            const otPct  = (oneTime / max) * 100;
+            const recPct = (recur   / max) * 100;
+            const labelInside = (pct, value) => pct >= 7 ? `+${fmtDollars(value)}` : '';
+            return `
+          <!-- COMPOUNDING VALUE OVER 3 YEARS -->
+          <div class="bi-section-eyebrow is-compound">Year 1 &rarr; Year 3 &mdash; how the value compounds</div>
+          <div class="bi-compound dash-animate">
+            <div class="bi-compound-head">
+              <div>
+                <div class="bi-compound-title">Cumulative reclaimed value over 3 years</div>
+                <div class="bi-compound-sub">The one-time packaging onboarding stacks with each year of recurring operational savings.</div>
+              </div>
+              <div class="bi-compound-legend">
+                <span class="bi-compound-legend-item"><span class="bi-compound-legend-swatch is-onetime"></span>One-time packaging</span>
+                <span class="bi-compound-legend-item"><span class="bi-compound-legend-swatch is-recurring"></span>Recurring annual savings</span>
+              </div>
+            </div>
+            <div class="bi-compound-rows">
+              <div class="bi-compound-row">
+                <div class="bi-compound-row-label">Year 1</div>
+                <div class="bi-compound-bar">
+                  <div class="bi-compound-seg bi-compound-seg-onetime" style="width:${otPct}%">${labelInside(otPct, oneTime)}</div>
+                  <div class="bi-compound-seg bi-compound-seg-rec"     style="width:${recPct}%">${labelInside(recPct, recur)}</div>
+                </div>
+                <div class="bi-compound-total">${fmtDollars(yr1Total)}<small>cumulative value</small></div>
+              </div>
+              <div class="bi-compound-row">
+                <div class="bi-compound-row-label">Year 2</div>
+                <div class="bi-compound-bar">
+                  <div class="bi-compound-seg bi-compound-seg-onetime" style="width:${otPct}%"></div>
+                  <div class="bi-compound-seg bi-compound-seg-rec"     style="width:${recPct}%"></div>
+                  <div class="bi-compound-seg bi-compound-seg-rec is-yr2" style="width:${recPct}%">${labelInside(recPct, recur)}</div>
+                </div>
+                <div class="bi-compound-total">${fmtDollars(yr2Total)}<small>cumulative value</small></div>
+              </div>
+              <div class="bi-compound-row">
+                <div class="bi-compound-row-label">Year 3</div>
+                <div class="bi-compound-bar">
+                  <div class="bi-compound-seg bi-compound-seg-onetime" style="width:${otPct}%"></div>
+                  <div class="bi-compound-seg bi-compound-seg-rec"     style="width:${recPct}%"></div>
+                  <div class="bi-compound-seg bi-compound-seg-rec is-yr2" style="width:${recPct}%"></div>
+                  <div class="bi-compound-seg bi-compound-seg-rec is-yr3" style="width:${recPct}%">${labelInside(recPct, recur)}</div>
+                </div>
+                <div class="bi-compound-total">${fmtDollars(yr3Total)}<small>cumulative value</small></div>
+              </div>
+            </div>
+            <div class="bi-compound-foot">
+              The one-time packaging onboarding (<b>${fmtDollars(oneTime)}</b>) plus three years of recurring operational savings (<b>${fmtDollars(recur)}/yr</b>) compound to <b>${fmtDollars(yr3Total)}</b> in total reclaimed value by the end of Year 3.
+            </div>
+          </div>`;
+          })()}
         `;
       }
 
