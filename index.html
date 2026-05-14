@@ -4402,6 +4402,11 @@
       .bi-compound-legend-swatch { width: 12px; height: 12px; border-radius: 2px; flex-shrink: 0; }
       .bi-compound-legend-swatch.is-onetime { background: #D97706; }
       .bi-compound-legend-swatch.is-recurring { background: var(--r-blue); }
+      .bi-compound-inputs {
+        padding: 0 0 14px;
+        margin-bottom: 14px;
+        border-bottom: 1px dashed var(--r-divider);
+      }
       .bi-compound-rows { display: flex; flex-direction: column; gap: 11px; }
       .bi-compound-row {
         display: grid;
@@ -4974,7 +4979,7 @@
         calcScenario: 'expected',
         calcResult: null,
         showAssumptions: false,
-        collapsedSections: { packaging: false, compound: false },
+        collapsedSections: { compound: false },
         editingAssumptions: false,
         pdfCompanyInput: false,
         pdfCompanyName: '',
@@ -9798,70 +9803,6 @@
             </div>
           </div>
 
-          <!-- ONE-TIME PROJECT — packaging cycle ROI -->
-          <button class="bi-section-eyebrow is-cycle is-toggle" type="button" data-action="toggle-section" data-section="packaging" aria-expanded="${STATE.collapsedSections.packaging ? 'false' : 'true'}" aria-controls="section-packaging">
-            <span class="bi-section-eyebrow-label">One-time &mdash; packaging the catalog</span>
-            <svg class="bi-section-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
-          </button>
-          <div class="bi-section-content${STATE.collapsedSections.packaging ? ' is-collapsed' : ''}" id="section-packaging">
-          <div class="bi-pkg dash-animate">
-            <div class="bi-pkg-head">
-              <div>
-                <div class="bi-pkg-title">
-                  Package your full catalog once
-                  <span class="bi-pkg-badge">Field-test benchmarks</span>
-                </div>
-                <div class="bi-pkg-sub">
-                  One-time engineering effort to onboard every app to App Workspace, end-to-end.
-                </div>
-              </div>
-            </div>
-
-            <!-- Inline levers: total apps · % complex · loaded rate -->
-            <div class="bi-pkg-inputs">
-              <span class="bi-pkg-inputs-prompt">Tune for your business</span>
-              <label class="bi-pkg-input-chip" title="Total apps to onboard">
-                <input type="number" id="pkg-apps" min="0" step="1" value="${ci.apps}" class="is-wide" aria-label="Total apps to onboard">
-                <span class="bi-pkg-input-chip-label">apps</span>
-              </label>
-              <label class="bi-pkg-input-chip" title="Share of apps that are complex (rest are standard)">
-                <input type="number" id="pkg-mix" min="0" max="100" step="1" value="${Math.round(ci.complexMixPct ?? 20)}" aria-label="Percent complex apps">
-                <span class="bi-pkg-input-chip-label">% complex &middot; ${Math.round(100 - (ci.complexMixPct ?? 20))}% standard</span>
-              </label>
-              <label class="bi-pkg-input-chip" title="Loaded engineer hourly rate">
-                <span class="bi-pkg-input-chip-label">$</span>
-                <input type="number" id="pkg-rate" min="0" step="1" value="${ci.loadedRate || 95}" aria-label="Loaded engineer hourly rate">
-                <span class="bi-pkg-input-chip-label">/hr loaded</span>
-              </label>
-            </div>
-
-            <div class="bi-pkg-bars">
-              <div class="bi-pkg-row">
-                <div class="bi-pkg-row-label">Traditional<small>per-platform packaging</small></div>
-                <div class="bi-pkg-bar">
-                  <div class="bi-pkg-bar-fill is-old" style="width:${tradPct}%"></div>
-                  <div class="bi-pkg-bar-value${tradOutside ? ' is-outside' : ''}" style="${tradOutside ? `left:calc(${tradPct}% + 8px); right:auto;` : ''}">${tradVal}</div>
-                </div>
-              </div>
-              ${hasCycle ? `
-              <div class="bi-pkg-savings">
-                <div></div>
-                <div class="bi-pkg-savings-tag">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
-                  <span><b>${num(Math.round(hrsSaved))} hrs saved</b> &middot; ${pctLess}% less effort &middot; <b>${timeMultStr}&times; faster</b></span>
-                </div>
-              </div>` : ''}
-              <div class="bi-pkg-row">
-                <div class="bi-pkg-row-label">App Workspace<small>package once, deliver everywhere</small></div>
-                <div class="bi-pkg-bar">
-                  <div class="bi-pkg-bar-fill is-new" style="width:${awPct}%"></div>
-                  <div class="bi-pkg-bar-value${awOutside ? ' is-outside' : ''}" style="${awOutside ? `left:calc(${awPct}% + 8px); right:auto;` : ''}">${awVal}</div>
-                </div>
-              </div>
-            </div>
-          </div>
-          </div>
-
           ${(() => {
             const oneTimeHrs = Math.round(hasCycle ? hrsSaved : 0);
             const recurHrs   = Math.round(r.totalHoursYear || 0);
@@ -9902,6 +9843,22 @@
                 <span class="bi-compound-legend-item"><span class="bi-compound-legend-swatch is-onetime"></span>One-time packaging onboarding</span>
                 <span class="bi-compound-legend-item"><span class="bi-compound-legend-swatch is-recurring"></span>Recurring annual capacity</span>
               </div>
+            </div>
+            <div class="bi-pkg-inputs bi-compound-inputs">
+              <span class="bi-pkg-inputs-prompt">Tune the one-time onboarding</span>
+              <label class="bi-pkg-input-chip" title="Total apps to onboard">
+                <input type="number" id="pkg-apps" min="0" step="1" value="${ci.apps}" class="is-wide" aria-label="Total apps to onboard">
+                <span class="bi-pkg-input-chip-label">apps</span>
+              </label>
+              <label class="bi-pkg-input-chip" title="Share of apps that are complex (rest are standard)">
+                <input type="number" id="pkg-mix" min="0" max="100" step="1" value="${Math.round(ci.complexMixPct ?? 20)}" aria-label="Percent complex apps">
+                <span class="bi-pkg-input-chip-label">% complex &middot; ${Math.round(100 - (ci.complexMixPct ?? 20))}% standard</span>
+              </label>
+              <label class="bi-pkg-input-chip" title="Loaded engineer hourly rate">
+                <span class="bi-pkg-input-chip-label">$</span>
+                <input type="number" id="pkg-rate" min="0" step="1" value="${ci.loadedRate || 95}" aria-label="Loaded engineer hourly rate">
+                <span class="bi-pkg-input-chip-label">/hr loaded</span>
+              </label>
             </div>
             <div class="bi-compound-rows">
               <div class="bi-compound-row">
