@@ -4298,7 +4298,9 @@
         letter-spacing: 0.14em;
         text-transform: uppercase;
         color: var(--r-ink-2);
-        margin: 0 0 6px 2px;
+        margin: 0 0 8px 2px;
+        padding: 5px 0;
+        line-height: 1;
       }
       .bi-section-eyebrow::before {
         content: "";
@@ -4318,27 +4320,33 @@
         letter-spacing: inherit;
         text-transform: inherit;
         text-align: left;
-        padding: 4px 8px 4px 0;
+        padding: 5px 10px 5px 0;
+        margin-left: 0;
         width: fit-content;
-        border-radius: 4px;
-        transition: color 150ms;
+        border-radius: 6px;
+        transition: color 150ms, background 150ms;
       }
-      .bi-section-eyebrow.is-toggle:hover { color: var(--r-ink); }
+      .bi-section-eyebrow.is-toggle:hover {
+        color: var(--r-ink);
+        background: rgba(15, 23, 42, 0.04);
+      }
       .bi-section-eyebrow.is-toggle:focus-visible {
         outline: 2px solid var(--r-blue);
         outline-offset: 2px;
       }
       .bi-section-chevron {
-        width: 12px;
-        height: 12px;
+        width: 13px;
+        height: 13px;
         stroke: currentColor;
-        stroke-width: 2.5;
+        stroke-width: 2;
         stroke-linecap: round;
         stroke-linejoin: round;
         fill: none;
         transition: transform 200ms cubic-bezier(.2,.8,.2,1);
         flex-shrink: 0;
+        opacity: 0.7;
       }
+      .bi-section-eyebrow.is-toggle:hover .bi-section-chevron { opacity: 1; }
       .bi-section-eyebrow.is-toggle[aria-expanded="false"] .bi-section-chevron {
         transform: rotate(-90deg);
       }
