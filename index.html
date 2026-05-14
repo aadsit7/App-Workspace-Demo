@@ -4597,6 +4597,83 @@
         #panel-roi .bi-compound-foot { font-size: 11px !important; padding: 10px 12px !important; }
         #panel-roi .bi-compound-inputs { padding: 8px 12px !important; margin-bottom: 12px !important; }
       }
+
+      /* ─── Side-by-side split: Ongoing × 3-year horizon ─── */
+      /* Default to stacked so narrow viewports remain readable. */
+      .bi-split {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 18px;
+        align-items: start;
+      }
+      .bi-split-col {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+      }
+      /* Pin the eyebrow header heights so both columns line up at the top. */
+      .bi-split-col > .bi-section-eyebrow,
+      .bi-split-col > .bi-section-eyebrow.is-toggle {
+        min-height: 22px;
+        margin-bottom: 8px;
+      }
+      /* Drop side-by-side in only when the panel has comfortable room for both
+         charts at once. Below this width, fall back to the stacked default. */
+      @media (min-width: 1100px) {
+        .bi-split:not(.is-single) { grid-template-columns: 1fr 1fr; }
+
+        .bi-split:not(.is-single) .bi-compare { padding: 16px 18px; }
+        .bi-split:not(.is-single) .bi-compare-head {
+          margin-bottom: 12px;
+          padding-bottom: 10px;
+        }
+        .bi-split:not(.is-single) .bi-compare-row {
+          grid-template-columns: 124px 1fr 86px;
+          gap: 12px;
+          padding: 9px 0;
+        }
+        .bi-split:not(.is-single) .bi-compare-axis {
+          grid-template-columns: 124px 1fr 86px;
+          gap: 12px;
+        }
+        .bi-split:not(.is-single) .bi-compare-label { font-size: 12px; }
+        .bi-split:not(.is-single) .bi-compare-label-sub { font-size: 10px; margin-top: 2px; }
+        .bi-split:not(.is-single) .bi-compare-stat-pct { font-size: 16px; }
+        .bi-split:not(.is-single) .bi-compare-stat-sub { font-size: 10px; }
+        .bi-split:not(.is-single) .bi-compare-summary {
+          margin: 12px -18px -16px;
+          padding: 12px 18px;
+          font-size: 12px;
+        }
+        .bi-split:not(.is-single) .bi-compare-summary-from,
+        .bi-split:not(.is-single) .bi-compare-summary-to { font-size: 16px; }
+        .bi-split:not(.is-single) .bi-compare-summary-pct { font-size: 19px; }
+
+        .bi-split:not(.is-single) .bi-compound { padding: 16px 18px; }
+        .bi-split:not(.is-single) .bi-compound-head {
+          margin-bottom: 14px;
+          padding-bottom: 12px;
+        }
+        .bi-split:not(.is-single) .bi-compound-hero-num { font-size: 36px; }
+        .bi-split:not(.is-single) .bi-compound-hero-unit { font-size: 15px; }
+        .bi-split:not(.is-single) .bi-compound-hero-suffix { font-size: 15px; }
+        .bi-split:not(.is-single) .bi-compound-sub { font-size: 12px; }
+        .bi-split:not(.is-single) .bi-compound-inputs {
+          padding: 8px 12px;
+          margin-bottom: 12px;
+        }
+        .bi-split:not(.is-single) .bi-compound-row {
+          grid-template-columns: 60px 1fr 108px;
+          gap: 12px;
+        }
+        .bi-split:not(.is-single) .bi-compound-bar { height: 26px; }
+        .bi-split:not(.is-single) .bi-compound-foot {
+          font-size: 11px;
+          padding: 10px 12px;
+          margin-top: 14px;
+        }
+      }
+
       .bi-section-eyebrow.is-roi::before { background: #047857; }
 
       /* Investment vs Return card — pays-for-itself summary */
@@ -9906,45 +9983,7 @@
         const timeMultStr  = hasCycle ? timeMult.toFixed(1) : '—';
         const timeMultUnit = hasCycle ? '× faster' : '';
 
-        return `
-          <!-- ONGOING IMPACT — monthly recurring -->
-          <div class="bi-section-eyebrow">Ongoing &middot; hours per month</div>
-          <div class="bi-compare dash-animate">
-            <div class="bi-compare-head">
-              <div>
-                <div class="bi-compare-title">Where time gets returned</div>
-                <div class="bi-compare-sub">Recurring operational hours, today vs. with Application Workspace. Hover any row for the math.</div>
-              </div>
-              <div class="bi-compare-legend">
-                <span class="bi-compare-legend-item"><span class="bi-compare-legend-swatch" style="background:var(--r-red)"></span>Today (manual)</span>
-                <span class="bi-compare-legend-item"><span class="bi-compare-legend-swatch" style="background:var(--r-blue)"></span>With App Workspace</span>
-              </div>
-            </div>
-            <div class="bi-compare-body">
-              ${bars.map(barRow).join('')}
-            </div>
-            <div class="bi-compare-axis">
-              <div></div>
-              <div class="bi-compare-axis-track">
-                ${ticks.map((t, i) => `<span class="bi-compare-axis-tick" style="left:${(i / (tickCount - 1)) * 100}%">${t} hrs</span>`).join('')}
-              </div>
-              <div></div>
-            </div>
-            <div class="bi-compare-summary">
-              <div class="bi-compare-summary-left">
-                <span class="bi-compare-summary-from">${num(oldTotal)} hrs/mo</span>
-                <span class="bi-compare-summary-arrow">&rarr;</span>
-                <span class="bi-compare-summary-to">${num(newTotal)} hrs/mo</span>
-                <span class="bi-compare-summary-tag">with Application Workspace</span>
-              </div>
-              <div class="bi-compare-summary-right">
-                <span class="bi-compare-summary-pct">${pctReduction}% reduction</span>
-                <span class="bi-compare-summary-detail">&middot; <b>${num(totalReturned)} hrs/mo</b> returned to strategy</span>
-              </div>
-            </div>
-          </div>
-
-          ${(() => {
+        const compoundCol = (() => {
             const oneTimeHrs = Math.round(hasCycle ? hrsSaved : 0);
             const recurHrs   = Math.round(r.totalHoursYear || 0);
             if ((oneTimeHrs + recurHrs) <= 0) return '';
@@ -9966,79 +10005,124 @@
             const engMonths = hasCycle ? (hrsSaved / 160).toFixed(1) : '0';
             return `
           <!-- COMPOUNDING OPERATIONAL CAPACITY OVER 3 YEARS -->
-          <button class="bi-section-eyebrow is-compound is-toggle" type="button" data-action="toggle-section" data-section="compound" aria-expanded="${STATE.collapsedSections.compound ? 'false' : 'true'}" aria-controls="section-compound">
-            <span class="bi-section-eyebrow-label">3-year horizon</span>
-            <svg class="bi-section-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
-          </button>
-          <div class="bi-section-content${STATE.collapsedSections.compound ? ' is-collapsed' : ''}" id="section-compound">
-          <div class="bi-compound dash-animate">
-            <div class="bi-compound-head">
-              <div class="bi-compound-head-main">
-                <div class="bi-compound-hero">
-                  <span class="bi-compound-hero-num">${heroNum}</span>
-                  <span class="bi-compound-hero-unit">${heroUnit}</span>
-                  <span class="bi-compound-hero-suffix">reclaimed by Year 3</span>
+          <section class="bi-split-col">
+            <button class="bi-section-eyebrow is-compound is-toggle" type="button" data-action="toggle-section" data-section="compound" aria-expanded="${STATE.collapsedSections.compound ? 'false' : 'true'}" aria-controls="section-compound">
+              <span class="bi-section-eyebrow-label">3-year horizon</span>
+              <svg class="bi-section-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+            <div class="bi-section-content${STATE.collapsedSections.compound ? ' is-collapsed' : ''}" id="section-compound">
+              <div class="bi-compound dash-animate">
+                <div class="bi-compound-head">
+                  <div class="bi-compound-head-main">
+                    <div class="bi-compound-hero">
+                      <span class="bi-compound-hero-num">${heroNum}</span>
+                      <span class="bi-compound-hero-unit">${heroUnit}</span>
+                      <span class="bi-compound-hero-suffix">reclaimed by Year 3</span>
+                    </div>
+                    <div class="bi-compound-sub">Onboarding pays for itself in Year 1. Recurring capacity compounds every year after across <b>${envCount} environment${envCount===1?'':'s'}</b>.</div>
+                  </div>
+                  <div class="bi-compound-legend">
+                    <span class="bi-compound-legend-item"><span class="bi-compound-legend-swatch is-onetime"></span>One-time onboarding</span>
+                    <span class="bi-compound-legend-item"><span class="bi-compound-legend-swatch is-recurring"></span>Recurring capacity</span>
+                  </div>
                 </div>
-                <div class="bi-compound-sub">Onboarding pays for itself in Year 1. Recurring capacity compounds every year after across <b>${envCount} environment${envCount===1?'':'s'}</b>.</div>
-              </div>
-              <div class="bi-compound-legend">
-                <span class="bi-compound-legend-item"><span class="bi-compound-legend-swatch is-onetime"></span>One-time onboarding</span>
-                <span class="bi-compound-legend-item"><span class="bi-compound-legend-swatch is-recurring"></span>Recurring capacity</span>
+                <div class="bi-pkg-inputs bi-compound-inputs">
+                  <span class="bi-pkg-inputs-prompt">Tune onboarding</span>
+                  <label class="bi-pkg-input-chip" title="Total apps to onboard">
+                    <input type="number" id="pkg-apps" min="0" step="1" value="${ci.apps}" class="is-wide" aria-label="Total apps to onboard">
+                    <span class="bi-pkg-input-chip-label">apps</span>
+                  </label>
+                  <label class="bi-pkg-input-chip" title="Share of apps that are complex (rest are standard)">
+                    <input type="number" id="pkg-mix" min="0" max="100" step="1" value="${Math.round(ci.complexMixPct ?? 20)}" aria-label="Percent complex apps">
+                    <span class="bi-pkg-input-chip-label">% complex &middot; ${Math.round(100 - (ci.complexMixPct ?? 20))}% standard</span>
+                  </label>
+                  <label class="bi-pkg-input-chip" title="Loaded engineer hourly rate">
+                    <span class="bi-pkg-input-chip-label">$</span>
+                    <input type="number" id="pkg-rate" min="0" step="1" value="${ci.loadedRate || 95}" aria-label="Loaded engineer hourly rate">
+                    <span class="bi-pkg-input-chip-label">/hr loaded</span>
+                  </label>
+                  <span class="bi-pkg-inputs-note">Defaults from Recast field test</span>
+                </div>
+                <div class="bi-compound-rows">
+                  <div class="bi-compound-row" title="Year 1: ${num(oneTimeHrs)} one-time + ${num(recurHrs)} recurring = ${num(yr1Hrs)} hrs">
+                    <div class="bi-compound-row-label">Year 1</div>
+                    <div class="bi-compound-bar">
+                      <div class="bi-compound-seg bi-compound-seg-onetime" style="width:${otPct}%">${labelInside(otPct, oneTimeHrs, 'hrs')}</div>
+                      <div class="bi-compound-seg bi-compound-seg-rec"     style="width:${recPct}%">${labelInside(recPct, recurHrs, 'hrs')}</div>
+                    </div>
+                    <div class="bi-compound-total">${num(yr1Hrs)} hrs<small>cumulative</small></div>
+                  </div>
+                  <div class="bi-compound-row" title="Year 2 cumulative: ${num(oneTimeHrs)} one-time + ${num(recurHrs * 2)} recurring = ${num(yr2Hrs)} hrs">
+                    <div class="bi-compound-row-label">Year 2</div>
+                    <div class="bi-compound-bar">
+                      <div class="bi-compound-seg bi-compound-seg-onetime" style="width:${otPct}%"></div>
+                      <div class="bi-compound-seg bi-compound-seg-rec"     style="width:${recPct}%"></div>
+                      <div class="bi-compound-seg bi-compound-seg-rec is-yr2" style="width:${recPct}%">${labelInside(recPct, recurHrs, 'hrs')}</div>
+                    </div>
+                    <div class="bi-compound-total">${num(yr2Hrs)} hrs<small>cumulative</small></div>
+                  </div>
+                  <div class="bi-compound-row" title="Year 3 cumulative: ${num(oneTimeHrs)} one-time + ${num(recurHrs * 3)} recurring = ${num(yr3Hrs)} hrs">
+                    <div class="bi-compound-row-label">Year 3</div>
+                    <div class="bi-compound-bar">
+                      <div class="bi-compound-seg bi-compound-seg-onetime" style="width:${otPct}%"></div>
+                      <div class="bi-compound-seg bi-compound-seg-rec"     style="width:${recPct}%"></div>
+                      <div class="bi-compound-seg bi-compound-seg-rec is-yr2" style="width:${recPct}%"></div>
+                      <div class="bi-compound-seg bi-compound-seg-rec is-yr3" style="width:${recPct}%">${labelInside(recPct, recurHrs, 'hrs')}</div>
+                    </div>
+                    <div class="bi-compound-total">${num(yr3Hrs)} hrs<small>cumulative</small></div>
+                  </div>
+                </div>
+                <div class="bi-compound-foot">
+                  <svg class="bi-compound-foot-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                  <span><b>+ ${num(ticketsTotal)} end-user tickets prevented</b> over 3 years &mdash; <b>${tixReductionPct}% fewer helpdesk calls</b>. Users self-serve their apps across all ${envCount} environment${envCount===1?'':'s'} instead of waiting for IT, and the one-time packaging onboarding (&asymp; <b>${engMonths} engineer-months</b>) stays returned forever.</span>
+                </div>
               </div>
             </div>
-            <div class="bi-pkg-inputs bi-compound-inputs">
-              <span class="bi-pkg-inputs-prompt">Tune onboarding</span>
-              <label class="bi-pkg-input-chip" title="Total apps to onboard">
-                <input type="number" id="pkg-apps" min="0" step="1" value="${ci.apps}" class="is-wide" aria-label="Total apps to onboard">
-                <span class="bi-pkg-input-chip-label">apps</span>
-              </label>
-              <label class="bi-pkg-input-chip" title="Share of apps that are complex (rest are standard)">
-                <input type="number" id="pkg-mix" min="0" max="100" step="1" value="${Math.round(ci.complexMixPct ?? 20)}" aria-label="Percent complex apps">
-                <span class="bi-pkg-input-chip-label">% complex &middot; ${Math.round(100 - (ci.complexMixPct ?? 20))}% standard</span>
-              </label>
-              <label class="bi-pkg-input-chip" title="Loaded engineer hourly rate">
-                <span class="bi-pkg-input-chip-label">$</span>
-                <input type="number" id="pkg-rate" min="0" step="1" value="${ci.loadedRate || 95}" aria-label="Loaded engineer hourly rate">
-                <span class="bi-pkg-input-chip-label">/hr loaded</span>
-              </label>
-              <span class="bi-pkg-inputs-note">Defaults from Recast field test</span>
-            </div>
-            <div class="bi-compound-rows">
-              <div class="bi-compound-row" title="Year 1: ${num(oneTimeHrs)} one-time + ${num(recurHrs)} recurring = ${num(yr1Hrs)} hrs">
-                <div class="bi-compound-row-label">Year 1</div>
-                <div class="bi-compound-bar">
-                  <div class="bi-compound-seg bi-compound-seg-onetime" style="width:${otPct}%">${labelInside(otPct, oneTimeHrs, 'hrs')}</div>
-                  <div class="bi-compound-seg bi-compound-seg-rec"     style="width:${recPct}%">${labelInside(recPct, recurHrs, 'hrs')}</div>
+          </section>`;
+          })();
+
+        return `
+          <div class="bi-split${compoundCol ? '' : ' is-single'}">
+            <!-- ONGOING IMPACT — monthly recurring -->
+            <section class="bi-split-col">
+              <div class="bi-section-eyebrow">Ongoing &middot; hours per month</div>
+              <div class="bi-compare dash-animate">
+                <div class="bi-compare-head">
+                  <div>
+                    <div class="bi-compare-title">Where time gets returned</div>
+                    <div class="bi-compare-sub">Recurring operational hours, today vs. with Application Workspace. Hover any row for the math.</div>
+                  </div>
+                  <div class="bi-compare-legend">
+                    <span class="bi-compare-legend-item"><span class="bi-compare-legend-swatch" style="background:var(--r-red)"></span>Today (manual)</span>
+                    <span class="bi-compare-legend-item"><span class="bi-compare-legend-swatch" style="background:var(--r-blue)"></span>With App Workspace</span>
+                  </div>
                 </div>
-                <div class="bi-compound-total">${num(yr1Hrs)} hrs<small>cumulative</small></div>
-              </div>
-              <div class="bi-compound-row" title="Year 2 cumulative: ${num(oneTimeHrs)} one-time + ${num(recurHrs * 2)} recurring = ${num(yr2Hrs)} hrs">
-                <div class="bi-compound-row-label">Year 2</div>
-                <div class="bi-compound-bar">
-                  <div class="bi-compound-seg bi-compound-seg-onetime" style="width:${otPct}%"></div>
-                  <div class="bi-compound-seg bi-compound-seg-rec"     style="width:${recPct}%"></div>
-                  <div class="bi-compound-seg bi-compound-seg-rec is-yr2" style="width:${recPct}%">${labelInside(recPct, recurHrs, 'hrs')}</div>
+                <div class="bi-compare-body">
+                  ${bars.map(barRow).join('')}
                 </div>
-                <div class="bi-compound-total">${num(yr2Hrs)} hrs<small>cumulative</small></div>
-              </div>
-              <div class="bi-compound-row" title="Year 3 cumulative: ${num(oneTimeHrs)} one-time + ${num(recurHrs * 3)} recurring = ${num(yr3Hrs)} hrs">
-                <div class="bi-compound-row-label">Year 3</div>
-                <div class="bi-compound-bar">
-                  <div class="bi-compound-seg bi-compound-seg-onetime" style="width:${otPct}%"></div>
-                  <div class="bi-compound-seg bi-compound-seg-rec"     style="width:${recPct}%"></div>
-                  <div class="bi-compound-seg bi-compound-seg-rec is-yr2" style="width:${recPct}%"></div>
-                  <div class="bi-compound-seg bi-compound-seg-rec is-yr3" style="width:${recPct}%">${labelInside(recPct, recurHrs, 'hrs')}</div>
+                <div class="bi-compare-axis">
+                  <div></div>
+                  <div class="bi-compare-axis-track">
+                    ${ticks.map((t, i) => `<span class="bi-compare-axis-tick" style="left:${(i / (tickCount - 1)) * 100}%">${t} hrs</span>`).join('')}
+                  </div>
+                  <div></div>
                 </div>
-                <div class="bi-compound-total">${num(yr3Hrs)} hrs<small>cumulative</small></div>
+                <div class="bi-compare-summary">
+                  <div class="bi-compare-summary-left">
+                    <span class="bi-compare-summary-from">${num(oldTotal)} hrs/mo</span>
+                    <span class="bi-compare-summary-arrow">&rarr;</span>
+                    <span class="bi-compare-summary-to">${num(newTotal)} hrs/mo</span>
+                    <span class="bi-compare-summary-tag">with Application Workspace</span>
+                  </div>
+                  <div class="bi-compare-summary-right">
+                    <span class="bi-compare-summary-pct">${pctReduction}% reduction</span>
+                    <span class="bi-compare-summary-detail">&middot; <b>${num(totalReturned)} hrs/mo</b> returned to strategy</span>
+                  </div>
+                </div>
               </div>
-            </div>
-            <div class="bi-compound-foot">
-              <svg class="bi-compound-foot-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-              <span><b>+ ${num(ticketsTotal)} end-user tickets prevented</b> over 3 years &mdash; <b>${tixReductionPct}% fewer helpdesk calls</b>. Users self-serve their apps across all ${envCount} environment${envCount===1?'':'s'} instead of waiting for IT, and the one-time packaging onboarding (&asymp; <b>${engMonths} engineer-months</b>) stays returned forever.</span>
-            </div>
+            </section>
+            ${compoundCol}
           </div>
-          </div>`;
-          })()}
         `;
       }
 
