@@ -4598,6 +4598,727 @@
         #panel-roi .bi-compound-inputs { padding: 8px 12px !important; margin-bottom: 12px !important; }
       }
 
+      /* ═════════════════════════════════════════════════════════════
+         TIME ROI — engineer-years delivered vs. calendar time
+         A single full-width card. Stacked timeline bars make the
+         "compression" effect literal: 3 yrs of calendar = N yrs
+         of traditional output.
+         ═════════════════════════════════════════════════════════════ */
+      .bi-timeroi {
+        background: #fff;
+        border: 1px solid var(--r-divider);
+        border-radius: 8px;
+        padding: 22px 26px 20px;
+        box-shadow: var(--shadow-card);
+        position: relative;
+        overflow: hidden;
+      }
+      .bi-timeroi::before {
+        content: "";
+        position: absolute; left: 0; top: 0; bottom: 0;
+        width: 4px;
+        background: linear-gradient(180deg, var(--r-blue) 0%, var(--r-cyan) 100%);
+      }
+      .bi-timeroi-head {
+        display: flex; align-items: flex-start; justify-content: space-between;
+        gap: 24px; margin-bottom: 18px; flex-wrap: wrap;
+      }
+      .bi-timeroi-eyebrow {
+        font-size: 11px; font-weight: 700;
+        text-transform: uppercase; letter-spacing: 0.12em;
+        color: var(--r-blue);
+        margin-bottom: 8px;
+        display: inline-flex; align-items: center; gap: 8px;
+      }
+      .bi-timeroi-eyebrow::before {
+        content: ""; width: 18px; height: 2px;
+        background: var(--r-cyan);
+      }
+      .bi-timeroi-headline {
+        font-size: 22px; font-weight: 800;
+        color: var(--r-ink);
+        letter-spacing: -0.02em;
+        line-height: 1.15;
+        max-width: 580px;
+      }
+      .bi-timeroi-headline em {
+        font-style: normal;
+        color: var(--r-blue);
+        font-weight: 800;
+        font-variant-numeric: tabular-nums;
+      }
+      .bi-timeroi-sub {
+        font-size: 13px;
+        color: var(--r-ink-2);
+        margin-top: 6px;
+        line-height: 1.5;
+        max-width: 580px;
+      }
+      .bi-timeroi-hero {
+        flex-shrink: 0;
+        text-align: right;
+        display: flex; flex-direction: column; align-items: flex-end;
+        gap: 2px;
+      }
+      .bi-timeroi-hero-num {
+        font-size: 56px; font-weight: 800;
+        color: var(--r-blue);
+        letter-spacing: -0.035em;
+        line-height: 0.92;
+        font-variant-numeric: tabular-nums;
+        font-feature-settings: "tnum";
+      }
+      .bi-timeroi-hero-unit {
+        font-size: 13px; font-weight: 700;
+        text-transform: uppercase; letter-spacing: 0.1em;
+        color: var(--r-ink-2);
+      }
+      .bi-timeroi-hero-suffix {
+        font-size: 12px; font-weight: 600;
+        color: var(--r-ink-2);
+        max-width: 200px;
+        line-height: 1.35;
+      }
+
+      /* Stacked time bars showing the compression */
+      .bi-timeroi-bars {
+        display: flex; flex-direction: column;
+        gap: 14px;
+        margin-bottom: 18px;
+      }
+      .bi-timeroi-bar-row {
+        display: grid;
+        grid-template-columns: 162px 1fr 92px;
+        gap: 14px;
+        align-items: center;
+      }
+      .bi-timeroi-bar-label {
+        font-size: 12px;
+        line-height: 1.2;
+      }
+      .bi-timeroi-bar-label b {
+        display: block;
+        font-size: 13px; font-weight: 700;
+        color: var(--r-ink);
+        letter-spacing: -0.005em;
+      }
+      .bi-timeroi-bar-label span {
+        display: block;
+        font-size: 11px; font-weight: 500;
+        color: var(--r-ink-2);
+        margin-top: 2px;
+      }
+      .bi-timeroi-bar-track {
+        position: relative;
+        height: 38px;
+        background: var(--r-quote-bg);
+        border-radius: 4px;
+        overflow: hidden;
+        border: 1px solid var(--r-divider);
+      }
+      .bi-timeroi-bar-fill {
+        position: absolute; inset: 0 auto 0 0;
+        display: flex; align-items: stretch;
+        transition: width 900ms cubic-bezier(.2,.8,.2,1);
+      }
+      .bi-timeroi-bar-fill.is-calendar {
+        background: repeating-linear-gradient(
+          135deg,
+          var(--r-muted-blue) 0,
+          var(--r-muted-blue) 6px,
+          #BCC8F0 6px, #BCC8F0 12px
+        );
+      }
+      .bi-timeroi-year {
+        flex: 1;
+        position: relative;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 11px; font-weight: 700;
+        color: #fff;
+        letter-spacing: 0.04em;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.18);
+        border-right: 1px solid rgba(255,255,255,0.4);
+      }
+      .bi-timeroi-year:last-child { border-right: 0; }
+      .bi-timeroi-year.is-calendar {
+        color: var(--r-blue);
+        text-shadow: none;
+        border-right-color: rgba(255,255,255,0.65);
+      }
+      /* Delivered bar segments — coloured by source: onboarding cyan, recurring blue */
+      .bi-timeroi-seg {
+        display: flex; align-items: center; justify-content: center;
+        font-size: 10px; font-weight: 700;
+        color: #fff;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        letter-spacing: 0.04em;
+        border-right: 1px solid rgba(255,255,255,0.35);
+        white-space: nowrap;
+        overflow: hidden;
+      }
+      .bi-timeroi-seg:last-child { border-right: 0; }
+      .bi-timeroi-seg.is-onboarding { background: var(--r-cyan); color: #003B66; text-shadow: none; }
+      .bi-timeroi-seg.is-recurring  { background: var(--r-blue); }
+      .bi-timeroi-bar-tag {
+        font-size: 18px; font-weight: 800;
+        color: var(--r-blue);
+        letter-spacing: -0.02em;
+        line-height: 1;
+        font-variant-numeric: tabular-nums;
+        text-align: right;
+      }
+      .bi-timeroi-bar-tag small {
+        display: block;
+        font-size: 10px; font-weight: 600;
+        color: var(--r-ink-2);
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        margin-top: 4px;
+      }
+      .bi-timeroi-bar-tag.is-calendar {
+        color: var(--r-ink-2);
+      }
+      .bi-timeroi-bar-tag.is-aw {
+        color: var(--r-blue);
+      }
+      .bi-timeroi-bar-tag small {
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        text-transform: none;
+      }
+      .bi-timeroi-bar-row.is-manual .bi-timeroi-bar-label b,
+      .bi-timeroi-grid-row.is-manual .bi-timeroi-bar-label b,
+      .bi-timeroi-figs-row.is-manual .bi-timeroi-bar-label b {
+        color: var(--r-ink);
+      }
+      .bi-timeroi-bar-row.is-aw .bi-timeroi-bar-label b,
+      .bi-timeroi-grid-row.is-aw .bi-timeroi-bar-label b,
+      .bi-timeroi-figs-row.is-aw .bi-timeroi-bar-label b {
+        color: var(--r-blue);
+      }
+
+      /* Reference scale showing extra years gained */
+      .bi-timeroi-gain {
+        position: relative;
+        margin: 8px 0 16px 176px;
+        padding: 8px 12px 8px 14px;
+        background: linear-gradient(90deg, #E0F4FF 0%, #F0FAFF 100%);
+        border-left: 3px solid var(--r-cyan);
+        border-radius: 0 4px 4px 0;
+        font-size: 13px;
+        color: #003B66;
+        line-height: 1.4;
+        display: flex; align-items: center; gap: 10px;
+      }
+      .bi-timeroi-gain b {
+        color: var(--r-blue);
+        font-weight: 800;
+        font-variant-numeric: tabular-nums;
+        font-size: 15px;
+      }
+      .bi-timeroi-gain-icon {
+        flex-shrink: 0;
+        color: var(--r-blue);
+      }
+
+      /* Three stat tiles */
+      .bi-timeroi-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-top: 6px;
+      }
+      .bi-timeroi-stat {
+        padding: 14px 16px;
+        background: var(--r-quote-bg);
+        border: 1px solid var(--r-divider);
+        border-radius: 6px;
+        display: flex; flex-direction: column;
+        gap: 4px;
+      }
+      .bi-timeroi-stat-label {
+        font-size: 10px; font-weight: 700;
+        text-transform: uppercase; letter-spacing: 0.1em;
+        color: var(--r-ink-2);
+      }
+      .bi-timeroi-stat-value {
+        font-size: 26px; font-weight: 800;
+        color: var(--r-blue);
+        letter-spacing: -0.025em;
+        line-height: 1;
+        font-variant-numeric: tabular-nums;
+      }
+      .bi-timeroi-stat-value small {
+        font-size: 14px; font-weight: 800;
+        color: var(--r-ink-2);
+        margin-left: 2px;
+      }
+      .bi-timeroi-stat-detail {
+        font-size: 11px; font-weight: 500;
+        color: var(--r-ink-2);
+        line-height: 1.4;
+        margin-top: 2px;
+      }
+      .bi-timeroi-stat-detail b {
+        color: var(--r-ink);
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+      }
+
+      /* Top row holds the eyebrow on the left and the style switcher on the right
+         so the hero number below has clean horizontal real estate. */
+      .bi-timeroi-toprow {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+      /* Style switcher (Tweaks-able) — small pill row, sits in the top-row */
+      .bi-timeroi-styleswitch {
+        display: inline-flex;
+        background: var(--r-surface-3);
+        border: 1px solid var(--r-divider);
+        border-radius: 999px;
+        padding: 2px;
+        gap: 1px;
+        flex-shrink: 0;
+      }
+      .bi-timeroi-styleswitch button {
+        background: transparent;
+        border: 0;
+        padding: 4px 10px;
+        font-size: 10px; font-weight: 700;
+        text-transform: uppercase; letter-spacing: 0.06em;
+        color: var(--r-ink-2);
+        border-radius: 999px;
+        cursor: pointer;
+        transition: all 150ms;
+      }
+      .bi-timeroi-styleswitch button.is-active {
+        background: var(--r-blue);
+        color: #fff;
+      }
+      .bi-timeroi-styleswitch button:hover:not(.is-active) {
+        color: var(--r-ink);
+      }
+
+      /* ─── STYLE B: Calendar grid (12-mo blocks) ─── */
+      .bi-timeroi-grid {
+        display: flex; flex-direction: column;
+        gap: 14px; margin-bottom: 18px;
+      }
+      .bi-timeroi-grid-row {
+        display: grid;
+        grid-template-columns: 162px 1fr 92px;
+        gap: 14px;
+        align-items: center;
+      }
+      .bi-timeroi-grid-track {
+        display: grid;
+        grid-auto-flow: column;
+        grid-auto-columns: 1fr;
+        gap: 3px;
+        height: 36px;
+      }
+      .bi-timeroi-grid-track.is-grouped {
+        grid-template-columns: repeat(var(--years), 1fr);
+        gap: 6px;
+      }
+      .bi-timeroi-yearblock {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 2px;
+        position: relative;
+        padding-top: 12px;
+      }
+      .bi-timeroi-yearblock::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 0; top: 0;
+        font-size: 9px; font-weight: 700;
+        color: var(--r-ink-2);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+      .bi-timeroi-mo {
+        background: var(--r-surface-2);
+        border-radius: 1px;
+      }
+      .bi-timeroi-mo.is-cal       { background: var(--r-muted-blue); }
+      .bi-timeroi-mo.is-onboard   { background: var(--r-cyan); }
+      .bi-timeroi-mo.is-recurring { background: var(--r-blue); }
+      .bi-timeroi-mo.is-partial   { background: linear-gradient(90deg, var(--r-blue) var(--p), var(--r-surface-2) var(--p)); }
+
+      /* ─── STYLE C: Engineer-figures ─── */
+      .bi-timeroi-figs {
+        display: flex; flex-direction: column;
+        gap: 14px; margin-bottom: 18px;
+      }
+      .bi-timeroi-figs-row {
+        display: grid;
+        grid-template-columns: 162px 1fr 92px;
+        gap: 14px;
+        align-items: center;
+      }
+      .bi-timeroi-figs-track {
+        display: flex; flex-wrap: wrap; gap: 4px;
+        align-items: center;
+        min-height: 40px;
+      }
+      .bi-timeroi-fig {
+        width: 14px; height: 28px;
+        background: currentColor;
+        clip-path: polygon(50% 0, 70% 18%, 70% 38%, 95% 80%, 80% 92%, 60% 60%, 60% 100%, 40% 100%, 40% 60%, 20% 92%, 5% 80%, 30% 38%, 30% 18%);
+        opacity: 0.95;
+      }
+      .bi-timeroi-fig.is-cal       { color: var(--r-muted-blue); }
+      .bi-timeroi-fig.is-onboard   { color: var(--r-cyan); }
+      .bi-timeroi-fig.is-recurring { color: var(--r-blue); }
+      .bi-timeroi-fig.is-fraction  { opacity: 0.45; }
+
+      /* Legend strip below the bars */
+      .bi-timeroi-legend {
+        display: inline-flex; align-items: center;
+        gap: 16px;
+        font-size: 11px; font-weight: 600;
+        color: var(--r-ink-2);
+        margin-left: 176px;
+        margin-bottom: 12px;
+        flex-wrap: wrap;
+      }
+      .bi-timeroi-legend-item {
+        display: inline-flex; align-items: center; gap: 6px;
+      }
+      .bi-timeroi-legend-swatch {
+        width: 11px; height: 11px; border-radius: 2px;
+      }
+      .bi-timeroi-legend-swatch.is-cal {
+        background: repeating-linear-gradient(135deg, var(--r-muted-blue) 0, var(--r-muted-blue) 3px, #BCC8F0 3px, #BCC8F0 6px);
+      }
+      .bi-timeroi-legend-swatch.is-onboard   { background: var(--r-cyan); }
+      .bi-timeroi-legend-swatch.is-recurring { background: var(--r-blue); }
+
+      /* Compact for shorter viewports */
+      @media (max-height: 900px) {
+        #panel-roi .bi-timeroi { padding: 16px 20px 14px !important; }
+        #panel-roi .bi-timeroi-hero-num { font-size: 44px !important; }
+        #panel-roi .bi-timeroi-headline { font-size: 18px !important; }
+        #panel-roi .bi-timeroi-sub { font-size: 12px !important; }
+        #panel-roi .bi-timeroi-bar-row,
+        #panel-roi .bi-timeroi-grid-row,
+        #panel-roi .bi-timeroi-figs-row { grid-template-columns: 130px 1fr 80px !important; gap: 10px !important; }
+        #panel-roi .bi-timeroi-bar-track { height: 30px !important; }
+        #panel-roi .bi-timeroi-bar-tag { font-size: 15px !important; }
+        #panel-roi .bi-timeroi-stat-value { font-size: 20px !important; }
+        #panel-roi .bi-timeroi-stat-detail { font-size: 10px !important; }
+        #panel-roi .bi-timeroi-stat-label { font-size: 9px !important; }
+        #panel-roi .bi-timeroi-stat { padding: 10px 12px !important; }
+        #panel-roi .bi-timeroi-gain { margin: 4px 0 12px 140px !important; font-size: 12px !important; padding: 6px 10px !important; }
+        #panel-roi .bi-timeroi-gain b { font-size: 13px !important; }
+        #panel-roi .bi-timeroi-legend { margin-left: 140px !important; }
+        #panel-roi .bi-timeroi-bars,
+        #panel-roi .bi-timeroi-grid,
+        #panel-roi .bi-timeroi-figs { gap: 10px !important; margin-bottom: 12px !important; }
+      }
+
+      /* Narrow viewport — stack labels above the bars */
+      @media (max-width: 900px) {
+        .bi-timeroi-bar-row,
+        .bi-timeroi-grid-row,
+        .bi-timeroi-figs-row { grid-template-columns: 1fr !important; gap: 6px !important; }
+        .bi-timeroi-bar-tag { text-align: left !important; }
+        .bi-timeroi-gain { margin-left: 0 !important; }
+        .bi-timeroi-legend { margin-left: 0 !important; }
+        .bi-timeroi-stats { grid-template-columns: 1fr !important; }
+        .bi-timeroi-toprow { flex-direction: column; align-items: flex-start; }
+        .bi-timeroi-head { flex-direction: column; }
+        .bi-timeroi-hero { text-align: left; align-items: flex-start; }
+      }
+
+      /* ─── People-icon viz: "how many engineers does this work eat?" ─── */
+      .bi-tr-rows {
+        display: flex; flex-direction: column;
+        gap: 10px;
+        margin: 6px 0 14px;
+      }
+      .bi-tr-row {
+        display: grid;
+        grid-template-columns: 162px 1fr 110px;
+        gap: 14px;
+        align-items: center;
+        padding: 10px 14px;
+        background: var(--r-surface-3);
+        border: 1px solid var(--r-divider);
+        border-radius: 6px;
+      }
+      .bi-tr-row.is-manual { background: #FEF2F2; border-color: #FECACA; }
+      .bi-tr-row.is-aw     { background: #F0F4FF; border-color: #C7D2FE; }
+      .bi-tr-row.is-freed  { background: #ECFDF5; border-color: #A7F3D0; border-style: solid; box-shadow: 0 0 0 1px #A7F3D0; }
+      .bi-tr-row-label b {
+        display: block;
+        font-size: 14px; font-weight: 800;
+        color: var(--r-ink);
+        letter-spacing: -0.01em;
+      }
+      .bi-tr-row-label span {
+        display: block;
+        font-size: 11px; font-weight: 500;
+        color: var(--r-ink-2);
+        margin-top: 2px;
+      }
+      .bi-tr-people {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        flex-wrap: nowrap;
+        min-height: 48px;
+      }
+      .bi-tr-person {
+        position: relative;
+        width: 32px;
+        height: 48px;
+        flex-shrink: 0;
+      }
+      .bi-tr-person svg {
+        position: absolute; inset: 0;
+        width: 100%; height: 100%;
+        fill: #E5E7EB;
+      }
+      .bi-tr-person::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        width: var(--fill, 100%);
+        background: var(--color, var(--r-blue));
+        -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 36'><path d='M12 0 C 8.7 0 6 2.7 6 6 C 6 9.3 8.7 12 12 12 C 15.3 12 18 9.3 18 6 C 18 2.7 15.3 0 12 0 Z M 4 14 C 2.3 14 1 15.3 1 17 L 1 26 C 1 27.1 1.9 28 3 28 L 5 28 L 5 35 C 5 35.6 5.4 36 6 36 L 10 36 C 10.6 36 11 35.6 11 35 L 11 28 L 13 28 L 13 35 C 13 35.6 13.4 36 14 36 L 18 36 C 18.6 36 19 35.6 19 35 L 19 28 L 21 28 C 22.1 28 23 27.1 23 26 L 23 17 C 23 15.3 21.7 14 20 14 Z'/></svg>") no-repeat;
+        -webkit-mask-size: 32px 48px;
+        -webkit-mask-position: left center;
+        mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 36'><path d='M12 0 C 8.7 0 6 2.7 6 6 C 6 9.3 8.7 12 12 12 C 15.3 12 18 9.3 18 6 C 18 2.7 15.3 0 12 0 Z M 4 14 C 2.3 14 1 15.3 1 17 L 1 26 C 1 27.1 1.9 28 3 28 L 5 28 L 5 35 C 5 35.6 5.4 36 6 36 L 10 36 C 10.6 36 11 35.6 11 35 L 11 28 L 13 28 L 13 35 C 13 35.6 13.4 36 14 36 L 18 36 C 18.6 36 19 35.6 19 35 L 19 28 L 21 28 C 22.1 28 23 27.1 23 26 L 23 17 C 23 15.3 21.7 14 20 14 Z'/></svg>") no-repeat;
+        mask-size: 32px 48px;
+        mask-position: left center;
+        transition: width 700ms cubic-bezier(.2,.8,.2,1);
+      }
+      .bi-tr-person.is-ghost svg { fill: #F3F4F6; }
+      .bi-tr-person.is-ghost::after { opacity: 0; }
+      .bi-tr-tag {
+        font-size: 22px; font-weight: 800;
+        color: #CC2222;
+        letter-spacing: -0.025em;
+        line-height: 1;
+        font-variant-numeric: tabular-nums;
+        text-align: right;
+      }
+      .bi-tr-tag small {
+        display: block;
+        font-size: 10px; font-weight: 700;
+        color: var(--r-ink-2);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-top: 4px;
+      }
+      .bi-tr-tag.is-aw    { color: var(--r-blue); }
+      .bi-tr-tag.is-freed { color: #047857; }
+      .bi-tr-howmuch {
+        font-size: 11px;
+        color: var(--r-ink-2);
+        line-height: 1.5;
+        background: var(--r-quote-bg);
+        border: 1px solid var(--r-divider);
+        border-radius: 4px;
+        padding: 8px 12px;
+        margin-bottom: 14px;
+        display: flex; align-items: flex-start; gap: 8px;
+      }
+      .bi-tr-howmuch svg { color: var(--r-ink-2); flex-shrink: 0; margin-top: 1px; }
+      .bi-tr-howmuch b { color: var(--r-ink); font-weight: 700; font-variant-numeric: tabular-nums; }
+
+      @media (max-height: 900px) {
+        #panel-roi .bi-tr-row { padding: 6px 12px !important; grid-template-columns: 130px 1fr 88px !important; gap: 10px !important; }
+        #panel-roi .bi-tr-people { min-height: 36px !important; gap: 6px !important; }
+        #panel-roi .bi-tr-person { width: 24px !important; height: 36px !important; }
+        #panel-roi .bi-tr-person::after { -webkit-mask-size: 24px 36px !important; mask-size: 24px 36px !important; }
+        #panel-roi .bi-tr-tag { font-size: 18px !important; }
+        #panel-roi .bi-tr-tag small { font-size: 9px !important; margin-top: 2px !important; }
+        #panel-roi .bi-tr-row-label b { font-size: 12px !important; }
+        #panel-roi .bi-tr-row-label span { font-size: 10px !important; }
+        #panel-roi .bi-tr-howmuch { font-size: 10px !important; padding: 6px 10px !important; margin-bottom: 10px !important; }
+        #panel-roi .bi-tr-rows { gap: 6px !important; margin: 4px 0 10px !important; }
+      }
+      @media (max-width: 900px) {
+        .bi-tr-row { grid-template-columns: 1fr !important; gap: 6px !important; }
+        .bi-tr-tag { text-align: left !important; }
+        .bi-tr-people { flex-wrap: wrap !important; }
+      }
+
+      /* ─── Side-by-side: left = "how much team this work eats", right = "where time gets returned" ─── */
+      .bi-sidebyside {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 16px;
+        align-items: stretch;
+      }
+      .bi-sidebyside-col { display: flex; flex-direction: column; min-width: 0; }
+      .bi-sidebyside-col > * { flex: 1; }
+      @media (min-width: 1200px) {
+        .bi-sidebyside { grid-template-columns: 1fr 1fr; }
+        /* The totals strip below spans both columns */
+        .bi-sidebyside > .bi-totals { grid-column: 1 / -1; }
+      }
+
+      /* ─── Totals strip spanning both columns (the green summary) ─── */
+      .bi-totals {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        padding: 16px 26px;
+        background: linear-gradient(90deg, #F0FDF4 0%, #ECFDF5 100%);
+        border: 1px solid #BBF7D0;
+        border-radius: 8px;
+        font-size: 14px;
+        color: #065F46;
+        flex-wrap: wrap;
+        line-height: 1.35;
+        box-shadow: var(--shadow-card);
+      }
+      .bi-totals-left {
+        display: flex;
+        align-items: baseline;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .bi-totals-from {
+        font-size: 22px;
+        font-weight: 800;
+        color: #1F2937;
+        letter-spacing: -0.015em;
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+      }
+      .bi-totals-arrow {
+        color: var(--r-ink-2);
+        font-weight: 700;
+        font-size: 18px;
+      }
+      .bi-totals-to {
+        font-size: 22px;
+        font-weight: 800;
+        color: var(--r-blue);
+        letter-spacing: -0.015em;
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+      }
+      .bi-totals-tag {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--r-ink-2);
+      }
+      .bi-totals-right {
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+        font-weight: 600;
+        flex-wrap: wrap;
+      }
+      .bi-totals-pct {
+        font-size: 26px;
+        font-weight: 800;
+        color: #047857;
+        letter-spacing: -0.02em;
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+      }
+      .bi-totals-detail {
+        font-size: 13px;
+        color: #065F46;
+      }
+      .bi-totals-detail b {
+        color: #065F46;
+        font-weight: 800;
+        font-variant-numeric: tabular-nums;
+      }
+      @media (max-height: 900px) {
+        #panel-roi .bi-totals { padding: 12px 22px !important; font-size: 13px !important; }
+        #panel-roi .bi-totals-from,
+        #panel-roi .bi-totals-to { font-size: 18px !important; }
+        #panel-roi .bi-totals-pct { font-size: 22px !important; }
+        #panel-roi .bi-totals-detail { font-size: 12px !important; }
+      }
+      @media (max-width: 900px) {
+        .bi-totals { flex-direction: column; align-items: flex-start; }
+      }
+
+      /* Compact the left column's chrome so it fits a ~640px column comfortably */
+      @media (min-width: 1200px) {
+        .bi-sidebyside-col .bi-timeroi { padding: 18px 22px 16px; }
+        .bi-sidebyside-col .bi-timeroi-head { gap: 14px; margin-bottom: 14px; }
+        .bi-sidebyside-col .bi-timeroi-headline {
+          font-size: 19px;
+          max-width: none;
+          line-height: 1.3;
+        }
+        .bi-sidebyside-col .bi-timeroi-sub {
+          font-size: 13px;
+          max-width: none;
+          margin-top: 8px;
+          line-height: 1.55;
+        }
+
+        .bi-sidebyside-col .bi-tr-rows { gap: 8px; margin: 6px 0 14px; }
+        .bi-sidebyside-col .bi-tr-row {
+          grid-template-columns: 150px 1fr 100px;
+          gap: 14px;
+          padding: 12px 16px;
+          align-items: center;
+        }
+        .bi-sidebyside-col .bi-tr-row-label b { font-size: 13px; }
+        .bi-sidebyside-col .bi-tr-row-label span { font-size: 11px; margin-top: 2px; }
+        .bi-sidebyside-col .bi-tr-people { min-height: 44px; gap: 8px; }
+        .bi-sidebyside-col .bi-tr-person { width: 28px; height: 42px; }
+        .bi-sidebyside-col .bi-tr-person::after {
+          -webkit-mask-size: 28px 42px;
+          mask-size: 28px 42px;
+        }
+        .bi-sidebyside-col .bi-tr-tag { font-size: 20px; }
+        .bi-sidebyside-col .bi-tr-tag small { font-size: 10px; margin-top: 3px; }
+
+        .bi-sidebyside-col .bi-tr-howmuch { font-size: 11.5px; padding: 9px 12px; margin-bottom: 12px; line-height: 1.55; }
+
+        /* Three stat tiles arranged 1 / 1 / 1 across the column with cleaner spacing */
+        .bi-sidebyside-col .bi-timeroi-stats { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .bi-sidebyside-col .bi-timeroi-stat { padding: 12px 14px; gap: 5px; }
+        .bi-sidebyside-col .bi-timeroi-stat-label { font-size: 10px; letter-spacing: 0.08em; }
+        .bi-sidebyside-col .bi-timeroi-stat-value { font-size: 22px; }
+        .bi-sidebyside-col .bi-timeroi-stat-value small { font-size: 11px; }
+        .bi-sidebyside-col .bi-timeroi-stat-detail { font-size: 11px; line-height: 1.45; margin-top: 2px; }
+
+        /* Compact the right column's chrome similarly */
+        .bi-sidebyside-col .bi-compare { padding: 18px 22px; }
+        .bi-sidebyside-col .bi-compare-head { margin-bottom: 14px; padding-bottom: 12px; }
+        .bi-sidebyside-col .bi-compare-title { font-size: 14px; }
+        .bi-sidebyside-col .bi-compare-sub { font-size: 12px; }
+        .bi-sidebyside-col .bi-compare-row {
+          grid-template-columns: 140px 1fr 92px;
+          gap: 14px;
+          padding: 10px 0;
+        }
+        .bi-sidebyside-col .bi-compare-axis {
+          grid-template-columns: 140px 1fr 92px;
+          gap: 14px;
+        }
+        .bi-sidebyside-col .bi-compare-label { font-size: 13px; }
+        .bi-sidebyside-col .bi-compare-label-sub { font-size: 11px; }
+        .bi-sidebyside-col .bi-compare-stat-pct { font-size: 17px; }
+        .bi-sidebyside-col .bi-compare-stat-sub { font-size: 10px; }
+        .bi-sidebyside-col .bi-compare-summary-from,
+        .bi-sidebyside-col .bi-compare-summary-to { font-size: 16px; white-space: nowrap; }
+        .bi-sidebyside-col .bi-compare-summary-pct { font-size: 19px; white-space: nowrap; }
+        .bi-sidebyside-col .bi-compare-summary { font-size: 12px; padding: 12px 22px; margin: 12px -22px -16px; }
+        .bi-sidebyside-col .bi-compare-summary-left,
+        .bi-sidebyside-col .bi-compare-summary-right { row-gap: 4px; }
+      }
+
       /* ─── Side-by-side split: Ongoing × 3-year horizon ─── */
       /* Default to stacked so narrow viewports remain readable. */
       .bi-split {
@@ -5197,6 +5918,7 @@
         calcResult: null,
         showAssumptions: false,
         collapsedSections: { compound: false },
+        timeRoiStyle: 'bars',  // 'bars' | 'grid' | 'figs'
         editingAssumptions: false,
         pdfCompanyInput: false,
         pdfCompanyName: '',
@@ -10102,11 +10824,162 @@
           </section>`;
           })();
 
+        // ── TIME ROI · "how many engineers does this work tie up?" ──
+        // Translate the calculator's monthly hours into continuous-FTE load:
+        //   FTE = monthly_hours_consumed / monthly_hours_per_FTE.
+        // This is the intuitive question execs ask — "what does this mean
+        // for my team?" — not the abstract "engineer-years delivered."
+        const timeRoiBlock = (() => {
+          if (!r) return '';
+          const oldMonthlyOps   = r.currentSupportHours + ci.pkgHours + ci.patchHours;
+          const newMonthlyOps   = Math.max(0, oldMonthlyOps - r.totalHoursMonth);
+          if (oldMonthlyOps <= 0) return '';
+
+          // 3-year totals
+          const months          = 36;
+          const fteY            = a.fteHours;     // 1920 hrs / engineer-year
+          const fteMonth        = fteY / 12;       // 160 hrs / engineer-month
+          const onboardTradHrs  = Math.round(r.tradCycleHours || 0);
+          const onboardAwHrs    = Math.round(r.awCycleHours   || 0);
+
+          // Spread the one-time setup over the 3-year window so we get a single
+          // "concurrent FTE load" number. The setup is one-time but its labor
+          // counts the same as recurring labor when totalled across 36 months.
+          const oldMonthlyEffective = oldMonthlyOps + onboardTradHrs / months;
+          const newMonthlyEffective = newMonthlyOps + onboardAwHrs   / months;
+
+          const manualFTEs   = oldMonthlyEffective / fteMonth;
+          const awFTEs       = newMonthlyEffective / fteMonth;
+          const freedFTEs    = Math.max(0, manualFTEs - awFTEs);
+
+          // Also keep engineer-year totals for the stat tiles
+          const tradYears = (oldMonthlyOps * months + onboardTradHrs) / fteY;
+          const awYears   = (newMonthlyOps * months + onboardAwHrs)   / fteY;
+          const yearsFreed= Math.max(0, tradYears - awYears);
+
+          // Multipliers
+          const recurMultiple   = newMonthlyOps > 0 ? (oldMonthlyOps / newMonthlyOps) : 0;
+          const onboardMultiple = (onboardAwHrs > 0) ? (onboardTradHrs / onboardAwHrs) : 0;
+          const blendedMultiple = awFTEs > 0 ? (manualFTEs / awFTEs) : 0;
+
+          // Format helpers
+          const yr   = (n) => n.toFixed(n >= 10 ? 0 : 1);
+          const mult = (n) => n >= 10 ? n.toFixed(0) : n.toFixed(1);
+          const fte  = (n) => n.toFixed(1);
+
+          // ── People-icon visualization ──────────────────────────────────────
+          // We size every row to the SAME max width (= manualFTEs), so the eye
+          // can directly compare "this much" vs "this much" and see the gap.
+          const scaleFTE = Math.max(manualFTEs, 1);
+          const slotsTotal = Math.max(1, Math.ceil(scaleFTE));
+
+          // Each row renders `slotsTotal` person silhouettes. Slots up to
+          // `filledFTEs` are coloured (with the last one a partial fill);
+          // remaining slots are ghosted out.
+          const renderPeopleRow = (filledFTEs, color) => {
+            const slots = [];
+            let rem = filledFTEs;
+            for (let i = 0; i < slotsTotal; i++) {
+              const fill = Math.min(1, Math.max(0, rem));
+              rem -= 1;
+              const isGhost = fill < 0.02;
+              const fillPct = Math.round(fill * 100);
+              slots.push(`
+                <div class="bi-tr-person ${isGhost ? 'is-ghost' : ''}" style="--fill:${fillPct}%; --color:${color};">
+                  <svg viewBox="0 0 24 36" aria-hidden="true">
+                    <path d="M12 0 C 8.7 0 6 2.7 6 6 C 6 9.3 8.7 12 12 12 C 15.3 12 18 9.3 18 6 C 18 2.7 15.3 0 12 0 Z M 4 14 C 2.3 14 1 15.3 1 17 L 1 26 C 1 27.1 1.9 28 3 28 L 5 28 L 5 35 C 5 35.6 5.4 36 6 36 L 10 36 C 10.6 36 11 35.6 11 35 L 11 28 L 13 28 L 13 35 C 13 35.6 13.4 36 14 36 L 18 36 C 18.6 36 19 35.6 19 35 L 19 28 L 21 28 C 22.1 28 23 27.1 23 26 L 23 17 C 23 15.3 21.7 14 20 14 Z" />
+                  </svg>
+                </div>`);
+            }
+            return slots.join('');
+          };
+
+          const manualRow = renderPeopleRow(manualFTEs, '#CC2222');
+          const awRow     = renderPeopleRow(awFTEs,     'var(--r-blue)');
+          const freedRow  = renderPeopleRow(freedFTEs,  '#047857');
+
+          return `
+            <section class="bi-timeroi dash-animate">
+              <div class="bi-timeroi-toprow">
+                <div class="bi-timeroi-eyebrow">Team capacity &middot; 3-year view</div>
+              </div>
+              <div class="bi-timeroi-head">
+                <div class="bi-timeroi-head-text">
+                  <div class="bi-timeroi-headline">
+                    Today this work ties up <em>${fte(manualFTEs)} engineers</em> full&#8209;time.<br>
+                    With App Workspace, only <em>${fte(awFTEs)}</em>.
+                  </div>
+                </div>
+              </div>
+
+              <div class="bi-tr-rows">
+                <div class="bi-tr-row is-manual">
+                  <div class="bi-tr-row-label">
+                    <b>Today</b>
+                  </div>
+                  <div class="bi-tr-people" data-fte="${fte(manualFTEs)}">${manualRow}</div>
+                  <div class="bi-tr-tag">${fte(manualFTEs)}<small>engineers</small></div>
+                </div>
+                <div class="bi-tr-row is-aw">
+                  <div class="bi-tr-row-label">
+                    <b>With App&nbsp;Workspace</b>
+                  </div>
+                  <div class="bi-tr-people" data-fte="${fte(awFTEs)}">${awRow}</div>
+                  <div class="bi-tr-tag is-aw">${fte(awFTEs)}<small>engineers</small></div>
+                </div>
+                <div class="bi-tr-row is-freed">
+                  <div class="bi-tr-row-label">
+                    <b>You get back</b>
+                    <span>Redirect to strategy</span>
+                  </div>
+                  <div class="bi-tr-people is-freed" data-fte="${fte(freedFTEs)}">${freedRow}</div>
+                  <div class="bi-tr-tag is-freed">+${fte(freedFTEs)}<small>engineers</small></div>
+                </div>
+              </div>
+
+              <div class="bi-tr-howmuch" hidden>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                <span>Math check: today <b>${num(Math.round(oldMonthlyOps))} hrs/mo</b> of ops + <b>${num(onboardTradHrs)} hrs</b> one&#8209;time setup. Divide by <b>${Math.round(fteMonth)} hrs/mo per engineer</b>, spread across 36 months &rarr; <b>${fte(manualFTEs)} engineers</b>. With AW: <b>${num(Math.round(newMonthlyOps))} hrs/mo</b> + <b>${num(onboardAwHrs)} hrs</b> setup &rarr; <b>${fte(awFTEs)} engineers</b>.</span>
+              </div>
+
+              <div class="bi-timeroi-stats">
+                <div class="bi-timeroi-stat">
+                  <div class="bi-timeroi-stat-label">Setting up apps</div>
+                  <div class="bi-timeroi-stat-value">${mult(onboardMultiple)}<small>× faster</small></div>
+                  <div class="bi-timeroi-stat-detail">
+                    Manual: <b>${num(onboardTradHrs)}&nbsp;hours</b>.<br>
+                    With App Workspace: <b>${num(onboardAwHrs)}&nbsp;hours</b>.
+                  </div>
+                </div>
+                <div class="bi-timeroi-stat">
+                  <div class="bi-timeroi-stat-label">Day&#8209;to&#8209;day work</div>
+                  <div class="bi-timeroi-stat-value">${mult(recurMultiple)}<small>× faster</small></div>
+                  <div class="bi-timeroi-stat-detail">
+                    Tickets + packaging + patching: <b>${num(Math.round(oldMonthlyOps))}&nbsp;hrs/mo</b>.<br>
+                    With App Workspace: <b>${num(Math.round(newMonthlyOps))}&nbsp;hrs/mo</b>.
+                  </div>
+                </div>
+                <div class="bi-timeroi-stat">
+                  <div class="bi-timeroi-stat-label">Engineers redirected</div>
+                  <div class="bi-timeroi-stat-value">${fte(freedFTEs)}<small>full&#8209;time</small></div>
+                  <div class="bi-timeroi-stat-detail">
+                    Same as adding <b>${fte(freedFTEs)} strategic engineers</b> to your team &mdash;<br>
+                    every day, for 3 years &mdash; without hiring or backfilling.
+                  </div>
+                </div>
+              </div>
+            </section>
+          `;
+        })();
+
         return `
-          <div class="bi-split${compoundCol ? '' : ' is-single'}">
-            <!-- ONGOING IMPACT — monthly recurring -->
-            <section class="bi-split-col">
-              <div class="bi-section-eyebrow">Ongoing &middot; hours per month</div>
+          <div class="bi-sidebyside">
+            <div class="bi-sidebyside-col">
+              ${timeRoiBlock}
+            </div>
+            <div class="bi-sidebyside-col">
+              <section class="bi-split-col">
+                <div class="bi-section-eyebrow">Ongoing &middot; hours per month</div>
               <div class="bi-compare dash-animate">
                 <div class="bi-compare-head">
                   <div>
@@ -10128,21 +11001,21 @@
                   </div>
                   <div></div>
                 </div>
-                <div class="bi-compare-summary">
-                  <div class="bi-compare-summary-left">
-                    <span class="bi-compare-summary-from">${num(oldTotal)} hrs/mo</span>
-                    <span class="bi-compare-summary-arrow">&rarr;</span>
-                    <span class="bi-compare-summary-to">${num(newTotal)} hrs/mo</span>
-                    <span class="bi-compare-summary-tag">with Application Workspace</span>
-                  </div>
-                  <div class="bi-compare-summary-right">
-                    <span class="bi-compare-summary-pct">${pctReduction}% reduction</span>
-                    <span class="bi-compare-summary-detail">&middot; <b>${num(totalReturned)} hrs/mo</b> returned to strategy</span>
-                  </div>
-                </div>
               </div>
             </section>
-            ${compoundCol}
+            </div>
+            <div class="bi-totals">
+              <div class="bi-totals-left">
+                <span class="bi-totals-from">${num(oldTotal)} hrs/mo</span>
+                <span class="bi-totals-arrow">&rarr;</span>
+                <span class="bi-totals-to">${num(newTotal)} hrs/mo</span>
+                <span class="bi-totals-tag">with Application Workspace</span>
+              </div>
+              <div class="bi-totals-right">
+                <span class="bi-totals-pct">${pctReduction}% reduction</span>
+                <span class="bi-totals-detail">&middot; <b>${num(totalReturned)} hrs/mo</b> redirected to strategic work</span>
+              </div>
+            </div>
           </div>
         `;
       }
@@ -10567,6 +11440,14 @@
           if (action === 'expand-all') { Object.keys(STATE.openCards).forEach(k => STATE.openCards[k] = true); STATE.visitedCards = ['core','onboarding','trust']; render(); return; }
           if (action === 'calculate-impact') { calculateImpact(); render(); return; }
           if (action === 'toggle-assumptions') { STATE.showAssumptions = !STATE.showAssumptions; render(); return; }
+          if (action === 'set-timeroi-style') {
+            const style = act.getAttribute('data-style');
+            if (style && ['bars','grid','figs'].includes(style)) {
+              STATE.timeRoiStyle = style;
+              render();
+            }
+            return;
+          }
           if (action === 'toggle-section') {
             const section = act.getAttribute('data-section');
             if (section && STATE.collapsedSections.hasOwnProperty(section)) {
