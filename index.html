@@ -5036,6 +5036,78 @@
         .bi-timeroi-hero { text-align: left; align-items: flex-start; }
       }
 
+      /* ─── "Why this works" platform unification line under headline ─── */
+      .bi-timeroi-why {
+        margin-top: 10px;
+        font-size: 13px;
+        line-height: 1.5;
+        color: var(--r-ink-2);
+        padding: 9px 12px;
+        background: linear-gradient(90deg, rgba(0,191,255,0.10) 0%, rgba(0,191,255,0.02) 100%);
+        border-left: 3px solid var(--r-cyan);
+        border-radius: 0 4px 4px 0;
+      }
+      .bi-timeroi-why b {
+        color: var(--r-blue);
+        font-weight: 700;
+      }
+
+      /* ─── Capacity-bar visualization (replaces person icons) ───────── */
+      .bi-tr-cap {
+        display: flex;
+        height: 44px;
+        background: var(--r-surface-2);
+        border: 1px solid var(--r-divider);
+        border-radius: 4px;
+        overflow: hidden;
+        align-items: stretch;
+      }
+      .bi-tr-cap-fill,
+      .bi-tr-cap-seg {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: 700;
+        color: #fff;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.18);
+        letter-spacing: 0.01em;
+        white-space: nowrap;
+        overflow: hidden;
+        transition: width 800ms cubic-bezier(.2,.8,.2,1);
+        position: relative;
+      }
+      .bi-tr-cap-seg + .bi-tr-cap-seg { box-shadow: inset 1px 0 0 rgba(255,255,255,0.35); }
+      .bi-tr-cap-fill span,
+      .bi-tr-cap-seg span {
+        padding: 0 10px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
+      .bi-tr-cap-fill.is-manual { background: linear-gradient(180deg, #DC2626 0%, #B91C1C 100%); }
+      .bi-tr-cap-seg.is-aw         { background: linear-gradient(180deg, #1E40AF 0%, var(--r-blue) 100%); }
+      .bi-tr-cap-seg.is-redirected { background: linear-gradient(180deg, #059669 0%, #047857 100%); }
+
+      /* The capacity-bar layout reuses the existing .bi-tr-row grid; the
+         right "tag" column is narrower now since we drop the small subtext. */
+      .bi-tr-tag.is-freed { color: #047857; }
+
+      /* Compact sizing in side-by-side mode */
+      @media (min-width: 1200px) {
+        .bi-sidebyside-col .bi-tr-cap { height: 40px; }
+        .bi-sidebyside-col .bi-tr-cap-fill,
+        .bi-sidebyside-col .bi-tr-cap-seg { font-size: 11px; }
+        .bi-sidebyside-col .bi-tr-cap-fill span,
+        .bi-sidebyside-col .bi-tr-cap-seg span { padding: 0 8px; }
+        .bi-sidebyside-col .bi-timeroi-why { font-size: 12px; padding: 8px 11px; margin-top: 8px; }
+      }
+      @media (max-height: 900px) {
+        #panel-roi .bi-tr-cap { height: 34px !important; }
+        #panel-roi .bi-tr-cap-fill,
+        #panel-roi .bi-tr-cap-seg { font-size: 10.5px !important; }
+        #panel-roi .bi-timeroi-why { font-size: 11px !important; padding: 7px 10px !important; }
+      }
+
       /* ─── People-icon viz: "how many engineers does this work eat?" ─── */
       .bi-tr-rows {
         display: flex; flex-direction: column;
@@ -5252,11 +5324,11 @@
       /* Compact the left column's chrome so it fits a ~640px column comfortably */
       @media (min-width: 1200px) {
         .bi-sidebyside-col .bi-timeroi { padding: 18px 22px 16px; }
-        .bi-sidebyside-col .bi-timeroi-head { gap: 14px; margin-bottom: 14px; }
+        .bi-sidebyside-col .bi-timeroi-head { gap: 14px; margin-bottom: 18px; }
         .bi-sidebyside-col .bi-timeroi-headline {
-          font-size: 19px;
+          font-size: 18px;
           max-width: none;
-          line-height: 1.3;
+          line-height: 1.4;
         }
         .bi-sidebyside-col .bi-timeroi-sub {
           font-size: 13px;
@@ -10630,29 +10702,32 @@
         const a = ROI_ASSUMPTIONS[STATE.calcScenario];
         const ci = STATE.calcInputs;
 
-        // ── 5-bar distribution, derived entirely from the calculator's truth ──
-        // Catalog vs custom share of packaging + patching, driven by inputs.
-        const apps = Math.max(1, ci.apps);
-        const customShare = Math.min(1, ci.customApps / apps);
-        const catalogShare = 1 - customShare;
-        // Support hours split across UX, dashboarding, multi-tenant — from assumptions.
-        // Normalized so the three always sum to 1, even if the user enters off-totals.
-        const rawSum = (a.uxShare + a.dashShare + a.mtShare) || 1;
-        const uxShare = a.uxShare / rawSum;
-        const dashShare = a.dashShare / rawSum;
-        const mtShare = a.mtShare / rawSum;
-
-        const pkgPatchOld = ci.pkgHours + ci.patchHours;
-        const pkgPatchRet = r.pkgHoursReturned + r.patchHoursReturned;
-        const sup = r.currentSupportHours;
-        const supRet = r.ticketHoursReturned;
-
+        // ── 3 bars mapping directly to the calculator's actual inputs ──
+        // Every row here reconciles 1:1 with the user's entered numbers:
+        //   • Support tickets: monthly tickets × avg minutes, reduced by ticketReduction
+        //   • Packaging:        pkgHours, reduced by pkgReduction
+        //   • Patching:         patchHours, reduced by patchReduction
+        // No synthesized share-splits; the totals always add up to what the
+        // calculator computed.
         const bars = [
-          { label: 'Managed apps',     sub: 'Deploy + lifecycle',     old: pkgPatchOld * catalogShare, ret: pkgPatchRet * catalogShare },
-          { label: 'Custom packaging', sub: 'In-house apps',          old: pkgPatchOld * customShare,  ret: pkgPatchRet * customShare  },
-          { label: 'User experience',  sub: 'Self-serve + auth',      old: sup * uxShare,              ret: supRet * uxShare           },
-          { label: 'Dashboarding',     sub: 'Reporting + audit',      old: sup * dashShare,            ret: supRet * dashShare         },
-          { label: 'Multi-tenant',     sub: 'Cross-env consistency',  old: sup * mtShare,              ret: supRet * mtShare           },
+          {
+            label: 'Support tickets',
+            sub: `${num(ci.monthlyTickets)}/mo \u00d7 ${ci.avgTicketMins} min each`,
+            old: r.currentSupportHours,
+            ret: r.ticketHoursReturned,
+          },
+          {
+            label: 'App packaging',
+            sub: 'Build + repackage',
+            old: ci.pkgHours,
+            ret: r.pkgHoursReturned,
+          },
+          {
+            label: 'Patching',
+            sub: 'Validate + deploy',
+            old: ci.patchHours,
+            ret: r.patchHoursReturned,
+          },
         ].map(b => {
           const oldR = Math.round(b.old);
           const retR = Math.round(b.ret);
@@ -10852,6 +10927,13 @@
           const awFTEs       = newMonthlyEffective / fteMonth;
           const freedFTEs    = Math.max(0, manualFTEs - awFTEs);
 
+          // Rounded-display values, guaranteed to sum: displayedFreed = displayedManual − displayedAW.
+          // This avoids the rounding artifact where 2.16 → "2.2" and 0.81 → "0.8"
+          // but 2.16 − 0.81 = 1.35 → "1.3"  →  0.8 + 1.3 ≠ 2.2.
+          const dManual = parseFloat(manualFTEs.toFixed(1));
+          const dAw     = parseFloat(awFTEs.toFixed(1));
+          const dFreed  = parseFloat(Math.max(0, dManual - dAw).toFixed(1));
+
           // Also keep engineer-year totals for the stat tiles
           const tradYears = (oldMonthlyOps * months + onboardTradHrs) / fteY;
           const awYears   = (newMonthlyOps * months + onboardAwHrs)   / fteY;
@@ -10867,36 +10949,14 @@
           const mult = (n) => n >= 10 ? n.toFixed(0) : n.toFixed(1);
           const fte  = (n) => n.toFixed(1);
 
-          // ── People-icon visualization ──────────────────────────────────────
-          // We size every row to the SAME max width (= manualFTEs), so the eye
-          // can directly compare "this much" vs "this much" and see the gap.
-          const scaleFTE = Math.max(manualFTEs, 1);
-          const slotsTotal = Math.max(1, Math.ceil(scaleFTE));
-
-          // Each row renders `slotsTotal` person silhouettes. Slots up to
-          // `filledFTEs` are coloured (with the last one a partial fill);
-          // remaining slots are ghosted out.
-          const renderPeopleRow = (filledFTEs, color) => {
-            const slots = [];
-            let rem = filledFTEs;
-            for (let i = 0; i < slotsTotal; i++) {
-              const fill = Math.min(1, Math.max(0, rem));
-              rem -= 1;
-              const isGhost = fill < 0.02;
-              const fillPct = Math.round(fill * 100);
-              slots.push(`
-                <div class="bi-tr-person ${isGhost ? 'is-ghost' : ''}" style="--fill:${fillPct}%; --color:${color};">
-                  <svg viewBox="0 0 24 36" aria-hidden="true">
-                    <path d="M12 0 C 8.7 0 6 2.7 6 6 C 6 9.3 8.7 12 12 12 C 15.3 12 18 9.3 18 6 C 18 2.7 15.3 0 12 0 Z M 4 14 C 2.3 14 1 15.3 1 17 L 1 26 C 1 27.1 1.9 28 3 28 L 5 28 L 5 35 C 5 35.6 5.4 36 6 36 L 10 36 C 10.6 36 11 35.6 11 35 L 11 28 L 13 28 L 13 35 C 13 35.6 13.4 36 14 36 L 18 36 C 18.6 36 19 35.6 19 35 L 19 28 L 21 28 C 22.1 28 23 27.1 23 26 L 23 17 C 23 15.3 21.7 14 20 14 Z" />
-                  </svg>
-                </div>`);
-            }
-            return slots.join('');
-          };
-
-          const manualRow = renderPeopleRow(manualFTEs, '#CC2222');
-          const awRow     = renderPeopleRow(awFTEs,     'var(--r-blue)');
-          const freedRow  = renderPeopleRow(freedFTEs,  '#047857');
+          // ── Capacity-bar visualization ────────────────────────────────
+          // Show 2 bars on the same scale (max = manual FTE load).
+          // Row 1: "Today" full red bar.
+          // Row 2: "With AW" same total length, but split into AW-consumed (blue)
+          // and redirected (green). The math is visible — row 1's bar equals
+          // the sum of row 2's two segments.
+          const awPct       = manualFTEs > 0 ? (awFTEs / manualFTEs) * 100 : 0;
+          const redirectPct = manualFTEs > 0 ? (freedFTEs / manualFTEs) * 100 : 0;
 
           return `
             <section class="bi-timeroi dash-animate">
@@ -10906,8 +10966,10 @@
               <div class="bi-timeroi-head">
                 <div class="bi-timeroi-head-text">
                   <div class="bi-timeroi-headline">
-                    Today this work ties up <em>${fte(manualFTEs)} engineers</em> full&#8209;time.<br>
-                    With App Workspace, only <em>${fte(awFTEs)}</em>.
+                    Today this work consumes <em>${dManual.toFixed(1)} FTEs</em> of your engineering capacity &mdash; with App Workspace, only <em>${dAw.toFixed(1)}</em>.
+                  </div>
+                  <div class="bi-timeroi-why">
+                    <b>Why this works:</b> Application Workspace delivers a single app definition to every platform you run &mdash; Intune, SCCM, AVD, Citrix, macOS &mdash; instead of rebuilding each app five times.
                   </div>
                 </div>
               </div>
@@ -10916,55 +10978,51 @@
                 <div class="bi-tr-row is-manual">
                   <div class="bi-tr-row-label">
                     <b>Today</b>
+                    <span>Manual ops</span>
                   </div>
-                  <div class="bi-tr-people" data-fte="${fte(manualFTEs)}">${manualRow}</div>
-                  <div class="bi-tr-tag">${fte(manualFTEs)}<small>engineers</small></div>
+                  <div class="bi-tr-cap">
+                    <div class="bi-tr-cap-fill is-manual" style="width:100%"><span>${dManual.toFixed(1)} FTEs absorbed by ops</span></div>
+                  </div>
+                  <div class="bi-tr-tag">${dManual.toFixed(1)}<small>FTE</small></div>
                 </div>
                 <div class="bi-tr-row is-aw">
                   <div class="bi-tr-row-label">
                     <b>With App&nbsp;Workspace</b>
+                    <span>Same workload</span>
                   </div>
-                  <div class="bi-tr-people" data-fte="${fte(awFTEs)}">${awRow}</div>
-                  <div class="bi-tr-tag is-aw">${fte(awFTEs)}<small>engineers</small></div>
-                </div>
-                <div class="bi-tr-row is-freed">
-                  <div class="bi-tr-row-label">
-                    <b>You get back</b>
-                    <span>Redirect to strategy</span>
+                  <div class="bi-tr-cap is-split">
+                    <div class="bi-tr-cap-seg is-aw" style="width:${awPct}%"><span>AW &middot; ${dAw.toFixed(1)}</span></div>
+                    <div class="bi-tr-cap-seg is-redirected" style="width:${redirectPct}%"><span>Redirected to strategy &middot; +${dFreed.toFixed(1)}</span></div>
                   </div>
-                  <div class="bi-tr-people is-freed" data-fte="${fte(freedFTEs)}">${freedRow}</div>
-                  <div class="bi-tr-tag is-freed">+${fte(freedFTEs)}<small>engineers</small></div>
+                  <div class="bi-tr-tag is-aw">${dAw.toFixed(1)}<small>FTE</small></div>
                 </div>
               </div>
 
               <div class="bi-tr-howmuch" hidden>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-                <span>Math check: today <b>${num(Math.round(oldMonthlyOps))} hrs/mo</b> of ops + <b>${num(onboardTradHrs)} hrs</b> one&#8209;time setup. Divide by <b>${Math.round(fteMonth)} hrs/mo per engineer</b>, spread across 36 months &rarr; <b>${fte(manualFTEs)} engineers</b>. With AW: <b>${num(Math.round(newMonthlyOps))} hrs/mo</b> + <b>${num(onboardAwHrs)} hrs</b> setup &rarr; <b>${fte(awFTEs)} engineers</b>.</span>
+                <span>Math check: today <b>${num(Math.round(oldMonthlyOps))} hrs/mo</b> of ops + <b>${num(onboardTradHrs)} hrs</b> one&#8209;time setup. Divide by <b>${Math.round(fteMonth)} hrs/mo per engineer</b>, spread across 36 months &rarr; <b>${fte(manualFTEs)} FTEs</b>. With AW: <b>${num(Math.round(newMonthlyOps))} hrs/mo</b> + <b>${num(onboardAwHrs)} hrs</b> setup &rarr; <b>${fte(awFTEs)} FTEs</b>.</span>
               </div>
 
               <div class="bi-timeroi-stats">
                 <div class="bi-timeroi-stat">
-                  <div class="bi-timeroi-stat-label">Setting up apps</div>
-                  <div class="bi-timeroi-stat-value">${mult(onboardMultiple)}<small>× faster</small></div>
+                  <div class="bi-timeroi-stat-label">App setup</div>
+                  <div class="bi-timeroi-stat-value">${mult(onboardMultiple)}<small>× less work per app</small></div>
                   <div class="bi-timeroi-stat-detail">
-                    Manual: <b>${num(onboardTradHrs)}&nbsp;hours</b>.<br>
-                    With App Workspace: <b>${num(onboardAwHrs)}&nbsp;hours</b>.
+                    One definition, every platform &mdash; you stop rebuilding each app for Intune, SCCM, AVD, Citrix, and macOS.
                   </div>
                 </div>
                 <div class="bi-timeroi-stat">
-                  <div class="bi-timeroi-stat-label">Day&#8209;to&#8209;day work</div>
-                  <div class="bi-timeroi-stat-value">${mult(recurMultiple)}<small>× faster</small></div>
+                  <div class="bi-timeroi-stat-label">Day&#8209;to&#8209;day ops</div>
+                  <div class="bi-timeroi-stat-value">${mult(recurMultiple)}<small>× less work</small></div>
                   <div class="bi-timeroi-stat-detail">
-                    Tickets + packaging + patching: <b>${num(Math.round(oldMonthlyOps))}&nbsp;hrs/mo</b>.<br>
-                    With App Workspace: <b>${num(Math.round(newMonthlyOps))}&nbsp;hrs/mo</b>.
+                    Tickets, packaging, patching: <b>${num(Math.round(oldMonthlyOps))}&nbsp;hrs/mo</b> &rarr; <b>${num(Math.round(newMonthlyOps))}&nbsp;hrs/mo</b>.
                   </div>
                 </div>
                 <div class="bi-timeroi-stat">
-                  <div class="bi-timeroi-stat-label">Engineers redirected</div>
-                  <div class="bi-timeroi-stat-value">${fte(freedFTEs)}<small>full&#8209;time</small></div>
+                  <div class="bi-timeroi-stat-label">Capacity redirected</div>
+                  <div class="bi-timeroi-stat-value">+${dFreed.toFixed(1)}<small>FTE</small></div>
                   <div class="bi-timeroi-stat-detail">
-                    Same as adding <b>${fte(freedFTEs)} strategic engineers</b> to your team &mdash;<br>
-                    every day, for 3 years &mdash; without hiring or backfilling.
+                    <b>${dFreed.toFixed(1)} FTEs</b> of engineering capacity redirected to strategic work &mdash; every day, for 3 years, without hiring or backfilling.
                   </div>
                 </div>
               </div>
