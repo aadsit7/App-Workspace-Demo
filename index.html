@@ -3966,6 +3966,21 @@
         color: var(--r-ink);
       }
       .bi-assumptions-actions { display: flex; gap: 8px; margin-top: 12px; }
+      .bi-assumptions-audit {
+        margin-top: 12px;
+        padding: 9px 12px;
+        background: var(--r-quote-bg);
+        border: 1px solid var(--r-divider);
+        border-radius: 4px;
+        font-size: 11.5px;
+        line-height: 1.5;
+        color: var(--r-ink-2);
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+      }
+      .bi-assumptions-audit svg { color: var(--r-ink-2); flex-shrink: 0; margin-top: 1px; }
+      .bi-assumptions-audit b { color: var(--r-ink); font-weight: 700; font-variant-numeric: tabular-nums; }
       .bi-assumptions-save {
         background: var(--r-blue);
         color: #fff;
@@ -5036,6 +5051,84 @@
         .bi-timeroi-hero { text-align: left; align-items: flex-start; }
       }
 
+      /* ─── Environments strip — context band above the side-by-side results ─── */
+      .bi-envs {
+        background: #fff;
+        border: 1px solid var(--r-divider);
+        border-radius: 8px;
+        padding: 12px 18px;
+        box-shadow: var(--shadow-card);
+      }
+      .bi-envs-row {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+      .bi-envs-label {
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--r-ink-2);
+        flex-shrink: 0;
+      }
+      .bi-envs-pills {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+      .bi-env-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 12px 5px 9px;
+        border-radius: 9999px;
+        font-size: 12.5px;
+        font-weight: 600;
+        color: var(--r-blue);
+        line-height: 1.2;
+        background: #fff;
+        border: 1px solid var(--r-divider);
+        transition: border-color 150ms, box-shadow 150ms, transform 150ms;
+      }
+      .bi-env-pill:hover {
+        border-color: var(--r-cyan);
+        box-shadow: 0 2px 6px rgba(0,191,255,0.18);
+        transform: translateY(-1px);
+      }
+      .bi-env-pill svg {
+        width: 16px; height: 16px;
+        flex-shrink: 0;
+        display: block;
+      }
+      .bi-envs-bridge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-left: auto;
+        padding: 5px 11px;
+        background: linear-gradient(90deg, rgba(0,191,255,0.10) 0%, rgba(0,191,255,0.04) 100%);
+        border: 1px solid rgba(0,191,255,0.32);
+        border-radius: 9999px;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--r-blue);
+        white-space: nowrap;
+      }
+      .bi-envs-bridge svg { color: var(--r-cyan); }
+      @media (max-height: 900px) {
+        #panel-roi .bi-envs { padding: 8px 14px !important; }
+        #panel-roi .bi-env-pill { font-size: 11.5px !important; padding: 4px 10px 4px 7px !important; }
+        #panel-roi .bi-env-pill svg { width: 14px !important; height: 14px !important; }
+        #panel-roi .bi-envs-label { font-size: 9.5px !important; }
+        #panel-roi .bi-envs-bridge { font-size: 11px !important; padding: 4px 9px !important; }
+      }
+      @media (max-width: 900px) {
+        .bi-envs-bridge { margin-left: 0 !important; }
+      }
+
       /* ─── "Why this works" platform unification line under headline ─── */
       .bi-timeroi-why {
         margin-top: 10px;
@@ -5053,6 +5146,20 @@
       }
 
       /* ─── Capacity-bar visualization (replaces person icons) ───────── */
+      .bi-tr-fallback {
+        display: flex;
+        gap: 12px;
+        padding: 14px 16px;
+        background: #FEF3C7;
+        border: 1px solid #FBBF24;
+        border-radius: 6px;
+        margin: 6px 0 14px;
+        font-size: 13px;
+        line-height: 1.5;
+        color: #78350F;
+      }
+      .bi-tr-fallback svg { color: #B45309; flex-shrink: 0; margin-top: 1px; }
+      .bi-tr-fallback b { color: #451A03; font-weight: 700; }
       .bi-tr-cap {
         display: flex;
         height: 44px;
@@ -10640,6 +10747,12 @@
                     <label class="bi-rate"><span>Traditional · standard</span><input type="number" id="asn-trad-std" min="0" step="0.01" value="${PACKAGING_BENCHMARKS.tradStdHrs}"></label>
                     <label class="bi-rate"><span>Traditional · complex</span><input type="number" id="asn-trad-cmp" min="0" step="0.1" value="${PACKAGING_BENCHMARKS.tradComplexHrs}"></label>
                   </div>
+                  ${r && (r.todayFTE_raw !== undefined) ? `
+                  <div class="bi-assumptions-audit">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    <span><b>FTE rounding:</b> Team-capacity values are rounded up (ceiling) to whole numbers for clarity. Underlying field-test math for this scenario: today = <b>${r.todayFTE_raw.toFixed(1)} FTE</b>, with AW = <b>${r.awFTE_raw.toFixed(1)} FTE</b>, redirected = <b>${Math.max(0, r.todayFTE_raw - r.awFTE_raw).toFixed(1)} FTE</b>.</span>
+                  </div>
+                  ` : ''}
                   <div class="bi-assumptions-actions">
                     <button type="button" data-action="save-assumptions" class="bi-assumptions-save">Save &amp; Recalculate</button>
                     <button type="button" data-action="toggle-assumptions" class="bi-assumptions-close">Close</button>
@@ -10657,7 +10770,26 @@
                   <div class="bi-toosmall-body">Organizations under 200 typically don't face the multi-platform complexity Application Workspace addresses. The per-platform model usually works fine at that scale.</div>
                 </div>
               </div>
-            ` : hasResult ? `<div id="impact-results">${renderCalcResult()}</div>` : `
+            ` : hasResult ? `
+              <div class="bi-envs">
+                <div class="bi-envs-row">
+                  <div class="bi-envs-label">Calculating across your environments</div>
+                  <div class="bi-envs-pills">
+                    <span class="bi-env-pill" title="Microsoft Intune"><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><linearGradient id="biIntGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#32BEDD"/><stop offset="1" stop-color="#0078D4"/></linearGradient></defs><path fill="url(#biIntGrad)" d="M22.5 12.5a6.5 6.5 0 0 0-12.7-1.7A5 5 0 0 0 10 21h12a4.5 4.5 0 0 0 .5-8.5z"/><circle cx="14.5" cy="16.5" r="1.6" fill="#fff"/><circle cx="19.5" cy="14.5" r="1.6" fill="#fff"/><circle cx="17" cy="18" r="1.2" fill="#fff"/></svg>Intune</span>
+                    <span class="bi-env-pill" title="Microsoft Configuration Manager"><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="4" y="4" width="11.5" height="11.5" fill="#F25022"/><rect x="16.5" y="4" width="11.5" height="11.5" fill="#7FBA00"/><rect x="4" y="16.5" width="11.5" height="11.5" fill="#00A4EF"/><rect x="16.5" y="16.5" width="11.5" height="11.5" fill="#FFB900"/></svg>ConfigMgr</span>
+                    <span class="bi-env-pill" title="Citrix"><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="#000"/><path d="M22 11.2a8.5 8.5 0 1 0 0 9.6l-2.6-1.5a5.5 5.5 0 1 1 0-6.6z" fill="#fff"/></svg>Citrix</span>
+                    <span class="bi-env-pill" title="Azure Virtual Desktop / Windows 365"><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="3" y="4" width="12" height="12" fill="#F25022"/><rect x="17" y="4" width="12" height="12" fill="#7FBA00"/><rect x="3" y="18" width="12" height="12" fill="#00A4EF"/><rect x="17" y="18" width="12" height="12" fill="#FFB900"/></svg>AVD / W365</span>
+                    <span class="bi-env-pill" title="macOS"><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill="#1A1A2E" d="M22.3 17c0-2.7 2.2-4 2.3-4.1-1.3-1.8-3.2-2.1-3.9-2.1-1.7-.2-3.2 1-4 1-.8 0-2.1-1-3.5-1-1.8 0-3.5 1-4.4 2.7-1.9 3.3-.5 8.1 1.4 10.7.9 1.3 2 2.7 3.4 2.7 1.4-.1 1.9-.9 3.5-.9 1.7 0 2.1.9 3.5.9 1.5 0 2.4-1.3 3.3-2.6 1-1.5 1.4-3 1.5-3.1-.1-.1-2.9-1.1-3-4.2zM19.7 9.1c.7-.9 1.2-2.1 1.1-3.3-1 0-2.3.7-3 1.6-.7.8-1.3 2-1.1 3.2 1.2.1 2.3-.6 3-1.5z"/></svg>macOS</span>
+                    <span class="bi-env-pill" title="Jamf"><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill="#1168ED" d="M22.5 4.5c.6 0 1 .5 1 1.1V18c0 5-4 9-9 9-2.4 0-4.5-.9-6.1-2.4-.4-.4-.4-1 0-1.4l2.1-2.1c.4-.4 1-.4 1.4-.1.7.6 1.6 1 2.6 1 2.2 0 4-1.8 4-4V5.6c0-.6.5-1.1 1.1-1.1h2.9zM10.5 16.5a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"/></svg>Jamf</span>
+                  </div>
+                  <div class="bi-envs-bridge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="5 12 19 12"></polyline><polyline points="13 6 19 12 13 18"></polyline></svg>
+                    <span>One App Workspace definition, every platform</span>
+                  </div>
+                </div>
+              </div>
+              <div id="impact-results">${renderCalcResult()}</div>
+            ` : `
               <div class="bi-empty">
                 <div class="bi-empty-visual">
                   <div class="bi-empty-bar" style="height:22%"></div>
@@ -10899,6 +11031,34 @@
           </section>`;
           })();
 
+        // ── FTE rounding rule (per brief, used by both the team-capacity card
+        //    on the left AND the totals strip below both columns) ────────────
+        //   todayTotal   = recurring hrs × 36
+        //   awTotal      = recurring hrs × 36 + one-time setup investment
+        //   FTE_raw      = total / (160 × 36)
+        //   FTE_display  = Math.ceil(FTE_raw)
+        //   redirected   = todayDisplay − awDisplay  (NOT ceil of the delta)
+        const _fteHorizonMonths = 36;
+        const _fteHoursPerMonth = a.fteHours / 12;            // 160
+        const _fteHoursPerHorizon = _fteHoursPerMonth * _fteHorizonMonths;  // 5,760
+
+        const oldMonthlyOps   = r ? r.currentSupportHours + ci.pkgHours + ci.patchHours : 0;
+        const newMonthlyOps   = r ? Math.max(0, oldMonthlyOps - r.totalHoursMonth) : 0;
+        const onboardTradHrs  = r ? Math.round(r.tradCycleHours || 0) : 0;
+        const onboardAwHrs    = r ? Math.round(r.awCycleHours   || 0) : 0;
+
+        const todayTotalHours = oldMonthlyOps * _fteHorizonMonths;
+        const awTotalHours    = newMonthlyOps * _fteHorizonMonths + onboardTradHrs;
+
+        const todayFTE_raw = _fteHoursPerHorizon > 0 ? todayTotalHours / _fteHoursPerHorizon : 0;
+        const awFTE_raw    = _fteHoursPerHorizon > 0 ? awTotalHours    / _fteHoursPerHorizon : 0;
+        const redirected_raw = Math.max(0, todayFTE_raw - awFTE_raw);
+
+        const todayFTE_display      = Math.ceil(todayFTE_raw);
+        const awFTE_display         = Math.ceil(awFTE_raw);
+        const redirectedFTE_display = Math.max(0, todayFTE_display - awFTE_display);
+        const showFTEBlock          = redirectedFTE_display > 0;
+
         // ── TIME ROI · "how many engineers does this work tie up?" ──
         // Translate the calculator's monthly hours into continuous-FTE load:
         //   FTE = monthly_hours_consumed / monthly_hours_per_FTE.
@@ -10906,57 +11066,20 @@
         // for my team?" — not the abstract "engineer-years delivered."
         const timeRoiBlock = (() => {
           if (!r) return '';
-          const oldMonthlyOps   = r.currentSupportHours + ci.pkgHours + ci.patchHours;
-          const newMonthlyOps   = Math.max(0, oldMonthlyOps - r.totalHoursMonth);
           if (oldMonthlyOps <= 0) return '';
 
-          // 3-year totals
-          const months          = 36;
-          const fteY            = a.fteHours;     // 1920 hrs / engineer-year
-          const fteMonth        = fteY / 12;       // 160 hrs / engineer-month
-          const onboardTradHrs  = Math.round(r.tradCycleHours || 0);
-          const onboardAwHrs    = Math.round(r.awCycleHours   || 0);
+          // Bar segment widths use the RAW ratio so the visual proportion stays
+          // accurate even when the displayed integer labels round up.
+          const awPctRaw       = todayFTE_raw > 0 ? (awFTE_raw / todayFTE_raw) * 100 : 0;
+          const redirectPctRaw = Math.max(0, 100 - awPctRaw);
 
-          // Spread the one-time setup over the 3-year window so we get a single
-          // "concurrent FTE load" number. The setup is one-time but its labor
-          // counts the same as recurring labor when totalled across 36 months.
-          const oldMonthlyEffective = oldMonthlyOps + onboardTradHrs / months;
-          const newMonthlyEffective = newMonthlyOps + onboardAwHrs   / months;
-
-          const manualFTEs   = oldMonthlyEffective / fteMonth;
-          const awFTEs       = newMonthlyEffective / fteMonth;
-          const freedFTEs    = Math.max(0, manualFTEs - awFTEs);
-
-          // Rounded-display values, guaranteed to sum: displayedFreed = displayedManual − displayedAW.
-          // This avoids the rounding artifact where 2.16 → "2.2" and 0.81 → "0.8"
-          // but 2.16 − 0.81 = 1.35 → "1.3"  →  0.8 + 1.3 ≠ 2.2.
-          const dManual = parseFloat(manualFTEs.toFixed(1));
-          const dAw     = parseFloat(awFTEs.toFixed(1));
-          const dFreed  = parseFloat(Math.max(0, dManual - dAw).toFixed(1));
-
-          // Also keep engineer-year totals for the stat tiles
-          const tradYears = (oldMonthlyOps * months + onboardTradHrs) / fteY;
-          const awYears   = (newMonthlyOps * months + onboardAwHrs)   / fteY;
-          const yearsFreed= Math.max(0, tradYears - awYears);
-
-          // Multipliers
+          // Multipliers used by the stat tiles
           const recurMultiple   = newMonthlyOps > 0 ? (oldMonthlyOps / newMonthlyOps) : 0;
           const onboardMultiple = (onboardAwHrs > 0) ? (onboardTradHrs / onboardAwHrs) : 0;
-          const blendedMultiple = awFTEs > 0 ? (manualFTEs / awFTEs) : 0;
+          const blendedMultiple = awTotalHours > 0 ? (todayTotalHours / awTotalHours) : 0;
 
-          // Format helpers
-          const yr   = (n) => n.toFixed(n >= 10 ? 0 : 1);
+          // Format helper for multipliers
           const mult = (n) => n >= 10 ? n.toFixed(0) : n.toFixed(1);
-          const fte  = (n) => n.toFixed(1);
-
-          // ── Capacity-bar visualization ────────────────────────────────
-          // Show 2 bars on the same scale (max = manual FTE load).
-          // Row 1: "Today" full red bar.
-          // Row 2: "With AW" same total length, but split into AW-consumed (blue)
-          // and redirected (green). The math is visible — row 1's bar equals
-          // the sum of row 2's two segments.
-          const awPct       = manualFTEs > 0 ? (awFTEs / manualFTEs) * 100 : 0;
-          const redirectPct = manualFTEs > 0 ? (freedFTEs / manualFTEs) * 100 : 0;
 
           return `
             <section class="bi-timeroi dash-animate">
@@ -10966,7 +11089,10 @@
               <div class="bi-timeroi-head">
                 <div class="bi-timeroi-head-text">
                   <div class="bi-timeroi-headline">
-                    Today this work consumes <em>${dManual.toFixed(1)} FTEs</em> of your engineering capacity &mdash; with App Workspace, only <em>${dAw.toFixed(1)}</em>.
+                    ${showFTEBlock
+                      ? `Today this work consumes <em>${todayFTE_display} FTEs</em> of your engineering capacity &mdash; with App Workspace, only <em>${awFTE_display}</em>.`
+                      : `Less than 1 FTE redirected at this scale &mdash; the hours&#8209;per&#8209;month chart on the right shows where time still gets returned.`
+                    }
                   </div>
                   <div class="bi-timeroi-why">
                     <b>Why this works:</b> Application Workspace delivers a single app definition to every platform you run &mdash; Intune, SCCM, AVD, Citrix, macOS &mdash; instead of rebuilding each app five times.
@@ -10974,6 +11100,7 @@
                 </div>
               </div>
 
+              ${showFTEBlock ? `
               <div class="bi-tr-rows">
                 <div class="bi-tr-row is-manual">
                   <div class="bi-tr-row-label">
@@ -10981,9 +11108,9 @@
                     <span>Manual ops</span>
                   </div>
                   <div class="bi-tr-cap">
-                    <div class="bi-tr-cap-fill is-manual" style="width:100%"><span>${dManual.toFixed(1)} FTEs absorbed by ops</span></div>
+                    <div class="bi-tr-cap-fill is-manual" style="width:100%"><span>${todayFTE_display} FTE${todayFTE_display === 1 ? '' : 's'} absorbed by ops</span></div>
                   </div>
-                  <div class="bi-tr-tag">${dManual.toFixed(1)}<small>FTE</small></div>
+                  <div class="bi-tr-tag">${todayFTE_display}<small>FTE</small></div>
                 </div>
                 <div class="bi-tr-row is-aw">
                   <div class="bi-tr-row-label">
@@ -10991,38 +11118,50 @@
                     <span>Same workload</span>
                   </div>
                   <div class="bi-tr-cap is-split">
-                    <div class="bi-tr-cap-seg is-aw" style="width:${awPct}%"><span>AW &middot; ${dAw.toFixed(1)}</span></div>
-                    <div class="bi-tr-cap-seg is-redirected" style="width:${redirectPct}%"><span>Redirected to strategy &middot; +${dFreed.toFixed(1)}</span></div>
+                    <div class="bi-tr-cap-seg is-aw" style="width:${awPctRaw}%"><span>AW &middot; ${awFTE_display}</span></div>
+                    <div class="bi-tr-cap-seg is-redirected" style="width:${redirectPctRaw}%"><span>Redirected to strategy &middot; +${redirectedFTE_display}</span></div>
                   </div>
-                  <div class="bi-tr-tag is-aw">${dAw.toFixed(1)}<small>FTE</small></div>
+                  <div class="bi-tr-tag is-aw">${awFTE_display}<small>FTE</small></div>
                 </div>
               </div>
+              ` : `
+              <div class="bi-tr-fallback">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <div>
+                  <b>Under 1 FTE of capacity redirected at this scale.</b><br>
+                  At your size, App Workspace still returns <b>${num(Math.round((oldMonthlyOps - newMonthlyOps)))} hrs/mo</b> of effort &mdash; see the hours&#8209;per&#8209;month chart for the detail.
+                </div>
+              </div>
+              `}
 
               <div class="bi-tr-howmuch" hidden>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-                <span>Math check: today <b>${num(Math.round(oldMonthlyOps))} hrs/mo</b> of ops + <b>${num(onboardTradHrs)} hrs</b> one&#8209;time setup. Divide by <b>${Math.round(fteMonth)} hrs/mo per engineer</b>, spread across 36 months &rarr; <b>${fte(manualFTEs)} FTEs</b>. With AW: <b>${num(Math.round(newMonthlyOps))} hrs/mo</b> + <b>${num(onboardAwHrs)} hrs</b> setup &rarr; <b>${fte(awFTEs)} FTEs</b>.</span>
+                <span>Math check: today <b>${num(Math.round(oldMonthlyOps))} hrs/mo</b> &times; 36 = <b>${num(todayTotalHours)} hrs</b> &rarr; ${todayFTE_raw.toFixed(2)} FTE raw &rarr; <b>${todayFTE_display} FTE displayed</b>. With AW: <b>${num(Math.round(newMonthlyOps))} hrs/mo</b> &times; 36 + <b>${num(onboardTradHrs)} hrs</b> setup = <b>${num(awTotalHours)} hrs</b> &rarr; ${awFTE_raw.toFixed(2)} FTE raw &rarr; <b>${awFTE_display} FTE displayed</b>.</span>
               </div>
 
               <div class="bi-timeroi-stats">
                 <div class="bi-timeroi-stat">
                   <div class="bi-timeroi-stat-label">App setup</div>
-                  <div class="bi-timeroi-stat-value">${mult(onboardMultiple)}<small>× less work per app</small></div>
+                  <div class="bi-timeroi-stat-value">${mult(onboardMultiple)}<small>&times; less work per app</small></div>
                   <div class="bi-timeroi-stat-detail">
                     One definition, every platform &mdash; you stop rebuilding each app for Intune, SCCM, AVD, Citrix, and macOS.
                   </div>
                 </div>
                 <div class="bi-timeroi-stat">
                   <div class="bi-timeroi-stat-label">Day&#8209;to&#8209;day ops</div>
-                  <div class="bi-timeroi-stat-value">${mult(recurMultiple)}<small>× less work</small></div>
+                  <div class="bi-timeroi-stat-value">${mult(recurMultiple)}<small>&times; less work</small></div>
                   <div class="bi-timeroi-stat-detail">
                     Tickets, packaging, patching: <b>${num(Math.round(oldMonthlyOps))}&nbsp;hrs/mo</b> &rarr; <b>${num(Math.round(newMonthlyOps))}&nbsp;hrs/mo</b>.
                   </div>
                 </div>
                 <div class="bi-timeroi-stat">
                   <div class="bi-timeroi-stat-label">Capacity redirected</div>
-                  <div class="bi-timeroi-stat-value">+${dFreed.toFixed(1)}<small>FTE</small></div>
+                  <div class="bi-timeroi-stat-value">${showFTEBlock ? `+${redirectedFTE_display}` : '&lt;1'}<small>FTE</small></div>
                   <div class="bi-timeroi-stat-detail">
-                    <b>${dFreed.toFixed(1)} FTEs</b> of engineering capacity redirected to strategic work &mdash; every day, for 3 years, without hiring or backfilling.
+                    ${showFTEBlock
+                      ? `<b>${redirectedFTE_display} FTE${redirectedFTE_display === 1 ? '' : 's'}</b> of engineering capacity redirected to strategic work &mdash; every day, for 3 years, without hiring or backfilling.`
+                      : `Capacity redirected rounds to under 1 FTE at this scale. Hours-per-month still shows the full benefit.`
+                    }
                   </div>
                 </div>
               </div>
@@ -11071,7 +11210,7 @@
               </div>
               <div class="bi-totals-right">
                 <span class="bi-totals-pct">${pctReduction}% reduction</span>
-                <span class="bi-totals-detail">&middot; <b>${num(totalReturned)} hrs/mo</b> redirected to strategic work</span>
+                <span class="bi-totals-detail">${showFTEBlock ? `&middot; <b>${num(totalReturned)} hrs/mo</b> &middot; <b>${redirectedFTE_display} FTE${redirectedFTE_display === 1 ? '' : 's'} of capacity</b> redirected to strategic work` : `&middot; <b>${num(totalReturned)} hrs/mo</b> redirected to strategic work`}</span>
               </div>
             </div>
           </div>
@@ -11138,7 +11277,24 @@
         const threeYearNet = threeYearValue - threeYearInvestment;
         const awBlendedPerUserMonth = ci.users > 0 ? (awAnnualInvestment / 12 / ci.users) : 0;
 
-        STATE.calcResult = { currentSupportHours, ticketHoursReturned, ticketsAvoided, pkgHoursReturned, patchHoursReturned, totalHoursMonth, totalHoursYear, fteCapacity, strategicHours, reqsDeferred, delayedInitiatives, supportCostAnnual, engineeringCostAnnual, wasteCostAnnual, totalBurnAnnual, totalRecoveredAnnual, monthlyCostOfWaiting, cycleStandardApps, cycleComplexApps, awCycleHours, tradCycleHours, cycleHoursSaved, cycleTimeMultiple, cycleDollarsSaved, awAnnualInvestment, recurringAnnualValue, oneTimePackagingValue, year1Value, year1Net, year1ROIMultiple, recurringROIMultiple, paybackMonths, threeYearValue, threeYearInvestment, threeYearNet, awBlendedPerUserMonth };
+        // ── FTE rounding for Team-capacity card (per brief) ──
+        // Ceiling rounding, with redirected = todayDisplay − awDisplay so the
+        // three numbers always reconcile.
+        const _fteHorizonMonths = 36;
+        const _fteHoursPerMonth = a.fteHours / 12;
+        const _fteHoursPerHorizon = _fteHoursPerMonth * _fteHorizonMonths;
+        const _oldMonthlyOps = currentSupportHours + ci.pkgHours + ci.patchHours;
+        const _newMonthlyOps = Math.max(0, _oldMonthlyOps - totalHoursMonth);
+        const todayTotalHours = _oldMonthlyOps * _fteHorizonMonths;
+        const awTotalHours    = _newMonthlyOps * _fteHorizonMonths + Math.round(tradCycleHours);
+        const todayFTE_raw = _fteHoursPerHorizon > 0 ? todayTotalHours / _fteHoursPerHorizon : 0;
+        const awFTE_raw    = _fteHoursPerHorizon > 0 ? awTotalHours    / _fteHoursPerHorizon : 0;
+        const todayFTE_display = Math.ceil(todayFTE_raw);
+        const awFTE_display    = Math.ceil(awFTE_raw);
+        const redirectedFTE_display = Math.max(0, todayFTE_display - awFTE_display);
+        const showFTEBlock = redirectedFTE_display > 0;
+
+        STATE.calcResult = { currentSupportHours, ticketHoursReturned, ticketsAvoided, pkgHoursReturned, patchHoursReturned, totalHoursMonth, totalHoursYear, fteCapacity, strategicHours, reqsDeferred, delayedInitiatives, supportCostAnnual, engineeringCostAnnual, wasteCostAnnual, totalBurnAnnual, totalRecoveredAnnual, monthlyCostOfWaiting, cycleStandardApps, cycleComplexApps, awCycleHours, tradCycleHours, cycleHoursSaved, cycleTimeMultiple, cycleDollarsSaved, awAnnualInvestment, recurringAnnualValue, oneTimePackagingValue, year1Value, year1Net, year1ROIMultiple, recurringROIMultiple, paybackMonths, threeYearValue, threeYearInvestment, threeYearNet, awBlendedPerUserMonth, todayFTE_raw, awFTE_raw, todayFTE_display, awFTE_display, redirectedFTE_display, showFTEBlock, todayTotalHours, awTotalHours };
       }
 
       const USER_ID = String(window.APP_USER_ID || "guest");
