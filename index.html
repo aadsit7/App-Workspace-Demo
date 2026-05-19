@@ -4603,39 +4603,171 @@
       .bi-envi-head { display: flex; flex-direction: column; gap: 4px; }
       .bi-envi-title { font-size: 16px; font-weight: 700; color: var(--r-ink); line-height: 1.35; }
       .bi-envi-sub { font-size: 12px; color: var(--r-ink-2); line-height: 1.5; }
-      .bi-envi-chips { display: flex; flex-wrap: wrap; gap: 6px; }
-      .bi-envi-chip { display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; background: var(--r-surface); border: 1px solid var(--r-divider); border-radius: 18px; font-size: 12px; font-weight: 500; color: var(--r-ink-2); cursor: pointer; transition: all 150ms ease; user-select: none; }
-      .bi-envi-chip:hover { border-color: var(--r-blue); color: var(--r-ink); }
-      .bi-envi-chip.is-active { background: var(--r-blue); color: white; border-color: var(--r-blue); }
-      .bi-envi-chip.is-active .bi-envi-chip-icon { color: var(--r-cyan); }
-      .bi-envi-chip-icon { width: 14px; height: 14px; display: inline-flex; }
-      .bi-envi-eq { background: var(--r-quote-bg); border: 1px solid #DAE3F2; border-radius: 8px; padding: 11px 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+
+      /* Branded chips */
+      .bi-envi-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+      .bi-envi-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 5px 13px 5px 5px;
+        background: var(--r-surface);
+        border: 1.5px solid var(--r-divider);
+        border-radius: 22px;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--r-ink-2);
+        cursor: pointer;
+        transition: all 180ms cubic-bezier(.2,.8,.2,1);
+        user-select: none;
+        font-family: inherit;
+      }
+      .bi-envi-chip:hover { border-color: var(--r-blue); color: var(--r-ink); transform: translateY(-1px); box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
+      .bi-envi-chip.is-active {
+        color: var(--r-ink);
+        background: var(--r-surface);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      }
+      .bi-envi-chip-logo {
+        width: 24px;
+        height: 24px;
+        border-radius: 5px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        background: var(--chip-color, var(--r-ink-2));
+        position: relative;
+        overflow: hidden;
+      }
+      .bi-envi-chip:not(.is-active) .bi-envi-chip-logo { opacity: 0.4; filter: grayscale(0.5); }
+      .bi-envi-chip:not(.is-active) { background: #F4F5F8; border-color: transparent; }
+      .bi-envi-chip-logo svg { width: 100%; height: 100%; }
+      .bi-envi-chip-check {
+        width: 14px; height: 14px;
+        border-radius: 50%;
+        background: var(--chip-color, var(--r-blue));
+        color: white;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-left: 2px;
+        font-size: 10px;
+        opacity: 0;
+        transition: opacity 200ms ease;
+      }
+      .bi-envi-chip.is-active .bi-envi-chip-check { opacity: 1; }
+
+      /* Equation banner */
+      .bi-envi-eq { background: linear-gradient(135deg, var(--r-quote-bg) 0%, #ECF2FF 100%); border: 1px solid #DAE3F2; border-radius: 10px; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
       .bi-envi-eq-text { font-size: 12px; color: var(--r-ink); line-height: 1.5; }
       .bi-envi-eq-text strong { color: var(--r-blue); font-weight: 700; }
-      .bi-envi-eq-result { font-size: 14px; font-weight: 700; color: var(--r-blue); white-space: nowrap; }
-      .bi-envi-mode { display: flex; gap: 6px; }
-      .bi-envi-mode-btn { flex: 1; padding: 10px 12px; background: var(--r-surface); border: 1px solid var(--r-divider); border-radius: 8px; font-size: 12px; font-weight: 600; color: var(--r-ink-2); cursor: pointer; transition: all 150ms ease; text-align: center; font-family: inherit; }
-      .bi-envi-mode-btn:hover { border-color: var(--r-blue); }
-      .bi-envi-mode-btn.is-active.is-today { background: #FEEBEB; border-color: #F0CACA; color: #A01818; }
-      .bi-envi-mode-btn.is-active.is-aw { background: #E1F5EE; border-color: #BBDDD0; color: #085041; }
-      .bi-envi-viz { background: linear-gradient(180deg, var(--r-surface-3) 0%, var(--r-surface-2) 100%); border: 1px solid var(--r-divider); border-radius: 10px; padding: 12px; }
-      .bi-envi-viz-svg { width: 100%; height: auto; display: block; }
+      .bi-envi-eq-result { font-size: 15px; font-weight: 700; color: var(--r-blue); white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; }
+      .bi-envi-eq-result::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--r-red); animation: bi-envi-blink 2.4s ease-in-out infinite; }
+      @keyframes bi-envi-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+      /* Mode toggle */
+      .bi-envi-mode { display: flex; gap: 6px; background: #F4F5F8; padding: 4px; border-radius: 10px; }
+      .bi-envi-mode-btn {
+        flex: 1;
+        padding: 10px 14px;
+        background: transparent;
+        border: none;
+        border-radius: 7px;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--r-ink-2);
+        cursor: pointer;
+        transition: all 200ms ease;
+        text-align: center;
+        font-family: inherit;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+      }
+      .bi-envi-mode-btn:hover:not(.is-active) { color: var(--r-ink); }
+      .bi-envi-mode-btn .bi-envi-mode-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; opacity: 0.5; }
+      .bi-envi-mode-btn.is-active.is-today { background: white; color: #A01818; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+      .bi-envi-mode-btn.is-active.is-today .bi-envi-mode-dot { background: #CC2222; opacity: 1; }
+      .bi-envi-mode-btn.is-active.is-aw { background: white; color: #085041; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+      .bi-envi-mode-btn.is-active.is-aw .bi-envi-mode-dot { background: #0F7A3F; opacity: 1; }
+
+      /* Visualization */
+      .bi-envi-viz {
+        background: radial-gradient(circle at 50% 50%, #FFFFFF 0%, var(--r-surface-3) 60%, var(--r-surface-2) 100%);
+        border: 1px solid var(--r-divider);
+        border-radius: 12px;
+        padding: 8px;
+        position: relative;
+        overflow: hidden;
+      }
+      .bi-envi-viz::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: radial-gradient(circle at 1px 1px, rgba(0,0,204,0.04) 1px, transparent 0);
+        background-size: 16px 16px;
+        pointer-events: none;
+      }
+      .bi-envi-viz-svg { width: 100%; height: auto; display: block; position: relative; z-index: 1; }
+      .bi-envi-flow-line { stroke-dasharray: 6 4; animation: bi-envi-flow 1.6s linear infinite; }
+      @keyframes bi-envi-flow { from { stroke-dashoffset: 0; } to { stroke-dashoffset: -20; } }
+      .bi-envi-hub-pulse { transform-origin: 310px 130px; animation: bi-envi-pulse 2.4s ease-in-out infinite; }
+      @keyframes bi-envi-pulse { 0%, 100% { opacity: 0.25; transform: scale(1); } 50% { opacity: 0.55; transform: scale(1.1); } }
+
+      /* Metrics */
       .bi-envi-metrics { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
-      .bi-envi-metric { background: var(--r-surface); border: 1px solid var(--r-divider); border-radius: 8px; padding: 11px 12px; }
-      .bi-envi-metric.is-highlight { background: #E1F5EE; border-color: #BBDDD0; }
-      .bi-envi-metric-label { font-size: 10px; color: var(--r-ink-2); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 4px; }
-      .bi-envi-metric-value { font-size: 20px; font-weight: 700; color: var(--r-ink); line-height: 1.1; }
+      .bi-envi-metric { background: var(--r-surface); border: 1px solid var(--r-divider); border-radius: 10px; padding: 12px 14px; position: relative; transition: all 200ms ease; }
+      .bi-envi-metric:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+      .bi-envi-metric.is-highlight { background: linear-gradient(135deg, #E1F5EE 0%, #C7EBDC 100%); border-color: #9CD8BC; }
+      .bi-envi-metric-label { font-size: 10px; color: var(--r-ink-2); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 4px; }
+      .bi-envi-metric-value { font-size: 22px; font-weight: 800; color: var(--r-ink); line-height: 1.1; letter-spacing: -0.01em; }
       .bi-envi-metric.is-highlight .bi-envi-metric-value { color: var(--r-green); }
       .bi-envi-metric-sub { font-size: 10px; color: var(--r-ink-2); margin-top: 4px; line-height: 1.35; }
-      .bi-envi-outcomes { background: var(--r-blue); color: white; padding: 14px 16px; border-radius: 10px; }
-      .bi-envi-outcomes-label { font-size: 10px; color: var(--r-muted-blue); letter-spacing: 0.06em; font-weight: 600; margin-bottom: 6px; text-transform: uppercase; }
-      .bi-envi-outcomes-head { font-size: 13px; font-weight: 600; line-height: 1.4; margin-bottom: 10px; color: white; }
-      .bi-envi-outcomes-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
-      .bi-envi-outcome { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; padding: 9px 10px; }
-      .bi-envi-outcome-title { font-size: 11px; font-weight: 600; color: white; line-height: 1.3; }
+
+      /* Outcomes band */
+      .bi-envi-outcomes {
+        background: linear-gradient(135deg, var(--r-blue) 0%, #1010DD 60%, #2222EE 100%);
+        color: white;
+        padding: 16px;
+        border-radius: 12px;
+        position: relative;
+        overflow: hidden;
+      }
+      .bi-envi-outcomes::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -20%;
+        width: 60%;
+        height: 200%;
+        background: radial-gradient(circle, var(--r-cyan) 0%, transparent 60%);
+        opacity: 0.12;
+        pointer-events: none;
+      }
+      .bi-envi-outcomes-label { font-size: 10px; color: var(--r-cyan); letter-spacing: 0.08em; font-weight: 700; margin-bottom: 6px; text-transform: uppercase; position: relative; z-index: 1; }
+      .bi-envi-outcomes-head { font-size: 13px; font-weight: 600; line-height: 1.4; margin-bottom: 12px; color: white; position: relative; z-index: 1; }
+      .bi-envi-outcomes-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; position: relative; z-index: 1; }
+      .bi-envi-outcome { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); border-radius: 8px; padding: 10px 12px; display: flex; gap: 10px; align-items: flex-start; transition: all 200ms ease; backdrop-filter: blur(4px); }
+      .bi-envi-outcome:hover { background: rgba(255,255,255,0.14); transform: translateY(-1px); }
+      .bi-envi-outcome-icon {
+        width: 28px; height: 28px;
+        background: rgba(0,191,255,0.18);
+        border-radius: 7px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--r-cyan);
+        flex-shrink: 0;
+      }
+      .bi-envi-outcome-icon svg { width: 16px; height: 16px; }
+      .bi-envi-outcome-content { flex: 1; min-width: 0; }
+      .bi-envi-outcome-title { font-size: 11px; font-weight: 700; color: white; line-height: 1.3; }
       .bi-envi-outcome-sub { font-size: 10px; color: var(--r-muted-blue); line-height: 1.4; margin-top: 3px; }
+
       .bi-envi-foot { font-size: 11px; color: var(--r-ink-2); line-height: 1.5; padding: 0 4px; }
-      .bi-envi-foot strong { color: var(--r-ink); font-weight: 600; }
+      .bi-envi-foot strong { color: var(--r-ink); font-weight: 700; }
       @media (min-width: 1024px) {
         .bi-envi-outcomes-grid { grid-template-columns: repeat(4, 1fr); }
       }
@@ -10070,13 +10202,53 @@
 
             // ── Environment Impact section computations ──
             const ENV_LIST = [
-              { id: 'intune', name: 'Intune',     icon: 'cloud' },
-              { id: 'sccm',   name: 'ConfigMgr',  icon: 'server' },
-              { id: 'avd',    name: 'AVD / W365', icon: 'monitor' },
-              { id: 'citrix', name: 'Citrix',     icon: 'grid' },
-              { id: 'macos',  name: 'macOS',      icon: 'apple' },
-              { id: 'jamf',   name: 'Jamf',       icon: 'laptop' }
+              { id: 'intune', name: 'Intune',     color: '#0078D4', mark: 'ms' },
+              { id: 'sccm',   name: 'ConfigMgr',  color: '#5C2D91', mark: 'ms' },
+              { id: 'avd',    name: 'AVD / W365', color: '#0078D4', mark: 'ms' },
+              { id: 'citrix', name: 'Citrix',     color: '#000000', mark: 'citrix' },
+              { id: 'macos',  name: 'macOS',      color: '#1A1A1A', mark: 'apple' },
+              { id: 'jamf',   name: 'Jamf',       color: '#E94B3C', mark: 'jamf' }
             ];
+
+            // Brand mark renderer — returns SVG markup positioned at (x, y) with given size
+            const brandMark = (mark, x, y, s) => {
+              if (mark === 'ms') {
+                const sq = (s - 2) / 2;
+                const gap = 1.5;
+                return `<g transform="translate(${x}, ${y})">
+                  <rect x="0" y="0" width="${sq}" height="${sq}" fill="#F25022"/>
+                  <rect x="${sq + gap}" y="0" width="${sq}" height="${sq}" fill="#7FBA00"/>
+                  <rect x="0" y="${sq + gap}" width="${sq}" height="${sq}" fill="#00A4EF"/>
+                  <rect x="${sq + gap}" y="${sq + gap}" width="${sq}" height="${sq}" fill="#FFB900"/>
+                </g>`;
+              }
+              if (mark === 'citrix') {
+                return `<g transform="translate(${x}, ${y})">
+                  <text x="${s/2}" y="${s*0.82}" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-size="${s*1.05}" font-weight="900" fill="white">c</text>
+                </g>`;
+              }
+              if (mark === 'apple') {
+                const cx = s / 2, top = s * 0.18;
+                return `<g transform="translate(${x}, ${y})">
+                  <path d="M ${cx} ${top + s*0.05}
+                           C ${cx + s*0.15} ${top + s*0.05} ${cx + s*0.22} ${top + s*0.16} ${cx + s*0.22} ${top + s*0.26}
+                           C ${cx + s*0.42} ${top + s*0.26} ${cx + s*0.46} ${top + s*0.46} ${cx + s*0.4} ${top + s*0.62}
+                           C ${cx + s*0.32} ${top + s*0.74} ${cx + s*0.18} ${top + s*0.74} ${cx} ${top + s*0.68}
+                           C ${cx - s*0.18} ${top + s*0.74} ${cx - s*0.32} ${top + s*0.74} ${cx - s*0.4} ${top + s*0.62}
+                           C ${cx - s*0.46} ${top + s*0.46} ${cx - s*0.42} ${top + s*0.26} ${cx - s*0.22} ${top + s*0.26}
+                           C ${cx - s*0.22} ${top + s*0.16} ${cx - s*0.15} ${top + s*0.05} ${cx} ${top + s*0.05} Z"
+                        fill="white"/>
+                  <ellipse cx="${cx + s*0.07}" cy="${top}" rx="${s*0.07}" ry="${s*0.05}" fill="white" transform="rotate(35 ${cx + s*0.07} ${top})"/>
+                </g>`;
+              }
+              if (mark === 'jamf') {
+                return `<g transform="translate(${x}, ${y})">
+                  <text x="${s/2}" y="${s*0.88}" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-size="${s*1.15}" font-weight="900" fill="white">j</text>
+                </g>`;
+              }
+              return '';
+            };
+
             const _sel = (STATE.envImpact && Array.isArray(STATE.envImpact.selected)) ? STATE.envImpact.selected : ['intune','sccm','avd'];
             const _mode = (STATE.envImpact && STATE.envImpact.mode) || 'today';
             const activeEnvs = ENV_LIST.filter(e => _sel.includes(e.id));
@@ -10089,69 +10261,66 @@
             const isToday = _mode === 'today';
 
             // Compute environment block Y positions for SVG (viewBox 0 0 660 260)
-            const envH = 38, envGap = 8, vizCenterY = 130;
+            const envH = 44, envGap = 10, vizCenterY = 130;
             const totalEnvH = nEnvs * envH + (nEnvs - 1) * envGap;
             const envStartY = vizCenterY - totalEnvH / 2;
             const envYs = Array.from({length: nEnvs}, (_, i) => envStartY + i * (envH + envGap));
 
-            // Build environment blocks SVG
+            // Build environment blocks SVG (polished card-style with brand color tile + logo + name)
             const envBlocks = activeEnvs.map((e, i) => `
-              <g transform="translate(480, ${envYs[i].toFixed(1)})">
-                <rect x="0" y="0" width="160" height="${envH}" rx="6" fill="white" stroke="#99AAEE" stroke-width="0.8"/>
-                <text x="14" y="${(envH/2 + 4).toFixed(1)}" font-family="Inter, sans-serif" font-size="11" font-weight="500" fill="#1A1A2E">${e.name}</text>
-                <text x="146" y="${(envH/2 + 4).toFixed(1)}" text-anchor="end" font-family="Inter, sans-serif" font-size="9" fill="${isToday ? '#A01818' : '#085041'}">${isToday ? appsCount + ' apps · manual' : appsCount + ' apps · auto'}</text>
+              <g transform="translate(478, ${envYs[i].toFixed(1)})" filter="url(#envi-card-shadow)">
+                <rect x="0" y="0" width="170" height="${envH}" rx="8" fill="white" stroke="#E0E5F0" stroke-width="0.8"/>
+                <path d="M 0 8 Q 0 0 8 0 L 38 0 L 38 ${envH} L 8 ${envH} Q 0 ${envH} 0 ${envH - 8} Z" fill="${e.color}"/>
+                ${brandMark(e.mark, 8, 11, 22)}
+                <text x="50" y="${envH/2 - 2}" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="#1A1A2E">${e.name}</text>
+                <text x="50" y="${envH/2 + 12}" font-family="Inter, sans-serif" font-size="9" font-weight="500" fill="${isToday ? '#A01818' : '#085041'}">${isToday ? num(appsCount) + ' apps · manual builds' : num(appsCount) + ' apps · auto-delivered'}</text>
               </g>
             `).join('');
 
             // Build the connection paths
             let connectionPaths = '';
             if (isToday) {
-              // Today: red dashed lines from apps box (right edge x=120, y=130) directly to each env (left edge x=480, mid envYs[i]+envH/2)
+              // Today: red dashed lines from apps box (right edge x=120, y=130) directly to each env (left edge x=478, mid envYs[i]+envH/2)
               connectionPaths = activeEnvs.map((e, i) => {
                 const targetY = envYs[i] + envH/2;
-                const midX = 280;
+                const midX = 290;
                 const midY = (130 + targetY) / 2;
-                const path = `M 120 130 Q ${midX} ${midY} 478 ${targetY.toFixed(1)}`;
+                const path = `M 120 130 Q ${midX} ${midY} 476 ${targetY.toFixed(1)}`;
                 const gearY = midY;
                 return `
-                  <path d="${path}" fill="none" stroke="#A01818" stroke-width="1.5" opacity="0.6" stroke-dasharray="4 3" marker-end="url(#envi-arrow-red)"/>
+                  <path class="bi-envi-flow-line" d="${path}" fill="none" stroke="#CC2222" stroke-width="1.6" opacity="0.55" marker-end="url(#envi-arrow-red)"/>
                   <g transform="translate(${midX}, ${gearY.toFixed(1)})">
-                    <circle cx="0" cy="0" r="11" fill="#FEEBEB" stroke="#A01818" stroke-width="0.8"/>
-                    <text x="0" y="3" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#A01818" font-weight="500">×</text>
+                    <circle cx="0" cy="0" r="13" fill="white" stroke="#CC2222" stroke-width="1.2"/>
+                    <text x="0" y="4" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" fill="#CC2222" font-weight="700">×</text>
                   </g>
                 `;
               }).join('');
             } else {
               // AW mode: apps → hub (one line), then hub → each env
-              const hubX = 310, hubY = 130, hubR = 42;
+              const hubX = 310, hubY = 130, hubR = 46;
               connectionPaths = `
-                <path d="M 120 130 L ${hubX - hubR - 4} 130" fill="none" stroke="#0000CC" stroke-width="2" opacity="0.85" marker-end="url(#envi-arrow-blue)"/>
+                <path class="bi-envi-flow-line" d="M 120 130 L ${hubX - hubR - 4} 130" fill="none" stroke="#0000CC" stroke-width="2.2" opacity="0.9" marker-end="url(#envi-arrow-blue)"/>
               ` + activeEnvs.map((e, i) => {
                 const targetY = envYs[i] + envH/2;
-                // Connection point on the hub circle, then to env left edge
-                const angle = Math.atan2(targetY - hubY, 478 - hubX);
+                const angle = Math.atan2(targetY - hubY, 476 - hubX);
                 const startX = hubX + hubR * Math.cos(angle);
                 const startY = hubY + hubR * Math.sin(angle);
-                const midX = (startX + 478) / 2;
+                const midX = (startX + 476) / 2;
                 const midY = (startY + targetY) / 2;
-                return `<path d="M ${startX.toFixed(1)} ${startY.toFixed(1)} Q ${midX.toFixed(1)} ${midY.toFixed(1)} 478 ${targetY.toFixed(1)}" fill="none" stroke="#0F7A3F" stroke-width="1.5" opacity="0.75" marker-end="url(#envi-arrow-blue)"/>`;
+                return `<path class="bi-envi-flow-line" d="M ${startX.toFixed(1)} ${startY.toFixed(1)} Q ${midX.toFixed(1)} ${midY.toFixed(1)} 476 ${targetY.toFixed(1)}" fill="none" stroke="#0F7A3F" stroke-width="1.8" opacity="0.8" marker-end="url(#envi-arrow-green)"/>`;
               }).join('');
             }
 
-            // Hub group (only shown in AW mode)
+            // Hub group (only shown in AW mode) — Recast-branded with pulse glow
             const hubGroup = isToday ? '' : `
               <g>
-                <defs>
-                  <linearGradient id="envi-hub-grad" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stop-color="#0033DD"/>
-                    <stop offset="100%" stop-color="#0000AA"/>
-                  </linearGradient>
-                </defs>
-                <circle cx="310" cy="130" r="42" fill="url(#envi-hub-grad)"/>
-                <circle cx="310" cy="130" r="42" fill="none" stroke="#00BFFF" stroke-width="1.5"/>
-                <text x="310" y="124" text-anchor="middle" font-family="Inter, sans-serif" font-size="8" font-weight="500" fill="#00BFFF" letter-spacing="0.3">APPLICATION</text>
-                <text x="310" y="135" text-anchor="middle" font-family="Inter, sans-serif" font-size="8" font-weight="500" fill="#00BFFF" letter-spacing="0.3">WORKSPACE</text>
-                <text x="310" y="148" text-anchor="middle" font-family="Inter, sans-serif" font-size="7" fill="#AABBEE">define · deploy · run</text>
+                <circle class="bi-envi-hub-pulse" cx="310" cy="130" r="58" fill="#00BFFF" opacity="0.18"/>
+                <circle cx="310" cy="130" r="46" fill="url(#envi-hub-grad)"/>
+                <circle cx="310" cy="130" r="46" fill="none" stroke="#00BFFF" stroke-width="1.8"/>
+                <text x="310" y="120" text-anchor="middle" font-family="Inter, sans-serif" font-size="8.5" font-weight="700" fill="#00BFFF" letter-spacing="0.6">APPLICATION</text>
+                <text x="310" y="132" text-anchor="middle" font-family="Inter, sans-serif" font-size="8.5" font-weight="700" fill="#00BFFF" letter-spacing="0.6">WORKSPACE</text>
+                <line x1="290" y1="138" x2="330" y2="138" stroke="#00BFFF" stroke-width="0.6" opacity="0.5"/>
+                <text x="310" y="150" text-anchor="middle" font-family="Inter, sans-serif" font-size="7" fill="#AABBEE" font-style="italic">define · deploy · run</text>
               </g>
             `;
 
@@ -10160,13 +10329,18 @@
               : 'With AW: one definition, distributed to every environment';
             const captionFill = isToday ? '#A01818' : '#085041';
 
-            // Build chips
-            const chipsHtml = ENV_LIST.map(e => `
-              <button type="button" class="bi-envi-chip${_sel.includes(e.id) ? ' is-active' : ''}" data-action="toggle-env-chip" data-env="${e.id}" aria-pressed="${_sel.includes(e.id)}">
-                <i data-lucide="${e.icon}" class="bi-envi-chip-icon"></i>
-                ${e.name}
-              </button>
-            `).join('');
+            // Build chips with brand-colored logos
+            const chipsHtml = ENV_LIST.map(e => {
+              const isActive = _sel.includes(e.id);
+              return `
+                <button type="button" class="bi-envi-chip${isActive ? ' is-active' : ''}" data-action="toggle-env-chip" data-env="${e.id}" aria-pressed="${isActive}" style="--chip-color: ${e.color}">
+                  <span class="bi-envi-chip-logo" style="background:${e.color}">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">${brandMark(e.mark, 1, 1, 22)}</svg>
+                  </span>
+                  ${e.name}
+                </button>
+              `;
+            }).join('');
 
             return `
           <!-- ENVIRONMENT IMPACT — operational dynamic across the customer's stack -->
@@ -10192,30 +10366,56 @@
                 </div>
 
                 <div class="bi-envi-mode">
-                  <button type="button" class="bi-envi-mode-btn is-today${isToday ? ' is-active' : ''}" data-action="set-env-mode" data-mode="today">Today &middot; fragmented</button>
-                  <button type="button" class="bi-envi-mode-btn is-aw${!isToday ? ' is-active' : ''}" data-action="set-env-mode" data-mode="aw">With Application Workspace &middot; unified</button>
+                  <button type="button" class="bi-envi-mode-btn is-today${isToday ? ' is-active' : ''}" data-action="set-env-mode" data-mode="today"><span class="bi-envi-mode-dot"></span>Today &middot; fragmented</button>
+                  <button type="button" class="bi-envi-mode-btn is-aw${!isToday ? ' is-active' : ''}" data-action="set-env-mode" data-mode="aw"><span class="bi-envi-mode-dot"></span>With Application Workspace &middot; unified</button>
                 </div>
 
                 <div class="bi-envi-viz">
                   <svg class="bi-envi-viz-svg" viewBox="0 0 660 260" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
                     <defs>
                       <marker id="envi-arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
-                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#0000CC" opacity="0.85"/>
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#0000CC" opacity="0.9"/>
                       </marker>
                       <marker id="envi-arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
-                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#A01818" opacity="0.7"/>
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#CC2222" opacity="0.7"/>
                       </marker>
+                      <marker id="envi-arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#0F7A3F" opacity="0.85"/>
+                      </marker>
+                      <linearGradient id="envi-hub-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stop-color="#0033DD"/>
+                        <stop offset="100%" stop-color="#0000AA"/>
+                      </linearGradient>
+                      <linearGradient id="envi-apps-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stop-color="#FFFFFF"/>
+                        <stop offset="100%" stop-color="#F0F4FF"/>
+                      </linearGradient>
+                      <filter id="envi-card-shadow" x="-10%" y="-10%" width="120%" height="120%">
+                        <feDropShadow dx="0" dy="1" stdDeviation="1.5" flood-color="#000020" flood-opacity="0.08"/>
+                      </filter>
                     </defs>
 
-                    <rect x="20" y="100" width="100" height="60" rx="8" fill="white" stroke="#0000CC" stroke-width="1"/>
-                    <text x="70" y="124" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="600" fill="#1A1A2E">${num(appsCount)} Apps</text>
-                    <text x="70" y="142" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" fill="#4A4A5A">+ ${num(ticketsMo)} tickets/mo</text>
+                    <!-- Apps source card -->
+                    <g filter="url(#envi-card-shadow)">
+                      <rect x="14" y="86" width="106" height="88" rx="10" fill="url(#envi-apps-grad)" stroke="#0000CC" stroke-width="1.2"/>
+                      <text x="67" y="103" text-anchor="middle" font-family="Inter, sans-serif" font-size="8" font-weight="700" fill="#0000CC" letter-spacing="0.5">APPLICATIONS</text>
+                      <!-- Mini app tile icons -->
+                      <rect x="26" y="110" width="14" height="14" rx="3" fill="#0078D4"/>
+                      <rect x="44" y="110" width="14" height="14" rx="3" fill="#E94B3C"/>
+                      <rect x="62" y="110" width="14" height="14" rx="3" fill="#00A4EF"/>
+                      <rect x="80" y="110" width="14" height="14" rx="3" fill="#7FBA00"/>
+                      <rect x="98" y="110" width="14" height="14" rx="3" fill="#FFB900"/>
+                      <text x="67" y="144" text-anchor="middle" font-family="Inter, sans-serif" font-size="14" font-weight="800" fill="#1A1A2E">${num(appsCount)}</text>
+                      <text x="67" y="156" text-anchor="middle" font-family="Inter, sans-serif" font-size="8" fill="#4A4A5A" font-weight="500">apps managed</text>
+                      <line x1="26" y1="162" x2="108" y2="162" stroke="#E0E5F0" stroke-width="0.5"/>
+                      <text x="67" y="171" text-anchor="middle" font-family="Inter, sans-serif" font-size="8" fill="#4A4A5A">+ ${num(ticketsMo)} tickets/mo</text>
+                    </g>
 
                     ${connectionPaths}
                     ${hubGroup}
                     ${envBlocks}
 
-                    <text x="330" y="248" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="${captionFill}" font-style="italic">${captionText}</text>
+                    <text x="330" y="248" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="${captionFill}" font-style="italic" font-weight="500">${captionText}</text>
                   </svg>
                 </div>
 
@@ -10242,20 +10442,40 @@
                   <div class="bi-envi-outcomes-head">The capacity returned goes into the work the business is actually asking for.</div>
                   <div class="bi-envi-outcomes-grid">
                     <div class="bi-envi-outcome">
-                      <div class="bi-envi-outcome-title">Migrations on time</div>
-                      <div class="bi-envi-outcome-sub">Intune, AVD, Win 11 in parallel with BAU</div>
+                      <div class="bi-envi-outcome-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><circle cx="6" cy="19" r="3"/><circle cx="18" cy="5" r="3"/><path d="M6 16V8a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v3"/></svg>
+                      </div>
+                      <div class="bi-envi-outcome-content">
+                        <div class="bi-envi-outcome-title">Migrations on time</div>
+                        <div class="bi-envi-outcome-sub">Intune, AVD, Win 11 in parallel with BAU</div>
+                      </div>
                     </div>
                     <div class="bi-envi-outcome">
-                      <div class="bi-envi-outcome-title">AI &amp; tools in days</div>
-                      <div class="bi-envi-outcome-sub">No more quarterly packaging waits</div>
+                      <div class="bi-envi-outcome-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/></svg>
+                      </div>
+                      <div class="bi-envi-outcome-content">
+                        <div class="bi-envi-outcome-title">AI &amp; tools in days</div>
+                        <div class="bi-envi-outcome-sub">No more quarterly packaging waits</div>
+                      </div>
                     </div>
                     <div class="bi-envi-outcome">
-                      <div class="bi-envi-outcome-title">Audits as reports</div>
-                      <div class="bi-envi-outcome-sub">SOC 2, ISO, CIS evidence on demand</div>
+                      <div class="bi-envi-outcome-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="m9 16 2 2 4-4"/></svg>
+                      </div>
+                      <div class="bi-envi-outcome-content">
+                        <div class="bi-envi-outcome-title">Audits as reports</div>
+                        <div class="bi-envi-outcome-sub">SOC 2, ISO, CIS evidence on demand</div>
+                      </div>
                     </div>
                     <div class="bi-envi-outcome">
-                      <div class="bi-envi-outcome-title">1-day patch close</div>
-                      <div class="bi-envi-outcome-sub">Across every environment, not per platform</div>
+                      <div class="bi-envi-outcome-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+                      </div>
+                      <div class="bi-envi-outcome-content">
+                        <div class="bi-envi-outcome-title">1-day patch close</div>
+                        <div class="bi-envi-outcome-sub">Across every environment, not per platform</div>
+                      </div>
                     </div>
                   </div>
                 </div>
