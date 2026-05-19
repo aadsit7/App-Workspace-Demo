@@ -4623,10 +4623,23 @@
       .bi-envi-mode-btn.is-active.is-aw { background: #E1F5EE; border-color: #BBDDD0; color: #085041; }
       .bi-envi-viz { background: linear-gradient(180deg, var(--r-surface-3) 0%, var(--r-surface-2) 100%); border: 1px solid var(--r-divider); border-radius: 10px; padding: 12px; }
       .bi-envi-viz-svg { width: 100%; height: auto; display: block; }
-      .bi-envi-viz-svg .envi-tile { transition: transform 200ms cubic-bezier(0.2, 0.8, 0.2, 1); transform-origin: center; transform-box: fill-box; }
-      .bi-envi-viz-svg .envi-tile:hover { transform: translateX(-2px); filter: drop-shadow(0 4px 8px rgba(0,0,204,0.08)); }
-      .bi-envi-viz-svg .envi-path { opacity: var(--p-op, 0.7); }
-      .bi-envi-viz-svg .envi-hub { transform-origin: center; transform-box: fill-box; }
+      /* IMPORTANT: do NOT use CSS `transform` animations on elements that
+         already carry an SVG `transform="..."` attribute — CSS transform
+         REPLACES (not concatenates with) the SVG attribute, which collapses
+         the element to (0,0). Keep CSS animations on these elements to
+         opacity/filter only, and use SMIL <animate> / <animateTransform>
+         (or wrap in a translated <g>) for any motion or scale. */
+      .bi-envi-viz-svg .envi-tile { transition: filter 200ms cubic-bezier(0.2, 0.8, 0.2, 1); animation: enviSoftIn 220ms cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+      .bi-envi-viz-svg .envi-tile:hover { filter: drop-shadow(0 4px 8px rgba(0,0,204,0.10)); }
+      .bi-envi-viz-svg .envi-path { opacity: var(--p-op, 0.7); animation: enviSoftIn 260ms cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+      .bi-envi-viz-svg .envi-hub { animation: enviSoftIn 320ms cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+      .bi-envi-viz-svg .scene-portal,
+      .bi-envi-viz-svg .scene-queue,
+      .bi-envi-viz-svg .scene-admin,
+      .bi-envi-viz-svg .scene-clock,
+      .bi-envi-viz-svg .scene-user,
+      .bi-envi-viz-svg .scene-callout { animation: enviSoftIn 240ms cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+      @keyframes enviSoftIn { from { opacity: 0; } to { opacity: 1; } }
       .bi-envi-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
       .bi-envi-metric {
         background: var(--r-surface);
@@ -10519,9 +10532,9 @@
               const portalX = sceneLeftX + 14;
               const portalY = centerY - 90;
               const portalW = 220, portalH = 180;
-              const hubX = portalX + portalW + 60 + 56;
+              const hubR = 64;
+              const hubX = portalX + portalW + 60 + hubR;
               const hubY = centerY;
-              const hubR = 56;
 
               // User → portal connectors (smooth blue lines, fast cyan particles)
               userConnectors = USERS.map(function(u, i) {
@@ -10593,19 +10606,59 @@
                 +   '<animateMotion dur="1.6s" repeatCount="indefinite" path="' + portalToHubPath + '"/>'
                 + '</circle>';
 
-              // AW hub — bigger, more presence
+              // AW hub — engine: glow, three pulse rings, soft rotor, crisp label.
+              // CRITICAL: positioning lives on the OUTER <g>. The inner
+              // .envi-hub group carries the opacity entry animation only. All
+              // motion/scale below uses SMIL so CSS-transform replacement of
+              // the SVG transform attribute never collapses the hub.
+              const hubR0 = hubR; // base ring radius
+              const pulseRing = (delay) => ''
+                + '<circle r="' + hubR0 + '" fill="none" stroke="#00BFFF" stroke-width="1.4" opacity="0">'
+                +   '<animate attributeName="r" values="' + (hubR0 * 0.55).toFixed(1) + ';' + (hubR0 * 1.45).toFixed(1) + '" dur="2.8s" begin="' + delay + 's" repeatCount="indefinite"/>'
+                +   '<animate attributeName="opacity" values="0.55;0" dur="2.8s" begin="' + delay + 's" repeatCount="indefinite"/>'
+                + '</circle>';
+
               const hubBlock = ''
-                + '<g class="envi-hub" transform="translate(' + hubX + ',' + hubY + ')">'
-                +   '<circle r="' + (hubR + 8) + '" fill="#0000CC" opacity="0.06"/>'
-                +   '<circle r="' + hubR + '" fill="#0000CC"/>'
-                +   '<circle r="' + hubR + '" fill="none" stroke="#00BFFF" stroke-width="2"/>'
-                +   '<text x="-32" y="-26" font-family="Inter, sans-serif" font-size="11" font-weight="800" fill="#2244EE">+</text>'
-                +   '<text x="28" y="30" font-family="Inter, sans-serif" font-size="11" font-weight="800" fill="#2244EE">+</text>'
-                +   '<text x="-26" y="32" font-family="Inter, sans-serif" font-size="9" font-weight="800" fill="#2244EE">+</text>'
-                +   '<text x="0" y="-12" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="800" fill="#00BFFF" letter-spacing="0.08em">APPLICATION</text>'
-                +   '<text x="0" y="3" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="800" fill="#fff" letter-spacing="0.08em">WORKSPACE</text>'
-                +   '<line x1="-26" y1="9" x2="26" y2="9" stroke="#00BFFF" stroke-width="0.8" opacity="0.5"/>'
-                +   '<text x="0" y="22" text-anchor="middle" font-family="Inter, sans-serif" font-size="8" font-weight="600" fill="#AABBEE" letter-spacing="0.08em">DEFINE · DEPLOY · RUN</text>'
+                + '<g transform="translate(' + hubX + ',' + hubY + ')">'
+                +   '<g class="envi-hub">'
+                +     '<defs>'
+                +       '<radialGradient id="hub-glow" cx="0.5" cy="0.5" r="0.5">'
+                +         '<stop offset="0%" stop-color="#00BFFF" stop-opacity="0.35"/>'
+                +         '<stop offset="60%" stop-color="#00BFFF" stop-opacity="0.08"/>'
+                +         '<stop offset="100%" stop-color="#00BFFF" stop-opacity="0"/>'
+                +       '</radialGradient>'
+                +       '<radialGradient id="hub-fill" cx="0.4" cy="0.35" r="0.85">'
+                +         '<stop offset="0%" stop-color="#2244EE"/>'
+                +         '<stop offset="60%" stop-color="#0033CC"/>'
+                +         '<stop offset="100%" stop-color="#001A99"/>'
+                +       '</radialGradient>'
+                +     '</defs>'
+                // Soft halo
+                +     '<circle r="' + (hubR0 + 26) + '" fill="url(#hub-glow)"/>'
+                // Three SMIL pulse rings
+                +     pulseRing(0)
+                +     pulseRing(0.9)
+                +     pulseRing(1.8)
+                // Slow rotor — SMIL animateTransform so SVG translate is never clobbered
+                +     '<g>'
+                +       '<circle r="' + (hubR0 - 4) + '" fill="none" stroke="#00BFFF" stroke-width="0.6" stroke-dasharray="6 8" opacity="0.45"/>'
+                +       '<circle cx="0" cy="' + (-(hubR0 - 4)) + '" r="1.8" fill="#00BFFF"/>'
+                +       '<circle cx="' + (hubR0 - 4) + '" cy="0" r="1.4" fill="#00BFFF" opacity="0.7"/>'
+                +       '<circle cx="0" cy="' + (hubR0 - 4) + '" r="1.4" fill="#00BFFF" opacity="0.55"/>'
+                +       '<circle cx="' + (-(hubR0 - 4)) + '" cy="0" r="1.4" fill="#00BFFF" opacity="0.4"/>'
+                +       '<animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="14s" repeatCount="indefinite"/>'
+                +     '</g>'
+                // Solid core
+                +     '<circle r="' + hubR0 + '" fill="url(#hub-fill)"/>'
+                +     '<circle r="' + hubR0 + '" fill="none" stroke="#00BFFF" stroke-width="2.2"/>'
+                // Centre label — three-beat brand voice
+                +     '<text x="0" y="-16" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" font-weight="800" fill="#7FD9FF" letter-spacing="0.18em">DEFINE  ONCE</text>'
+                +     '<line x1="-22" y1="-8" x2="22" y2="-8" stroke="#00BFFF" stroke-width="0.6" opacity="0.45"/>'
+                +     '<text x="0" y="5" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" font-weight="800" fill="#fff" letter-spacing="0.06em">APPLICATION</text>'
+                +     '<text x="0" y="18" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" font-weight="800" fill="#fff" letter-spacing="0.06em">WORKSPACE</text>'
+                +     '<line x1="-22" y1="26" x2="22" y2="26" stroke="#00BFFF" stroke-width="0.6" opacity="0.45"/>'
+                +     '<text x="0" y="35" text-anchor="middle" font-family="Inter, sans-serif" font-size="8" font-weight="700" fill="#7FD9FF" letter-spacing="0.18em">DELIVER  EVERYWHERE</text>'
+                +   '</g>'
                 + '</g>';
 
               // Hub → envs (green branches with fast moving particles)
@@ -10659,7 +10712,7 @@
               <svg class="bi-section-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
             </button>
             <div class="bi-section-content${STATE.collapsedSections.compound ? ' is-collapsed' : ''}" id="section-compound">
-              <div class="bi-envi dash-animate">
+              <div class="bi-envi">
                 <div class="bi-envi-head">
                   <div class="bi-envi-title">Same stack. Same users. Two outcomes.</div>
                   <div class="bi-envi-sub">Pick the envs you run. The picture and the math respond.</div>
