@@ -4603,15 +4603,15 @@
       .bi-envi-head { display: flex; flex-direction: column; gap: 4px; }
       .bi-envi-title { font-size: 16px; font-weight: 700; color: var(--r-ink); line-height: 1.35; }
       .bi-envi-sub { font-size: 12px; color: var(--r-ink-2); line-height: 1.5; }
-      .bi-envi-chips { display: flex; flex-wrap: wrap; gap: 6px; }
-      .bi-envi-chip { display: inline-flex; align-items: center; gap: 7px; padding: 5px 12px 5px 5px; background: var(--r-surface); border: 1px solid var(--r-divider); border-radius: 999px; font-size: 12px; font-weight: 600; color: var(--r-ink-2); cursor: pointer; transition: all 150ms ease; user-select: none; }
+      .bi-envi-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+      .bi-envi-chip { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px 3px 3px; background: var(--r-surface); border: 1px solid var(--r-divider); border-radius: 999px; font-size: 11px; font-weight: 600; color: var(--r-ink-2); cursor: pointer; transition: all 150ms ease; user-select: none; line-height: 1; }
       .bi-envi-chip:hover { border-color: var(--r-blue); color: var(--r-ink); box-shadow: 0 1px 3px rgba(0,0,204,0.08); }
       .bi-envi-chip.is-active { background: #EEF2FF; color: var(--r-blue); border-color: var(--r-blue); }
-      .bi-envi-chip-logo { width: 22px; height: 22px; border-radius: 5px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; }
+      .bi-envi-chip-logo { width: 20px; height: 20px; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; }
       .bi-envi-chip-logo svg { width: 100%; height: 100%; display: block; }
-      .bi-envi-chip-check { width: 12px; height: 12px; border-radius: 50%; border: 1.5px solid #C8D0E0; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; transition: all 150ms ease; margin-left: 1px; }
+      .bi-envi-chip-check { width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid #C8D0E0; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; transition: all 150ms ease; }
       .bi-envi-chip.is-active .bi-envi-chip-check { background: var(--r-blue); border-color: var(--r-blue); }
-      .bi-envi-chip.is-active .bi-envi-chip-check::after { content: ''; width: 5px; height: 5px; background: white; border-radius: 50%; display: block; }
+      .bi-envi-chip.is-active .bi-envi-chip-check::after { content: ''; width: 4px; height: 4px; background: white; border-radius: 50%; display: block; }
       .bi-envi-eq { background: var(--r-quote-bg); border: 1px solid #DAE3F2; border-radius: 8px; padding: 11px 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
       .bi-envi-eq-text { font-size: 12px; color: var(--r-ink); line-height: 1.5; }
       .bi-envi-eq-text strong { color: var(--r-blue); font-weight: 700; }
@@ -4627,13 +4627,42 @@
       .bi-envi-viz-svg .envi-tile:hover { transform: translateX(-2px); filter: drop-shadow(0 4px 8px rgba(0,0,204,0.08)); }
       .bi-envi-viz-svg .envi-path { opacity: var(--p-op, 0.7); }
       .bi-envi-viz-svg .envi-hub { transform-origin: center; transform-box: fill-box; }
-      .bi-envi-metrics { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
-      .bi-envi-metric { background: var(--r-surface); border: 1px solid var(--r-divider); border-radius: 8px; padding: 11px 12px; }
-      .bi-envi-metric.is-highlight { background: #E1F5EE; border-color: #BBDDD0; }
-      .bi-envi-metric-label { font-size: 10px; color: var(--r-ink-2); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 4px; }
-      .bi-envi-metric-value { font-size: 20px; font-weight: 700; color: var(--r-ink); line-height: 1.1; }
-      .bi-envi-metric.is-highlight .bi-envi-metric-value { color: var(--r-green); }
-      .bi-envi-metric-sub { font-size: 10px; color: var(--r-ink-2); margin-top: 4px; line-height: 1.35; }
+      .bi-envi-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+      .bi-envi-metric {
+        background: var(--r-surface);
+        border: 1px solid var(--r-divider);
+        border-radius: 8px;
+        padding: 12px 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        min-height: 92px;
+      }
+      .bi-envi-metric.is-highlight { background: #F0FDF4; border-color: #BBF7D0; }
+      .bi-envi-metric-label {
+        font-size: 10px;
+        color: var(--r-ink-2);
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 4px;
+      }
+      .bi-envi-metric-value {
+        font-size: 20px;
+        font-weight: 800;
+        color: var(--r-ink);
+        line-height: 1.15;
+        letter-spacing: -0.02em;
+        font-variant-numeric: tabular-nums;
+      }
+      .bi-envi-metric.is-highlight .bi-envi-metric-value { color: #047857; }
+      .bi-envi-metric-sub {
+        font-size: 11px;
+        font-weight: 500;
+        color: var(--r-ink-2);
+        margin-top: 2px;
+        line-height: 1.35;
+      }
       .bi-envi-outcomes { background: var(--r-blue); color: white; padding: 14px 16px; border-radius: 10px; }
       .bi-envi-outcomes-label { font-size: 10px; color: var(--r-muted-blue); letter-spacing: 0.06em; font-weight: 600; margin-bottom: 6px; text-transform: uppercase; }
       .bi-envi-outcomes-head { font-size: 13px; font-weight: 600; line-height: 1.4; margin-bottom: 10px; color: white; }
@@ -4649,6 +4678,49 @@
       .bi-envi-coverage-btn { flex: 1; padding: 3px 0; background: rgba(255,255,255,0.6); border: 1px solid rgba(15,122,63,0.18); border-radius: 4px; font-size: 10px; font-weight: 600; color: var(--r-ink-2); cursor: pointer; font-family: inherit; transition: all 120ms ease; }
       .bi-envi-coverage-btn:hover { border-color: var(--r-green); color: var(--r-green); }
       .bi-envi-coverage-btn.is-active { background: var(--r-green); color: white; border-color: var(--r-green); }
+
+      /* Bottom summary band for the env-impact story side. Mirrors
+         .bi-compare-summary on the bar-chart side so the two cards finish
+         on the same visual beat when displayed side by side. */
+      .bi-envi-summary {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        margin: 14px -16px -16px;
+        padding: 14px 18px;
+        background: linear-gradient(90deg, #F0FDF4 0%, #ECFDF5 100%);
+        border-top: 1px solid #BBF7D0;
+        border-radius: 0 0 12px 12px;
+        font-size: 13px;
+        color: #065F46;
+        flex-wrap: wrap;
+        line-height: 1.35;
+      }
+      .bi-envi-summary.is-today {
+        background: linear-gradient(90deg, #FEF7F7 0%, #FFF1F1 100%);
+        border-top-color: #F3CCCC;
+        color: #7F1D1D;
+      }
+      .bi-envi-summary-left { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+      .bi-envi-summary-stat {
+        font-size: 18px; font-weight: 800; letter-spacing: -0.015em;
+        font-variant-numeric: tabular-nums; color: #047857;
+      }
+      .bi-envi-summary.is-today .bi-envi-summary-stat { color: #991B1B; }
+      .bi-envi-summary-arrow { color: var(--r-ink-2); font-weight: 700; margin: 0 2px; }
+      .bi-envi-summary-to {
+        font-size: 18px; font-weight: 800; letter-spacing: -0.015em;
+        font-variant-numeric: tabular-nums; color: var(--r-blue);
+      }
+      .bi-envi-summary-tag { font-size: 12px; font-weight: 600; color: var(--r-ink-2); }
+      .bi-envi-summary-right { display: flex; align-items: baseline; gap: 8px; font-weight: 600; }
+      .bi-envi-summary-pct {
+        font-size: 22px; font-weight: 800; letter-spacing: -0.02em;
+        font-variant-numeric: tabular-nums; color: #047857;
+      }
+      .bi-envi-summary.is-today .bi-envi-summary-pct { color: #991B1B; }
+      .bi-envi-summary-detail b { font-weight: 800; font-variant-numeric: tabular-nums; }
       @media (min-width: 1024px) {
         .bi-envi-outcomes-grid { grid-template-columns: repeat(4, 1fr); }
       }
@@ -4689,6 +4761,14 @@
           display: flex;
           flex-direction: column;
         }
+        /* Same treatment for the story side so its bottom band lands at the
+           same baseline as the bar chart's green summary band. */
+        .bi-split:not(.is-single) .bi-section-content > .bi-envi {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+        }
+        .bi-split:not(.is-single) .bi-envi-summary { margin-top: auto; }
         /* Year rows expand and distribute to fill any spare vertical space. */
         .bi-split:not(.is-single) .bi-compound-rows {
           flex: 1;
@@ -10086,47 +10166,51 @@
             // groups (used both in chips and in the main diagram) so they read as
             // real product brands rather than generic line icons.
             const BRAND_SYMBOLS = {
+              // Microsoft Intune — diamond/tile mark on Microsoft blue with a
+              // cloud check overlay (UEM/MDM identity)
               intune: '<symbol id="brand-intune" viewBox="0 0 32 32">' +
-                '<rect width="32" height="32" rx="6" fill="#0078D4"/>' +
-                '<path d="M8 11 L8 24 L24 24 L24 11 Z" fill="#fff"/>' +
-                '<path d="M16 4 L20 9 L12 9 Z" fill="#50E6FF"/>' +
-                '<rect x="10.5" y="13" width="11" height="1.6" rx="0.5" fill="#0078D4"/>' +
-                '<rect x="10.5" y="16" width="11" height="1.6" rx="0.5" fill="#0078D4"/>' +
-                '<rect x="10.5" y="19" width="7" height="1.6" rx="0.5" fill="#50E6FF"/>' +
+                '<rect width="32" height="32" rx="7" fill="#0078D4"/>' +
+                '<path d="M16 6 L26 16 L16 26 L6 16 Z" fill="#fff"/>' +
+                '<path d="M11 17 Q11 13.8 14 13.8 L18 13.8 Q21 13.8 21.6 16 Q23 16 23 17.6 Q23 19.2 21.2 19.2 L11.8 19.2 Q9.5 19.2 9.5 17.6 Q9.5 16 11 17 Z" fill="#0078D4"/>' +
+                '<path d="M13.5 16.7 L15.3 18.5 L18.5 14.7" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>' +
                 '</symbol>',
+              // Microsoft Configuration Manager — stacked database/server cans
               sccm: '<symbol id="brand-sccm" viewBox="0 0 32 32">' +
-                '<rect width="32" height="32" rx="6" fill="#0078D4"/>' +
-                '<rect x="6.5" y="8" width="19" height="4.5" rx="0.8" fill="#fff"/>' +
-                '<rect x="6.5" y="13.75" width="19" height="4.5" rx="0.8" fill="#fff"/>' +
-                '<rect x="6.5" y="19.5" width="19" height="4.5" rx="0.8" fill="#fff"/>' +
-                '<circle cx="9.5" cy="10.25" r="1" fill="#50E6FF"/>' +
-                '<circle cx="9.5" cy="16" r="1" fill="#50E6FF"/>' +
-                '<circle cx="9.5" cy="21.75" r="1" fill="#50E6FF"/>' +
-                '<rect x="12" y="9.75" width="9" height="1" fill="#0078D4" opacity="0.6"/>' +
-                '<rect x="12" y="15.5" width="9" height="1" fill="#0078D4" opacity="0.6"/>' +
-                '<rect x="12" y="21.25" width="9" height="1" fill="#0078D4" opacity="0.6"/>' +
+                '<rect width="32" height="32" rx="7" fill="#005EA6"/>' +
+                '<ellipse cx="16" cy="9.5" rx="8" ry="2.4" fill="#fff"/>' +
+                '<path d="M8 9.5 L8 14 Q8 16.4 16 16.4 Q24 16.4 24 14 L24 9.5" fill="#fff"/>' +
+                '<ellipse cx="16" cy="14" rx="8" ry="2.4" fill="#36A2EB"/>' +
+                '<path d="M8 14 L8 18.5 Q8 20.9 16 20.9 Q24 20.9 24 18.5 L24 14" fill="#fff"/>' +
+                '<ellipse cx="16" cy="18.5" rx="8" ry="2.4" fill="#36A2EB"/>' +
+                '<path d="M8 18.5 L8 23 Q8 25.4 16 25.4 Q24 25.4 24 23 L24 18.5" fill="#fff"/>' +
+                '<ellipse cx="16" cy="23" rx="8" ry="2.4" fill="#36A2EB"/>' +
+                '<circle cx="11" cy="23" r="0.9" fill="#22C55E"/>' +
                 '</symbol>',
+              // Azure Virtual Desktop / Windows 365 — cloud over monitor
               avd: '<symbol id="brand-avd" viewBox="0 0 32 32">' +
-                '<rect width="32" height="32" rx="6" fill="#0078D4"/>' +
-                '<path d="M7 14 Q7 8.5 12 8.5 L20 8.5 Q25 8.5 25 14 L25 20 L7 20 Z" fill="#50E6FF"/>' +
-                '<rect x="7" y="20" width="18" height="1.2" fill="#fff"/>' +
-                '<rect x="13.5" y="22" width="5" height="2.5" fill="#fff"/>' +
-                '<rect x="10" y="24.5" width="12" height="1.2" rx="0.4" fill="#fff"/>' +
-                '<path d="M11 12 L20 12" stroke="#fff" stroke-width="0.8" opacity="0.6"/>' +
-                '<path d="M11 15 L18 15" stroke="#fff" stroke-width="0.8" opacity="0.6"/>' +
+                '<rect width="32" height="32" rx="7" fill="#0061A8"/>' +
+                '<path d="M9 14 Q9 10 13 10 Q14 8 17 8 Q20 8 21 11 Q24 11 24 14 Q26 14 26 16.5 Q26 19 23 19 L9 19 Q6 19 6 16.5 Q6 14 9 14 Z" fill="#fff"/>' +
+                '<rect x="10" y="20" width="12" height="6.5" rx="0.6" fill="#fff"/>' +
+                '<rect x="11" y="21" width="10" height="4.5" rx="0.3" fill="#36A2EB"/>' +
+                '<rect x="14" y="26" width="4" height="0.8" fill="#fff"/>' +
+                '<rect x="11.5" y="27" width="9" height="1" rx="0.3" fill="#fff"/>' +
                 '</symbol>',
+              // Citrix — bold black mark with the distinctive open-C + dot
               citrix: '<symbol id="brand-citrix" viewBox="0 0 32 32">' +
-                '<rect width="32" height="32" rx="6" fill="#000"/>' +
-                '<text x="16" y="22" text-anchor="middle" font-family="Inter, sans-serif" font-weight="800" font-size="15" fill="#fff" letter-spacing="-0.05em">Ctx</text>' +
+                '<rect width="32" height="32" rx="7" fill="#000"/>' +
+                '<path d="M23 12 Q20 8.5 16 8.5 Q9 8.5 9 16 Q9 23.5 16 23.5 Q20 23.5 23 20" stroke="#fff" stroke-width="3.6" stroke-linecap="round" fill="none"/>' +
+                '<circle cx="23" cy="20" r="2.2" fill="#fff"/>' +
                 '</symbol>',
+              // Apple / macOS — clean Apple silhouette on near-black
               macos: '<symbol id="brand-macos" viewBox="0 0 32 32">' +
-                '<rect width="32" height="32" rx="6" fill="#1d1d1f"/>' +
-                '<path d="M19.5 8.4 C19.7 7.6 20.4 7.1 21.2 7 C21.1 7.9 20.5 8.5 19.5 8.4 Z" fill="#fff"/>' +
-                '<path d="M22.6 18.5 C22.6 14.5 19.6 13.5 18 13.5 C16.7 13.5 15.8 14 15.2 14.5 C14.6 14 13.7 13.5 12.4 13.5 C9.5 13.5 8 16 8 18.7 C8 21.7 9.6 24.8 11.6 25 C12.6 25.1 13.3 24.4 14.4 24.4 C15.5 24.4 16.2 25.1 17.2 25 C19.2 24.8 20.7 22.5 21.4 20.1 C20.4 19.6 22.6 18.5 22.6 18.5 Z" fill="#fff"/>' +
+                '<rect width="32" height="32" rx="7" fill="#1d1d1f"/>' +
+                '<path d="M19.4 8 C19.9 7 21 6.4 22.1 6.4 C22 7.6 21.2 8.5 19.4 8 Z" fill="#fff"/>' +
+                '<path d="M23.6 18.6 C23.6 14.4 19.8 13.4 18 13.4 C16.6 13.4 15.6 13.9 14.9 14.3 C14.2 13.9 13.2 13.4 11.8 13.4 C8.2 13.4 6.6 16.2 6.6 18.9 C6.6 22.4 8.6 25.8 10.7 25.8 C12 25.8 12.6 25.2 13.9 25.2 C15.2 25.2 15.6 25.8 17.3 25.8 C19.4 25.8 21.1 23.1 21.7 20.4 C21 20.1 23.6 18.6 23.6 18.6 Z" fill="#fff"/>' +
                 '</symbol>',
+              // Jamf — red square with the lowercase wordmark
               jamf: '<symbol id="brand-jamf" viewBox="0 0 32 32">' +
-                '<rect width="32" height="32" rx="6" fill="#E13B40"/>' +
-                '<text x="16" y="21" text-anchor="middle" font-family="Inter, sans-serif" font-weight="800" font-size="12" fill="#fff" letter-spacing="-0.03em">jamf</text>' +
+                '<rect width="32" height="32" rx="7" fill="#E13B40"/>' +
+                '<text x="16" y="22" text-anchor="middle" font-family="Inter, -apple-system, sans-serif" font-weight="800" font-size="13" fill="#fff" letter-spacing="-0.05em">jamf</text>' +
                 '</symbol>'
             };
             const BRAND_DEFS = Object.values(BRAND_SYMBOLS).join('');
@@ -10283,7 +10367,7 @@
               const y = userYs[i];
               const showSelfServe = isToday && u.selfServe;
               const statusFill = showSelfServe ? '#0F7A3F' : '#0F7A3F';
-              const statusLabel = showSelfServe ? 'Self-serves today' : 'Active';
+              const statusLabel = showSelfServe ? 'Self-serves' : 'Active';
               return ''
                 + '<g class="scene-user" transform="translate(' + USER_X + ',' + y.toFixed(1) + ')">'
                 +   '<rect width="' + USER_W + '" height="' + USER_H + '" rx="10" fill="#fff" stroke="' + (showSelfServe ? '#BFDDC8' : '#DDDDEE') + '"/>'
@@ -10310,7 +10394,7 @@
               const accent = isToday ? '#CC2222' : '#0F7A3F';
               const tileBg = isToday ? '#fff' : '#FAFEFB';
               const tileStroke = isToday ? '#E8C7C7' : '#BFDDC8';
-              const stat = isToday ? num(appsCount) + ' apps · per-platform' : num(appsCount) + ' apps · live';
+              const stat = isToday ? num(appsCount) + ' apps · queued' : num(appsCount) + ' apps · live';
               return ''
                 + '<g class="envi-tile" transform="translate(' + ENV_TILE_X + ',' + y.toFixed(1) + ')">'
                 + '<rect width="' + ENV_TILE_W + '" height="' + ENV_TILE_H + '" rx="9" fill="' + tileBg + '" stroke="' + tileStroke + '" stroke-width="1"/>'
@@ -10399,8 +10483,7 @@
                 + '<g class="scene-admin" transform="translate(' + adminX + ',' + adminY + ')">'
                 +   '<use href="#icon-admin" width="52" height="62"/>'
                 +   '<text x="26" y="78" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="700" fill="#1A1A2E">IT admin</text>'
-                +   '<text x="26" y="90" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" fill="#A01818">per-platform</text>'
-                +   '<text x="26" y="100" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" fill="#A01818" font-weight="700">packaging × ' + nEnvs + ' envs</text>'
+                +   '<text x="26" y="92" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" fill="#A01818" font-weight="700">packages × ' + nEnvs + '</text>'
                 +   '<g transform="translate(44, 8)">'
                 +     '<rect x="-14" y="-10" width="28" height="18" rx="9" fill="#CC2222"/>'
                 +     '<text x="0" y="2" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" font-weight="800" fill="#fff">!</text>'
@@ -10419,14 +10502,11 @@
 
               sceneGroup = queueBlock + clockBlock + queueToAdmin + adminBlock;
 
-              // Today callouts — honest about the scope ("most" not "every")
+              // Today callouts — one beat, no extra clauses.
               calloutsGroup = ''
-                + '<g class="scene-callout scene-callout-today" transform="translate(' + (queueX + queueW / 2) + ',' + (centerY + STAGE_H / 2 - 6) + ')">'
-                +   '<rect x="-145" y="-14" width="290" height="28" rx="14" fill="#FFEFEF" stroke="#F3CCCC"/>'
-                +   '<text x="0" y="4" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="700" fill="#A01818">Most apps require IT to package and deliver</text>'
-                + '</g>'
-                + '<g class="scene-callout scene-callout-today" transform="translate(' + sceneCenterX + ',' + (centerY + STAGE_H / 2 + 26) + ')">'
-                +   '<text x="0" y="0" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="600" fill="#A01818">Each platform maintained separately · audit by hand · ' + nEnvs + ' parallel pipelines</text>'
+                + '<g class="scene-callout scene-callout-today" transform="translate(' + sceneCenterX + ',' + (centerY + STAGE_H / 2 + 8) + ')">'
+                +   '<rect x="-140" y="-15" width="280" height="30" rx="15" fill="#FFEFEF" stroke="#F3CCCC"/>'
+                +   '<text x="0" y="5" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" font-weight="800" fill="#A01818">Package. Per platform. Every release.</text>'
                 + '</g>';
 
             } else {
@@ -10547,14 +10627,11 @@
 
               sceneGroup = portalBlock + portalToHub + hubBlock;
 
-              // AW callouts — honest about "most" apps self-served (not every)
+              // AW callouts — one punchy line. Recast 3-beat voice.
               calloutsGroup = ''
-                + '<g class="scene-callout scene-callout-aw" transform="translate(' + (portalX + portalW / 2) + ',' + (centerY + STAGE_H / 2 - 6) + ')">'
-                +   '<rect x="-160" y="-14" width="320" height="28" rx="14" fill="#E1F5EE" stroke="#BFDDC8"/>'
-                +   '<text x="0" y="4" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="700" fill="#085041">Users self-serve most apps · 70% fewer tickets · faster access</text>'
-                + '</g>'
-                + '<g class="scene-callout scene-callout-aw" transform="translate(' + sceneCenterX + ',' + (centerY + STAGE_H / 2 + 26) + ')">'
-                +   '<text x="0" y="0" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="600" fill="#085041">Define once · deliver to every platform that needs it · audit on demand</text>'
+                + '<g class="scene-callout scene-callout-aw" transform="translate(' + sceneCenterX + ',' + (centerY + STAGE_H / 2 + 8) + ')">'
+                +   '<rect x="-160" y="-15" width="320" height="30" rx="15" fill="#E1F5EE" stroke="#BFDDC8"/>'
+                +   '<text x="0" y="5" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" font-weight="800" fill="#085041">Self-serve. Same minute. 70% fewer tickets.</text>'
                 + '</g>';
             }
 
@@ -10584,8 +10661,8 @@
             <div class="bi-section-content${STATE.collapsedSections.compound ? ' is-collapsed' : ''}" id="section-compound">
               <div class="bi-envi dash-animate">
                 <div class="bi-envi-head">
-                  <div class="bi-envi-title">Your stack drives the workload &mdash; here&rsquo;s how Application Workspace changes it.</div>
-                  <div class="bi-envi-sub">Toggle the environments you actually run. The visual and the math respond live.</div>
+                  <div class="bi-envi-title">Same stack. Same users. Two outcomes.</div>
+                  <div class="bi-envi-sub">Pick the envs you run. The picture and the math respond.</div>
                 </div>
 
                 <div class="bi-envi-chips">
@@ -10593,13 +10670,13 @@
                 </div>
 
                 <div class="bi-envi-eq">
-                  <div class="bi-envi-eq-text">Operating across <strong>${nEnvs} environment${nEnvs===1?'':'s'}</strong> with <strong>${num(appsCount)} apps</strong> &middot; <strong>${num(ticketsMo)} tickets/mo</strong> &middot; coverage assumed <strong>${Math.round(_cov*100)}%</strong></div>
-                  <div class="bi-envi-eq-result">${num(streamsToday)} deployment touchpoints today</div>
+                  <div class="bi-envi-eq-text"><strong>${nEnvs}</strong> env${nEnvs===1?'':'s'} &middot; <strong>${num(appsCount)}</strong> apps &middot; <strong>${num(ticketsMo)}</strong> tickets/mo &middot; <strong>${Math.round(_cov*100)}%</strong> coverage</div>
+                  <div class="bi-envi-eq-result">${num(streamsToday)} touchpoints today</div>
                 </div>
 
                 <div class="bi-envi-mode">
-                  <button type="button" class="bi-envi-mode-btn is-today${isToday ? ' is-active' : ''}" data-action="set-env-mode" data-mode="today">Today &middot; per-platform</button>
-                  <button type="button" class="bi-envi-mode-btn is-aw${!isToday ? ' is-active' : ''}" data-action="set-env-mode" data-mode="aw">With Application Workspace &middot; unified</button>
+                  <button type="button" class="bi-envi-mode-btn is-today${isToday ? ' is-active' : ''}" data-action="set-env-mode" data-mode="today">Today</button>
+                  <button type="button" class="bi-envi-mode-btn is-aw${!isToday ? ' is-active' : ''}" data-action="set-env-mode" data-mode="aw">With Application Workspace</button>
                 </div>
 
                 <div class="bi-envi-viz">
@@ -10630,19 +10707,19 @@
 
                 <div class="bi-envi-metrics">
                   <div class="bi-envi-metric">
-                    <div class="bi-envi-metric-label">User wait time</div>
-                    <div class="bi-envi-metric-value" style="font-size:18px">${isToday ? '5&ndash;14 days' : '&lt; 1 min'}</div>
-                    <div class="bi-envi-metric-sub">${isToday ? 'most apps need IT to package' : 'self-serve from any device'}</div>
+                    <div class="bi-envi-metric-label">User wait</div>
+                    <div class="bi-envi-metric-value">${isToday ? '5&ndash;14d' : '&lt;1 min'}</div>
+                    <div class="bi-envi-metric-sub">${isToday ? 'package per env' : 'any device'}</div>
                   </div>
                   <div class="bi-envi-metric">
-                    <div class="bi-envi-metric-label">Support tickets</div>
+                    <div class="bi-envi-metric-label">Tickets / mo</div>
                     <div class="bi-envi-metric-value">${isToday ? num(ticketsMo) : num(ticketsAw)}</div>
-                    <div class="bi-envi-metric-sub">${isToday ? 'per month, package-and-ship' : 'per month · &minus;70%'}</div>
+                    <div class="bi-envi-metric-sub">${isToday ? 'package &amp; ship' : '70% fewer'}</div>
                   </div>
                   <div class="bi-envi-metric is-highlight">
                     <div class="bi-envi-metric-label">Touchpoints</div>
                     <div class="bi-envi-metric-value">${isToday ? num(streamsToday) + ' → ' + num(streamsAw) : '&minus;' + streamReduction + '%'}</div>
-                    <div class="bi-envi-metric-sub">apps × envs they actually ship to</div>
+                    <div class="bi-envi-metric-sub">apps × envs they ship to</div>
                     <div class="bi-envi-coverage">
                       <span class="bi-envi-coverage-lbl">Cross-platform coverage</span>
                       <div class="bi-envi-coverage-btns">
@@ -10652,31 +10729,16 @@
                   </div>
                 </div>
 
-                <div class="bi-envi-outcomes">
-                  <div class="bi-envi-outcomes-label">What the team redirects to</div>
-                  <div class="bi-envi-outcomes-head">The capacity returned goes into the work the business is actually asking for.</div>
-                  <div class="bi-envi-outcomes-grid">
-                    <div class="bi-envi-outcome">
-                      <div class="bi-envi-outcome-title">Migrations on time</div>
-                      <div class="bi-envi-outcome-sub">Intune, AVD, Win 11 in parallel with BAU</div>
-                    </div>
-                    <div class="bi-envi-outcome">
-                      <div class="bi-envi-outcome-title">AI &amp; tools in days</div>
-                      <div class="bi-envi-outcome-sub">No more quarterly packaging waits</div>
-                    </div>
-                    <div class="bi-envi-outcome">
-                      <div class="bi-envi-outcome-title">Audits as reports</div>
-                      <div class="bi-envi-outcome-sub">SOC 2, ISO, CIS evidence on demand</div>
-                    </div>
-                    <div class="bi-envi-outcome">
-                      <div class="bi-envi-outcome-title">1-day patch close</div>
-                      <div class="bi-envi-outcome-sub">Across every environment, not per platform</div>
-                    </div>
+                <div class="bi-envi-summary${isToday ? ' is-today' : ''}">
+                  <div class="bi-envi-summary-left">
+                    <span class="bi-envi-summary-stat">${isToday ? '5&ndash;14 days' : '&lt; 1 min'}</span>
+                    ${isToday ? '' : `<span class="bi-envi-summary-arrow">&rarr;</span><span class="bi-envi-summary-tag" style="font-weight:700">to access</span>`}
+                    <span class="bi-envi-summary-tag">${isToday ? 'per release · packaged per env' : '· from any device'}</span>
                   </div>
-                </div>
-
-                <div class="bi-envi-foot">
-                  Workstream math: <strong>active apps × environments</strong> today; <strong>active apps × 1</strong> with Application Workspace. The reduction is structural — independent of org size, scales with how many platforms you run.
+                  <div class="bi-envi-summary-right">
+                    <span class="bi-envi-summary-pct">${isToday ? num(streamsToday) + ' touchpoints' : '70% fewer'}</span>
+                    <span class="bi-envi-summary-detail">${isToday ? '<b>· every release</b>' : 'support <b>tickets / mo</b>'}</span>
+                  </div>
                 </div>
 
               </div>
@@ -10686,7 +10748,8 @@
 
         return `
           <div class="bi-split${compoundCol ? '' : ' is-single'}">
-            <!-- ONGOING IMPACT — monthly recurring -->
+            ${compoundCol}
+            <!-- ONGOING IMPACT — monthly recurring (right side: data backs the story) -->
             <section class="bi-split-col">
               <div class="bi-section-eyebrow">Ongoing &middot; hours per month</div>
               <div class="bi-compare dash-animate">
@@ -10696,7 +10759,7 @@
                     <div class="bi-compare-sub">Recurring operational hours, today vs. with Application Workspace. Hover any row for the math.</div>
                   </div>
                   <div class="bi-compare-legend">
-                    <span class="bi-compare-legend-item"><span class="bi-compare-legend-swatch" style="background:var(--r-red)"></span>Today (manual)</span>
+                    <span class="bi-compare-legend-item"><span class="bi-compare-legend-swatch" style="background:var(--r-red)"></span>Today</span>
                     <span class="bi-compare-legend-item"><span class="bi-compare-legend-swatch" style="background:var(--r-blue)"></span>With App Workspace</span>
                   </div>
                 </div>
@@ -10724,7 +10787,6 @@
                 </div>
               </div>
             </section>
-            ${compoundCol}
           </div>
         `;
       }
