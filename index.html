@@ -4619,27 +4619,98 @@
       .bi-envi-mode { display: flex; gap: 6px; }
       .bi-envi-mode-btn { flex: 1; padding: 10px 12px; background: var(--r-surface); border: 1px solid var(--r-divider); border-radius: 8px; font-size: 12px; font-weight: 600; color: var(--r-ink-2); cursor: pointer; transition: all 150ms ease; text-align: center; font-family: inherit; }
       .bi-envi-mode-btn:hover { border-color: var(--r-blue); }
-      .bi-envi-mode-btn.is-active.is-today { background: #FEEBEB; border-color: #F0CACA; color: #A01818; }
-      .bi-envi-mode-btn.is-active.is-aw { background: #E1F5EE; border-color: #BBDDD0; color: #085041; }
-      .bi-envi-viz { background: linear-gradient(180deg, var(--r-surface-3) 0%, var(--r-surface-2) 100%); border: 1px solid var(--r-divider); border-radius: 10px; padding: 12px; }
+      .bi-envi-mode-btn.is-active.is-today { background: #F8FAFC; border-color: #CBD5E1; color: #334155; }
+      .bi-envi-mode-btn.is-active.is-aw { background: #EEF2FF; border-color: #C7D2FE; color: #3730A3; }
+
+      /* ── Persona ribbon — five "who wins" chips above the stage ──
+         The five-up grid stays five-up at every breakpoint. Each chip is
+         a constant shape; only its color shifts between modes (slate-amber
+         today / indigo-cyan with AW). The transformation between modes is
+         the entire pitch for each persona. */
+      .ss-personas {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 6px;
+      }
+      .ss-persona {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        padding: 8px 9px;
+        background: #FFFFFF;
+        border: 1px solid var(--r-divider);
+        border-radius: 8px;
+        min-width: 0;
+        transition: background 220ms ease, border-color 220ms ease;
+      }
+      .ss-persona-icon {
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: #F1F5F9;
+        color: #475569;
+        flex-shrink: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 220ms ease, color 220ms ease;
+      }
+      .ss-persona-icon svg { width: 12px; height: 12px; display: block; }
+      .ss-persona-body { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+      .ss-persona-role {
+        font-size: 10px;
+        font-weight: 700;
+        color: #0F172A;
+        letter-spacing: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .ss-persona-stat {
+        font-size: 11.5px;
+        font-weight: 800;
+        font-variant-numeric: tabular-nums;
+        letter-spacing: -0.01em;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        transition: color 220ms ease;
+      }
+      .ss-personas.is-today .ss-persona { background: #F8FAFC; border-color: #E2E8F0; }
+      .ss-personas.is-today .ss-persona-icon { background: #FEF3C7; color: #92400E; }
+      .ss-personas.is-today .ss-persona-stat { color: #92400E; }
+      .ss-personas.is-aw .ss-persona { background: #EEF2FF; border-color: #C7D2FE; }
+      .ss-personas.is-aw .ss-persona-icon { background: #CFFAFE; color: #155E75; }
+      .ss-personas.is-aw .ss-persona-stat { color: #155E75; }
+
+      /* ── Single-Stream stage ──
+         The SVG canvas itself sits on a soft gradient; the mechanic carries
+         the color. CSS transitions are limited to opacity/filter only —
+         elements that carry an SVG transform="" attribute must not receive
+         a CSS transform animation (CSS replaces the attribute, collapsing
+         to (0,0)). SMIL <animateMotion> handles all motion. */
+      .bi-envi-viz.ss-viz {
+        background: linear-gradient(180deg, #FBFCFE 0%, #F3F5FB 100%);
+        border: 1px solid var(--r-divider);
+        border-radius: 12px;
+        padding: 16px;
+        transition: background 320ms ease;
+      }
+      .bi-envi.is-today .bi-envi-viz.ss-viz {
+        background: linear-gradient(180deg, #FCFCFC 0%, #F5F6F8 100%);
+      }
+      .bi-envi.is-aw .bi-envi-viz.ss-viz {
+        background: linear-gradient(180deg, #FBFCFF 0%, #EEF2FF 100%);
+      }
       .bi-envi-viz-svg { width: 100%; height: auto; display: block; }
-      /* IMPORTANT: do NOT use CSS `transform` animations on elements that
-         already carry an SVG `transform="..."` attribute — CSS transform
-         REPLACES (not concatenates with) the SVG attribute, which collapses
-         the element to (0,0). Keep CSS animations on these elements to
-         opacity/filter only, and use SMIL <animate> / <animateTransform>
-         (or wrap in a translated <g>) for any motion or scale. */
-      .bi-envi-viz-svg .envi-tile { transition: filter 200ms cubic-bezier(0.2, 0.8, 0.2, 1); animation: enviSoftIn 220ms cubic-bezier(0.2, 0.8, 0.2, 1) both; }
-      .bi-envi-viz-svg .envi-tile:hover { filter: drop-shadow(0 4px 8px rgba(0,0,204,0.10)); }
-      .bi-envi-viz-svg .envi-path { opacity: var(--p-op, 0.7); animation: enviSoftIn 260ms cubic-bezier(0.2, 0.8, 0.2, 1) both; }
-      .bi-envi-viz-svg .envi-hub { animation: enviSoftIn 320ms cubic-bezier(0.2, 0.8, 0.2, 1) both; }
-      .bi-envi-viz-svg .scene-portal,
-      .bi-envi-viz-svg .scene-queue,
-      .bi-envi-viz-svg .scene-admin,
-      .bi-envi-viz-svg .scene-clock,
-      .bi-envi-viz-svg .scene-user,
-      .bi-envi-viz-svg .scene-callout { animation: enviSoftIn 240ms cubic-bezier(0.2, 0.8, 0.2, 1) both; }
-      @keyframes enviSoftIn { from { opacity: 0; } to { opacity: 1; } }
+      .ss-svg .ss-app,
+      .ss-svg .ss-env,
+      .ss-svg .ss-badge,
+      .ss-svg .ss-flow { animation: ssSoftIn 280ms ease-out both; }
+      .ss-svg .ss-env { animation-delay: 60ms; }
+      .ss-svg .ss-badge { animation-delay: 120ms; }
+      .ss-svg .ss-env:hover { filter: drop-shadow(0 4px 10px rgba(99,102,241,0.15)); cursor: default; }
+      @keyframes ssSoftIn { from { opacity: 0; } to { opacity: 1; } }
       .bi-envi-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
       .bi-envi-metric {
         background: var(--r-surface);
@@ -10174,20 +10245,33 @@
             const tixReductionPct = Math.round(a.ticketReduction * 100);
             const engMonths = hasCycle ? (hrsSaved / 160).toFixed(1) : '0';
 
-            // ── Environment Impact section computations ──
-            // Brand-styled logo marks for each environment. Drawn as inline SVG
-            // groups (used both in chips and in the main diagram) so they read as
-            // real product brands rather than generic line icons.
+            // ══════════════════════════════════════════════════════════
+            //  THE SINGLE STREAM — Environment Impact, redesigned
+            //
+            //  Read the diagram in 3 seconds without labels:
+            //    TODAY  one release branches BEFORE the work — N parallel
+            //           rebuild stacks. The multiplication is geometric.
+            //    AW     one release flows through ONE stack and branches
+            //           AFTER the work. The fan-out is routing, not labor.
+            //
+            //  The fork point literally moves left → right between modes,
+            //  and that movement IS the story. Palette is dual cool tones
+            //  (slate + amber for friction; indigo + cyan for flow) — no
+            //  red-vs-green, so the customer's status quo reads as "heavy"
+            //  rather than "broken".
+            // ══════════════════════════════════════════════════════════
+
+            // Brand glyphs are the only inline symbols we keep — every
+            // bitmap from the old diagram (ticket icons, device sprites,
+            // admin avatar, clock, etc) has been retired in favor of
+            // line-only mechanics.
             const BRAND_SYMBOLS = {
-              // Microsoft Intune — diamond/tile mark on Microsoft blue with a
-              // cloud check overlay (UEM/MDM identity)
               intune: '<symbol id="brand-intune" viewBox="0 0 32 32">' +
                 '<rect width="32" height="32" rx="7" fill="#0078D4"/>' +
                 '<path d="M16 6 L26 16 L16 26 L6 16 Z" fill="#fff"/>' +
                 '<path d="M11 17 Q11 13.8 14 13.8 L18 13.8 Q21 13.8 21.6 16 Q23 16 23 17.6 Q23 19.2 21.2 19.2 L11.8 19.2 Q9.5 19.2 9.5 17.6 Q9.5 16 11 17 Z" fill="#0078D4"/>' +
                 '<path d="M13.5 16.7 L15.3 18.5 L18.5 14.7" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>' +
                 '</symbol>',
-              // Microsoft Configuration Manager — stacked database/server cans
               sccm: '<symbol id="brand-sccm" viewBox="0 0 32 32">' +
                 '<rect width="32" height="32" rx="7" fill="#005EA6"/>' +
                 '<ellipse cx="16" cy="9.5" rx="8" ry="2.4" fill="#fff"/>' +
@@ -10199,7 +10283,6 @@
                 '<ellipse cx="16" cy="23" rx="8" ry="2.4" fill="#36A2EB"/>' +
                 '<circle cx="11" cy="23" r="0.9" fill="#22C55E"/>' +
                 '</symbol>',
-              // Azure Virtual Desktop / Windows 365 — cloud over monitor
               avd: '<symbol id="brand-avd" viewBox="0 0 32 32">' +
                 '<rect width="32" height="32" rx="7" fill="#0061A8"/>' +
                 '<path d="M9 14 Q9 10 13 10 Q14 8 17 8 Q20 8 21 11 Q24 11 24 14 Q26 14 26 16.5 Q26 19 23 19 L9 19 Q6 19 6 16.5 Q6 14 9 14 Z" fill="#fff"/>' +
@@ -10208,107 +10291,22 @@
                 '<rect x="14" y="26" width="4" height="0.8" fill="#fff"/>' +
                 '<rect x="11.5" y="27" width="9" height="1" rx="0.3" fill="#fff"/>' +
                 '</symbol>',
-              // Citrix — bold black mark with the distinctive open-C + dot
               citrix: '<symbol id="brand-citrix" viewBox="0 0 32 32">' +
                 '<rect width="32" height="32" rx="7" fill="#000"/>' +
                 '<path d="M23 12 Q20 8.5 16 8.5 Q9 8.5 9 16 Q9 23.5 16 23.5 Q20 23.5 23 20" stroke="#fff" stroke-width="3.6" stroke-linecap="round" fill="none"/>' +
                 '<circle cx="23" cy="20" r="2.2" fill="#fff"/>' +
                 '</symbol>',
-              // Apple / macOS — clean Apple silhouette on near-black
               macos: '<symbol id="brand-macos" viewBox="0 0 32 32">' +
                 '<rect width="32" height="32" rx="7" fill="#1d1d1f"/>' +
                 '<path d="M19.4 8 C19.9 7 21 6.4 22.1 6.4 C22 7.6 21.2 8.5 19.4 8 Z" fill="#fff"/>' +
                 '<path d="M23.6 18.6 C23.6 14.4 19.8 13.4 18 13.4 C16.6 13.4 15.6 13.9 14.9 14.3 C14.2 13.9 13.2 13.4 11.8 13.4 C8.2 13.4 6.6 16.2 6.6 18.9 C6.6 22.4 8.6 25.8 10.7 25.8 C12 25.8 12.6 25.2 13.9 25.2 C15.2 25.2 15.6 25.8 17.3 25.8 C19.4 25.8 21.1 23.1 21.7 20.4 C21 20.1 23.6 18.6 23.6 18.6 Z" fill="#fff"/>' +
                 '</symbol>',
-              // Jamf — red square with the lowercase wordmark
               jamf: '<symbol id="brand-jamf" viewBox="0 0 32 32">' +
                 '<rect width="32" height="32" rx="7" fill="#E13B40"/>' +
                 '<text x="16" y="22" text-anchor="middle" font-family="Inter, -apple-system, sans-serif" font-weight="800" font-size="13" fill="#fff" letter-spacing="-0.05em">jamf</text>' +
                 '</symbol>'
             };
             const BRAND_DEFS = Object.values(BRAND_SYMBOLS).join('');
-
-            // End-user device marks — recognisable enterprise hardware silhouettes.
-            // Each device is sized 36x36 and drawn in a consistent enterprise palette.
-            const DEVICE_SYMBOLS = {
-              laptop: '<symbol id="dev-laptop" viewBox="0 0 36 36">' +
-                '<rect x="6" y="9" width="24" height="15" rx="1.5" fill="#fff" stroke="#1A1A2E" stroke-width="1.3"/>' +
-                '<rect x="7.5" y="10.5" width="21" height="12" fill="#0078D4"/>' +
-                '<rect x="10" y="13" width="15" height="1" fill="#fff" opacity="0.55"/>' +
-                '<rect x="10" y="15" width="11" height="1" fill="#fff" opacity="0.55"/>' +
-                '<rect x="10" y="17" width="13" height="1" fill="#fff" opacity="0.55"/>' +
-                '<path d="M3 24 L33 24 L31 28 L5 28 Z" fill="#1A1A2E"/>' +
-                '<rect x="14.5" y="25" width="7" height="1.4" rx="0.5" fill="#666"/>' +
-                '</symbol>',
-              macbook: '<symbol id="dev-macbook" viewBox="0 0 36 36">' +
-                '<rect x="7" y="7" width="22" height="14" rx="1" fill="#C8C8D0" stroke="#1A1A2E" stroke-width="1"/>' +
-                '<rect x="8" y="8" width="20" height="12" fill="#0F1419"/>' +
-                '<path d="M19.6 11 C19.9 10.4 20.6 10.2 21.2 10.3 C21 11 20.4 11.4 19.6 11 Z" fill="#fff"/>' +
-                '<path d="M21.2 16.5 C21.2 14.5 19.6 14 18.6 14 C17.9 14 17.4 14.3 17.1 14.5 C16.8 14.3 16.3 14 15.6 14 C14.2 14 13.2 15 13.2 16.5 C13.2 18 14.2 19.4 15.2 19.4 C15.7 19.4 16 19.1 16.5 19.1 C17 19.1 17.4 19.4 17.9 19.4 C18.9 19.4 19.7 18.4 20 17.4 C19.5 17.2 21.2 16.5 21.2 16.5 Z" fill="#fff"/>' +
-                '<path d="M3 22 L33 22 L31 26 L5 26 Z" fill="#B0B0B8"/>' +
-                '<path d="M14.5 23 L21.5 23 L21 24 L15 24 Z" fill="#1A1A2E"/>' +
-                '</symbol>',
-              winarm: '<symbol id="dev-winarm" viewBox="0 0 36 36">' +
-                // Surface-style 2-in-1 with kickstand — represents Windows-on-ARM hardware
-                '<rect x="6" y="6" width="24" height="17" rx="1.5" fill="#1A1A2E"/>' +
-                '<rect x="7.4" y="7.4" width="21.2" height="14.2" fill="#0078D4"/>' +
-                // Windows 4-pane glyph
-                '<g transform="translate(13.5, 10.5)" fill="#fff">' +
-                  '<rect width="3.8" height="3.8"/>' +
-                  '<rect x="5" width="3.8" height="3.8"/>' +
-                  '<rect y="5" width="3.8" height="3.8"/>' +
-                  '<rect x="5" y="5" width="3.8" height="3.8"/>' +
-                '</g>' +
-                // Kickstand fold
-                '<path d="M18 23 L18 30 L26 27 L26 23 Z" fill="#3A3A48" stroke="#1A1A2E" stroke-width="0.5"/>' +
-                '<ellipse cx="18" cy="32" rx="13" ry="0.7" fill="#1A1A2E" opacity="0.25"/>' +
-                '</symbol>',
-              cloudpc: '<symbol id="dev-cloudpc" viewBox="0 0 36 36">' +
-                '<rect x="5" y="6" width="26" height="18" rx="1.5" fill="#fff" stroke="#1A1A2E" stroke-width="1.3"/>' +
-                '<rect x="6.5" y="7.5" width="23" height="15" fill="#0078D4"/>' +
-                '<path d="M13.5 14 Q13.5 11 16.5 11 Q18.8 11 19.2 13 Q22.5 13 22.5 16 Q22.5 18 20.5 18 L13.5 18 Q11.5 18 11.5 16 Q11.5 14 13.5 14 Z" fill="#50E6FF"/>' +
-                '<rect x="14" y="24" width="8" height="3" fill="#A0A0A8"/>' +
-                '<rect x="10" y="27" width="16" height="1.5" rx="0.3" fill="#1A1A2E"/>' +
-                '</symbol>'
-            };
-
-            // Scene icons — used in the today/AW pipeline narratives.
-            const ICON_SYMBOLS = {
-              ticket: '<symbol id="icon-ticket" viewBox="0 0 60 22">' +
-                '<path d="M4 4 Q4 1 7 1 L53 1 Q56 1 56 4 L56 7 Q53.5 7 53.5 11 Q53.5 14 56 14 L56 18 Q56 21 53 21 L7 21 Q4 21 4 18 L4 14 Q6.5 14 6.5 11 Q6.5 7 4 7 Z" fill="#CC2222" stroke="#A01818" stroke-width="0.8"/>' +
-                '<line x1="30" y1="2" x2="30" y2="20" stroke="#FFE0E0" stroke-width="0.5" stroke-dasharray="1.2 1"/>' +
-                '<text x="17" y="14" text-anchor="middle" font-family="Inter, sans-serif" font-size="8" font-weight="800" fill="#fff">TKT</text>' +
-                '<rect x="34" y="6" width="16" height="1.3" rx="0.5" fill="#fff" opacity="0.7"/>' +
-                '<rect x="34" y="9" width="13" height="1.3" rx="0.5" fill="#fff" opacity="0.5"/>' +
-                '<rect x="34" y="12" width="10" height="1.3" rx="0.5" fill="#fff" opacity="0.5"/>' +
-                '</symbol>',
-              admin: '<symbol id="icon-admin" viewBox="0 0 44 52">' +
-                '<circle cx="22" cy="14" r="8.5" fill="#F5C796" stroke="#4A4A5A" stroke-width="1.2"/>' +
-                '<path d="M14 12 Q14 5.5 22 5.5 Q30 5.5 30 12 L27 11 L24 13 L20 11 L17 13 L14 12 Z" fill="#4A4A5A"/>' +
-                '<circle cx="19" cy="14.5" r="0.9" fill="#1A1A2E"/>' +
-                '<circle cx="25" cy="14.5" r="0.9" fill="#1A1A2E"/>' +
-                '<path d="M18 17.5 Q20 19 22 19 Q24 19 26 17.5" stroke="#1A1A2E" stroke-width="0.8" fill="none" stroke-linecap="round"/>' +
-                '<path d="M6 52 Q6 30 22 30 Q38 30 38 52 Z" fill="#0078D4" stroke="#003F73" stroke-width="1"/>' +
-                '<rect x="19" y="30" width="6" height="5" fill="#fff"/>' +
-                '<path d="M20.5 30 L22 33.5 L23.5 30" fill="#003F73"/>' +
-                '<rect x="28" y="38" width="6" height="2" rx="0.5" fill="#fff" opacity="0.55"/>' +
-                '<rect x="28" y="42" width="4" height="2" rx="0.5" fill="#fff" opacity="0.4"/>' +
-                '</symbol>',
-              clock: '<symbol id="icon-clock" viewBox="0 0 32 32">' +
-                '<circle cx="16" cy="16" r="14" fill="#FFEFEF" stroke="#CC2222" stroke-width="1.8"/>' +
-                '<circle cx="16" cy="16" r="11" fill="none" stroke="#F3CCCC" stroke-width="0.6" stroke-dasharray="1.5 2"/>' +
-                '<path d="M16 7 L16 16 L22 19" stroke="#CC2222" stroke-width="2.5" stroke-linecap="round" fill="none"/>' +
-                '<circle cx="16" cy="16" r="1.6" fill="#A01818"/>' +
-                '</symbol>',
-              spark: '<symbol id="icon-spark" viewBox="0 0 24 24">' +
-                '<path d="M12 2 L13.5 9 L20 10.5 L13.5 12 L12 19 L10.5 12 L4 10.5 L10.5 9 Z" fill="#00BFFF"/>' +
-                '</symbol>',
-              check: '<symbol id="icon-check" viewBox="0 0 28 28">' +
-                '<circle cx="14" cy="14" r="13" fill="#E1F5EE" stroke="#0F7A3F" stroke-width="1.5"/>' +
-                '<path d="M8 14 L12.5 18.5 L20 11" stroke="#0F7A3F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>' +
-                '</symbol>'
-            };
-            const ALL_DEFS = BRAND_DEFS + Object.values(DEVICE_SYMBOLS).join('') + Object.values(ICON_SYMBOLS).join('');
 
             const ENV_LIST = [
               { id: 'intune', name: 'Intune',     brand: 'brand-intune' },
@@ -10336,362 +10334,287 @@
             const ticketsAw = Math.round(ticketsMo * (1 - ticketReductionPct / 100));
             const isToday = _mode === 'today';
 
-            // ── Scene geometry ──
-            // The visualization is composed as a left-to-right story:
-            //   END USERS (column)  →  PIPELINE (today queue / AW portal)  →  ENVIRONMENTS (column)
-            // This way the right side tells the same story as the left side's
-            // "Where time gets returned" rows — user experience, packaging,
-            // multi-tenant — but as a moving picture rather than numbers.
-            const VB_W = 920;
-            const USER_W = 168, USER_H = 84, USER_GAP = 10;
-            const ENV_TILE_W = 200, ENV_TILE_H = 56, ENV_GAP = 10;
-            const USERS = [
-              { id: 'sales',  name: 'Maria',  role: 'Sales · Win laptop',   device: 'dev-laptop',  selfServe: false },
-              { id: 'design', name: 'Devon',  role: 'Design · MacBook',     device: 'dev-macbook', selfServe: true  },
-              { id: 'field',  name: 'Priya',  role: 'Field · Win ARM',      device: 'dev-winarm',  selfServe: false },
-              { id: 'remote', name: 'James',  role: 'Remote · Cloud PC',    device: 'dev-cloudpc', selfServe: false }
-            ];
-            const nUsers = USERS.length;
-            const totalUserH = nUsers * USER_H + (nUsers - 1) * USER_GAP;
+            // ── Geometry ──
+            // The redesigned diagram is a left-to-right tri-band:
+            //   APP RELEASE (single card)  →  STAGE (mechanic)  →  ENVIRONMENTS (column)
+            // The stage rewrites itself for each mode; the app card and env
+            // tiles stay put. Heights scale to env count up to a cap.
+            const VB_W = 940;
+            const PAD = 24;
+            const APP_W = 156, APP_H = 132;
+            const APP_X = PAD;
+            const ENV_TILE_W = 224, ENV_TILE_H = 44, ENV_GAP = 10;
+            const ENV_X = VB_W - PAD - ENV_TILE_W;
             const totalEnvH = nEnvs * ENV_TILE_H + (nEnvs - 1) * ENV_GAP;
-            const STAGE_H = Math.max(totalUserH, totalEnvH, 320);
-            const TOP_PAD = 40, BOTTOM_PAD = 56;
-            const VB_H = TOP_PAD + STAGE_H + BOTTOM_PAD;
-            const centerY = TOP_PAD + STAGE_H / 2;
-            const userStartY = centerY - totalUserH / 2;
-            const userYs = USERS.map(function(_, i) { return userStartY + i * (USER_H + USER_GAP); });
+            const TOP_PAD = 36, BOTTOM_PAD = 36;
+            const VB_H = Math.max(380, TOP_PAD + totalEnvH + BOTTOM_PAD);
+            const centerY = VB_H / 2;
+            const APP_Y = centerY - APP_H / 2;
             const envStartY = centerY - totalEnvH / 2;
             const envYs = Array.from({length: nEnvs}, function(_, i) { return envStartY + i * (ENV_TILE_H + ENV_GAP); });
-            const USER_X = 14;
-            const userRightX = USER_X + USER_W;
-            const ENV_TILE_X = VB_W - ENV_TILE_W - 10;
-            const sceneLeftX = userRightX + 24;
-            const sceneRightX = ENV_TILE_X - 20;
-            const sceneW = sceneRightX - sceneLeftX;
-            const sceneCenterX = (sceneLeftX + sceneRightX) / 2;
+            const STAGE_X1 = APP_X + APP_W + 28;     // stage starts after app card
+            const STAGE_X2 = ENV_X - 28;              // stage ends before env tiles
 
-            // ── USER COLUMN ──
-            // Four representative end users on different devices. Their device
-            // mix is intentional: Windows, macOS, ARM, and Cloud PC — all of
-            // the environments the customer actually runs. One user (Devon) is
-            // marked as already self-serving today, so the visual doesn't
-            // claim that 100% of users are blocked by IT.
-            const usersGroup = USERS.map(function(u, i) {
-              const y = userYs[i];
-              const showSelfServe = isToday && u.selfServe;
-              const statusFill = showSelfServe ? '#0F7A3F' : '#0F7A3F';
-              const statusLabel = showSelfServe ? 'Self-serves' : 'Active';
-              return ''
-                + '<g class="scene-user" transform="translate(' + USER_X + ',' + y.toFixed(1) + ')">'
-                +   '<rect width="' + USER_W + '" height="' + USER_H + '" rx="10" fill="#fff" stroke="' + (showSelfServe ? '#BFDDC8' : '#DDDDEE') + '"/>'
-                +   (showSelfServe ? '<rect x="0" y="0" width="3" height="' + USER_H + '" rx="1.5" fill="#0F7A3F" opacity="0.85"/>' : '')
-                +   '<use href="#' + u.device + '" x="14" y="' + ((USER_H - 40) / 2).toFixed(1) + '" width="40" height="40"/>'
-                +   '<text x="62" y="32" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#1A1A2E">' + u.name + '</text>'
-                +   '<text x="62" y="48" font-family="Inter, sans-serif" font-size="10" fill="#4A4A5A">' + u.role + '</text>'
-                +   '<g transform="translate(62, 60)">'
-                +     '<circle r="2.5" fill="' + statusFill + '"/>'
-                +     '<text x="7" y="3" font-family="Inter, sans-serif" font-size="9" font-weight="' + (showSelfServe ? '700' : '500') + '" fill="' + (showSelfServe ? '#0F7A3F' : '#4A4A5A') + '">' + statusLabel + '</text>'
-                +   '</g>'
-                + '</g>';
-            }).join('');
+            // ── Palette ──
+            // Two cool tones — slate-amber for friction, indigo-cyan for flow.
+            // No red, no green. The customer's status quo reads "heavy", not
+            // "broken".
+            const C_T_STROKE  = '#94A3B8';   // slate-400
+            const C_T_LINE    = '#CBD5E1';   // slate-300
+            const C_T_TEXT    = '#475569';   // slate-600
+            const C_T_TEXT_D  = '#1E293B';   // slate-800
+            const C_T_FILL    = '#F8FAFC';   // slate-50
+            const C_T_ACCENT  = '#F59E0B';   // amber-500
+            const C_T_ACCENT_BG = '#FEF3C7'; // amber-100
+            const C_T_ACCENT_TX = '#92400E'; // amber-800
 
-            const usersHeader = ''
-              + '<text x="' + (USER_X + USER_W / 2) + '" y="' + (TOP_PAD - 14) + '" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" font-weight="800" fill="#4A4A5A" letter-spacing="0.12em">END USERS · ' + nUsers + '</text>';
+            const C_A_STROKE  = '#6366F1';   // indigo-500
+            const C_A_LINE    = '#C7D2FE';   // indigo-200
+            const C_A_TEXT    = '#3730A3';   // indigo-800
+            const C_A_TEXT_D  = '#1E1B4B';   // indigo-950
+            const C_A_FILL    = '#EEF2FF';   // indigo-50
+            const C_A_ACCENT  = '#06B6D4';   // cyan-500
+            const C_A_ACCENT_BG = '#CFFAFE'; // cyan-100
+            const C_A_ACCENT_TX = '#155E75'; // cyan-800
 
-            // ── ENV COLUMN ──
-            const envsHeader = ''
-              + '<text x="' + (ENV_TILE_X + ENV_TILE_W / 2) + '" y="' + (TOP_PAD - 14) + '" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" font-weight="800" fill="#4A4A5A" letter-spacing="0.12em">ENVIRONMENTS · ' + nEnvs + '</text>';
+            const C_STROKE = isToday ? C_T_STROKE : C_A_STROKE;
+            const C_TEXT   = isToday ? C_T_TEXT   : C_A_TEXT;
+            const C_LINE   = isToday ? C_T_LINE   : C_A_LINE;
+            const C_FILL   = isToday ? C_T_FILL   : C_A_FILL;
 
-            const envBlocks = activeEnvs.map(function(e, i) {
+            const BUILD_STEPS = [
+              { id: 'pkg',  label: 'Package' },
+              { id: 'test', label: 'Test'    },
+              { id: 'dep',  label: 'Deploy'  },
+              { id: 'pat',  label: 'Patch'   }
+            ];
+
+            // ── App release card (left column, both modes) ──
+            // A single, neutral "release event" with apps-in-portfolio context.
+            // The card itself doesn't change between modes; only its accent does.
+            const appCardSVG = ''
+              + '<g class="ss-app">'
+              +   '<rect x="' + APP_X + '" y="' + APP_Y + '" width="' + APP_W + '" height="' + APP_H + '" rx="14" fill="#FFFFFF" stroke="' + C_STROKE + '" stroke-width="1.4"/>'
+              +   '<text x="' + (APP_X + 16) + '" y="' + (APP_Y + 26) + '" font-family="Inter, sans-serif" font-size="9.5" font-weight="700" fill="' + C_TEXT + '" letter-spacing="0.14em">ONE  RELEASE</text>'
+              +   '<rect x="' + (APP_X + 16) + '" y="' + (APP_Y + 38) + '" width="40" height="40" rx="9" fill="' + (isToday ? '#F1F5F9' : '#E0E7FF') + '"/>'
+              +   '<g transform="translate(' + (APP_X + 22) + ',' + (APP_Y + 44) + ')">'
+              +     '<rect width="28" height="28" rx="6" fill="none" stroke="' + C_STROKE + '" stroke-width="1.8"/>'
+              +     '<path d="M8 14 L13 19 L20 10" stroke="' + C_STROKE + '" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>'
+              +   '</g>'
+              +   '<text x="' + (APP_X + 64) + '" y="' + (APP_Y + 54) + '" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#0F172A">App update</text>'
+              +   '<text x="' + (APP_X + 64) + '" y="' + (APP_Y + 70) + '" font-family="Inter, sans-serif" font-size="11" font-weight="500" fill="' + C_TEXT + '">v ' + (10 + Math.min(nEnvs * 2, 12)) + '.0</text>'
+              +   '<line x1="' + (APP_X + 16) + '" y1="' + (APP_Y + APP_H - 42) + '" x2="' + (APP_X + APP_W - 16) + '" y2="' + (APP_Y + APP_H - 42) + '" stroke="' + (isToday ? '#E2E8F0' : '#E0E7FF') + '" stroke-width="1"/>'
+              +   '<text x="' + (APP_X + 16) + '" y="' + (APP_Y + APP_H - 24) + '" font-family="Inter, sans-serif" font-size="11" font-weight="700" fill="' + C_TEXT + '">' + num(appsCount) + ' apps</text>'
+              +   '<text x="' + (APP_X + 16) + '" y="' + (APP_Y + APP_H - 11) + '" font-family="Inter, sans-serif" font-size="9.5" font-weight="500" fill="#64748B">in your portfolio</text>'
+              + '</g>';
+
+            // ── Env tiles (right column, both modes) ──
+            // The destinations. Brand glyph + name + status. The left edge
+            // accent picks up the mode color so each row visually belongs to
+            // its mode without being colored as "good" or "bad".
+            const envBlocksSVG = activeEnvs.map(function(e, i) {
               const y = envYs[i];
-              const accent = isToday ? '#CC2222' : '#0F7A3F';
-              const tileBg = isToday ? '#fff' : '#FAFEFB';
-              const tileStroke = isToday ? '#E8C7C7' : '#BFDDC8';
+              const statClr = isToday ? '#94A3B8' : C_A_TEXT;
               const stat = isToday ? num(appsCount) + ' apps · queued' : num(appsCount) + ' apps · live';
+              const accent = isToday ? '#CBD5E1' : C_A_ACCENT;
               return ''
-                + '<g class="envi-tile" transform="translate(' + ENV_TILE_X + ',' + y.toFixed(1) + ')">'
-                + '<rect width="' + ENV_TILE_W + '" height="' + ENV_TILE_H + '" rx="9" fill="' + tileBg + '" stroke="' + tileStroke + '" stroke-width="1"/>'
-                + '<rect x="0" y="0" width="4" height="' + ENV_TILE_H + '" rx="2" fill="' + accent + '" opacity="0.85"/>'
-                + '<use href="#' + e.brand + '" x="14" y="' + ((ENV_TILE_H - 34) / 2).toFixed(1) + '" width="34" height="34"/>'
-                + '<text x="56" y="22" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#1A1A2E">' + e.name + '</text>'
-                + '<text x="56" y="39" font-family="Inter, sans-serif" font-size="10" fill="#4A4A5A">' + stat + '</text>'
-                + '<g transform="translate(' + (ENV_TILE_W - 18) + ',' + (ENV_TILE_H / 2) + ')">'
-                +   (isToday
-                    ? '<circle r="6" fill="#FFEFEF" stroke="#CC2222" stroke-width="1"/><path d="M -2 -2 L 2 2 M 2 -2 L -2 2" stroke="#CC2222" stroke-width="1.5" stroke-linecap="round"/>'
-                    : '<circle r="7" fill="#E1F5EE" stroke="#0F7A3F" stroke-width="1"/><path d="M -3 0 L -0.5 2.5 L 3 -2" stroke="#0F7A3F" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>')
-                + '</g>'
+                + '<g class="ss-env" transform="translate(' + ENV_X + ',' + y.toFixed(1) + ')">'
+                +   '<rect width="' + ENV_TILE_W + '" height="' + ENV_TILE_H + '" rx="9" fill="#FFFFFF" stroke="' + (isToday ? '#E2E8F0' : '#C7D2FE') + '" stroke-width="1"/>'
+                +   '<rect x="0" y="0" width="3" height="' + ENV_TILE_H + '" rx="1.5" fill="' + accent + '" opacity="' + (isToday ? '0.6' : '0.95') + '"/>'
+                +   '<use href="#' + e.brand + '" x="14" y="' + ((ENV_TILE_H - 26) / 2) + '" width="26" height="26"/>'
+                +   '<text x="48" y="19" font-family="Inter, sans-serif" font-size="12.5" font-weight="700" fill="#0F172A">' + e.name + '</text>'
+                +   '<text x="48" y="33" font-family="Inter, sans-serif" font-size="10.5" font-weight="500" fill="' + statClr + '">' + stat + '</text>'
                 + '</g>';
             }).join('');
 
-            // ── SCENE — pipeline middle ──
-            let sceneGroup = '';
-            let userConnectors = '';
-            let envConnectors = '';
-            let calloutsGroup = '';
+            // ── Stage body (the mechanic that flips between modes) ──
+            let stageBodySVG = '';
 
             if (isToday) {
-              // TODAY: every request is a manual workflow.
-              // Stage A: tickets emerge from each user (red ticket icons)
-              // Stage B: queue stack collects them
-              // Stage C: lone IT admin packages, one at a time
-              // Stage D: fragmented branches out to each env (per-env work)
+              // ── TODAY: multiplication is visible. ──
+              // The release branches BEFORE the work, fanning into N parallel
+              // rebuild stacks. Each stack is the same four steps. Seeing the
+              // same row of work repeat n times IS the multiplication story.
+              const BLOCK_W = 62, BLOCK_H = 28, BLOCK_GAP = 6;
+              const stackW = BUILD_STEPS.length * BLOCK_W + (BUILD_STEPS.length - 1) * BLOCK_GAP;
+              const stackX = STAGE_X1 + Math.max(0, (STAGE_X2 - STAGE_X1 - stackW) / 2);
+              const stackEndX = stackX + stackW;
+              const trunkX = APP_X + APP_W;
+              const forkX  = trunkX + 18;
 
-              const queueX = sceneLeftX + 30;
-              const queueY = centerY - 90;
-              const queueW = 110, queueH = 180;
-              const adminX = queueX + queueW + 50;
-              const adminY = centerY - 26;
-              const splitX = adminX + 90;
-              const splitY = centerY;
+              // Trunk: app card → fork point
+              const trunkPath = ''
+                + '<line x1="' + trunkX + '" y1="' + centerY + '" x2="' + forkX + '" y2="' + centerY + '" stroke="' + C_T_STROKE + '" stroke-width="2" stroke-linecap="round"/>';
 
-              // Connectors from users → queue. Only the 3 users marked as
-              // NOT already self-serving fire tickets. Devon (selfServe:true)
-              // gets no animation; his card already shows the green badge.
-              userConnectors = USERS.map(function(u, i) {
-                if (u.selfServe) return '';
-                const y = userYs[i] + USER_H / 2;
-                const start = userRightX + 4;
-                const end = queueX - 4;
-                const mid = (start + end) / 2;
+              // Pre-work fan — one branch per env, each curving to that env's row
+              const forkBranches = activeEnvs.map(function(e, i) {
+                const rowY = envYs[i] + ENV_TILE_H / 2;
+                const c1x  = forkX + 32;
+                return '<path class="ss-flow ss-flow-in" d="M ' + forkX + ' ' + centerY + ' C ' + c1x + ' ' + centerY + ', ' + c1x + ' ' + rowY.toFixed(1) + ', ' + stackX + ' ' + rowY.toFixed(1) + '" stroke="' + C_T_LINE + '" stroke-width="1.4" fill="none" stroke-linecap="round"/>';
+              }).join('');
+
+              // Per-env rebuild stack
+              const stacks = activeEnvs.map(function(e, i) {
+                const rowY = envYs[i] + ENV_TILE_H / 2;
+                const blockY = rowY - BLOCK_H / 2;
+                const stack = BUILD_STEPS.map(function(s, j) {
+                  const bx = stackX + j * (BLOCK_W + BLOCK_GAP);
+                  return ''
+                    + '<rect x="' + bx + '" y="' + blockY.toFixed(1) + '" width="' + BLOCK_W + '" height="' + BLOCK_H + '" rx="6" fill="#FFFFFF" stroke="' + C_T_STROKE + '" stroke-width="1"/>'
+                    + '<rect x="' + bx + '" y="' + blockY.toFixed(1) + '" width="' + BLOCK_W + '" height="3" rx="1.5" fill="' + C_T_LINE + '"/>'
+                    + '<text x="' + (bx + BLOCK_W/2) + '" y="' + (rowY + 4).toFixed(1) + '" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" font-weight="600" fill="' + C_T_TEXT + '">' + s.label + '</text>';
+                }).join('');
+                const out = '<line class="ss-flow ss-flow-out" x1="' + stackEndX + '" y1="' + rowY.toFixed(1) + '" x2="' + ENV_X + '" y2="' + rowY.toFixed(1) + '" stroke="' + C_T_LINE + '" stroke-width="1.4" stroke-linecap="round"/>';
+                return stack + out;
+              }).join('');
+
+              // Amber "×N rebuilds" badge — the one editorial accent that
+              // names the problem. Lives above the topmost rebuild row.
+              const badgeY = Math.max(envYs[0] - 24, TOP_PAD - 4);
+              const badgeCx = stackX + stackW / 2;
+              const multBadge = ''
+                + '<g class="ss-badge ss-badge-today">'
+                +   '<rect x="' + (badgeCx - 92) + '" y="' + badgeY + '" width="184" height="22" rx="11" fill="' + C_T_ACCENT_BG + '" stroke="' + C_T_ACCENT + '" stroke-width="1"/>'
+                +   '<circle cx="' + (badgeCx - 76) + '" cy="' + (badgeY + 11) + '" r="3" fill="' + C_T_ACCENT + '"/>'
+                +   '<text x="' + (badgeCx - 64) + '" y="' + (badgeY + 15) + '" font-family="Inter, sans-serif" font-size="11" font-weight="800" fill="' + C_T_ACCENT_TX + '">×' + nEnvs + ' rebuilds &middot; same release</text>'
+                + '</g>';
+
+              // Subtle amber ghost particles — one per env, traveling through
+              // its own stack at slightly different speeds. The parallelism
+              // makes the duplicated labor feel like a beat, not random.
+              const ghosts = activeEnvs.map(function(e, i) {
+                const rowY = envYs[i] + ENV_TILE_H / 2;
+                const path = 'M ' + (stackX + 2) + ' ' + rowY.toFixed(1) + ' L ' + (stackEndX - 2) + ' ' + rowY.toFixed(1);
                 return ''
-                  + '<path class="envi-path" style="--p-op:0.55" d="M ' + start + ' ' + y.toFixed(1) + ' C ' + mid + ' ' + y.toFixed(1) + ', ' + mid + ' ' + (queueY + queueH / 2).toFixed(1) + ', ' + end + ' ' + (queueY + queueH / 2).toFixed(1) + '" fill="none" stroke="#CC2222" stroke-width="1.4" stroke-dasharray="5 4" opacity="0.55"/>'
-                  + '<g opacity="0.85"><use href="#icon-ticket" x="-20" y="-7" width="40" height="14"/>'
-                  +   '<animateMotion dur="' + (3.5 + i * 0.6).toFixed(1) + 's" repeatCount="indefinite" begin="' + (i * 0.4).toFixed(1) + 's" path="M ' + start + ' ' + y.toFixed(1) + ' C ' + mid + ' ' + y.toFixed(1) + ', ' + mid + ' ' + (queueY + queueH / 2).toFixed(1) + ', ' + end + ' ' + (queueY + queueH / 2).toFixed(1) + '" rotate="auto"/>'
-                  + '</g>';
+                  + '<circle r="2.4" fill="' + C_T_ACCENT + '" opacity="0.75">'
+                  +   '<animateMotion dur="' + (4.6 + i * 0.3).toFixed(2) + 's" repeatCount="indefinite" begin="' + (i * 0.55).toFixed(2) + 's" path="' + path + '"/>'
+                  + '</circle>';
               }).join('');
 
-              // Ticket queue — visible stack of tickets piling up
-              const stackCount = 6;
-              const stackTickets = Array.from({length: stackCount}, function(_, i) {
-                const ty = 28 + i * 22;
-                const tx = 6 + (i % 2) * 4;
-                return '<use href="#icon-ticket" x="' + tx + '" y="' + ty + '" width="' + (queueW - 24) + '" height="22" opacity="' + (0.55 + i * 0.07).toFixed(2) + '"/>';
-              }).join('');
-
-              const queueBlock = ''
-                + '<g class="scene-queue" transform="translate(' + queueX + ',' + queueY + ')">'
-                +   '<rect x="-8" y="-12" width="' + (queueW + 16) + '" height="' + (queueH + 30) + '" rx="10" fill="#FFF6F6" stroke="#F3CCCC" stroke-dasharray="4 3"/>'
-                +   '<text x="' + (queueW / 2) + '" y="4" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" font-weight="800" fill="#A01818" letter-spacing="0.1em">TICKET QUEUE</text>'
-                +   stackTickets
-                +   '<g transform="translate(' + (queueW / 2) + ',' + (queueH + 8) + ')">'
-                +     '<rect x="-38" y="-12" width="76" height="24" rx="12" fill="#CC2222"/>'
-                +     '<text x="0" y="4" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" font-weight="800" fill="#fff">' + num(ticketsMo) + ' / mo</text>'
-                +   '</g>'
-                + '</g>';
-
-              // Wait clock above queue
-              const clockBlock = ''
-                + '<g class="scene-clock" transform="translate(' + (queueX + queueW + 8) + ',' + (queueY - 4) + ')">'
-                +   '<use href="#icon-clock" width="38" height="38"/>'
-                +   '<text x="19" y="54" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="800" fill="#A01818">5–14 days</text>'
-                +   '<text x="19" y="66" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" fill="#CC2222">to deploy</text>'
-                + '</g>';
-
-              // Queue → admin
-              const queueToAdmin = ''
-                + '<path class="envi-path" style="--p-op:0.7" d="M ' + (queueX + queueW + 4) + ' ' + (queueY + queueH / 2).toFixed(1) + ' L ' + (adminX - 6) + ' ' + (adminY + 26).toFixed(1) + '" fill="none" stroke="#CC2222" stroke-width="1.6" stroke-dasharray="5 4" opacity="0.6" marker-end="url(#envi-arrow-red)"/>';
-
-              // IT admin avatar
-              const adminBlock = ''
-                + '<g class="scene-admin" transform="translate(' + adminX + ',' + adminY + ')">'
-                +   '<use href="#icon-admin" width="52" height="62"/>'
-                +   '<text x="26" y="78" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="700" fill="#1A1A2E">IT admin</text>'
-                +   '<text x="26" y="92" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" fill="#A01818" font-weight="700">packages × ' + nEnvs + '</text>'
-                +   '<g transform="translate(44, 8)">'
-                +     '<rect x="-14" y="-10" width="28" height="18" rx="9" fill="#CC2222"/>'
-                +     '<text x="0" y="2" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" font-weight="800" fill="#fff">!</text>'
-                +   '</g>'
-                + '</g>';
-
-              // Admin → split → env connectors (fragmented)
-              envConnectors = activeEnvs.map(function(e, i) {
-                const targetY = envYs[i] + ENV_TILE_H / 2;
-                const start = adminX + 56;
-                const end = ENV_TILE_X - 4;
-                const mid = (start + end) / 2;
-                return ''
-                  + '<path class="envi-path" style="--p-op:0.65" d="M ' + start + ' ' + (adminY + 30).toFixed(1) + ' C ' + mid + ' ' + (adminY + 30).toFixed(1) + ', ' + mid + ' ' + targetY.toFixed(1) + ', ' + end + ' ' + targetY.toFixed(1) + '" fill="none" stroke="#CC2222" stroke-width="1.5" stroke-dasharray="6 5" opacity="0.6" marker-end="url(#envi-arrow-red)"/>';
-              }).join('');
-
-              sceneGroup = queueBlock + clockBlock + queueToAdmin + adminBlock;
-
-              // Today callouts — one beat, no extra clauses.
-              calloutsGroup = ''
-                + '<g class="scene-callout scene-callout-today" transform="translate(' + sceneCenterX + ',' + (centerY + STAGE_H / 2 + 8) + ')">'
-                +   '<rect x="-140" y="-15" width="280" height="30" rx="15" fill="#FFEFEF" stroke="#F3CCCC"/>'
-                +   '<text x="0" y="5" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" font-weight="800" fill="#A01818">Package. Per platform. Every release.</text>'
-                + '</g>';
+              stageBodySVG = trunkPath + forkBranches + stacks + multBadge + ghosts;
 
             } else {
-              // WITH APPLICATION WORKSPACE
-              // Stage A: Users open a Self-Service Portal (mini-mock card)
-              // Stage B: Portal feeds a single Application Workspace hub
-              // Stage C: Hub distributes one definition to every environment
-              // Animations: fast cyan particles moving along the in-flow and out-flows.
+              // ── AW: routing visible. ──
+              // One lane. Four blocks. After the last block, the stream fans
+              // out to every env tile. Fork point is at the END of the work,
+              // not the start — that's the entire pitch in one shape.
+              const LANE_BLOCK_W = 86, LANE_BLOCK_H = 56, LANE_BLOCK_GAP = 10;
+              const laneW = BUILD_STEPS.length * LANE_BLOCK_W + (BUILD_STEPS.length - 1) * LANE_BLOCK_GAP;
+              const laneX = STAGE_X1 + Math.max(0, (STAGE_X2 - STAGE_X1 - laneW - 80) / 2);
+              const laneEndX = laneX + laneW;
+              const laneY = centerY - LANE_BLOCK_H / 2;
+              const trunkX = APP_X + APP_W;
 
-              const portalX = sceneLeftX + 14;
-              const portalY = centerY - 90;
-              const portalW = 220, portalH = 180;
-              const hubR = 64;
-              const hubX = portalX + portalW + 60 + hubR;
-              const hubY = centerY;
+              // Trunk: app card → lane start
+              const trunkPath = '<line x1="' + trunkX + '" y1="' + centerY + '" x2="' + laneX + '" y2="' + centerY + '" stroke="' + C_A_STROKE + '" stroke-width="2.2" stroke-linecap="round"/>';
 
-              // User → portal connectors (smooth blue lines, fast cyan particles)
-              userConnectors = USERS.map(function(u, i) {
-                const y = userYs[i] + USER_H / 2;
-                const start = userRightX + 4;
-                const end = portalX - 4;
-                const targetY = portalY + portalH / 2;
-                const mid = (start + end) / 2;
-                const pathD = 'M ' + start + ' ' + y.toFixed(1) + ' C ' + mid + ' ' + y.toFixed(1) + ', ' + mid + ' ' + targetY.toFixed(1) + ', ' + end + ' ' + targetY.toFixed(1);
+              // Backbone: a thin indigo bar connecting the 4 blocks visually
+              const backbone = '<rect x="' + laneX + '" y="' + (centerY - 3) + '" width="' + laneW + '" height="6" rx="3" fill="' + C_A_LINE + '" opacity="0.6"/>';
+
+              // The lane: four cards with a colored "header" stripe each.
+              const blocks = BUILD_STEPS.map(function(s, j) {
+                const bx = laneX + j * (LANE_BLOCK_W + LANE_BLOCK_GAP);
                 return ''
-                  + '<path class="envi-path" style="--p-op:0.7" d="' + pathD + '" fill="none" stroke="#0078D4" stroke-width="1.6" opacity="0.7"/>'
-                  + '<circle r="3" fill="#00BFFF">'
-                  +   '<animateMotion dur="1.8s" repeatCount="indefinite" begin="' + (i * 0.25).toFixed(2) + 's" path="' + pathD + '"/>'
+                  + '<rect x="' + bx + '" y="' + laneY + '" width="' + LANE_BLOCK_W + '" height="' + LANE_BLOCK_H + '" rx="9" fill="#FFFFFF" stroke="' + C_A_STROKE + '" stroke-width="1.4"/>'
+                  + '<rect x="' + bx + '" y="' + laneY + '" width="' + LANE_BLOCK_W + '" height="6" rx="3" fill="' + C_A_STROKE + '"/>'
+                  + '<rect x="' + (bx + 12) + '" y="' + (laneY + 18) + '" width="22" height="22" rx="5" fill="' + C_A_FILL + '"/>'
+                  + '<text x="' + (bx + LANE_BLOCK_W/2) + '" y="' + (laneY + 36) + '" text-anchor="middle" font-family="Inter, sans-serif" font-size="12.5" font-weight="700" fill="' + C_A_TEXT_D + '">' + s.label + '</text>'
+                  + '<text x="' + (bx + LANE_BLOCK_W/2) + '" y="' + (laneY + LANE_BLOCK_H - 8) + '" text-anchor="middle" font-family="Inter, sans-serif" font-size="9.5" font-weight="600" fill="' + C_A_TEXT + '" letter-spacing="0.06em">' + (j === 0 ? 'DEFINE  ONCE' : 'ROUTED') + '</text>';
+              }).join('');
+
+              // Post-work fan — single point (laneEndX) branches to each env
+              const fanBranches = activeEnvs.map(function(e, i) {
+                const rowY = envYs[i] + ENV_TILE_H / 2;
+                const mid = (laneEndX + ENV_X) / 2;
+                return '<path class="ss-flow ss-flow-out" d="M ' + laneEndX + ' ' + centerY + ' C ' + mid + ' ' + centerY + ', ' + mid + ' ' + rowY.toFixed(1) + ', ' + ENV_X + ' ' + rowY.toFixed(1) + '" stroke="' + C_A_LINE + '" stroke-width="1.6" fill="none" stroke-linecap="round"/>';
+              }).join('');
+
+              // Cyan "×1 build · N deliveries" badge — names the routing.
+              const badgeY = Math.max(laneY - 28, TOP_PAD - 4);
+              const badgeCx = laneX + laneW / 2;
+              const routeBadge = ''
+                + '<g class="ss-badge ss-badge-aw">'
+                +   '<rect x="' + (badgeCx - 96) + '" y="' + badgeY + '" width="192" height="22" rx="11" fill="' + C_A_ACCENT_BG + '" stroke="' + C_A_ACCENT + '" stroke-width="1"/>'
+                +   '<circle cx="' + (badgeCx - 80) + '" cy="' + (badgeY + 11) + '" r="3" fill="' + C_A_ACCENT + '"/>'
+                +   '<text x="' + (badgeCx - 68) + '" y="' + (badgeY + 15) + '" font-family="Inter, sans-serif" font-size="11" font-weight="800" fill="' + C_A_ACCENT_TX + '">×1 build &middot; ' + nEnvs + ' delivery point' + (nEnvs===1?'':'s') + '</text>'
+                + '</g>';
+
+              // Single ghost particle moves along the lane, then a quick
+              // batch of small particles fan out to each env on arrival —
+              // the routing motion mimics what the geometry already says.
+              const lanePath = 'M ' + (laneX - 4) + ' ' + centerY + ' L ' + (laneEndX + 4) + ' ' + centerY;
+              const laneGhost = ''
+                + '<circle r="3.2" fill="' + C_A_ACCENT + '">'
+                +   '<animateMotion dur="2.4s" repeatCount="indefinite" path="' + lanePath + '"/>'
+                + '</circle>';
+              const fanGhosts = activeEnvs.map(function(e, i) {
+                const rowY = envYs[i] + ENV_TILE_H / 2;
+                const mid = (laneEndX + ENV_X) / 2;
+                const path = 'M ' + laneEndX + ' ' + centerY + ' C ' + mid + ' ' + centerY + ', ' + mid + ' ' + rowY.toFixed(1) + ', ' + (ENV_X - 2) + ' ' + rowY.toFixed(1);
+                return ''
+                  + '<circle r="2.4" fill="' + C_A_ACCENT + '" opacity="0.85">'
+                  +   '<animateMotion dur="1.3s" repeatCount="indefinite" begin="' + (1.8 + i * 0.12).toFixed(2) + 's" path="' + path + '"/>'
                   + '</circle>';
               }).join('');
 
-              // Self-Service Portal mock — a real-looking enterprise catalog
-              const appCatalog = [
-                { name: 'Office',  status: 'installed', color: '#D03A1F' },
-                { name: 'Slack',   status: 'install',   color: '#4A154B' },
-                { name: 'Zoom',    status: 'installed', color: '#2D8CFF' },
-                { name: 'Figma',   status: 'install',   color: '#1ABCFE' },
-                { name: 'Chrome',  status: 'installed', color: '#4285F4' },
-                { name: 'Adobe',   status: 'install',   color: '#FA0F00' }
-              ];
-              const cellW = (portalW - 16 - 6) / 3;
-              const cellH = 36;
-              const catalogGrid = appCatalog.map(function(app, i) {
-                const col = i % 3, row = Math.floor(i / 3);
-                const cx = 8 + col * (cellW + 3);
-                const cy = 56 + row * (cellH + 4);
-                const isInstalled = app.status === 'installed';
-                const installFill = isInstalled ? '#E1F5EE' : '#EEF2FF';
-                const installStroke = isInstalled ? '#BFDDC8' : '#DDDDEE';
-                const installLabel = isInstalled ? '✓ Installed' : 'Install';
-                const installColor = isInstalled ? '#0F7A3F' : '#0000CC';
-                return ''
-                  + '<g transform="translate(' + cx + ',' + cy + ')">'
-                  +   '<rect width="' + cellW + '" height="' + cellH + '" rx="4" fill="#fff" stroke="#E5E7EB" stroke-width="0.8"/>'
-                  +   '<rect x="4" y="4" width="14" height="14" rx="3" fill="' + app.color + '"/>'
-                  +   '<text x="' + (cellW / 2 + 7) + '" y="14" font-family="Inter, sans-serif" font-size="8" font-weight="700" fill="#1A1A2E">' + app.name + '</text>'
-                  +   '<rect x="4" y="22" width="' + (cellW - 8) + '" height="10" rx="2" fill="' + installFill + '" stroke="' + installStroke + '" stroke-width="0.6"/>'
-                  +   '<text x="' + (cellW / 2) + '" y="29.5" text-anchor="middle" font-family="Inter, sans-serif" font-size="6.5" font-weight="700" fill="' + installColor + '">' + installLabel + '</text>'
-                  + '</g>';
-              }).join('');
-
-              const portalBlock = ''
-                + '<g class="scene-portal" transform="translate(' + portalX + ',' + portalY + ')">'
-                +   '<rect width="' + portalW + '" height="' + portalH + '" rx="10" fill="#fff" stroke="#0000CC" stroke-width="1.3"/>'
-                +   '<rect width="' + portalW + '" height="28" rx="10" fill="#0000CC"/>'
-                +   '<rect y="18" width="' + portalW + '" height="10" fill="#0000CC"/>'
-                +   '<circle cx="10" cy="14" r="2.5" fill="#00BFFF"/>'
-                +   '<text x="20" y="17.5" font-family="Inter, sans-serif" font-size="10" font-weight="800" fill="#fff" letter-spacing="0.06em">SELF-SERVICE PORTAL</text>'
-                +   '<rect x="' + (portalW - 38) + '" y="8" width="30" height="12" rx="6" fill="#00BFFF"/>'
-                +   '<text x="' + (portalW - 23) + '" y="17" text-anchor="middle" font-family="Inter, sans-serif" font-size="7" font-weight="700" fill="#0000CC">' + num(appsCount) + ' apps</text>'
-                +   '<rect x="8" y="36" width="' + (portalW - 16) + '" height="14" rx="3" fill="#F0F0F6"/>'
-                +   '<text x="14" y="46" font-family="Inter, sans-serif" font-size="8" fill="#999">Search your apps…</text>'
-                +   catalogGrid
-                +   '<text x="' + (portalW / 2) + '" y="' + (portalH + 16) + '" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" font-weight="700" fill="#0000CC">One click. Any device.</text>'
-                + '</g>';
-
-              // Portal → hub (single bold blue line, animated cyan particle)
-              const portalRightX = portalX + portalW;
-              const hubLeftX = hubX - hubR;
-              const portalToHubPath = 'M ' + (portalRightX + 4) + ' ' + (portalY + portalH / 2).toFixed(1) + ' C ' + ((portalRightX + hubLeftX) / 2) + ' ' + (portalY + portalH / 2).toFixed(1) + ', ' + ((portalRightX + hubLeftX) / 2) + ' ' + hubY.toFixed(1) + ', ' + (hubLeftX - 6) + ' ' + hubY.toFixed(1);
-              const portalToHub = ''
-                + '<path class="envi-path" style="--p-op:0.95" d="' + portalToHubPath + '" fill="none" stroke="#0000CC" stroke-width="2.8" marker-end="url(#envi-arrow-blue)"/>'
-                + '<circle r="3.5" fill="#00BFFF">'
-                +   '<animateMotion dur="1.6s" repeatCount="indefinite" path="' + portalToHubPath + '"/>'
-                + '</circle>';
-
-              // AW hub — engine: glow, three pulse rings, soft rotor, crisp label.
-              // CRITICAL: positioning lives on the OUTER <g>. The inner
-              // .envi-hub group carries the opacity entry animation only. All
-              // motion/scale below uses SMIL so CSS-transform replacement of
-              // the SVG transform attribute never collapses the hub.
-              const hubR0 = hubR; // base ring radius
-              const pulseRing = (delay) => ''
-                + '<circle r="' + hubR0 + '" fill="none" stroke="#00BFFF" stroke-width="1.4" opacity="0">'
-                +   '<animate attributeName="r" values="' + (hubR0 * 0.55).toFixed(1) + ';' + (hubR0 * 1.45).toFixed(1) + '" dur="2.8s" begin="' + delay + 's" repeatCount="indefinite"/>'
-                +   '<animate attributeName="opacity" values="0.55;0" dur="2.8s" begin="' + delay + 's" repeatCount="indefinite"/>'
-                + '</circle>';
-
-              const hubBlock = ''
-                + '<g transform="translate(' + hubX + ',' + hubY + ')">'
-                +   '<g class="envi-hub">'
-                +     '<defs>'
-                +       '<radialGradient id="hub-glow" cx="0.5" cy="0.5" r="0.5">'
-                +         '<stop offset="0%" stop-color="#00BFFF" stop-opacity="0.35"/>'
-                +         '<stop offset="60%" stop-color="#00BFFF" stop-opacity="0.08"/>'
-                +         '<stop offset="100%" stop-color="#00BFFF" stop-opacity="0"/>'
-                +       '</radialGradient>'
-                +       '<radialGradient id="hub-fill" cx="0.4" cy="0.35" r="0.85">'
-                +         '<stop offset="0%" stop-color="#2244EE"/>'
-                +         '<stop offset="60%" stop-color="#0033CC"/>'
-                +         '<stop offset="100%" stop-color="#001A99"/>'
-                +       '</radialGradient>'
-                +     '</defs>'
-                // Soft halo
-                +     '<circle r="' + (hubR0 + 26) + '" fill="url(#hub-glow)"/>'
-                // Three SMIL pulse rings
-                +     pulseRing(0)
-                +     pulseRing(0.9)
-                +     pulseRing(1.8)
-                // Slow rotor — SMIL animateTransform so SVG translate is never clobbered
-                +     '<g>'
-                +       '<circle r="' + (hubR0 - 4) + '" fill="none" stroke="#00BFFF" stroke-width="0.6" stroke-dasharray="6 8" opacity="0.45"/>'
-                +       '<circle cx="0" cy="' + (-(hubR0 - 4)) + '" r="1.8" fill="#00BFFF"/>'
-                +       '<circle cx="' + (hubR0 - 4) + '" cy="0" r="1.4" fill="#00BFFF" opacity="0.7"/>'
-                +       '<circle cx="0" cy="' + (hubR0 - 4) + '" r="1.4" fill="#00BFFF" opacity="0.55"/>'
-                +       '<circle cx="' + (-(hubR0 - 4)) + '" cy="0" r="1.4" fill="#00BFFF" opacity="0.4"/>'
-                +       '<animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="14s" repeatCount="indefinite"/>'
-                +     '</g>'
-                // Solid core
-                +     '<circle r="' + hubR0 + '" fill="url(#hub-fill)"/>'
-                +     '<circle r="' + hubR0 + '" fill="none" stroke="#00BFFF" stroke-width="2.2"/>'
-                // Centre label — three-beat brand voice
-                +     '<text x="0" y="-16" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" font-weight="800" fill="#7FD9FF" letter-spacing="0.18em">DEFINE  ONCE</text>'
-                +     '<line x1="-22" y1="-8" x2="22" y2="-8" stroke="#00BFFF" stroke-width="0.6" opacity="0.45"/>'
-                +     '<text x="0" y="5" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" font-weight="800" fill="#fff" letter-spacing="0.06em">APPLICATION</text>'
-                +     '<text x="0" y="18" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" font-weight="800" fill="#fff" letter-spacing="0.06em">WORKSPACE</text>'
-                +     '<line x1="-22" y1="26" x2="22" y2="26" stroke="#00BFFF" stroke-width="0.6" opacity="0.45"/>'
-                +     '<text x="0" y="35" text-anchor="middle" font-family="Inter, sans-serif" font-size="8" font-weight="700" fill="#7FD9FF" letter-spacing="0.18em">DELIVER  EVERYWHERE</text>'
-                +   '</g>'
-                + '</g>';
-
-              // Hub → envs (green branches with fast moving particles)
-              envConnectors = activeEnvs.map(function(e, i) {
-                const targetY = envYs[i] + ENV_TILE_H / 2;
-                const angle = Math.atan2(targetY - hubY, ENV_TILE_X - hubX);
-                const startX = hubX + hubR * Math.cos(angle);
-                const startY = hubY + hubR * Math.sin(angle);
-                const endX = ENV_TILE_X - 4;
-                const c1x = startX + (endX - startX) * 0.4;
-                const c2x = startX + (endX - startX) * 0.6;
-                const pathD = 'M ' + startX.toFixed(1) + ' ' + startY.toFixed(1) + ' C ' + c1x.toFixed(1) + ' ' + startY.toFixed(1) + ', ' + c2x.toFixed(1) + ' ' + targetY.toFixed(1) + ', ' + endX + ' ' + targetY.toFixed(1);
-                return ''
-                  + '<path class="envi-path" style="--p-op:0.85" d="' + pathD + '" fill="none" stroke="#0F7A3F" stroke-width="2.2" opacity="0.85" marker-end="url(#envi-arrow-green)"/>'
-                  + '<circle r="3" fill="#34D399">'
-                  +   '<animateMotion dur="1.4s" repeatCount="indefinite" begin="' + (i * 0.15).toFixed(2) + 's" path="' + pathD + '"/>'
-                  + '</circle>';
-              }).join('');
-
-              sceneGroup = portalBlock + portalToHub + hubBlock;
-
-              // AW callouts — one punchy line. Recast 3-beat voice.
-              calloutsGroup = ''
-                + '<g class="scene-callout scene-callout-aw" transform="translate(' + sceneCenterX + ',' + (centerY + STAGE_H / 2 + 8) + ')">'
-                +   '<rect x="-160" y="-15" width="320" height="30" rx="15" fill="#E1F5EE" stroke="#BFDDC8"/>'
-                +   '<text x="0" y="5" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" font-weight="800" fill="#085041">Self-serve. Same minute. 70% fewer tickets.</text>'
-                + '</g>';
+              stageBodySVG = trunkPath + backbone + blocks + fanBranches + routeBadge + laneGhost + fanGhosts;
             }
 
-            const captionY = TOP_PAD + STAGE_H + 8;
+            // ── Persona ribbon (HTML, sits between mode toggle and SVG) ──
+            // Five personas, always visible. The transformation between today
+            // and AW IS the story for each one: end user goes from "5–14d
+            // wait" to "<1 min"; engineer goes from "rebuild ×N" to "1 build";
+            // etc. Today: muted slate-amber chips (heavy, but not insulting).
+            // AW: indigo chips with cyan stat (lift, but not loud).
+            const PERSONAS = [
+              {
+                role: 'End user',
+                icon: '<circle cx="12" cy="8" r="4" fill="currentColor"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8" fill="currentColor"/>',
+                today: '5–14d',
+                aw:    '<1 min'
+              },
+              {
+                role: 'Help desk',
+                icon: '<path d="M21 12a8.5 8.5 0 0 1-8.5 8.5h-.5L4 23l1.5-4A8.5 8.5 0 1 1 21 12z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="8" cy="12" r="1.2" fill="currentColor"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/><circle cx="16" cy="12" r="1.2" fill="currentColor"/>',
+                today: '+ queue',
+                aw:    '−70%'
+              },
+              {
+                role: 'Engineer',
+                icon: '<path d="M14.7 6.3a4 4 0 0 0-5.4 5.4l-7 7 2 2 7-7a4 4 0 0 0 5.4-5.4l-2 2-1.4-1.4 2-2z" fill="currentColor"/><circle cx="18.5" cy="5.5" r="1.4" fill="currentColor"/>',
+                today: '×' + nEnvs + ' builds',
+                aw:    '×1 build'
+              },
+              {
+                role: 'IT leader',
+                icon: '<rect x="3" y="3" width="8" height="8" rx="1.4" fill="currentColor"/><rect x="13" y="3" width="8" height="8" rx="1.4" fill="currentColor" opacity="0.45"/><rect x="3" y="13" width="8" height="8" rx="1.4" fill="currentColor" opacity="0.45"/><rect x="13" y="13" width="8" height="8" rx="1.4" fill="currentColor"/>',
+                today: 'paused',
+                aw:    'unblocked'
+              },
+              {
+                role: 'Security',
+                icon: '<path d="M12 2 L20 6 V12 C20 17 16 21 12 22 C8 21 4 17 4 12 V6 Z" fill="currentColor"/><path d="M8.5 12 L11 14.5 L15.5 9.5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>',
+                today: 'drift',
+                aw:    'day-zero'
+              }
+            ];
+            const personasHtml = ''
+              + '<div class="ss-personas' + (isToday ? ' is-today' : ' is-aw') + '" role="group" aria-label="Who wins">'
+              +   PERSONAS.map(function(p) {
+                    return ''
+                      + '<div class="ss-persona">'
+                      +   '<div class="ss-persona-icon"><svg viewBox="0 0 24 24" aria-hidden="true">' + p.icon + '</svg></div>'
+                      +   '<div class="ss-persona-body">'
+                      +     '<div class="ss-persona-role">' + p.role + '</div>'
+                      +     '<div class="ss-persona-stat">' + (isToday ? p.today : p.aw) + '</div>'
+                      +   '</div>'
+                      + '</div>';
+                  }).join('')
+              + '</div>';
 
-            // Chips — now use real brand glyphs (inline SVG) instead of generic
-            // line icons, so the env identity carries through the whole panel.
+            // ── Env chips (HTML, sit above the SVG and drive the picker) ──
+            // Re-uses the same brand symbols inline so the chip glyphs and
+            // the right-column tiles are visually identical marks.
             const chipsHtml = ENV_LIST.map(function(e) {
               const active = _sel.includes(e.id);
               return ''
@@ -10705,16 +10628,16 @@
             }).join('');
 
             return `
-          <!-- ENVIRONMENT IMPACT — operational dynamic across the customer's stack -->
+          <!-- ENVIRONMENT IMPACT — The Single Stream: multiplication vs routing -->
           <section class="bi-split-col">
             <button class="bi-section-eyebrow is-compound is-toggle" type="button" data-action="toggle-section" data-section="compound" aria-expanded="${STATE.collapsedSections.compound ? 'false' : 'true'}" aria-controls="section-compound">
-              <span class="bi-section-eyebrow-label">Environment impact · operational dynamic</span>
+              <span class="bi-section-eyebrow-label">Environment impact · who wins, and how</span>
               <svg class="bi-section-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
             </button>
             <div class="bi-section-content${STATE.collapsedSections.compound ? ' is-collapsed' : ''}" id="section-compound">
-              <div class="bi-envi">
+              <div class="bi-envi ss-card ${isToday ? 'is-today' : 'is-aw'}">
                 <div class="bi-envi-head">
-                  <div class="bi-envi-title">Same stack. Same users. Two outcomes.</div>
+                  <div class="bi-envi-title">${isToday ? 'One app. ' + nEnvs + ' rebuilds. Same team.' : 'One app. ' + nEnvs + ' deliveries. Same minute.'}</div>
                   <div class="bi-envi-sub">Pick the envs you run. The picture and the math respond.</div>
                 </div>
 
@@ -10732,29 +10655,14 @@
                   <button type="button" class="bi-envi-mode-btn is-aw${!isToday ? ' is-active' : ''}" data-action="set-env-mode" data-mode="aw">With Application Workspace</button>
                 </div>
 
-                <div class="bi-envi-viz">
-                  <svg class="bi-envi-viz-svg" viewBox="0 0 ${VB_W} ${VB_H}" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                      ${ALL_DEFS}
-                      <marker id="envi-arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#0000CC"/>
-                      </marker>
-                      <marker id="envi-arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#0F7A3F"/>
-                      </marker>
-                      <marker id="envi-arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#CC2222" opacity="0.8"/>
-                      </marker>
-                    </defs>
+                ${personasHtml}
 
-                    ${usersHeader}
-                    ${envsHeader}
-                    ${usersGroup}
-                    ${userConnectors}
-                    ${sceneGroup}
-                    ${envConnectors}
-                    ${envBlocks}
-                    ${calloutsGroup}
+                <div class="bi-envi-viz ss-viz">
+                  <svg class="bi-envi-viz-svg ss-svg ${isToday ? 'is-today' : 'is-aw'}" viewBox="0 0 ${VB_W} ${VB_H}" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+                    <defs>${BRAND_DEFS}</defs>
+                    ${appCardSVG}
+                    ${stageBodySVG}
+                    ${envBlocksSVG}
                   </svg>
                 </div>
 
