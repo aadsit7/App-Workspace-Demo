@@ -4643,6 +4643,12 @@
       .bi-envi-outcome-sub { font-size: 10px; color: var(--r-muted-blue); line-height: 1.4; margin-top: 3px; }
       .bi-envi-foot { font-size: 11px; color: var(--r-ink-2); line-height: 1.5; padding: 0 4px; }
       .bi-envi-foot strong { color: var(--r-ink); font-weight: 600; }
+      .bi-envi-coverage { margin-top: 8px; padding-top: 8px; border-top: 1px dashed rgba(15,122,63,0.25); display: flex; flex-direction: column; gap: 4px; }
+      .bi-envi-coverage-lbl { font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--r-ink-2); }
+      .bi-envi-coverage-btns { display: flex; gap: 3px; }
+      .bi-envi-coverage-btn { flex: 1; padding: 3px 0; background: rgba(255,255,255,0.6); border: 1px solid rgba(15,122,63,0.18); border-radius: 4px; font-size: 10px; font-weight: 600; color: var(--r-ink-2); cursor: pointer; font-family: inherit; transition: all 120ms ease; }
+      .bi-envi-coverage-btn:hover { border-color: var(--r-green); color: var(--r-green); }
+      .bi-envi-coverage-btn.is-active { background: var(--r-green); color: white; border-color: var(--r-green); }
       @media (min-width: 1024px) {
         .bi-envi-outcomes-grid { grid-template-columns: repeat(4, 1fr); }
       }
@@ -5246,7 +5252,7 @@
         calcResult: null,
         showAssumptions: false,
         collapsedSections: { compound: false },
-        envImpact: { selected: ['intune','sccm','avd'], mode: 'today' },
+        envImpact: { selected: ['intune','sccm','avd'], mode: 'today', coverage: 0.5 },
         editingAssumptions: false,
         pdfCompanyInput: false,
         pdfCompanyName: '',
@@ -10217,13 +10223,20 @@
             ];
             const _sel = (STATE.envImpact && Array.isArray(STATE.envImpact.selected)) ? STATE.envImpact.selected : ['intune','sccm','avd'];
             const _mode = (STATE.envImpact && STATE.envImpact.mode) || 'today';
+            const _cov  = (STATE.envImpact && typeof STATE.envImpact.coverage === 'number') ? STATE.envImpact.coverage : 0.5;
             const activeEnvs = ENV_LIST.filter(e => _sel.includes(e.id));
             const nEnvs = Math.max(activeEnvs.length, 1);
             const appsCount = ci.apps || 150;
             const ticketsMo = ci.tickets || 600;
-            const streamsToday = appsCount * nEnvs;
-            const streamsAw = appsCount;
-            const streamReduction = streamsToday > 0 ? Math.round(((streamsToday - streamsAw) / streamsToday) * 100) : 0;
+            // Coverage factor: a typical app only lives on ~50% of the envs in a
+            // stack (Windows apps don't ship to macOS; Citrix hosts specialised
+            // tools; AVD serves a subset; etc). Multiply touchpoints by it so
+            // the math is defensible to a real IT manager.
+            const streamsToday = Math.max(appsCount, Math.round(appsCount * nEnvs * _cov));
+            const streamsAw    = appsCount;
+            const streamReduction = streamsToday > 0 ? Math.max(0, Math.round(((streamsToday - streamsAw) / streamsToday) * 100)) : 0;
+            const ticketReductionPct = 70; // headline AW number, also reflected in metric card
+            const ticketsAw = Math.round(ticketsMo * (1 - ticketReductionPct / 100));
             const isToday = _mode === 'today';
 
             // ── Scene geometry ──
@@ -10236,10 +10249,10 @@
             const USER_W = 168, USER_H = 84, USER_GAP = 10;
             const ENV_TILE_W = 200, ENV_TILE_H = 56, ENV_GAP = 10;
             const USERS = [
-              { id: 'sales',  name: 'Maria',  role: 'Sales · Win laptop',   device: 'dev-laptop'  },
-              { id: 'design', name: 'Devon',  role: 'Design · MacBook',     device: 'dev-macbook' },
-              { id: 'field',  name: 'Priya',  role: 'Field · Win ARM',      device: 'dev-winarm'  },
-              { id: 'remote', name: 'James',  role: 'Remote · Cloud PC',    device: 'dev-cloudpc' }
+              { id: 'sales',  name: 'Maria',  role: 'Sales · Win laptop',   device: 'dev-laptop',  selfServe: false },
+              { id: 'design', name: 'Devon',  role: 'Design · MacBook',     device: 'dev-macbook', selfServe: true  },
+              { id: 'field',  name: 'Priya',  role: 'Field · Win ARM',      device: 'dev-winarm',  selfServe: false },
+              { id: 'remote', name: 'James',  role: 'Remote · Cloud PC',    device: 'dev-cloudpc', selfServe: false }
             ];
             const nUsers = USERS.length;
             const totalUserH = nUsers * USER_H + (nUsers - 1) * USER_GAP;
@@ -10262,19 +10275,25 @@
 
             // ── USER COLUMN ──
             // Four representative end users on different devices. Their device
-            // mix is intentional: Windows, macOS, mobile, and Cloud PC — all of
-            // the environments the customer actually runs.
+            // mix is intentional: Windows, macOS, ARM, and Cloud PC — all of
+            // the environments the customer actually runs. One user (Devon) is
+            // marked as already self-serving today, so the visual doesn't
+            // claim that 100% of users are blocked by IT.
             const usersGroup = USERS.map(function(u, i) {
               const y = userYs[i];
+              const showSelfServe = isToday && u.selfServe;
+              const statusFill = showSelfServe ? '#0F7A3F' : '#0F7A3F';
+              const statusLabel = showSelfServe ? 'Self-serves today' : 'Active';
               return ''
                 + '<g class="scene-user" transform="translate(' + USER_X + ',' + y.toFixed(1) + ')">'
-                +   '<rect width="' + USER_W + '" height="' + USER_H + '" rx="10" fill="#fff" stroke="#DDDDEE"/>'
+                +   '<rect width="' + USER_W + '" height="' + USER_H + '" rx="10" fill="#fff" stroke="' + (showSelfServe ? '#BFDDC8' : '#DDDDEE') + '"/>'
+                +   (showSelfServe ? '<rect x="0" y="0" width="3" height="' + USER_H + '" rx="1.5" fill="#0F7A3F" opacity="0.85"/>' : '')
                 +   '<use href="#' + u.device + '" x="14" y="' + ((USER_H - 40) / 2).toFixed(1) + '" width="40" height="40"/>'
                 +   '<text x="62" y="32" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#1A1A2E">' + u.name + '</text>'
                 +   '<text x="62" y="48" font-family="Inter, sans-serif" font-size="10" fill="#4A4A5A">' + u.role + '</text>'
                 +   '<g transform="translate(62, 60)">'
-                +     '<circle r="2.5" fill="#0F7A3F"/>'
-                +     '<text x="7" y="3" font-family="Inter, sans-serif" font-size="9" font-weight="500" fill="#4A4A5A">Active</text>'
+                +     '<circle r="2.5" fill="' + statusFill + '"/>'
+                +     '<text x="7" y="3" font-family="Inter, sans-serif" font-size="9" font-weight="' + (showSelfServe ? '700' : '500') + '" fill="' + (showSelfServe ? '#0F7A3F' : '#4A4A5A') + '">' + statusLabel + '</text>'
                 +   '</g>'
                 + '</g>';
             }).join('');
@@ -10291,7 +10310,7 @@
               const accent = isToday ? '#CC2222' : '#0F7A3F';
               const tileBg = isToday ? '#fff' : '#FAFEFB';
               const tileStroke = isToday ? '#E8C7C7' : '#BFDDC8';
-              const stat = isToday ? num(appsCount) + ' apps · queued' : num(appsCount) + ' apps · live';
+              const stat = isToday ? num(appsCount) + ' apps · per-platform' : num(appsCount) + ' apps · live';
               return ''
                 + '<g class="envi-tile" transform="translate(' + ENV_TILE_X + ',' + y.toFixed(1) + ')">'
                 + '<rect width="' + ENV_TILE_W + '" height="' + ENV_TILE_H + '" rx="9" fill="' + tileBg + '" stroke="' + tileStroke + '" stroke-width="1"/>'
@@ -10328,15 +10347,17 @@
               const splitX = adminX + 90;
               const splitY = centerY;
 
-              // Connectors from users → queue (each user sends red tickets)
+              // Connectors from users → queue. Only the 3 users marked as
+              // NOT already self-serving fire tickets. Devon (selfServe:true)
+              // gets no animation; his card already shows the green badge.
               userConnectors = USERS.map(function(u, i) {
+                if (u.selfServe) return '';
                 const y = userYs[i] + USER_H / 2;
                 const start = userRightX + 4;
                 const end = queueX - 4;
                 const mid = (start + end) / 2;
                 return ''
                   + '<path class="envi-path" style="--p-op:0.55" d="M ' + start + ' ' + y.toFixed(1) + ' C ' + mid + ' ' + y.toFixed(1) + ', ' + mid + ' ' + (queueY + queueH / 2).toFixed(1) + ', ' + end + ' ' + (queueY + queueH / 2).toFixed(1) + '" fill="none" stroke="#CC2222" stroke-width="1.4" stroke-dasharray="5 4" opacity="0.55"/>'
-                  // Travelling red ticket along this path — animates user submitting a ticket
                   + '<g opacity="0.85"><use href="#icon-ticket" x="-20" y="-7" width="40" height="14"/>'
                   +   '<animateMotion dur="' + (3.5 + i * 0.6).toFixed(1) + 's" repeatCount="indefinite" begin="' + (i * 0.4).toFixed(1) + 's" path="M ' + start + ' ' + y.toFixed(1) + ' C ' + mid + ' ' + y.toFixed(1) + ', ' + mid + ' ' + (queueY + queueH / 2).toFixed(1) + ', ' + end + ' ' + (queueY + queueH / 2).toFixed(1) + '" rotate="auto"/>'
                   + '</g>';
@@ -10378,8 +10399,8 @@
                 + '<g class="scene-admin" transform="translate(' + adminX + ',' + adminY + ')">'
                 +   '<use href="#icon-admin" width="52" height="62"/>'
                 +   '<text x="26" y="78" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="700" fill="#1A1A2E">IT admin</text>'
-                +   '<text x="26" y="90" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" fill="#A01818">packaging</text>'
-                +   '<text x="26" y="100" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" fill="#A01818" font-weight="700">× ' + nEnvs + ' envs</text>'
+                +   '<text x="26" y="90" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" fill="#A01818">per-platform</text>'
+                +   '<text x="26" y="100" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" fill="#A01818" font-weight="700">packaging × ' + nEnvs + ' envs</text>'
                 +   '<g transform="translate(44, 8)">'
                 +     '<rect x="-14" y="-10" width="28" height="18" rx="9" fill="#CC2222"/>'
                 +     '<text x="0" y="2" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" font-weight="800" fill="#fff">!</text>'
@@ -10398,14 +10419,14 @@
 
               sceneGroup = queueBlock + clockBlock + queueToAdmin + adminBlock;
 
-              // Today callouts — mirror the left side's reclamation categories
+              // Today callouts — honest about the scope ("most" not "every")
               calloutsGroup = ''
                 + '<g class="scene-callout scene-callout-today" transform="translate(' + (queueX + queueW / 2) + ',' + (centerY + STAGE_H / 2 - 6) + ')">'
-                +   '<rect x="-110" y="-14" width="220" height="28" rx="14" fill="#FFEFEF" stroke="#F3CCCC"/>'
-                +   '<text x="0" y="4" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="700" fill="#A01818">User experience: stalled by IT</text>'
+                +   '<rect x="-145" y="-14" width="290" height="28" rx="14" fill="#FFEFEF" stroke="#F3CCCC"/>'
+                +   '<text x="0" y="4" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="700" fill="#A01818">Most apps require IT to package and deliver</text>'
                 + '</g>'
                 + '<g class="scene-callout scene-callout-today" transform="translate(' + sceneCenterX + ',' + (centerY + STAGE_H / 2 + 26) + ')">'
-                +   '<text x="0" y="0" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="600" fill="#A01818">Every app × every environment · ' + nEnvs + ' parallel work-streams · audit by hand</text>'
+                +   '<text x="0" y="0" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="600" fill="#A01818">Each platform maintained separately · audit by hand · ' + nEnvs + ' parallel pipelines</text>'
                 + '</g>';
 
             } else {
@@ -10526,15 +10547,14 @@
 
               sceneGroup = portalBlock + portalToHub + hubBlock;
 
-              // AW callouts — sell the user-experience win and link to the
-              // matching reclaim categories from the left chart.
+              // AW callouts — honest about "most" apps self-served (not every)
               calloutsGroup = ''
                 + '<g class="scene-callout scene-callout-aw" transform="translate(' + (portalX + portalW / 2) + ',' + (centerY + STAGE_H / 2 - 6) + ')">'
-                +   '<rect x="-130" y="-14" width="260" height="28" rx="14" fill="#E1F5EE" stroke="#BFDDC8"/>'
-                +   '<text x="0" y="4" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="700" fill="#085041">User experience −70% · self-serve in seconds</text>'
+                +   '<rect x="-160" y="-14" width="320" height="28" rx="14" fill="#E1F5EE" stroke="#BFDDC8"/>'
+                +   '<text x="0" y="4" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="700" fill="#085041">Users self-serve most apps · 70% fewer tickets · faster access</text>'
                 + '</g>'
                 + '<g class="scene-callout scene-callout-aw" transform="translate(' + sceneCenterX + ',' + (centerY + STAGE_H / 2 + 26) + ')">'
-                +   '<text x="0" y="0" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="600" fill="#085041">Define once · deliver everywhere · audit on demand</text>'
+                +   '<text x="0" y="0" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="600" fill="#085041">Define once · deliver to every platform that needs it · audit on demand</text>'
                 + '</g>';
             }
 
@@ -10573,12 +10593,12 @@
                 </div>
 
                 <div class="bi-envi-eq">
-                  <div class="bi-envi-eq-text">Operating across <strong>${nEnvs} environment${nEnvs===1?'':'s'}</strong> with <strong>${num(appsCount)} apps</strong> &middot; <strong>${num(ticketsMo)} tickets/mo</strong></div>
-                  <div class="bi-envi-eq-result">${num(streamsToday)} active workstreams today</div>
+                  <div class="bi-envi-eq-text">Operating across <strong>${nEnvs} environment${nEnvs===1?'':'s'}</strong> with <strong>${num(appsCount)} apps</strong> &middot; <strong>${num(ticketsMo)} tickets/mo</strong> &middot; coverage assumed <strong>${Math.round(_cov*100)}%</strong></div>
+                  <div class="bi-envi-eq-result">${num(streamsToday)} deployment touchpoints today</div>
                 </div>
 
                 <div class="bi-envi-mode">
-                  <button type="button" class="bi-envi-mode-btn is-today${isToday ? ' is-active' : ''}" data-action="set-env-mode" data-mode="today">Today &middot; fragmented</button>
+                  <button type="button" class="bi-envi-mode-btn is-today${isToday ? ' is-active' : ''}" data-action="set-env-mode" data-mode="today">Today &middot; per-platform</button>
                   <button type="button" class="bi-envi-mode-btn is-aw${!isToday ? ' is-active' : ''}" data-action="set-env-mode" data-mode="aw">With Application Workspace &middot; unified</button>
                 </div>
 
@@ -10612,17 +10632,23 @@
                   <div class="bi-envi-metric">
                     <div class="bi-envi-metric-label">User wait time</div>
                     <div class="bi-envi-metric-value" style="font-size:18px">${isToday ? '5&ndash;14 days' : '&lt; 1 min'}</div>
-                    <div class="bi-envi-metric-sub">${isToday ? 'queue, package, deploy' : 'self-serve from any device'}</div>
+                    <div class="bi-envi-metric-sub">${isToday ? 'most apps need IT to package' : 'self-serve from any device'}</div>
                   </div>
                   <div class="bi-envi-metric">
                     <div class="bi-envi-metric-label">Support tickets</div>
-                    <div class="bi-envi-metric-value">${isToday ? num(ticketsMo) : num(Math.round(ticketsMo * 0.30))}</div>
-                    <div class="bi-envi-metric-sub">${isToday ? 'per month, manual' : 'per month · &minus;70%'}</div>
+                    <div class="bi-envi-metric-value">${isToday ? num(ticketsMo) : num(ticketsAw)}</div>
+                    <div class="bi-envi-metric-sub">${isToday ? 'per month, package-and-ship' : 'per month · &minus;70%'}</div>
                   </div>
                   <div class="bi-envi-metric is-highlight">
-                    <div class="bi-envi-metric-label">Workstreams</div>
+                    <div class="bi-envi-metric-label">Touchpoints</div>
                     <div class="bi-envi-metric-value">${isToday ? num(streamsToday) + ' → ' + num(streamsAw) : '&minus;' + streamReduction + '%'}</div>
-                    <div class="bi-envi-metric-sub">${isToday ? 'apps × environments' : 'fewer to manage, end to end'}</div>
+                    <div class="bi-envi-metric-sub">apps × envs they actually ship to</div>
+                    <div class="bi-envi-coverage">
+                      <span class="bi-envi-coverage-lbl">Cross-platform coverage</span>
+                      <div class="bi-envi-coverage-btns">
+                        ${[0.3, 0.5, 0.7, 1.0].map(c => `<button type="button" class="bi-envi-coverage-btn${Math.abs(_cov - c) < 0.01 ? ' is-active' : ''}" data-action="set-env-coverage" data-cov="${c}">${Math.round(c*100)}%</button>`).join('')}
+                      </div>
+                    </div>
                   </div>
                 </div>
 
@@ -11156,8 +11182,16 @@
           if (action === 'set-env-mode') {
             const mode = act.getAttribute('data-mode');
             if (mode !== 'today' && mode !== 'aw') return;
-            if (!STATE.envImpact) STATE.envImpact = { selected: ['intune','sccm','avd'], mode: 'today' };
+            if (!STATE.envImpact) STATE.envImpact = { selected: ['intune','sccm','avd'], mode: 'today', coverage: 0.5 };
             STATE.envImpact.mode = mode;
+            render();
+            return;
+          }
+          if (action === 'set-env-coverage') {
+            const cov = parseFloat(act.getAttribute('data-cov'));
+            if (!(cov > 0 && cov <= 1)) return;
+            if (!STATE.envImpact) STATE.envImpact = { selected: ['intune','sccm','avd'], mode: 'today', coverage: 0.5 };
+            STATE.envImpact.coverage = cov;
             render();
             return;
           }
