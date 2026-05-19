@@ -4603,171 +4603,46 @@
       .bi-envi-head { display: flex; flex-direction: column; gap: 4px; }
       .bi-envi-title { font-size: 16px; font-weight: 700; color: var(--r-ink); line-height: 1.35; }
       .bi-envi-sub { font-size: 12px; color: var(--r-ink-2); line-height: 1.5; }
-
-      /* Branded chips */
-      .bi-envi-chips { display: flex; flex-wrap: wrap; gap: 8px; }
-      .bi-envi-chip {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 5px 13px 5px 5px;
-        background: var(--r-surface);
-        border: 1.5px solid var(--r-divider);
-        border-radius: 22px;
-        font-size: 12px;
-        font-weight: 600;
-        color: var(--r-ink-2);
-        cursor: pointer;
-        transition: all 180ms cubic-bezier(.2,.8,.2,1);
-        user-select: none;
-        font-family: inherit;
-      }
-      .bi-envi-chip:hover { border-color: var(--r-blue); color: var(--r-ink); transform: translateY(-1px); box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
-      .bi-envi-chip.is-active {
-        color: var(--r-ink);
-        background: var(--r-surface);
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-      }
-      .bi-envi-chip-logo {
-        width: 24px;
-        height: 24px;
-        border-radius: 5px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-        background: var(--chip-color, var(--r-ink-2));
-        position: relative;
-        overflow: hidden;
-      }
-      .bi-envi-chip:not(.is-active) .bi-envi-chip-logo { opacity: 0.4; filter: grayscale(0.5); }
-      .bi-envi-chip:not(.is-active) { background: #F4F5F8; border-color: transparent; }
-      .bi-envi-chip-logo svg { width: 100%; height: 100%; }
-      .bi-envi-chip-check {
-        width: 14px; height: 14px;
-        border-radius: 50%;
-        background: var(--chip-color, var(--r-blue));
-        color: white;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        margin-left: 2px;
-        font-size: 10px;
-        opacity: 0;
-        transition: opacity 200ms ease;
-      }
-      .bi-envi-chip.is-active .bi-envi-chip-check { opacity: 1; }
-
-      /* Equation banner */
-      .bi-envi-eq { background: linear-gradient(135deg, var(--r-quote-bg) 0%, #ECF2FF 100%); border: 1px solid #DAE3F2; border-radius: 10px; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+      .bi-envi-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+      .bi-envi-chip { display: inline-flex; align-items: center; gap: 7px; padding: 5px 12px 5px 5px; background: var(--r-surface); border: 1px solid var(--r-divider); border-radius: 999px; font-size: 12px; font-weight: 600; color: var(--r-ink-2); cursor: pointer; transition: all 150ms ease; user-select: none; }
+      .bi-envi-chip:hover { border-color: var(--r-blue); color: var(--r-ink); box-shadow: 0 1px 3px rgba(0,0,204,0.08); }
+      .bi-envi-chip.is-active { background: #EEF2FF; color: var(--r-blue); border-color: var(--r-blue); }
+      .bi-envi-chip-logo { width: 22px; height: 22px; border-radius: 5px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; }
+      .bi-envi-chip-logo svg { width: 100%; height: 100%; display: block; }
+      .bi-envi-chip-check { width: 12px; height: 12px; border-radius: 50%; border: 1.5px solid #C8D0E0; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; transition: all 150ms ease; margin-left: 1px; }
+      .bi-envi-chip.is-active .bi-envi-chip-check { background: var(--r-blue); border-color: var(--r-blue); }
+      .bi-envi-chip.is-active .bi-envi-chip-check::after { content: ''; width: 5px; height: 5px; background: white; border-radius: 50%; display: block; }
+      .bi-envi-eq { background: var(--r-quote-bg); border: 1px solid #DAE3F2; border-radius: 8px; padding: 11px 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
       .bi-envi-eq-text { font-size: 12px; color: var(--r-ink); line-height: 1.5; }
       .bi-envi-eq-text strong { color: var(--r-blue); font-weight: 700; }
-      .bi-envi-eq-result { font-size: 15px; font-weight: 700; color: var(--r-blue); white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; }
-      .bi-envi-eq-result::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--r-red); animation: bi-envi-blink 2.4s ease-in-out infinite; }
-      @keyframes bi-envi-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-
-      /* Mode toggle */
-      .bi-envi-mode { display: flex; gap: 6px; background: #F4F5F8; padding: 4px; border-radius: 10px; }
-      .bi-envi-mode-btn {
-        flex: 1;
-        padding: 10px 14px;
-        background: transparent;
-        border: none;
-        border-radius: 7px;
-        font-size: 12px;
-        font-weight: 600;
-        color: var(--r-ink-2);
-        cursor: pointer;
-        transition: all 200ms ease;
-        text-align: center;
-        font-family: inherit;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-      }
-      .bi-envi-mode-btn:hover:not(.is-active) { color: var(--r-ink); }
-      .bi-envi-mode-btn .bi-envi-mode-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; opacity: 0.5; }
-      .bi-envi-mode-btn.is-active.is-today { background: white; color: #A01818; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
-      .bi-envi-mode-btn.is-active.is-today .bi-envi-mode-dot { background: #CC2222; opacity: 1; }
-      .bi-envi-mode-btn.is-active.is-aw { background: white; color: #085041; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
-      .bi-envi-mode-btn.is-active.is-aw .bi-envi-mode-dot { background: #0F7A3F; opacity: 1; }
-
-      /* Visualization */
-      .bi-envi-viz {
-        background: radial-gradient(circle at 50% 50%, #FFFFFF 0%, var(--r-surface-3) 60%, var(--r-surface-2) 100%);
-        border: 1px solid var(--r-divider);
-        border-radius: 12px;
-        padding: 8px;
-        position: relative;
-        overflow: hidden;
-      }
-      .bi-envi-viz::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background-image: radial-gradient(circle at 1px 1px, rgba(0,0,204,0.04) 1px, transparent 0);
-        background-size: 16px 16px;
-        pointer-events: none;
-      }
-      .bi-envi-viz-svg { width: 100%; height: auto; display: block; position: relative; z-index: 1; }
-      .bi-envi-flow-line { stroke-dasharray: 6 4; animation: bi-envi-flow 1.6s linear infinite; }
-      @keyframes bi-envi-flow { from { stroke-dashoffset: 0; } to { stroke-dashoffset: -20; } }
-      .bi-envi-hub-pulse { transform-origin: 310px 130px; animation: bi-envi-pulse 2.4s ease-in-out infinite; }
-      @keyframes bi-envi-pulse { 0%, 100% { opacity: 0.25; transform: scale(1); } 50% { opacity: 0.55; transform: scale(1.1); } }
-
-      /* Metrics */
+      .bi-envi-eq-result { font-size: 14px; font-weight: 700; color: var(--r-blue); white-space: nowrap; }
+      .bi-envi-mode { display: flex; gap: 6px; }
+      .bi-envi-mode-btn { flex: 1; padding: 10px 12px; background: var(--r-surface); border: 1px solid var(--r-divider); border-radius: 8px; font-size: 12px; font-weight: 600; color: var(--r-ink-2); cursor: pointer; transition: all 150ms ease; text-align: center; font-family: inherit; }
+      .bi-envi-mode-btn:hover { border-color: var(--r-blue); }
+      .bi-envi-mode-btn.is-active.is-today { background: #FEEBEB; border-color: #F0CACA; color: #A01818; }
+      .bi-envi-mode-btn.is-active.is-aw { background: #E1F5EE; border-color: #BBDDD0; color: #085041; }
+      .bi-envi-viz { background: linear-gradient(180deg, var(--r-surface-3) 0%, var(--r-surface-2) 100%); border: 1px solid var(--r-divider); border-radius: 10px; padding: 12px; }
+      .bi-envi-viz-svg { width: 100%; height: auto; display: block; }
+      .bi-envi-viz-svg .envi-tile { transition: transform 200ms cubic-bezier(0.2, 0.8, 0.2, 1); transform-origin: center; transform-box: fill-box; }
+      .bi-envi-viz-svg .envi-tile:hover { transform: translateX(-2px); filter: drop-shadow(0 4px 8px rgba(0,0,204,0.08)); }
+      .bi-envi-viz-svg .envi-path { opacity: var(--p-op, 0.7); }
+      .bi-envi-viz-svg .envi-hub { transform-origin: center; transform-box: fill-box; }
       .bi-envi-metrics { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
-      .bi-envi-metric { background: var(--r-surface); border: 1px solid var(--r-divider); border-radius: 10px; padding: 12px 14px; position: relative; transition: all 200ms ease; }
-      .bi-envi-metric:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
-      .bi-envi-metric.is-highlight { background: linear-gradient(135deg, #E1F5EE 0%, #C7EBDC 100%); border-color: #9CD8BC; }
-      .bi-envi-metric-label { font-size: 10px; color: var(--r-ink-2); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 4px; }
-      .bi-envi-metric-value { font-size: 22px; font-weight: 800; color: var(--r-ink); line-height: 1.1; letter-spacing: -0.01em; }
+      .bi-envi-metric { background: var(--r-surface); border: 1px solid var(--r-divider); border-radius: 8px; padding: 11px 12px; }
+      .bi-envi-metric.is-highlight { background: #E1F5EE; border-color: #BBDDD0; }
+      .bi-envi-metric-label { font-size: 10px; color: var(--r-ink-2); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 4px; }
+      .bi-envi-metric-value { font-size: 20px; font-weight: 700; color: var(--r-ink); line-height: 1.1; }
       .bi-envi-metric.is-highlight .bi-envi-metric-value { color: var(--r-green); }
       .bi-envi-metric-sub { font-size: 10px; color: var(--r-ink-2); margin-top: 4px; line-height: 1.35; }
-
-      /* Outcomes band */
-      .bi-envi-outcomes {
-        background: linear-gradient(135deg, var(--r-blue) 0%, #1010DD 60%, #2222EE 100%);
-        color: white;
-        padding: 16px;
-        border-radius: 12px;
-        position: relative;
-        overflow: hidden;
-      }
-      .bi-envi-outcomes::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        right: -20%;
-        width: 60%;
-        height: 200%;
-        background: radial-gradient(circle, var(--r-cyan) 0%, transparent 60%);
-        opacity: 0.12;
-        pointer-events: none;
-      }
-      .bi-envi-outcomes-label { font-size: 10px; color: var(--r-cyan); letter-spacing: 0.08em; font-weight: 700; margin-bottom: 6px; text-transform: uppercase; position: relative; z-index: 1; }
-      .bi-envi-outcomes-head { font-size: 13px; font-weight: 600; line-height: 1.4; margin-bottom: 12px; color: white; position: relative; z-index: 1; }
-      .bi-envi-outcomes-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; position: relative; z-index: 1; }
-      .bi-envi-outcome { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); border-radius: 8px; padding: 10px 12px; display: flex; gap: 10px; align-items: flex-start; transition: all 200ms ease; backdrop-filter: blur(4px); }
-      .bi-envi-outcome:hover { background: rgba(255,255,255,0.14); transform: translateY(-1px); }
-      .bi-envi-outcome-icon {
-        width: 28px; height: 28px;
-        background: rgba(0,191,255,0.18);
-        border-radius: 7px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--r-cyan);
-        flex-shrink: 0;
-      }
-      .bi-envi-outcome-icon svg { width: 16px; height: 16px; }
-      .bi-envi-outcome-content { flex: 1; min-width: 0; }
-      .bi-envi-outcome-title { font-size: 11px; font-weight: 700; color: white; line-height: 1.3; }
+      .bi-envi-outcomes { background: var(--r-blue); color: white; padding: 14px 16px; border-radius: 10px; }
+      .bi-envi-outcomes-label { font-size: 10px; color: var(--r-muted-blue); letter-spacing: 0.06em; font-weight: 600; margin-bottom: 6px; text-transform: uppercase; }
+      .bi-envi-outcomes-head { font-size: 13px; font-weight: 600; line-height: 1.4; margin-bottom: 10px; color: white; }
+      .bi-envi-outcomes-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+      .bi-envi-outcome { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; padding: 9px 10px; }
+      .bi-envi-outcome-title { font-size: 11px; font-weight: 600; color: white; line-height: 1.3; }
       .bi-envi-outcome-sub { font-size: 10px; color: var(--r-muted-blue); line-height: 1.4; margin-top: 3px; }
-
       .bi-envi-foot { font-size: 11px; color: var(--r-ink-2); line-height: 1.5; padding: 0 4px; }
-      .bi-envi-foot strong { color: var(--r-ink); font-weight: 700; }
+      .bi-envi-foot strong { color: var(--r-ink); font-weight: 600; }
       @media (min-width: 1024px) {
         .bi-envi-outcomes-grid { grid-template-columns: repeat(4, 1fr); }
       }
@@ -9649,11 +9524,6 @@
         else if (n <= 10000) { ci.endpoints = Math.round(n * 1.25); ci.envs = 4; ci.apps = 175; ci.customApps = 30; ci.monthlyTickets = Math.round(n * 0.12); ci.avgTicketMins = 18; ci.pkgHours = 100; ci.patchHours = 70; }
         else if (n <= 25000) { ci.endpoints = Math.round(n * 1.3); ci.envs = 5; ci.apps = 200; ci.customApps = 40; ci.monthlyTickets = Math.round(n * 0.12); ci.avgTicketMins = 20; ci.pkgHours = 130; ci.patchHours = 90; }
         else { ci.endpoints = Math.round(n * 1.3); ci.envs = 6; ci.apps = 250; ci.customApps = 50; ci.monthlyTickets = Math.round(n * 0.12); ci.avgTicketMins = 20; ci.pkgHours = 160; ci.patchHours = 110; }
-
-        // Sync Environment Impact chip selection to match new env count
-        const ENVI_ORDER = ['intune','sccm','avd','citrix','macos','jamf'];
-        if (!STATE.envImpact) STATE.envImpact = { selected: [], mode: 'today' };
-        STATE.envImpact.selected = ENVI_ORDER.slice(0, Math.max(1, Math.min(6, ci.envs)));
       }
 
       function generatePDF(companyName){
@@ -10206,152 +10076,482 @@
             const engMonths = hasCycle ? (hrsSaved / 160).toFixed(1) : '0';
 
             // ── Environment Impact section computations ──
-            const ENV_LIST = [
-              { id: 'intune', name: 'Intune',     color: '#0078D4', mark: 'ms' },
-              { id: 'sccm',   name: 'ConfigMgr',  color: '#5C2D91', mark: 'ms' },
-              { id: 'avd',    name: 'AVD / W365', color: '#0078D4', mark: 'ms' },
-              { id: 'citrix', name: 'Citrix',     color: '#000000', mark: 'citrix' },
-              { id: 'macos',  name: 'macOS',      color: '#1A1A1A', mark: 'apple' },
-              { id: 'jamf',   name: 'Jamf',       color: '#E94B3C', mark: 'jamf' }
-            ];
+            // Brand-styled logo marks for each environment. Drawn as inline SVG
+            // groups (used both in chips and in the main diagram) so they read as
+            // real product brands rather than generic line icons.
+            const BRAND_SYMBOLS = {
+              intune: '<symbol id="brand-intune" viewBox="0 0 32 32">' +
+                '<rect width="32" height="32" rx="6" fill="#0078D4"/>' +
+                '<path d="M8 11 L8 24 L24 24 L24 11 Z" fill="#fff"/>' +
+                '<path d="M16 4 L20 9 L12 9 Z" fill="#50E6FF"/>' +
+                '<rect x="10.5" y="13" width="11" height="1.6" rx="0.5" fill="#0078D4"/>' +
+                '<rect x="10.5" y="16" width="11" height="1.6" rx="0.5" fill="#0078D4"/>' +
+                '<rect x="10.5" y="19" width="7" height="1.6" rx="0.5" fill="#50E6FF"/>' +
+                '</symbol>',
+              sccm: '<symbol id="brand-sccm" viewBox="0 0 32 32">' +
+                '<rect width="32" height="32" rx="6" fill="#0078D4"/>' +
+                '<rect x="6.5" y="8" width="19" height="4.5" rx="0.8" fill="#fff"/>' +
+                '<rect x="6.5" y="13.75" width="19" height="4.5" rx="0.8" fill="#fff"/>' +
+                '<rect x="6.5" y="19.5" width="19" height="4.5" rx="0.8" fill="#fff"/>' +
+                '<circle cx="9.5" cy="10.25" r="1" fill="#50E6FF"/>' +
+                '<circle cx="9.5" cy="16" r="1" fill="#50E6FF"/>' +
+                '<circle cx="9.5" cy="21.75" r="1" fill="#50E6FF"/>' +
+                '<rect x="12" y="9.75" width="9" height="1" fill="#0078D4" opacity="0.6"/>' +
+                '<rect x="12" y="15.5" width="9" height="1" fill="#0078D4" opacity="0.6"/>' +
+                '<rect x="12" y="21.25" width="9" height="1" fill="#0078D4" opacity="0.6"/>' +
+                '</symbol>',
+              avd: '<symbol id="brand-avd" viewBox="0 0 32 32">' +
+                '<rect width="32" height="32" rx="6" fill="#0078D4"/>' +
+                '<path d="M7 14 Q7 8.5 12 8.5 L20 8.5 Q25 8.5 25 14 L25 20 L7 20 Z" fill="#50E6FF"/>' +
+                '<rect x="7" y="20" width="18" height="1.2" fill="#fff"/>' +
+                '<rect x="13.5" y="22" width="5" height="2.5" fill="#fff"/>' +
+                '<rect x="10" y="24.5" width="12" height="1.2" rx="0.4" fill="#fff"/>' +
+                '<path d="M11 12 L20 12" stroke="#fff" stroke-width="0.8" opacity="0.6"/>' +
+                '<path d="M11 15 L18 15" stroke="#fff" stroke-width="0.8" opacity="0.6"/>' +
+                '</symbol>',
+              citrix: '<symbol id="brand-citrix" viewBox="0 0 32 32">' +
+                '<rect width="32" height="32" rx="6" fill="#000"/>' +
+                '<text x="16" y="22" text-anchor="middle" font-family="Inter, sans-serif" font-weight="800" font-size="15" fill="#fff" letter-spacing="-0.05em">Ctx</text>' +
+                '</symbol>',
+              macos: '<symbol id="brand-macos" viewBox="0 0 32 32">' +
+                '<rect width="32" height="32" rx="6" fill="#1d1d1f"/>' +
+                '<path d="M19.5 8.4 C19.7 7.6 20.4 7.1 21.2 7 C21.1 7.9 20.5 8.5 19.5 8.4 Z" fill="#fff"/>' +
+                '<path d="M22.6 18.5 C22.6 14.5 19.6 13.5 18 13.5 C16.7 13.5 15.8 14 15.2 14.5 C14.6 14 13.7 13.5 12.4 13.5 C9.5 13.5 8 16 8 18.7 C8 21.7 9.6 24.8 11.6 25 C12.6 25.1 13.3 24.4 14.4 24.4 C15.5 24.4 16.2 25.1 17.2 25 C19.2 24.8 20.7 22.5 21.4 20.1 C20.4 19.6 22.6 18.5 22.6 18.5 Z" fill="#fff"/>' +
+                '</symbol>',
+              jamf: '<symbol id="brand-jamf" viewBox="0 0 32 32">' +
+                '<rect width="32" height="32" rx="6" fill="#E13B40"/>' +
+                '<text x="16" y="21" text-anchor="middle" font-family="Inter, sans-serif" font-weight="800" font-size="12" fill="#fff" letter-spacing="-0.03em">jamf</text>' +
+                '</symbol>'
+            };
+            const BRAND_DEFS = Object.values(BRAND_SYMBOLS).join('');
 
-            // Brand mark renderer — returns SVG markup positioned at (x, y) with given size
-            const brandMark = (mark, x, y, s) => {
-              if (mark === 'ms') {
-                const sq = (s - 2) / 2;
-                const gap = 1.5;
-                return `<g transform="translate(${x}, ${y})">
-                  <rect x="0" y="0" width="${sq}" height="${sq}" fill="#F25022"/>
-                  <rect x="${sq + gap}" y="0" width="${sq}" height="${sq}" fill="#7FBA00"/>
-                  <rect x="0" y="${sq + gap}" width="${sq}" height="${sq}" fill="#00A4EF"/>
-                  <rect x="${sq + gap}" y="${sq + gap}" width="${sq}" height="${sq}" fill="#FFB900"/>
-                </g>`;
-              }
-              if (mark === 'citrix') {
-                return `<g transform="translate(${x}, ${y})">
-                  <text x="${s/2}" y="${s*0.82}" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-size="${s*1.05}" font-weight="900" fill="white">c</text>
-                </g>`;
-              }
-              if (mark === 'apple') {
-                const cx = s / 2, top = s * 0.18;
-                return `<g transform="translate(${x}, ${y})">
-                  <path d="M ${cx} ${top + s*0.05}
-                           C ${cx + s*0.15} ${top + s*0.05} ${cx + s*0.22} ${top + s*0.16} ${cx + s*0.22} ${top + s*0.26}
-                           C ${cx + s*0.42} ${top + s*0.26} ${cx + s*0.46} ${top + s*0.46} ${cx + s*0.4} ${top + s*0.62}
-                           C ${cx + s*0.32} ${top + s*0.74} ${cx + s*0.18} ${top + s*0.74} ${cx} ${top + s*0.68}
-                           C ${cx - s*0.18} ${top + s*0.74} ${cx - s*0.32} ${top + s*0.74} ${cx - s*0.4} ${top + s*0.62}
-                           C ${cx - s*0.46} ${top + s*0.46} ${cx - s*0.42} ${top + s*0.26} ${cx - s*0.22} ${top + s*0.26}
-                           C ${cx - s*0.22} ${top + s*0.16} ${cx - s*0.15} ${top + s*0.05} ${cx} ${top + s*0.05} Z"
-                        fill="white"/>
-                  <ellipse cx="${cx + s*0.07}" cy="${top}" rx="${s*0.07}" ry="${s*0.05}" fill="white" transform="rotate(35 ${cx + s*0.07} ${top})"/>
-                </g>`;
-              }
-              if (mark === 'jamf') {
-                return `<g transform="translate(${x}, ${y})">
-                  <text x="${s/2}" y="${s*0.88}" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-size="${s*1.15}" font-weight="900" fill="white">j</text>
-                </g>`;
-              }
-              return '';
+            // End-user device marks — recognisable enterprise hardware silhouettes.
+            // Each device is sized 36x36 and drawn in a consistent enterprise palette.
+            const DEVICE_SYMBOLS = {
+              laptop: '<symbol id="dev-laptop" viewBox="0 0 36 36">' +
+                '<rect x="6" y="9" width="24" height="15" rx="1.5" fill="#fff" stroke="#1A1A2E" stroke-width="1.3"/>' +
+                '<rect x="7.5" y="10.5" width="21" height="12" fill="#0078D4"/>' +
+                '<rect x="10" y="13" width="15" height="1" fill="#fff" opacity="0.55"/>' +
+                '<rect x="10" y="15" width="11" height="1" fill="#fff" opacity="0.55"/>' +
+                '<rect x="10" y="17" width="13" height="1" fill="#fff" opacity="0.55"/>' +
+                '<path d="M3 24 L33 24 L31 28 L5 28 Z" fill="#1A1A2E"/>' +
+                '<rect x="14.5" y="25" width="7" height="1.4" rx="0.5" fill="#666"/>' +
+                '</symbol>',
+              macbook: '<symbol id="dev-macbook" viewBox="0 0 36 36">' +
+                '<rect x="7" y="7" width="22" height="14" rx="1" fill="#C8C8D0" stroke="#1A1A2E" stroke-width="1"/>' +
+                '<rect x="8" y="8" width="20" height="12" fill="#0F1419"/>' +
+                '<path d="M19.6 11 C19.9 10.4 20.6 10.2 21.2 10.3 C21 11 20.4 11.4 19.6 11 Z" fill="#fff"/>' +
+                '<path d="M21.2 16.5 C21.2 14.5 19.6 14 18.6 14 C17.9 14 17.4 14.3 17.1 14.5 C16.8 14.3 16.3 14 15.6 14 C14.2 14 13.2 15 13.2 16.5 C13.2 18 14.2 19.4 15.2 19.4 C15.7 19.4 16 19.1 16.5 19.1 C17 19.1 17.4 19.4 17.9 19.4 C18.9 19.4 19.7 18.4 20 17.4 C19.5 17.2 21.2 16.5 21.2 16.5 Z" fill="#fff"/>' +
+                '<path d="M3 22 L33 22 L31 26 L5 26 Z" fill="#B0B0B8"/>' +
+                '<path d="M14.5 23 L21.5 23 L21 24 L15 24 Z" fill="#1A1A2E"/>' +
+                '</symbol>',
+              winarm: '<symbol id="dev-winarm" viewBox="0 0 36 36">' +
+                // Surface-style 2-in-1 with kickstand — represents Windows-on-ARM hardware
+                '<rect x="6" y="6" width="24" height="17" rx="1.5" fill="#1A1A2E"/>' +
+                '<rect x="7.4" y="7.4" width="21.2" height="14.2" fill="#0078D4"/>' +
+                // Windows 4-pane glyph
+                '<g transform="translate(13.5, 10.5)" fill="#fff">' +
+                  '<rect width="3.8" height="3.8"/>' +
+                  '<rect x="5" width="3.8" height="3.8"/>' +
+                  '<rect y="5" width="3.8" height="3.8"/>' +
+                  '<rect x="5" y="5" width="3.8" height="3.8"/>' +
+                '</g>' +
+                // Kickstand fold
+                '<path d="M18 23 L18 30 L26 27 L26 23 Z" fill="#3A3A48" stroke="#1A1A2E" stroke-width="0.5"/>' +
+                '<ellipse cx="18" cy="32" rx="13" ry="0.7" fill="#1A1A2E" opacity="0.25"/>' +
+                '</symbol>',
+              cloudpc: '<symbol id="dev-cloudpc" viewBox="0 0 36 36">' +
+                '<rect x="5" y="6" width="26" height="18" rx="1.5" fill="#fff" stroke="#1A1A2E" stroke-width="1.3"/>' +
+                '<rect x="6.5" y="7.5" width="23" height="15" fill="#0078D4"/>' +
+                '<path d="M13.5 14 Q13.5 11 16.5 11 Q18.8 11 19.2 13 Q22.5 13 22.5 16 Q22.5 18 20.5 18 L13.5 18 Q11.5 18 11.5 16 Q11.5 14 13.5 14 Z" fill="#50E6FF"/>' +
+                '<rect x="14" y="24" width="8" height="3" fill="#A0A0A8"/>' +
+                '<rect x="10" y="27" width="16" height="1.5" rx="0.3" fill="#1A1A2E"/>' +
+                '</symbol>'
             };
 
-            const _sel_raw = (STATE.envImpact && Array.isArray(STATE.envImpact.selected)) ? STATE.envImpact.selected : ['intune','sccm','avd'];
-            // Reconcile chip selection to ci.envs if they drift apart (e.g., user edited envs in Assumptions)
-            const _ciEnvs = Math.max(1, Math.min(6, ci.envs || 3));
-            const _sel = (_sel_raw.length === _ciEnvs)
-              ? _sel_raw
-              : ENV_LIST.slice(0, _ciEnvs).map(e => e.id);
-            // Persist reconciled selection back to state so chip clicks work consistently
-            if (STATE.envImpact) STATE.envImpact.selected = _sel;
+            // Scene icons — used in the today/AW pipeline narratives.
+            const ICON_SYMBOLS = {
+              ticket: '<symbol id="icon-ticket" viewBox="0 0 60 22">' +
+                '<path d="M4 4 Q4 1 7 1 L53 1 Q56 1 56 4 L56 7 Q53.5 7 53.5 11 Q53.5 14 56 14 L56 18 Q56 21 53 21 L7 21 Q4 21 4 18 L4 14 Q6.5 14 6.5 11 Q6.5 7 4 7 Z" fill="#CC2222" stroke="#A01818" stroke-width="0.8"/>' +
+                '<line x1="30" y1="2" x2="30" y2="20" stroke="#FFE0E0" stroke-width="0.5" stroke-dasharray="1.2 1"/>' +
+                '<text x="17" y="14" text-anchor="middle" font-family="Inter, sans-serif" font-size="8" font-weight="800" fill="#fff">TKT</text>' +
+                '<rect x="34" y="6" width="16" height="1.3" rx="0.5" fill="#fff" opacity="0.7"/>' +
+                '<rect x="34" y="9" width="13" height="1.3" rx="0.5" fill="#fff" opacity="0.5"/>' +
+                '<rect x="34" y="12" width="10" height="1.3" rx="0.5" fill="#fff" opacity="0.5"/>' +
+                '</symbol>',
+              admin: '<symbol id="icon-admin" viewBox="0 0 44 52">' +
+                '<circle cx="22" cy="14" r="8.5" fill="#F5C796" stroke="#4A4A5A" stroke-width="1.2"/>' +
+                '<path d="M14 12 Q14 5.5 22 5.5 Q30 5.5 30 12 L27 11 L24 13 L20 11 L17 13 L14 12 Z" fill="#4A4A5A"/>' +
+                '<circle cx="19" cy="14.5" r="0.9" fill="#1A1A2E"/>' +
+                '<circle cx="25" cy="14.5" r="0.9" fill="#1A1A2E"/>' +
+                '<path d="M18 17.5 Q20 19 22 19 Q24 19 26 17.5" stroke="#1A1A2E" stroke-width="0.8" fill="none" stroke-linecap="round"/>' +
+                '<path d="M6 52 Q6 30 22 30 Q38 30 38 52 Z" fill="#0078D4" stroke="#003F73" stroke-width="1"/>' +
+                '<rect x="19" y="30" width="6" height="5" fill="#fff"/>' +
+                '<path d="M20.5 30 L22 33.5 L23.5 30" fill="#003F73"/>' +
+                '<rect x="28" y="38" width="6" height="2" rx="0.5" fill="#fff" opacity="0.55"/>' +
+                '<rect x="28" y="42" width="4" height="2" rx="0.5" fill="#fff" opacity="0.4"/>' +
+                '</symbol>',
+              clock: '<symbol id="icon-clock" viewBox="0 0 32 32">' +
+                '<circle cx="16" cy="16" r="14" fill="#FFEFEF" stroke="#CC2222" stroke-width="1.8"/>' +
+                '<circle cx="16" cy="16" r="11" fill="none" stroke="#F3CCCC" stroke-width="0.6" stroke-dasharray="1.5 2"/>' +
+                '<path d="M16 7 L16 16 L22 19" stroke="#CC2222" stroke-width="2.5" stroke-linecap="round" fill="none"/>' +
+                '<circle cx="16" cy="16" r="1.6" fill="#A01818"/>' +
+                '</symbol>',
+              spark: '<symbol id="icon-spark" viewBox="0 0 24 24">' +
+                '<path d="M12 2 L13.5 9 L20 10.5 L13.5 12 L12 19 L10.5 12 L4 10.5 L10.5 9 Z" fill="#00BFFF"/>' +
+                '</symbol>',
+              check: '<symbol id="icon-check" viewBox="0 0 28 28">' +
+                '<circle cx="14" cy="14" r="13" fill="#E1F5EE" stroke="#0F7A3F" stroke-width="1.5"/>' +
+                '<path d="M8 14 L12.5 18.5 L20 11" stroke="#0F7A3F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>' +
+                '</symbol>'
+            };
+            const ALL_DEFS = BRAND_DEFS + Object.values(DEVICE_SYMBOLS).join('') + Object.values(ICON_SYMBOLS).join('');
+
+            const ENV_LIST = [
+              { id: 'intune', name: 'Intune',     brand: 'brand-intune' },
+              { id: 'sccm',   name: 'ConfigMgr',  brand: 'brand-sccm' },
+              { id: 'avd',    name: 'AVD / W365', brand: 'brand-avd' },
+              { id: 'citrix', name: 'Citrix',     brand: 'brand-citrix' },
+              { id: 'macos',  name: 'macOS',      brand: 'brand-macos' },
+              { id: 'jamf',   name: 'Jamf',       brand: 'brand-jamf' }
+            ];
+            const _sel = (STATE.envImpact && Array.isArray(STATE.envImpact.selected)) ? STATE.envImpact.selected : ['intune','sccm','avd'];
             const _mode = (STATE.envImpact && STATE.envImpact.mode) || 'today';
             const activeEnvs = ENV_LIST.filter(e => _sel.includes(e.id));
             const nEnvs = Math.max(activeEnvs.length, 1);
             const appsCount = ci.apps || 150;
-            const ticketsMo = ci.monthlyTickets || 600;
+            const ticketsMo = ci.tickets || 600;
             const streamsToday = appsCount * nEnvs;
             const streamsAw = appsCount;
             const streamReduction = streamsToday > 0 ? Math.round(((streamsToday - streamsAw) / streamsToday) * 100) : 0;
             const isToday = _mode === 'today';
 
-            // Compute environment block Y positions for SVG (viewBox 0 0 660 260)
-            const envH = 44, envGap = 10, vizCenterY = 130;
-            const totalEnvH = nEnvs * envH + (nEnvs - 1) * envGap;
-            const envStartY = vizCenterY - totalEnvH / 2;
-            const envYs = Array.from({length: nEnvs}, (_, i) => envStartY + i * (envH + envGap));
+            // ── Scene geometry ──
+            // The visualization is composed as a left-to-right story:
+            //   END USERS (column)  →  PIPELINE (today queue / AW portal)  →  ENVIRONMENTS (column)
+            // This way the right side tells the same story as the left side's
+            // "Where time gets returned" rows — user experience, packaging,
+            // multi-tenant — but as a moving picture rather than numbers.
+            const VB_W = 920;
+            const USER_W = 168, USER_H = 84, USER_GAP = 10;
+            const ENV_TILE_W = 200, ENV_TILE_H = 56, ENV_GAP = 10;
+            const USERS = [
+              { id: 'sales',  name: 'Maria',  role: 'Sales · Win laptop',   device: 'dev-laptop'  },
+              { id: 'design', name: 'Devon',  role: 'Design · MacBook',     device: 'dev-macbook' },
+              { id: 'field',  name: 'Priya',  role: 'Field · Win ARM',      device: 'dev-winarm'  },
+              { id: 'remote', name: 'James',  role: 'Remote · Cloud PC',    device: 'dev-cloudpc' }
+            ];
+            const nUsers = USERS.length;
+            const totalUserH = nUsers * USER_H + (nUsers - 1) * USER_GAP;
+            const totalEnvH = nEnvs * ENV_TILE_H + (nEnvs - 1) * ENV_GAP;
+            const STAGE_H = Math.max(totalUserH, totalEnvH, 320);
+            const TOP_PAD = 40, BOTTOM_PAD = 56;
+            const VB_H = TOP_PAD + STAGE_H + BOTTOM_PAD;
+            const centerY = TOP_PAD + STAGE_H / 2;
+            const userStartY = centerY - totalUserH / 2;
+            const userYs = USERS.map(function(_, i) { return userStartY + i * (USER_H + USER_GAP); });
+            const envStartY = centerY - totalEnvH / 2;
+            const envYs = Array.from({length: nEnvs}, function(_, i) { return envStartY + i * (ENV_TILE_H + ENV_GAP); });
+            const USER_X = 14;
+            const userRightX = USER_X + USER_W;
+            const ENV_TILE_X = VB_W - ENV_TILE_W - 10;
+            const sceneLeftX = userRightX + 24;
+            const sceneRightX = ENV_TILE_X - 20;
+            const sceneW = sceneRightX - sceneLeftX;
+            const sceneCenterX = (sceneLeftX + sceneRightX) / 2;
 
-            // Build environment blocks SVG (polished card-style with brand color tile + logo + name)
-            const envBlocks = activeEnvs.map((e, i) => `
-              <g transform="translate(478, ${envYs[i].toFixed(1)})" filter="url(#envi-card-shadow)">
-                <rect x="0" y="0" width="170" height="${envH}" rx="8" fill="white" stroke="#E0E5F0" stroke-width="0.8"/>
-                <path d="M 0 8 Q 0 0 8 0 L 38 0 L 38 ${envH} L 8 ${envH} Q 0 ${envH} 0 ${envH - 8} Z" fill="${e.color}"/>
-                ${brandMark(e.mark, 8, 11, 22)}
-                <text x="50" y="${envH/2 - 2}" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="#1A1A2E">${e.name}</text>
-                <text x="50" y="${envH/2 + 12}" font-family="Inter, sans-serif" font-size="9" font-weight="500" fill="${isToday ? '#A01818' : '#085041'}">${isToday ? num(appsCount) + ' apps · manual builds' : num(appsCount) + ' apps · auto-delivered'}</text>
-              </g>
-            `).join('');
+            // ── USER COLUMN ──
+            // Four representative end users on different devices. Their device
+            // mix is intentional: Windows, macOS, mobile, and Cloud PC — all of
+            // the environments the customer actually runs.
+            const usersGroup = USERS.map(function(u, i) {
+              const y = userYs[i];
+              return ''
+                + '<g class="scene-user" transform="translate(' + USER_X + ',' + y.toFixed(1) + ')">'
+                +   '<rect width="' + USER_W + '" height="' + USER_H + '" rx="10" fill="#fff" stroke="#DDDDEE"/>'
+                +   '<use href="#' + u.device + '" x="14" y="' + ((USER_H - 40) / 2).toFixed(1) + '" width="40" height="40"/>'
+                +   '<text x="62" y="32" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#1A1A2E">' + u.name + '</text>'
+                +   '<text x="62" y="48" font-family="Inter, sans-serif" font-size="10" fill="#4A4A5A">' + u.role + '</text>'
+                +   '<g transform="translate(62, 60)">'
+                +     '<circle r="2.5" fill="#0F7A3F"/>'
+                +     '<text x="7" y="3" font-family="Inter, sans-serif" font-size="9" font-weight="500" fill="#4A4A5A">Active</text>'
+                +   '</g>'
+                + '</g>';
+            }).join('');
 
-            // Build the connection paths
-            let connectionPaths = '';
+            const usersHeader = ''
+              + '<text x="' + (USER_X + USER_W / 2) + '" y="' + (TOP_PAD - 14) + '" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" font-weight="800" fill="#4A4A5A" letter-spacing="0.12em">END USERS · ' + nUsers + '</text>';
+
+            // ── ENV COLUMN ──
+            const envsHeader = ''
+              + '<text x="' + (ENV_TILE_X + ENV_TILE_W / 2) + '" y="' + (TOP_PAD - 14) + '" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" font-weight="800" fill="#4A4A5A" letter-spacing="0.12em">ENVIRONMENTS · ' + nEnvs + '</text>';
+
+            const envBlocks = activeEnvs.map(function(e, i) {
+              const y = envYs[i];
+              const accent = isToday ? '#CC2222' : '#0F7A3F';
+              const tileBg = isToday ? '#fff' : '#FAFEFB';
+              const tileStroke = isToday ? '#E8C7C7' : '#BFDDC8';
+              const stat = isToday ? num(appsCount) + ' apps · queued' : num(appsCount) + ' apps · live';
+              return ''
+                + '<g class="envi-tile" transform="translate(' + ENV_TILE_X + ',' + y.toFixed(1) + ')">'
+                + '<rect width="' + ENV_TILE_W + '" height="' + ENV_TILE_H + '" rx="9" fill="' + tileBg + '" stroke="' + tileStroke + '" stroke-width="1"/>'
+                + '<rect x="0" y="0" width="4" height="' + ENV_TILE_H + '" rx="2" fill="' + accent + '" opacity="0.85"/>'
+                + '<use href="#' + e.brand + '" x="14" y="' + ((ENV_TILE_H - 34) / 2).toFixed(1) + '" width="34" height="34"/>'
+                + '<text x="56" y="22" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#1A1A2E">' + e.name + '</text>'
+                + '<text x="56" y="39" font-family="Inter, sans-serif" font-size="10" fill="#4A4A5A">' + stat + '</text>'
+                + '<g transform="translate(' + (ENV_TILE_W - 18) + ',' + (ENV_TILE_H / 2) + ')">'
+                +   (isToday
+                    ? '<circle r="6" fill="#FFEFEF" stroke="#CC2222" stroke-width="1"/><path d="M -2 -2 L 2 2 M 2 -2 L -2 2" stroke="#CC2222" stroke-width="1.5" stroke-linecap="round"/>'
+                    : '<circle r="7" fill="#E1F5EE" stroke="#0F7A3F" stroke-width="1"/><path d="M -3 0 L -0.5 2.5 L 3 -2" stroke="#0F7A3F" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>')
+                + '</g>'
+                + '</g>';
+            }).join('');
+
+            // ── SCENE — pipeline middle ──
+            let sceneGroup = '';
+            let userConnectors = '';
+            let envConnectors = '';
+            let calloutsGroup = '';
+
             if (isToday) {
-              // Today: red dashed lines from apps box (right edge x=120, y=130) directly to each env (left edge x=478, mid envYs[i]+envH/2)
-              connectionPaths = activeEnvs.map((e, i) => {
-                const targetY = envYs[i] + envH/2;
-                const midX = 290;
-                const midY = (130 + targetY) / 2;
-                const path = `M 120 130 Q ${midX} ${midY} 476 ${targetY.toFixed(1)}`;
-                const gearY = midY;
-                return `
-                  <path class="bi-envi-flow-line" d="${path}" fill="none" stroke="#CC2222" stroke-width="1.6" opacity="0.55" marker-end="url(#envi-arrow-red)"/>
-                  <g transform="translate(${midX}, ${gearY.toFixed(1)})">
-                    <circle cx="0" cy="0" r="13" fill="white" stroke="#CC2222" stroke-width="1.2"/>
-                    <text x="0" y="4" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" fill="#CC2222" font-weight="700">×</text>
-                  </g>
-                `;
+              // TODAY: every request is a manual workflow.
+              // Stage A: tickets emerge from each user (red ticket icons)
+              // Stage B: queue stack collects them
+              // Stage C: lone IT admin packages, one at a time
+              // Stage D: fragmented branches out to each env (per-env work)
+
+              const queueX = sceneLeftX + 30;
+              const queueY = centerY - 90;
+              const queueW = 110, queueH = 180;
+              const adminX = queueX + queueW + 50;
+              const adminY = centerY - 26;
+              const splitX = adminX + 90;
+              const splitY = centerY;
+
+              // Connectors from users → queue (each user sends red tickets)
+              userConnectors = USERS.map(function(u, i) {
+                const y = userYs[i] + USER_H / 2;
+                const start = userRightX + 4;
+                const end = queueX - 4;
+                const mid = (start + end) / 2;
+                return ''
+                  + '<path class="envi-path" style="--p-op:0.55" d="M ' + start + ' ' + y.toFixed(1) + ' C ' + mid + ' ' + y.toFixed(1) + ', ' + mid + ' ' + (queueY + queueH / 2).toFixed(1) + ', ' + end + ' ' + (queueY + queueH / 2).toFixed(1) + '" fill="none" stroke="#CC2222" stroke-width="1.4" stroke-dasharray="5 4" opacity="0.55"/>'
+                  // Travelling red ticket along this path — animates user submitting a ticket
+                  + '<g opacity="0.85"><use href="#icon-ticket" x="-20" y="-7" width="40" height="14"/>'
+                  +   '<animateMotion dur="' + (3.5 + i * 0.6).toFixed(1) + 's" repeatCount="indefinite" begin="' + (i * 0.4).toFixed(1) + 's" path="M ' + start + ' ' + y.toFixed(1) + ' C ' + mid + ' ' + y.toFixed(1) + ', ' + mid + ' ' + (queueY + queueH / 2).toFixed(1) + ', ' + end + ' ' + (queueY + queueH / 2).toFixed(1) + '" rotate="auto"/>'
+                  + '</g>';
               }).join('');
+
+              // Ticket queue — visible stack of tickets piling up
+              const stackCount = 6;
+              const stackTickets = Array.from({length: stackCount}, function(_, i) {
+                const ty = 28 + i * 22;
+                const tx = 6 + (i % 2) * 4;
+                return '<use href="#icon-ticket" x="' + tx + '" y="' + ty + '" width="' + (queueW - 24) + '" height="22" opacity="' + (0.55 + i * 0.07).toFixed(2) + '"/>';
+              }).join('');
+
+              const queueBlock = ''
+                + '<g class="scene-queue" transform="translate(' + queueX + ',' + queueY + ')">'
+                +   '<rect x="-8" y="-12" width="' + (queueW + 16) + '" height="' + (queueH + 30) + '" rx="10" fill="#FFF6F6" stroke="#F3CCCC" stroke-dasharray="4 3"/>'
+                +   '<text x="' + (queueW / 2) + '" y="4" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" font-weight="800" fill="#A01818" letter-spacing="0.1em">TICKET QUEUE</text>'
+                +   stackTickets
+                +   '<g transform="translate(' + (queueW / 2) + ',' + (queueH + 8) + ')">'
+                +     '<rect x="-38" y="-12" width="76" height="24" rx="12" fill="#CC2222"/>'
+                +     '<text x="0" y="4" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" font-weight="800" fill="#fff">' + num(ticketsMo) + ' / mo</text>'
+                +   '</g>'
+                + '</g>';
+
+              // Wait clock above queue
+              const clockBlock = ''
+                + '<g class="scene-clock" transform="translate(' + (queueX + queueW + 8) + ',' + (queueY - 4) + ')">'
+                +   '<use href="#icon-clock" width="38" height="38"/>'
+                +   '<text x="19" y="54" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="800" fill="#A01818">5–14 days</text>'
+                +   '<text x="19" y="66" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" fill="#CC2222">to deploy</text>'
+                + '</g>';
+
+              // Queue → admin
+              const queueToAdmin = ''
+                + '<path class="envi-path" style="--p-op:0.7" d="M ' + (queueX + queueW + 4) + ' ' + (queueY + queueH / 2).toFixed(1) + ' L ' + (adminX - 6) + ' ' + (adminY + 26).toFixed(1) + '" fill="none" stroke="#CC2222" stroke-width="1.6" stroke-dasharray="5 4" opacity="0.6" marker-end="url(#envi-arrow-red)"/>';
+
+              // IT admin avatar
+              const adminBlock = ''
+                + '<g class="scene-admin" transform="translate(' + adminX + ',' + adminY + ')">'
+                +   '<use href="#icon-admin" width="52" height="62"/>'
+                +   '<text x="26" y="78" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="700" fill="#1A1A2E">IT admin</text>'
+                +   '<text x="26" y="90" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" fill="#A01818">packaging</text>'
+                +   '<text x="26" y="100" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" fill="#A01818" font-weight="700">× ' + nEnvs + ' envs</text>'
+                +   '<g transform="translate(44, 8)">'
+                +     '<rect x="-14" y="-10" width="28" height="18" rx="9" fill="#CC2222"/>'
+                +     '<text x="0" y="2" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" font-weight="800" fill="#fff">!</text>'
+                +   '</g>'
+                + '</g>';
+
+              // Admin → split → env connectors (fragmented)
+              envConnectors = activeEnvs.map(function(e, i) {
+                const targetY = envYs[i] + ENV_TILE_H / 2;
+                const start = adminX + 56;
+                const end = ENV_TILE_X - 4;
+                const mid = (start + end) / 2;
+                return ''
+                  + '<path class="envi-path" style="--p-op:0.65" d="M ' + start + ' ' + (adminY + 30).toFixed(1) + ' C ' + mid + ' ' + (adminY + 30).toFixed(1) + ', ' + mid + ' ' + targetY.toFixed(1) + ', ' + end + ' ' + targetY.toFixed(1) + '" fill="none" stroke="#CC2222" stroke-width="1.5" stroke-dasharray="6 5" opacity="0.6" marker-end="url(#envi-arrow-red)"/>';
+              }).join('');
+
+              sceneGroup = queueBlock + clockBlock + queueToAdmin + adminBlock;
+
+              // Today callouts — mirror the left side's reclamation categories
+              calloutsGroup = ''
+                + '<g class="scene-callout scene-callout-today" transform="translate(' + (queueX + queueW / 2) + ',' + (centerY + STAGE_H / 2 - 6) + ')">'
+                +   '<rect x="-110" y="-14" width="220" height="28" rx="14" fill="#FFEFEF" stroke="#F3CCCC"/>'
+                +   '<text x="0" y="4" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="700" fill="#A01818">User experience: stalled by IT</text>'
+                + '</g>'
+                + '<g class="scene-callout scene-callout-today" transform="translate(' + sceneCenterX + ',' + (centerY + STAGE_H / 2 + 26) + ')">'
+                +   '<text x="0" y="0" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="600" fill="#A01818">Every app × every environment · ' + nEnvs + ' parallel work-streams · audit by hand</text>'
+                + '</g>';
+
             } else {
-              // AW mode: apps → hub (one line), then hub → each env
-              const hubX = 310, hubY = 130, hubR = 46;
-              connectionPaths = `
-                <path class="bi-envi-flow-line" d="M 120 130 L ${hubX - hubR - 4} 130" fill="none" stroke="#0000CC" stroke-width="2.2" opacity="0.9" marker-end="url(#envi-arrow-blue)"/>
-              ` + activeEnvs.map((e, i) => {
-                const targetY = envYs[i] + envH/2;
-                const angle = Math.atan2(targetY - hubY, 476 - hubX);
+              // WITH APPLICATION WORKSPACE
+              // Stage A: Users open a Self-Service Portal (mini-mock card)
+              // Stage B: Portal feeds a single Application Workspace hub
+              // Stage C: Hub distributes one definition to every environment
+              // Animations: fast cyan particles moving along the in-flow and out-flows.
+
+              const portalX = sceneLeftX + 14;
+              const portalY = centerY - 90;
+              const portalW = 220, portalH = 180;
+              const hubX = portalX + portalW + 60 + 56;
+              const hubY = centerY;
+              const hubR = 56;
+
+              // User → portal connectors (smooth blue lines, fast cyan particles)
+              userConnectors = USERS.map(function(u, i) {
+                const y = userYs[i] + USER_H / 2;
+                const start = userRightX + 4;
+                const end = portalX - 4;
+                const targetY = portalY + portalH / 2;
+                const mid = (start + end) / 2;
+                const pathD = 'M ' + start + ' ' + y.toFixed(1) + ' C ' + mid + ' ' + y.toFixed(1) + ', ' + mid + ' ' + targetY.toFixed(1) + ', ' + end + ' ' + targetY.toFixed(1);
+                return ''
+                  + '<path class="envi-path" style="--p-op:0.7" d="' + pathD + '" fill="none" stroke="#0078D4" stroke-width="1.6" opacity="0.7"/>'
+                  + '<circle r="3" fill="#00BFFF">'
+                  +   '<animateMotion dur="1.8s" repeatCount="indefinite" begin="' + (i * 0.25).toFixed(2) + 's" path="' + pathD + '"/>'
+                  + '</circle>';
+              }).join('');
+
+              // Self-Service Portal mock — a real-looking enterprise catalog
+              const appCatalog = [
+                { name: 'Office',  status: 'installed', color: '#D03A1F' },
+                { name: 'Slack',   status: 'install',   color: '#4A154B' },
+                { name: 'Zoom',    status: 'installed', color: '#2D8CFF' },
+                { name: 'Figma',   status: 'install',   color: '#1ABCFE' },
+                { name: 'Chrome',  status: 'installed', color: '#4285F4' },
+                { name: 'Adobe',   status: 'install',   color: '#FA0F00' }
+              ];
+              const cellW = (portalW - 16 - 6) / 3;
+              const cellH = 36;
+              const catalogGrid = appCatalog.map(function(app, i) {
+                const col = i % 3, row = Math.floor(i / 3);
+                const cx = 8 + col * (cellW + 3);
+                const cy = 56 + row * (cellH + 4);
+                const isInstalled = app.status === 'installed';
+                const installFill = isInstalled ? '#E1F5EE' : '#EEF2FF';
+                const installStroke = isInstalled ? '#BFDDC8' : '#DDDDEE';
+                const installLabel = isInstalled ? '✓ Installed' : 'Install';
+                const installColor = isInstalled ? '#0F7A3F' : '#0000CC';
+                return ''
+                  + '<g transform="translate(' + cx + ',' + cy + ')">'
+                  +   '<rect width="' + cellW + '" height="' + cellH + '" rx="4" fill="#fff" stroke="#E5E7EB" stroke-width="0.8"/>'
+                  +   '<rect x="4" y="4" width="14" height="14" rx="3" fill="' + app.color + '"/>'
+                  +   '<text x="' + (cellW / 2 + 7) + '" y="14" font-family="Inter, sans-serif" font-size="8" font-weight="700" fill="#1A1A2E">' + app.name + '</text>'
+                  +   '<rect x="4" y="22" width="' + (cellW - 8) + '" height="10" rx="2" fill="' + installFill + '" stroke="' + installStroke + '" stroke-width="0.6"/>'
+                  +   '<text x="' + (cellW / 2) + '" y="29.5" text-anchor="middle" font-family="Inter, sans-serif" font-size="6.5" font-weight="700" fill="' + installColor + '">' + installLabel + '</text>'
+                  + '</g>';
+              }).join('');
+
+              const portalBlock = ''
+                + '<g class="scene-portal" transform="translate(' + portalX + ',' + portalY + ')">'
+                +   '<rect width="' + portalW + '" height="' + portalH + '" rx="10" fill="#fff" stroke="#0000CC" stroke-width="1.3"/>'
+                +   '<rect width="' + portalW + '" height="28" rx="10" fill="#0000CC"/>'
+                +   '<rect y="18" width="' + portalW + '" height="10" fill="#0000CC"/>'
+                +   '<circle cx="10" cy="14" r="2.5" fill="#00BFFF"/>'
+                +   '<text x="20" y="17.5" font-family="Inter, sans-serif" font-size="10" font-weight="800" fill="#fff" letter-spacing="0.06em">SELF-SERVICE PORTAL</text>'
+                +   '<rect x="' + (portalW - 38) + '" y="8" width="30" height="12" rx="6" fill="#00BFFF"/>'
+                +   '<text x="' + (portalW - 23) + '" y="17" text-anchor="middle" font-family="Inter, sans-serif" font-size="7" font-weight="700" fill="#0000CC">' + num(appsCount) + ' apps</text>'
+                +   '<rect x="8" y="36" width="' + (portalW - 16) + '" height="14" rx="3" fill="#F0F0F6"/>'
+                +   '<text x="14" y="46" font-family="Inter, sans-serif" font-size="8" fill="#999">Search your apps…</text>'
+                +   catalogGrid
+                +   '<text x="' + (portalW / 2) + '" y="' + (portalH + 16) + '" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" font-weight="700" fill="#0000CC">One click. Any device.</text>'
+                + '</g>';
+
+              // Portal → hub (single bold blue line, animated cyan particle)
+              const portalRightX = portalX + portalW;
+              const hubLeftX = hubX - hubR;
+              const portalToHubPath = 'M ' + (portalRightX + 4) + ' ' + (portalY + portalH / 2).toFixed(1) + ' C ' + ((portalRightX + hubLeftX) / 2) + ' ' + (portalY + portalH / 2).toFixed(1) + ', ' + ((portalRightX + hubLeftX) / 2) + ' ' + hubY.toFixed(1) + ', ' + (hubLeftX - 6) + ' ' + hubY.toFixed(1);
+              const portalToHub = ''
+                + '<path class="envi-path" style="--p-op:0.95" d="' + portalToHubPath + '" fill="none" stroke="#0000CC" stroke-width="2.8" marker-end="url(#envi-arrow-blue)"/>'
+                + '<circle r="3.5" fill="#00BFFF">'
+                +   '<animateMotion dur="1.6s" repeatCount="indefinite" path="' + portalToHubPath + '"/>'
+                + '</circle>';
+
+              // AW hub — bigger, more presence
+              const hubBlock = ''
+                + '<g class="envi-hub" transform="translate(' + hubX + ',' + hubY + ')">'
+                +   '<circle r="' + (hubR + 8) + '" fill="#0000CC" opacity="0.06"/>'
+                +   '<circle r="' + hubR + '" fill="#0000CC"/>'
+                +   '<circle r="' + hubR + '" fill="none" stroke="#00BFFF" stroke-width="2"/>'
+                +   '<text x="-32" y="-26" font-family="Inter, sans-serif" font-size="11" font-weight="800" fill="#2244EE">+</text>'
+                +   '<text x="28" y="30" font-family="Inter, sans-serif" font-size="11" font-weight="800" fill="#2244EE">+</text>'
+                +   '<text x="-26" y="32" font-family="Inter, sans-serif" font-size="9" font-weight="800" fill="#2244EE">+</text>'
+                +   '<text x="0" y="-12" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="800" fill="#00BFFF" letter-spacing="0.08em">APPLICATION</text>'
+                +   '<text x="0" y="3" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="800" fill="#fff" letter-spacing="0.08em">WORKSPACE</text>'
+                +   '<line x1="-26" y1="9" x2="26" y2="9" stroke="#00BFFF" stroke-width="0.8" opacity="0.5"/>'
+                +   '<text x="0" y="22" text-anchor="middle" font-family="Inter, sans-serif" font-size="8" font-weight="600" fill="#AABBEE" letter-spacing="0.08em">DEFINE · DEPLOY · RUN</text>'
+                + '</g>';
+
+              // Hub → envs (green branches with fast moving particles)
+              envConnectors = activeEnvs.map(function(e, i) {
+                const targetY = envYs[i] + ENV_TILE_H / 2;
+                const angle = Math.atan2(targetY - hubY, ENV_TILE_X - hubX);
                 const startX = hubX + hubR * Math.cos(angle);
                 const startY = hubY + hubR * Math.sin(angle);
-                const midX = (startX + 476) / 2;
-                const midY = (startY + targetY) / 2;
-                return `<path class="bi-envi-flow-line" d="M ${startX.toFixed(1)} ${startY.toFixed(1)} Q ${midX.toFixed(1)} ${midY.toFixed(1)} 476 ${targetY.toFixed(1)}" fill="none" stroke="#0F7A3F" stroke-width="1.8" opacity="0.8" marker-end="url(#envi-arrow-green)"/>`;
+                const endX = ENV_TILE_X - 4;
+                const c1x = startX + (endX - startX) * 0.4;
+                const c2x = startX + (endX - startX) * 0.6;
+                const pathD = 'M ' + startX.toFixed(1) + ' ' + startY.toFixed(1) + ' C ' + c1x.toFixed(1) + ' ' + startY.toFixed(1) + ', ' + c2x.toFixed(1) + ' ' + targetY.toFixed(1) + ', ' + endX + ' ' + targetY.toFixed(1);
+                return ''
+                  + '<path class="envi-path" style="--p-op:0.85" d="' + pathD + '" fill="none" stroke="#0F7A3F" stroke-width="2.2" opacity="0.85" marker-end="url(#envi-arrow-green)"/>'
+                  + '<circle r="3" fill="#34D399">'
+                  +   '<animateMotion dur="1.4s" repeatCount="indefinite" begin="' + (i * 0.15).toFixed(2) + 's" path="' + pathD + '"/>'
+                  + '</circle>';
               }).join('');
+
+              sceneGroup = portalBlock + portalToHub + hubBlock;
+
+              // AW callouts — sell the user-experience win and link to the
+              // matching reclaim categories from the left chart.
+              calloutsGroup = ''
+                + '<g class="scene-callout scene-callout-aw" transform="translate(' + (portalX + portalW / 2) + ',' + (centerY + STAGE_H / 2 - 6) + ')">'
+                +   '<rect x="-130" y="-14" width="260" height="28" rx="14" fill="#E1F5EE" stroke="#BFDDC8"/>'
+                +   '<text x="0" y="4" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="700" fill="#085041">User experience −70% · self-serve in seconds</text>'
+                + '</g>'
+                + '<g class="scene-callout scene-callout-aw" transform="translate(' + sceneCenterX + ',' + (centerY + STAGE_H / 2 + 26) + ')">'
+                +   '<text x="0" y="0" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="600" fill="#085041">Define once · deliver everywhere · audit on demand</text>'
+                + '</g>';
             }
 
-            // Hub group (only shown in AW mode) — Recast-branded with pulse glow
-            const hubGroup = isToday ? '' : `
-              <g>
-                <circle class="bi-envi-hub-pulse" cx="310" cy="130" r="58" fill="#00BFFF" opacity="0.18"/>
-                <circle cx="310" cy="130" r="46" fill="url(#envi-hub-grad)"/>
-                <circle cx="310" cy="130" r="46" fill="none" stroke="#00BFFF" stroke-width="1.8"/>
-                <text x="310" y="120" text-anchor="middle" font-family="Inter, sans-serif" font-size="8.5" font-weight="700" fill="#00BFFF" letter-spacing="0.6">APPLICATION</text>
-                <text x="310" y="132" text-anchor="middle" font-family="Inter, sans-serif" font-size="8.5" font-weight="700" fill="#00BFFF" letter-spacing="0.6">WORKSPACE</text>
-                <line x1="290" y1="138" x2="330" y2="138" stroke="#00BFFF" stroke-width="0.6" opacity="0.5"/>
-                <text x="310" y="150" text-anchor="middle" font-family="Inter, sans-serif" font-size="7" fill="#AABBEE" font-style="italic">define · deploy · run</text>
-              </g>
-            `;
+            const captionY = TOP_PAD + STAGE_H + 8;
 
-            const captionText = isToday
-              ? 'Today: every app rebuilt for every environment'
-              : 'With AW: one definition, distributed to every environment';
-            const captionFill = isToday ? '#A01818' : '#085041';
-
-            // Build chips with brand-colored logos
-            const chipsHtml = ENV_LIST.map(e => {
-              const isActive = _sel.includes(e.id);
-              return `
-                <button type="button" class="bi-envi-chip${isActive ? ' is-active' : ''}" data-action="toggle-env-chip" data-env="${e.id}" aria-pressed="${isActive}" style="--chip-color: ${e.color}">
-                  <span class="bi-envi-chip-logo" style="background:${e.color}">
-                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">${brandMark(e.mark, 1, 1, 22)}</svg>
-                  </span>
-                  ${e.name}
-                </button>
-              `;
+            // Chips — now use real brand glyphs (inline SVG) instead of generic
+            // line icons, so the env identity carries through the whole panel.
+            const chipsHtml = ENV_LIST.map(function(e) {
+              const active = _sel.includes(e.id);
+              return ''
+                + '<button type="button" class="bi-envi-chip' + (active ? ' is-active' : '') + '" data-action="toggle-env-chip" data-env="' + e.id + '" aria-pressed="' + active + '">'
+                +   '<span class="bi-envi-chip-logo">'
+                +     '<svg viewBox="0 0 32 32" aria-hidden="true">' + BRAND_SYMBOLS[e.id].replace(/<symbol[^>]*>/, '<g>').replace('</symbol>', '</g>') + '</svg>'
+                +   '</span>'
+                +   '<span>' + e.name + '</span>'
+                +   '<span class="bi-envi-chip-check" aria-hidden="true"></span>'
+                + '</button>';
             }).join('');
 
             return `
@@ -10378,74 +10578,51 @@
                 </div>
 
                 <div class="bi-envi-mode">
-                  <button type="button" class="bi-envi-mode-btn is-today${isToday ? ' is-active' : ''}" data-action="set-env-mode" data-mode="today"><span class="bi-envi-mode-dot"></span>Today &middot; fragmented</button>
-                  <button type="button" class="bi-envi-mode-btn is-aw${!isToday ? ' is-active' : ''}" data-action="set-env-mode" data-mode="aw"><span class="bi-envi-mode-dot"></span>With Application Workspace &middot; unified</button>
+                  <button type="button" class="bi-envi-mode-btn is-today${isToday ? ' is-active' : ''}" data-action="set-env-mode" data-mode="today">Today &middot; fragmented</button>
+                  <button type="button" class="bi-envi-mode-btn is-aw${!isToday ? ' is-active' : ''}" data-action="set-env-mode" data-mode="aw">With Application Workspace &middot; unified</button>
                 </div>
 
                 <div class="bi-envi-viz">
-                  <svg class="bi-envi-viz-svg" viewBox="0 0 660 260" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+                  <svg class="bi-envi-viz-svg" viewBox="0 0 ${VB_W} ${VB_H}" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
                     <defs>
-                      <marker id="envi-arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
-                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#0000CC" opacity="0.9"/>
+                      ${ALL_DEFS}
+                      <marker id="envi-arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#0000CC"/>
                       </marker>
-                      <marker id="envi-arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
-                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#CC2222" opacity="0.7"/>
+                      <marker id="envi-arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#0F7A3F"/>
                       </marker>
-                      <marker id="envi-arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
-                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#0F7A3F" opacity="0.85"/>
+                      <marker id="envi-arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#CC2222" opacity="0.8"/>
                       </marker>
-                      <linearGradient id="envi-hub-grad" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" stop-color="#0033DD"/>
-                        <stop offset="100%" stop-color="#0000AA"/>
-                      </linearGradient>
-                      <linearGradient id="envi-apps-grad" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" stop-color="#FFFFFF"/>
-                        <stop offset="100%" stop-color="#F0F4FF"/>
-                      </linearGradient>
-                      <filter id="envi-card-shadow" x="-10%" y="-10%" width="120%" height="120%">
-                        <feDropShadow dx="0" dy="1" stdDeviation="1.5" flood-color="#000020" flood-opacity="0.08"/>
-                      </filter>
                     </defs>
 
-                    <!-- Apps source card -->
-                    <g filter="url(#envi-card-shadow)">
-                      <rect x="14" y="86" width="106" height="88" rx="10" fill="url(#envi-apps-grad)" stroke="#0000CC" stroke-width="1.2"/>
-                      <text x="67" y="103" text-anchor="middle" font-family="Inter, sans-serif" font-size="8" font-weight="700" fill="#0000CC" letter-spacing="0.5">APPLICATIONS</text>
-                      <!-- Mini app tile icons -->
-                      <rect x="26" y="110" width="14" height="14" rx="3" fill="#0078D4"/>
-                      <rect x="44" y="110" width="14" height="14" rx="3" fill="#E94B3C"/>
-                      <rect x="62" y="110" width="14" height="14" rx="3" fill="#00A4EF"/>
-                      <rect x="80" y="110" width="14" height="14" rx="3" fill="#7FBA00"/>
-                      <rect x="98" y="110" width="14" height="14" rx="3" fill="#FFB900"/>
-                      <text x="67" y="144" text-anchor="middle" font-family="Inter, sans-serif" font-size="14" font-weight="800" fill="#1A1A2E">${num(appsCount)}</text>
-                      <text x="67" y="156" text-anchor="middle" font-family="Inter, sans-serif" font-size="8" fill="#4A4A5A" font-weight="500">apps managed</text>
-                      <line x1="26" y1="162" x2="108" y2="162" stroke="#E0E5F0" stroke-width="0.5"/>
-                      <text x="67" y="171" text-anchor="middle" font-family="Inter, sans-serif" font-size="8" fill="#4A4A5A">+ ${num(ticketsMo)} tickets/mo</text>
-                    </g>
-
-                    ${connectionPaths}
-                    ${hubGroup}
+                    ${usersHeader}
+                    ${envsHeader}
+                    ${usersGroup}
+                    ${userConnectors}
+                    ${sceneGroup}
+                    ${envConnectors}
                     ${envBlocks}
-
-                    <text x="330" y="248" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="${captionFill}" font-style="italic" font-weight="500">${captionText}</text>
+                    ${calloutsGroup}
                   </svg>
                 </div>
 
                 <div class="bi-envi-metrics">
                   <div class="bi-envi-metric">
-                    <div class="bi-envi-metric-label">Streams today</div>
-                    <div class="bi-envi-metric-value">${num(streamsToday)}</div>
-                    <div class="bi-envi-metric-sub">apps × environments</div>
+                    <div class="bi-envi-metric-label">User wait time</div>
+                    <div class="bi-envi-metric-value" style="font-size:18px">${isToday ? '5&ndash;14 days' : '&lt; 1 min'}</div>
+                    <div class="bi-envi-metric-sub">${isToday ? 'queue, package, deploy' : 'self-serve from any device'}</div>
                   </div>
                   <div class="bi-envi-metric">
-                    <div class="bi-envi-metric-label">With App Workspace</div>
-                    <div class="bi-envi-metric-value">${num(streamsAw)}</div>
-                    <div class="bi-envi-metric-sub">define once, deliver everywhere</div>
+                    <div class="bi-envi-metric-label">Support tickets</div>
+                    <div class="bi-envi-metric-value">${isToday ? num(ticketsMo) : num(Math.round(ticketsMo * 0.30))}</div>
+                    <div class="bi-envi-metric-sub">${isToday ? 'per month, manual' : 'per month · &minus;70%'}</div>
                   </div>
                   <div class="bi-envi-metric is-highlight">
-                    <div class="bi-envi-metric-label">Structural reduction</div>
-                    <div class="bi-envi-metric-value">${streamReduction}%</div>
-                    <div class="bi-envi-metric-sub">fewer workstreams to manage</div>
+                    <div class="bi-envi-metric-label">Workstreams</div>
+                    <div class="bi-envi-metric-value">${isToday ? num(streamsToday) + ' → ' + num(streamsAw) : '&minus;' + streamReduction + '%'}</div>
+                    <div class="bi-envi-metric-sub">${isToday ? 'apps × environments' : 'fewer to manage, end to end'}</div>
                   </div>
                 </div>
 
@@ -10454,45 +10631,27 @@
                   <div class="bi-envi-outcomes-head">The capacity returned goes into the work the business is actually asking for.</div>
                   <div class="bi-envi-outcomes-grid">
                     <div class="bi-envi-outcome">
-                      <div class="bi-envi-outcome-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><circle cx="6" cy="19" r="3"/><circle cx="18" cy="5" r="3"/><path d="M6 16V8a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v3"/></svg>
-                      </div>
-                      <div class="bi-envi-outcome-content">
-                        <div class="bi-envi-outcome-title">Migrations on time</div>
-                        <div class="bi-envi-outcome-sub">Intune, AVD, Win 11 in parallel with BAU</div>
-                      </div>
+                      <div class="bi-envi-outcome-title">Migrations on time</div>
+                      <div class="bi-envi-outcome-sub">Intune, AVD, Win 11 in parallel with BAU</div>
                     </div>
                     <div class="bi-envi-outcome">
-                      <div class="bi-envi-outcome-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/></svg>
-                      </div>
-                      <div class="bi-envi-outcome-content">
-                        <div class="bi-envi-outcome-title">AI &amp; tools in days</div>
-                        <div class="bi-envi-outcome-sub">No more quarterly packaging waits</div>
-                      </div>
+                      <div class="bi-envi-outcome-title">AI &amp; tools in days</div>
+                      <div class="bi-envi-outcome-sub">No more quarterly packaging waits</div>
                     </div>
                     <div class="bi-envi-outcome">
-                      <div class="bi-envi-outcome-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="m9 16 2 2 4-4"/></svg>
-                      </div>
-                      <div class="bi-envi-outcome-content">
-                        <div class="bi-envi-outcome-title">Audits as reports</div>
-                        <div class="bi-envi-outcome-sub">SOC 2, ISO, CIS evidence on demand</div>
-                      </div>
+                      <div class="bi-envi-outcome-title">Audits as reports</div>
+                      <div class="bi-envi-outcome-sub">SOC 2, ISO, CIS evidence on demand</div>
                     </div>
                     <div class="bi-envi-outcome">
-                      <div class="bi-envi-outcome-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
-                      </div>
-                      <div class="bi-envi-outcome-content">
-                        <div class="bi-envi-outcome-title">1-day patch close</div>
-                        <div class="bi-envi-outcome-sub">Across every environment, not per platform</div>
-                      </div>
+                      <div class="bi-envi-outcome-title">1-day patch close</div>
+                      <div class="bi-envi-outcome-sub">Across every environment, not per platform</div>
                     </div>
                   </div>
                 </div>
 
                 <div class="bi-envi-foot">
+                  Workstream math: <strong>active apps × environments</strong> today; <strong>active apps × 1</strong> with Application Workspace. The reduction is structural — independent of org size, scales with how many platforms you run.
+                </div>
 
               </div>
             </div>
