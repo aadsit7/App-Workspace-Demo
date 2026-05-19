@@ -4598,6 +4598,48 @@
         #panel-roi .bi-compound-inputs { padding: 8px 12px !important; margin-bottom: 12px !important; }
       }
 
+      /* ─── Environment Impact (right-column replacement for 3-year horizon) ─── */
+      .bi-envi { display: flex; flex-direction: column; gap: 14px; padding: 16px; background: var(--r-surface); border: 1px solid var(--r-divider); border-radius: 12px; }
+      .bi-envi-head { display: flex; flex-direction: column; gap: 4px; }
+      .bi-envi-title { font-size: 16px; font-weight: 700; color: var(--r-ink); line-height: 1.35; }
+      .bi-envi-sub { font-size: 12px; color: var(--r-ink-2); line-height: 1.5; }
+      .bi-envi-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+      .bi-envi-chip { display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; background: var(--r-surface); border: 1px solid var(--r-divider); border-radius: 18px; font-size: 12px; font-weight: 500; color: var(--r-ink-2); cursor: pointer; transition: all 150ms ease; user-select: none; }
+      .bi-envi-chip:hover { border-color: var(--r-blue); color: var(--r-ink); }
+      .bi-envi-chip.is-active { background: var(--r-blue); color: white; border-color: var(--r-blue); }
+      .bi-envi-chip.is-active .bi-envi-chip-icon { color: var(--r-cyan); }
+      .bi-envi-chip-icon { width: 14px; height: 14px; display: inline-flex; }
+      .bi-envi-eq { background: var(--r-quote-bg); border: 1px solid #DAE3F2; border-radius: 8px; padding: 11px 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+      .bi-envi-eq-text { font-size: 12px; color: var(--r-ink); line-height: 1.5; }
+      .bi-envi-eq-text strong { color: var(--r-blue); font-weight: 700; }
+      .bi-envi-eq-result { font-size: 14px; font-weight: 700; color: var(--r-blue); white-space: nowrap; }
+      .bi-envi-mode { display: flex; gap: 6px; }
+      .bi-envi-mode-btn { flex: 1; padding: 10px 12px; background: var(--r-surface); border: 1px solid var(--r-divider); border-radius: 8px; font-size: 12px; font-weight: 600; color: var(--r-ink-2); cursor: pointer; transition: all 150ms ease; text-align: center; font-family: inherit; }
+      .bi-envi-mode-btn:hover { border-color: var(--r-blue); }
+      .bi-envi-mode-btn.is-active.is-today { background: #FEEBEB; border-color: #F0CACA; color: #A01818; }
+      .bi-envi-mode-btn.is-active.is-aw { background: #E1F5EE; border-color: #BBDDD0; color: #085041; }
+      .bi-envi-viz { background: linear-gradient(180deg, var(--r-surface-3) 0%, var(--r-surface-2) 100%); border: 1px solid var(--r-divider); border-radius: 10px; padding: 12px; }
+      .bi-envi-viz-svg { width: 100%; height: auto; display: block; }
+      .bi-envi-metrics { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+      .bi-envi-metric { background: var(--r-surface); border: 1px solid var(--r-divider); border-radius: 8px; padding: 11px 12px; }
+      .bi-envi-metric.is-highlight { background: #E1F5EE; border-color: #BBDDD0; }
+      .bi-envi-metric-label { font-size: 10px; color: var(--r-ink-2); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 4px; }
+      .bi-envi-metric-value { font-size: 20px; font-weight: 700; color: var(--r-ink); line-height: 1.1; }
+      .bi-envi-metric.is-highlight .bi-envi-metric-value { color: var(--r-green); }
+      .bi-envi-metric-sub { font-size: 10px; color: var(--r-ink-2); margin-top: 4px; line-height: 1.35; }
+      .bi-envi-outcomes { background: var(--r-blue); color: white; padding: 14px 16px; border-radius: 10px; }
+      .bi-envi-outcomes-label { font-size: 10px; color: var(--r-muted-blue); letter-spacing: 0.06em; font-weight: 600; margin-bottom: 6px; text-transform: uppercase; }
+      .bi-envi-outcomes-head { font-size: 13px; font-weight: 600; line-height: 1.4; margin-bottom: 10px; color: white; }
+      .bi-envi-outcomes-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+      .bi-envi-outcome { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; padding: 9px 10px; }
+      .bi-envi-outcome-title { font-size: 11px; font-weight: 600; color: white; line-height: 1.3; }
+      .bi-envi-outcome-sub { font-size: 10px; color: var(--r-muted-blue); line-height: 1.4; margin-top: 3px; }
+      .bi-envi-foot { font-size: 11px; color: var(--r-ink-2); line-height: 1.5; padding: 0 4px; }
+      .bi-envi-foot strong { color: var(--r-ink); font-weight: 600; }
+      @media (min-width: 1024px) {
+        .bi-envi-outcomes-grid { grid-template-columns: repeat(4, 1fr); }
+      }
+
       /* ─── Side-by-side split: Ongoing × 3-year horizon ─── */
       /* Default to stacked so narrow viewports remain readable. */
       .bi-split {
@@ -5197,6 +5239,7 @@
         calcResult: null,
         showAssumptions: false,
         collapsedSections: { compound: false },
+        envImpact: { selected: ['intune','sccm','avd'], mode: 'today' },
         editingAssumptions: false,
         pdfCompanyInput: false,
         pdfCompanyName: '',
@@ -10024,79 +10067,203 @@
             const ticketsTotal  = ticketsAnnual * 3;
             const tixReductionPct = Math.round(a.ticketReduction * 100);
             const engMonths = hasCycle ? (hrsSaved / 160).toFixed(1) : '0';
+
+            // ── Environment Impact section computations ──
+            const ENV_LIST = [
+              { id: 'intune', name: 'Intune',     icon: 'cloud' },
+              { id: 'sccm',   name: 'ConfigMgr',  icon: 'server' },
+              { id: 'avd',    name: 'AVD / W365', icon: 'monitor' },
+              { id: 'citrix', name: 'Citrix',     icon: 'grid' },
+              { id: 'macos',  name: 'macOS',      icon: 'apple' },
+              { id: 'jamf',   name: 'Jamf',       icon: 'laptop' }
+            ];
+            const _sel = (STATE.envImpact && Array.isArray(STATE.envImpact.selected)) ? STATE.envImpact.selected : ['intune','sccm','avd'];
+            const _mode = (STATE.envImpact && STATE.envImpact.mode) || 'today';
+            const activeEnvs = ENV_LIST.filter(e => _sel.includes(e.id));
+            const nEnvs = Math.max(activeEnvs.length, 1);
+            const appsCount = ci.apps || 150;
+            const ticketsMo = ci.tickets || 600;
+            const streamsToday = appsCount * nEnvs;
+            const streamsAw = appsCount;
+            const streamReduction = streamsToday > 0 ? Math.round(((streamsToday - streamsAw) / streamsToday) * 100) : 0;
+            const isToday = _mode === 'today';
+
+            // Compute environment block Y positions for SVG (viewBox 0 0 660 260)
+            const envH = 38, envGap = 8, vizCenterY = 130;
+            const totalEnvH = nEnvs * envH + (nEnvs - 1) * envGap;
+            const envStartY = vizCenterY - totalEnvH / 2;
+            const envYs = Array.from({length: nEnvs}, (_, i) => envStartY + i * (envH + envGap));
+
+            // Build environment blocks SVG
+            const envBlocks = activeEnvs.map((e, i) => `
+              <g transform="translate(480, ${envYs[i].toFixed(1)})">
+                <rect x="0" y="0" width="160" height="${envH}" rx="6" fill="white" stroke="#99AAEE" stroke-width="0.8"/>
+                <text x="14" y="${(envH/2 + 4).toFixed(1)}" font-family="Inter, sans-serif" font-size="11" font-weight="500" fill="#1A1A2E">${e.name}</text>
+                <text x="146" y="${(envH/2 + 4).toFixed(1)}" text-anchor="end" font-family="Inter, sans-serif" font-size="9" fill="${isToday ? '#A01818' : '#085041'}">${isToday ? appsCount + ' apps · manual' : appsCount + ' apps · auto'}</text>
+              </g>
+            `).join('');
+
+            // Build the connection paths
+            let connectionPaths = '';
+            if (isToday) {
+              // Today: red dashed lines from apps box (right edge x=120, y=130) directly to each env (left edge x=480, mid envYs[i]+envH/2)
+              connectionPaths = activeEnvs.map((e, i) => {
+                const targetY = envYs[i] + envH/2;
+                const midX = 280;
+                const midY = (130 + targetY) / 2;
+                const path = `M 120 130 Q ${midX} ${midY} 478 ${targetY.toFixed(1)}`;
+                const gearY = midY;
+                return `
+                  <path d="${path}" fill="none" stroke="#A01818" stroke-width="1.5" opacity="0.6" stroke-dasharray="4 3" marker-end="url(#envi-arrow-red)"/>
+                  <g transform="translate(${midX}, ${gearY.toFixed(1)})">
+                    <circle cx="0" cy="0" r="11" fill="#FEEBEB" stroke="#A01818" stroke-width="0.8"/>
+                    <text x="0" y="3" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#A01818" font-weight="500">×</text>
+                  </g>
+                `;
+              }).join('');
+            } else {
+              // AW mode: apps → hub (one line), then hub → each env
+              const hubX = 310, hubY = 130, hubR = 42;
+              connectionPaths = `
+                <path d="M 120 130 L ${hubX - hubR - 4} 130" fill="none" stroke="#0000CC" stroke-width="2" opacity="0.85" marker-end="url(#envi-arrow-blue)"/>
+              ` + activeEnvs.map((e, i) => {
+                const targetY = envYs[i] + envH/2;
+                // Connection point on the hub circle, then to env left edge
+                const angle = Math.atan2(targetY - hubY, 478 - hubX);
+                const startX = hubX + hubR * Math.cos(angle);
+                const startY = hubY + hubR * Math.sin(angle);
+                const midX = (startX + 478) / 2;
+                const midY = (startY + targetY) / 2;
+                return `<path d="M ${startX.toFixed(1)} ${startY.toFixed(1)} Q ${midX.toFixed(1)} ${midY.toFixed(1)} 478 ${targetY.toFixed(1)}" fill="none" stroke="#0F7A3F" stroke-width="1.5" opacity="0.75" marker-end="url(#envi-arrow-blue)"/>`;
+              }).join('');
+            }
+
+            // Hub group (only shown in AW mode)
+            const hubGroup = isToday ? '' : `
+              <g>
+                <defs>
+                  <linearGradient id="envi-hub-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#0033DD"/>
+                    <stop offset="100%" stop-color="#0000AA"/>
+                  </linearGradient>
+                </defs>
+                <circle cx="310" cy="130" r="42" fill="url(#envi-hub-grad)"/>
+                <circle cx="310" cy="130" r="42" fill="none" stroke="#00BFFF" stroke-width="1.5"/>
+                <text x="310" y="124" text-anchor="middle" font-family="Inter, sans-serif" font-size="8" font-weight="500" fill="#00BFFF" letter-spacing="0.3">APPLICATION</text>
+                <text x="310" y="135" text-anchor="middle" font-family="Inter, sans-serif" font-size="8" font-weight="500" fill="#00BFFF" letter-spacing="0.3">WORKSPACE</text>
+                <text x="310" y="148" text-anchor="middle" font-family="Inter, sans-serif" font-size="7" fill="#AABBEE">define · deploy · run</text>
+              </g>
+            `;
+
+            const captionText = isToday
+              ? 'Today: every app rebuilt for every environment'
+              : 'With AW: one definition, distributed to every environment';
+            const captionFill = isToday ? '#A01818' : '#085041';
+
+            // Build chips
+            const chipsHtml = ENV_LIST.map(e => `
+              <button type="button" class="bi-envi-chip${_sel.includes(e.id) ? ' is-active' : ''}" data-action="toggle-env-chip" data-env="${e.id}" aria-pressed="${_sel.includes(e.id)}">
+                <i data-lucide="${e.icon}" class="bi-envi-chip-icon"></i>
+                ${e.name}
+              </button>
+            `).join('');
+
             return `
-          <!-- COMPOUNDING OPERATIONAL CAPACITY OVER 3 YEARS -->
+          <!-- ENVIRONMENT IMPACT — operational dynamic across the customer's stack -->
           <section class="bi-split-col">
             <button class="bi-section-eyebrow is-compound is-toggle" type="button" data-action="toggle-section" data-section="compound" aria-expanded="${STATE.collapsedSections.compound ? 'false' : 'true'}" aria-controls="section-compound">
-              <span class="bi-section-eyebrow-label">3-year horizon</span>
+              <span class="bi-section-eyebrow-label">Environment impact · operational dynamic</span>
               <svg class="bi-section-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
             </button>
             <div class="bi-section-content${STATE.collapsedSections.compound ? ' is-collapsed' : ''}" id="section-compound">
-              <div class="bi-compound dash-animate">
-                <div class="bi-compound-head">
-                  <div class="bi-compound-head-main">
-                    <div class="bi-compound-hero">
-                      <span class="bi-compound-hero-num">${heroNum}</span>
-                      <span class="bi-compound-hero-unit">${heroUnit}</span>
-                      <span class="bi-compound-hero-suffix">reclaimed by Year 3</span>
-                    </div>
-                    <div class="bi-compound-sub">Onboarding pays for itself in Year 1. Recurring capacity compounds every year after across <b>${envCount} environment${envCount===1?'':'s'}</b>.</div>
+              <div class="bi-envi dash-animate">
+                <div class="bi-envi-head">
+                  <div class="bi-envi-title">Your stack drives the workload &mdash; here&rsquo;s how Application Workspace changes it.</div>
+                  <div class="bi-envi-sub">Toggle the environments you actually run. The visual and the math respond live.</div>
+                </div>
+
+                <div class="bi-envi-chips">
+                  ${chipsHtml}
+                </div>
+
+                <div class="bi-envi-eq">
+                  <div class="bi-envi-eq-text">Operating across <strong>${nEnvs} environment${nEnvs===1?'':'s'}</strong> with <strong>${num(appsCount)} apps</strong> &middot; <strong>${num(ticketsMo)} tickets/mo</strong></div>
+                  <div class="bi-envi-eq-result">${num(streamsToday)} active workstreams today</div>
+                </div>
+
+                <div class="bi-envi-mode">
+                  <button type="button" class="bi-envi-mode-btn is-today${isToday ? ' is-active' : ''}" data-action="set-env-mode" data-mode="today">Today &middot; fragmented</button>
+                  <button type="button" class="bi-envi-mode-btn is-aw${!isToday ? ' is-active' : ''}" data-action="set-env-mode" data-mode="aw">With Application Workspace &middot; unified</button>
+                </div>
+
+                <div class="bi-envi-viz">
+                  <svg class="bi-envi-viz-svg" viewBox="0 0 660 260" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                      <marker id="envi-arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#0000CC" opacity="0.85"/>
+                      </marker>
+                      <marker id="envi-arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#A01818" opacity="0.7"/>
+                      </marker>
+                    </defs>
+
+                    <rect x="20" y="100" width="100" height="60" rx="8" fill="white" stroke="#0000CC" stroke-width="1"/>
+                    <text x="70" y="124" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="600" fill="#1A1A2E">${num(appsCount)} Apps</text>
+                    <text x="70" y="142" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" fill="#4A4A5A">+ ${num(ticketsMo)} tickets/mo</text>
+
+                    ${connectionPaths}
+                    ${hubGroup}
+                    ${envBlocks}
+
+                    <text x="330" y="248" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="${captionFill}" font-style="italic">${captionText}</text>
+                  </svg>
+                </div>
+
+                <div class="bi-envi-metrics">
+                  <div class="bi-envi-metric">
+                    <div class="bi-envi-metric-label">Streams today</div>
+                    <div class="bi-envi-metric-value">${num(streamsToday)}</div>
+                    <div class="bi-envi-metric-sub">apps × environments</div>
                   </div>
-                  <div class="bi-compound-legend">
-                    <span class="bi-compound-legend-item"><span class="bi-compound-legend-swatch is-onetime"></span>One-time onboarding</span>
-                    <span class="bi-compound-legend-item"><span class="bi-compound-legend-swatch is-recurring"></span>Recurring capacity</span>
+                  <div class="bi-envi-metric">
+                    <div class="bi-envi-metric-label">With App Workspace</div>
+                    <div class="bi-envi-metric-value">${num(streamsAw)}</div>
+                    <div class="bi-envi-metric-sub">define once, deliver everywhere</div>
+                  </div>
+                  <div class="bi-envi-metric is-highlight">
+                    <div class="bi-envi-metric-label">Structural reduction</div>
+                    <div class="bi-envi-metric-value">${streamReduction}%</div>
+                    <div class="bi-envi-metric-sub">fewer workstreams to manage</div>
                   </div>
                 </div>
-                <div class="bi-pkg-inputs bi-compound-inputs">
-                  <span class="bi-pkg-inputs-prompt">Tune onboarding</span>
-                  <label class="bi-pkg-input-chip" title="Total apps to onboard">
-                    <input type="number" id="pkg-apps" min="0" step="1" value="${ci.apps}" class="is-wide" aria-label="Total apps to onboard">
-                    <span class="bi-pkg-input-chip-label">apps</span>
-                  </label>
-                  <label class="bi-pkg-input-chip" title="Share of apps that are complex (rest are standard)">
-                    <input type="number" id="pkg-mix" min="0" max="100" step="1" value="${Math.round(ci.complexMixPct ?? 20)}" aria-label="Percent complex apps">
-                    <span class="bi-pkg-input-chip-label">% complex &middot; ${Math.round(100 - (ci.complexMixPct ?? 20))}% standard</span>
-                  </label>
-                  <label class="bi-pkg-input-chip" title="Loaded engineer hourly rate">
-                    <span class="bi-pkg-input-chip-label">$</span>
-                    <input type="number" id="pkg-rate" min="0" step="1" value="${ci.loadedRate || 95}" aria-label="Loaded engineer hourly rate">
-                    <span class="bi-pkg-input-chip-label">/hr loaded</span>
-                  </label>
-                  <span class="bi-pkg-inputs-note">Defaults from Recast field test</span>
-                </div>
-                <div class="bi-compound-rows">
-                  <div class="bi-compound-row" title="Year 1: ${num(oneTimeHrs)} one-time + ${num(recurHrs)} recurring = ${num(yr1Hrs)} hrs">
-                    <div class="bi-compound-row-label">Year 1</div>
-                    <div class="bi-compound-bar">
-                      <div class="bi-compound-seg bi-compound-seg-onetime" style="width:${otPct}%">${labelInside(otPct, oneTimeHrs, 'hrs')}</div>
-                      <div class="bi-compound-seg bi-compound-seg-rec"     style="width:${recPct}%">${labelInside(recPct, recurHrs, 'hrs')}</div>
+
+                <div class="bi-envi-outcomes">
+                  <div class="bi-envi-outcomes-label">What the team redirects to</div>
+                  <div class="bi-envi-outcomes-head">The capacity returned goes into the work the business is actually asking for.</div>
+                  <div class="bi-envi-outcomes-grid">
+                    <div class="bi-envi-outcome">
+                      <div class="bi-envi-outcome-title">Migrations on time</div>
+                      <div class="bi-envi-outcome-sub">Intune, AVD, Win 11 in parallel with BAU</div>
                     </div>
-                    <div class="bi-compound-total">${num(yr1Hrs)} hrs<small>cumulative</small></div>
-                  </div>
-                  <div class="bi-compound-row" title="Year 2 cumulative: ${num(oneTimeHrs)} one-time + ${num(recurHrs * 2)} recurring = ${num(yr2Hrs)} hrs">
-                    <div class="bi-compound-row-label">Year 2</div>
-                    <div class="bi-compound-bar">
-                      <div class="bi-compound-seg bi-compound-seg-onetime" style="width:${otPct}%"></div>
-                      <div class="bi-compound-seg bi-compound-seg-rec"     style="width:${recPct}%"></div>
-                      <div class="bi-compound-seg bi-compound-seg-rec is-yr2" style="width:${recPct}%">${labelInside(recPct, recurHrs, 'hrs')}</div>
+                    <div class="bi-envi-outcome">
+                      <div class="bi-envi-outcome-title">AI &amp; tools in days</div>
+                      <div class="bi-envi-outcome-sub">No more quarterly packaging waits</div>
                     </div>
-                    <div class="bi-compound-total">${num(yr2Hrs)} hrs<small>cumulative</small></div>
-                  </div>
-                  <div class="bi-compound-row" title="Year 3 cumulative: ${num(oneTimeHrs)} one-time + ${num(recurHrs * 3)} recurring = ${num(yr3Hrs)} hrs">
-                    <div class="bi-compound-row-label">Year 3</div>
-                    <div class="bi-compound-bar">
-                      <div class="bi-compound-seg bi-compound-seg-onetime" style="width:${otPct}%"></div>
-                      <div class="bi-compound-seg bi-compound-seg-rec"     style="width:${recPct}%"></div>
-                      <div class="bi-compound-seg bi-compound-seg-rec is-yr2" style="width:${recPct}%"></div>
-                      <div class="bi-compound-seg bi-compound-seg-rec is-yr3" style="width:${recPct}%">${labelInside(recPct, recurHrs, 'hrs')}</div>
+                    <div class="bi-envi-outcome">
+                      <div class="bi-envi-outcome-title">Audits as reports</div>
+                      <div class="bi-envi-outcome-sub">SOC 2, ISO, CIS evidence on demand</div>
                     </div>
-                    <div class="bi-compound-total">${num(yr3Hrs)} hrs<small>cumulative</small></div>
+                    <div class="bi-envi-outcome">
+                      <div class="bi-envi-outcome-title">1-day patch close</div>
+                      <div class="bi-envi-outcome-sub">Across every environment, not per platform</div>
+                    </div>
                   </div>
                 </div>
-                <div class="bi-compound-foot">
-                  <svg class="bi-compound-foot-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                  <span><b>+ ${num(ticketsTotal)} end-user tickets prevented</b> over 3 years &mdash; <b>${tixReductionPct}% fewer helpdesk calls</b>. Users self-serve their apps across all ${envCount} environment${envCount===1?'':'s'} instead of waiting for IT, and the one-time packaging onboarding (&asymp; <b>${engMonths} engineer-months</b>) stays returned forever.</span>
+
+                <div class="bi-envi-foot">
+                  Workstream math: <strong>active apps × environments</strong> today; <strong>active apps × 1</strong> with Application Workspace. The reduction is structural — independent of org size, scales with how many platforms you run.
                 </div>
+
               </div>
             </div>
           </section>`;
@@ -10573,6 +10740,36 @@
               STATE.collapsedSections[section] = !STATE.collapsedSections[section];
               render();
             }
+            return;
+          }
+          if (action === 'toggle-env-chip') {
+            const env = act.getAttribute('data-env');
+            if (!env) return;
+            if (!STATE.envImpact) STATE.envImpact = { selected: ['intune','sccm','avd'], mode: 'today' };
+            const sel = STATE.envImpact.selected || [];
+            const idx = sel.indexOf(env);
+            if (idx >= 0) {
+              // Don't allow deselecting the last chip — keep at least 1
+              if (sel.length <= 1) return;
+              sel.splice(idx, 1);
+            } else {
+              sel.push(env);
+            }
+            STATE.envImpact.selected = sel;
+            // Sync to calculator inputs and recalculate so left side stays consistent
+            if (STATE.calcInputs) {
+              STATE.calcInputs.envs = sel.length;
+              calculateImpact();
+            }
+            render();
+            return;
+          }
+          if (action === 'set-env-mode') {
+            const mode = act.getAttribute('data-mode');
+            if (mode !== 'today' && mode !== 'aw') return;
+            if (!STATE.envImpact) STATE.envImpact = { selected: ['intune','sccm','avd'], mode: 'today' };
+            STATE.envImpact.mode = mode;
+            render();
             return;
           }
           if (action === 'save-assumptions') {
