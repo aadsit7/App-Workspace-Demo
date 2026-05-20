@@ -10024,43 +10024,75 @@
         const a = ROI_ASSUMPTIONS[STATE.calcScenario];
         const ci = STATE.calcInputs;
 
-        // ── 5-bar distribution, derived entirely from the calculator's truth ──
-        // Catalog vs custom share of packaging + patching, driven by inputs.
+        // ── 5-bar partition. Built from the engine's RAW monthly hours
+        // so the parts sum to the engine totals exactly. Largest-remainder
+        // rounding then locks the displayed integers to those totals, so
+        // the bar chart, the summary strip, and the Speed/Scale/Risk
+        // cards can never disagree about how many hours come back. ──
         const apps = Math.max(1, ci.apps);
         const customShare = Math.min(1, ci.customApps / apps);
         const catalogShare = 1 - customShare;
         // Support hours split across UX, dashboarding, multi-tenant — from assumptions.
         // Normalized so the three always sum to 1, even if the user enters off-totals.
-        const rawSum = (a.uxShare + a.dashShare + a.mtShare) || 1;
-        const uxShare = a.uxShare / rawSum;
-        const dashShare = a.dashShare / rawSum;
-        const mtShare = a.mtShare / rawSum;
+        const shareSum = (a.uxShare + a.dashShare + a.mtShare) || 1;
+        const uxShare = a.uxShare / shareSum;
+        const dashShare = a.dashShare / shareSum;
+        const mtShare = a.mtShare / shareSum;
 
-        const pkgPatchOld = ci.pkgHours + ci.patchHours;
-        const pkgPatchRet = r.pkgHoursReturned + r.patchHoursReturned;
-        const sup = r.currentSupportHours;
-        const supRet = r.ticketHoursReturned;
+        const pkgPatchOldRaw = ci.pkgHours + ci.patchHours;
+        const pkgPatchRetRaw = r.pkgRetRaw + r.patchRetRaw;
+        const supOldRaw      = r.currentSupportHoursRaw;
+        const supRetRaw      = r.supportRetRaw;
 
-        const bars = [
-          { label: 'Managed apps',     sub: 'Deploy + lifecycle',     old: pkgPatchOld * catalogShare, ret: pkgPatchRet * catalogShare },
-          { label: 'Custom packaging', sub: 'In-house apps',          old: pkgPatchOld * customShare,  ret: pkgPatchRet * customShare  },
-          { label: 'User experience',  sub: 'Self-serve + auth',      old: sup * uxShare,              ret: supRet * uxShare           },
-          { label: 'Dashboarding',     sub: 'Reporting + audit',      old: sup * dashShare,            ret: supRet * dashShare         },
-          { label: 'Multi-tenant',     sub: 'Cross-env consistency',  old: sup * mtShare,              ret: supRet * mtShare           },
-        ].map(b => {
-          const oldR = Math.round(b.old);
-          const retR = Math.round(b.ret);
-          const neww = Math.max(0, oldR - retR);
+        const rawBars = [
+          { label: 'Managed apps',     sub: 'Deploy + lifecycle',     old: pkgPatchOldRaw * catalogShare, ret: pkgPatchRetRaw * catalogShare },
+          { label: 'Custom packaging', sub: 'In-house apps',          old: pkgPatchOldRaw * customShare,  ret: pkgPatchRetRaw * customShare  },
+          { label: 'User experience',  sub: 'Self-serve + auth',      old: supOldRaw * uxShare,           ret: supRetRaw * uxShare           },
+          { label: 'Dashboarding',     sub: 'Reporting + audit',      old: supOldRaw * dashShare,         ret: supRetRaw * dashShare         },
+          { label: 'Multi-tenant',     sub: 'Cross-env consistency',  old: supOldRaw * mtShare,           ret: supRetRaw * mtShare           },
+        ];
+
+        // Largest-remainder rounding: floor each part, then distribute
+        // the residual (target − sum_of_floors) to the parts with the
+        // largest fractional remainder. parts.sum() === target by
+        // construction, so rounded bars always sum to the engine total.
+        const roundToTotal = (rawParts, target) => {
+          const fl = rawParts.map(Math.floor);
+          let rem = Math.round(target - fl.reduce((s,v) => s + v, 0));
+          const order = rawParts.map((v,i) => ({i, frac: v - Math.floor(v)}))
+                                .sort((x,y) => y.frac - x.frac);
+          for (let k = 0; k < rem && k < order.length; k++) fl[order[k].i]++;
+          return fl;
+        };
+
+        const oldTotal = Math.round(r.baselineRaw);                          // == ci.pkgHours + ci.patchHours + currentSupportHours
+        const totalReturned = r.totalHoursMonth;                             // engine value, not recomputed
+        const newTotal = Math.max(0, oldTotal - totalReturned);
+        const oldParts = roundToTotal(rawBars.map(b => b.old), oldTotal);
+        const newRawParts = rawBars.map(b => Math.max(0, b.old - b.ret));
+        const newParts = roundToTotal(newRawParts, newTotal);
+        // Defensive clamp: largest-remainder can in theory push a unit
+        // anywhere; "new" must never exceed "old" for the same bar.
+        for (let i = 0; i < newParts.length; i++) {
+          if (newParts[i] > oldParts[i]) newParts[i] = oldParts[i];
+        }
+
+        const bars = rawBars.map((b, i) => {
+          const oldR = oldParts[i];
+          const neww = newParts[i];
           const reclaimed = oldR - neww;
           const pct = oldR > 0 ? Math.round((reclaimed / oldR) * 100) : 0;
           return { label: b.label, sub: b.sub, old: oldR, neww, reclaimed, pct };
         });
 
-        const oldTotal = bars.reduce((s,b) => s + b.old,  0);
-        const newTotal = bars.reduce((s,b) => s + b.neww, 0);
-        const totalReturned = Math.max(0, oldTotal - newTotal);
         const pctReduction = oldTotal ? Math.round((totalReturned / oldTotal) * 100) : 0;
-        const ftesAbsorbed = oldTotal ? (oldTotal * 12 / a.fteHours).toFixed(1) : '0.0';
+
+        // Dev-only invariant: rounded bars must reconcile to the engine
+        // reclaim. If this ever fails the cards/bars/summary are drifting.
+        console.assert(
+          bars.reduce((s,b) => s + b.old, 0) - bars.reduce((s,b) => s + b.neww, 0) === r.totalHoursMonth,
+          "bars don't reconcile to engine reclaim"
+        );
 
         // Nice axis ceiling for the chart (round up to a clean tick).
         const axisMax = Math.max(...bars.map(b => b.old), 10);
@@ -10099,34 +10131,13 @@
           </div>`;
         };
 
-        // ─── SPEED / SCALE / RISK card derivations ───────────────────
-        // Every value below feeds the same r/ci/a state that drives the
-        // right-hand "Where time gets returned" panel — both update
-        // together on Recalculate or assumption edits, so the two
-        // columns can never show inconsistent numbers. Only two values
-        // are new derivations: blended per-app build time (Speed hero)
-        // and reclaimed-hour dollar value (Scale hero sub).
-        const pb = PACKAGING_BENCHMARKS;
-        const complexMix  = Math.max(0, Math.min(1, (ci.complexMixPct ?? 20) / 100));
-        const standardMix = 1 - complexMix;
-        const tradBlended = standardMix * pb.tradStdHrs + complexMix * pb.tradComplexHrs;
-        const awBlended   = standardMix * pb.awStdHrs   + complexMix * pb.awComplexHrs;
-        const pctFaster   = tradBlended > 0 ? Math.round((1 - awBlended / tradBlended) * 100) : 0;
-
-        const loadedRate = ci.loadedRate || 95;
-        const reclaimedDollarsAnnual = totalReturned * loadedRate * 12;
+        // ─── Card bindings — every value reads from the engine (r) so
+        // the cards, the bar chart, and the summary strip stay in sync
+        // by construction. No card recomputes a savings or dollar
+        // figure with its own arithmetic.
         const fmtDollarsK = (n) => '$' + Math.round(n / 1000).toLocaleString() + 'K';
-
-        // Cross-platform touchpoints — same formula the removed env
-        // picker used, driven by ci.envs and a fixed 50% coverage (a
-        // typical app lives on ~half the platforms in a stack).
-        const ENV_COVERAGE = 0.5;
-        const streamsToday = Math.max(ci.apps, Math.round(ci.apps * ci.envs * ENV_COVERAGE));
-        const streamsAw    = ci.apps;
-        const touchpointReduction = streamsToday > 0 ? Math.max(0, Math.round(((streamsToday - streamsAw) / streamsToday) * 100)) : 0;
-
-        const pkgAfter   = Math.round(ci.pkgHours   * (1 - a.pkgReduction));
-        const patchAfter = Math.round(ci.patchHours * (1 - a.patchReduction));
+        const pkgAfter   = Math.max(0, ci.pkgHours   - r.pkgHoursReturned);
+        const patchAfter = Math.max(0, ci.patchHours - r.patchHoursReturned);
         const dashRow    = bars[3]; // Dashboarding row, also rendered on the right
         const envsLabel  = ci.envs === 1 ? 'env' : 'envs';
 
@@ -10143,12 +10154,12 @@
                     <h3 class="bi-pillar-title">Time to deliver</h3>
                   </header>
                   <div class="bi-pillar-hero">
-                    <div class="bi-pillar-hero-num">&minus;${pctFaster}<span class="bi-pillar-hero-unit">%</span></div>
+                    <div class="bi-pillar-hero-num">&minus;${r.pctFaster}<span class="bi-pillar-hero-unit">%</span></div>
                     <div class="bi-pillar-hero-sub">
                       per-app build time &middot;
-                      <span class="bi-pillar-from">${tradBlended.toFixed(1)} hrs</span>
+                      <span class="bi-pillar-from">${r.tradBlendedHrs.toFixed(1)} hrs</span>
                       <span class="bi-pillar-arrow">&rarr;</span>
-                      <span class="bi-pillar-to">${awBlended.toFixed(1)} hrs</span>
+                      <span class="bi-pillar-to">${r.awBlendedHrs.toFixed(1)} hrs</span>
                     </div>
                   </div>
                   <ul class="bi-pillar-rows">
@@ -10185,10 +10196,10 @@
                     <h3 class="bi-pillar-title">Capacity reclaimed</h3>
                   </header>
                   <div class="bi-pillar-hero">
-                    <div class="bi-pillar-hero-num">${num(totalReturned)}<span class="bi-pillar-hero-unit"> hrs/mo</span></div>
+                    <div class="bi-pillar-hero-num">${num(r.totalHoursMonth)}<span class="bi-pillar-hero-unit"> hrs/mo</span></div>
                     <div class="bi-pillar-hero-sub">
-                      &asymp; <span class="bi-pillar-to">${fmtDollarsK(reclaimedDollarsAnnual)}/yr</span>
-                      &middot; <span class="bi-pillar-to">&minus;${pctReduction}%</span>
+                      &asymp; <span class="bi-pillar-to">${fmtDollarsK(r.totalRecoveredAnnual)}/yr</span>
+                      &middot; <span class="bi-pillar-to">&minus;${pctReduction}%</span> of ops baseline
                     </div>
                   </div>
                   <ul class="bi-pillar-rows">
@@ -10203,10 +10214,10 @@
                     <li class="bi-pillar-row">
                       <span class="bi-pillar-row-lbl">Delivery touchpoints</span>
                       <span class="bi-pillar-row-val">
-                        <span class="bi-pillar-from">${num(streamsToday)}</span>
+                        <span class="bi-pillar-from">${num(r.streamsToday)}</span>
                         <span class="bi-pillar-arrow">&rarr;</span>
-                        <span class="bi-pillar-to">${num(streamsAw)}</span>
-                        <span class="bi-pillar-tag">&minus;${touchpointReduction}%</span>
+                        <span class="bi-pillar-to">${num(r.streamsAw)}</span>
+                        <span class="bi-pillar-tag">&minus;${r.touchpointReduction}%</span>
                       </span>
                     </li>
                     <li class="bi-pillar-row">
@@ -10291,7 +10302,7 @@
                     <span class="bi-compare-summary-tag">with Application Workspace</span>
                   </div>
                   <div class="bi-compare-summary-right">
-                    <span class="bi-compare-summary-pct">${pctReduction}% reduction</span>
+                    <span class="bi-compare-summary-pct">${pctReduction}% of ops baseline</span>
                     <span class="bi-compare-summary-detail">&middot; <b>${num(totalReturned)} hrs/mo</b> returned to strategy</span>
                   </div>
                 </div>
@@ -10308,39 +10319,73 @@
       function calculateImpact(){
         const ci = STATE.calcInputs;
         const a = ROI_ASSUMPTIONS[STATE.calcScenario];
-        const currentSupportHours = round((ci.monthlyTickets * ci.avgTicketMins) / 60);
-        const ticketHoursReturned = round(currentSupportHours * a.ticketReduction);
-        const ticketsAvoided = Math.round(ci.monthlyTickets * a.ticketReduction);
-        const pkgHoursReturned = round(ci.pkgHours * a.pkgReduction);
-        const patchHoursReturned = round(ci.patchHours * a.patchReduction);
-        const totalHoursMonth = round(ticketHoursReturned + pkgHoursReturned + patchHoursReturned);
-        const totalHoursYear = round(totalHoursMonth * 12);
-        const fteCapacity = round(totalHoursYear / a.fteHours);
-        const strategicHours = Math.round(totalHoursYear * a.strategicRealloc);
-        const reqsDeferred = ci.openReqs > 0 ? Math.min(ci.openReqs, Math.floor(fteCapacity)) : 0;
-        const delayedInitiatives = ci.delayedInitiatives;
-        const supportCostAnnual = Math.round(currentSupportHours * 90 * 12);
-        const engineeringCostAnnual = Math.round((ci.pkgHours + ci.patchHours) * 120 * 12);
-        const wasteCostAnnual = Math.round((supportCostAnnual + engineeringCostAnnual) * 0.25);
-        const totalBurnAnnual = supportCostAnnual + engineeringCostAnnual + wasteCostAnnual;
-        const totalRecoveredAnnual = Math.round((ticketHoursReturned * 90 + (pkgHoursReturned + patchHoursReturned) * 120) * 12);
-        const monthlyCostOfWaiting = Math.round(totalRecoveredAnnual / 12);
+
+        // ─── Raw (unrounded) monthly hours — canonical source of truth.
+        // The view layer partitions these into bars and only rounds at
+        // render time (with largest-remainder so parts sum to the whole).
+        // Rounded display fields below are derived from the raws so the
+        // headline, the bars, and the cards can never drift apart.
+        const currentSupportHoursRaw = (ci.monthlyTickets * ci.avgTicketMins) / 60;
+        const supportRetRaw = currentSupportHoursRaw * a.ticketReduction;
+        const pkgRetRaw     = ci.pkgHours  * a.pkgReduction;
+        const patchRetRaw   = ci.patchHours * a.patchReduction;
+        const totalRetRaw   = supportRetRaw + pkgRetRaw + patchRetRaw;
+        const baselineRaw   = currentSupportHoursRaw + ci.pkgHours + ci.patchHours;
+
+        const currentSupportHours = Math.round(currentSupportHoursRaw);
+        const ticketHoursReturned = Math.round(supportRetRaw);
+        const ticketsAvoided      = Math.round(ci.monthlyTickets * a.ticketReduction);
+        const pkgHoursReturned    = Math.round(pkgRetRaw);
+        const patchHoursReturned  = Math.round(patchRetRaw);
+        const totalHoursMonth     = Math.round(totalRetRaw);
+        const totalHoursYear      = Math.round(totalRetRaw * 12);
+        const fteCapacity         = round(totalHoursYear / a.fteHours);
+        const strategicHours      = Math.round(totalHoursYear * a.strategicRealloc);
+        const reqsDeferred        = ci.openReqs > 0 ? Math.min(ci.openReqs, Math.floor(fteCapacity)) : 0;
+        const delayedInitiatives  = ci.delayedInitiatives;
+
+        // ─── Single declared rate for every dollar figure. Editable via
+        // the Assumptions panel (loadedRate, default 95 $/hr). Replaces
+        // the prior $90 (support) / $120 (engineering) split so the
+        // Scale card's dollar value matches the engine by construction.
+        const rate = ci.loadedRate || 95;
+        const supportCostAnnual     = Math.round(currentSupportHoursRaw * rate * 12);
+        const engineeringCostAnnual = Math.round((ci.pkgHours + ci.patchHours) * rate * 12);
+        const wasteCostAnnual       = Math.round((supportCostAnnual + engineeringCostAnnual) * 0.25);
+        const totalBurnAnnual       = supportCostAnnual + engineeringCostAnnual + wasteCostAnnual;
+        const totalRecoveredAnnual  = Math.round(totalRetRaw * rate * 12);
+        const monthlyCostOfWaiting  = Math.round(totalRecoveredAnnual / 12);
 
         // ── Packaging cycle ROI (field-test model) ──
         // Standard_Apps  = Total_Apps × (1 − complex%);   Complex_Apps = Total_Apps × complex%
         // AW_Hours       = (Std × awStd) + (Complex × awComplex)
         // Trad_Hours     = (Std × tradStd) + (Complex × tradComplex)
-        // Hours_Saved    = Trad − AW;   Time_Multiple = Trad ÷ AW;   $_Saved = Hours_Saved × loadedRate
+        // Hours_Saved    = Trad − AW;   Time_Multiple = Trad ÷ AW;   $_Saved = Hours_Saved × rate
         const pb = PACKAGING_BENCHMARKS;
         const complexMix = Math.max(0, Math.min(1, (ci.complexMixPct ?? 20) / 100));
         const standardMix = 1 - complexMix;
-        const cycleStandardApps = Math.round(ci.apps * standardMix);
-        const cycleComplexApps  = Math.max(0, ci.apps - cycleStandardApps);
+        const apps = Math.max(1, ci.apps);
+        const cycleStandardApps = Math.round(apps * standardMix);
+        const cycleComplexApps  = Math.max(0, apps - cycleStandardApps);
         const awCycleHours      = (cycleStandardApps * pb.awStdHrs)   + (cycleComplexApps * pb.awComplexHrs);
         const tradCycleHours    = (cycleStandardApps * pb.tradStdHrs) + (cycleComplexApps * pb.tradComplexHrs);
         const cycleHoursSaved   = Math.max(0, tradCycleHours - awCycleHours);
         const cycleTimeMultiple = awCycleHours > 0 ? (tradCycleHours / awCycleHours) : 0;
-        const cycleDollarsSaved = Math.round(cycleHoursSaved * (ci.loadedRate || 95));
+        const cycleDollarsSaved = Math.round(cycleHoursSaved * rate);
+
+        // Blended per-app build time (drives the Speed hero).
+        const awBlendedHrs   = standardMix * pb.awStdHrs   + complexMix * pb.awComplexHrs;
+        const tradBlendedHrs = standardMix * pb.tradStdHrs + complexMix * pb.tradComplexHrs;
+        const pctFaster      = tradBlendedHrs > 0 ? Math.round((1 - awBlendedHrs / tradBlendedHrs) * 100) : 0;
+
+        // Delivery touchpoints — apps × envs they ship to. A typical
+        // app lives on ~50% of the platforms in a stack.
+        const ENV_COVERAGE = 0.5;
+        const streamsToday = Math.max(ci.apps, Math.round(ci.apps * ci.envs * ENV_COVERAGE));
+        const streamsAw    = ci.apps;
+        const touchpointReduction = streamsToday > 0
+          ? Math.max(0, Math.round(((streamsToday - streamsAw) / streamsToday) * 100))
+          : 0;
 
         // ── Investment vs Return (full 3-year financial model) ──
         // Investment is real list pricing; value is recurring annual savings + one-time packaging cycle savings.
@@ -10361,7 +10406,27 @@
         const threeYearNet = threeYearValue - threeYearInvestment;
         const awBlendedPerUserMonth = ci.users > 0 ? (awAnnualInvestment / 12 / ci.users) : 0;
 
-        STATE.calcResult = { currentSupportHours, ticketHoursReturned, ticketsAvoided, pkgHoursReturned, patchHoursReturned, totalHoursMonth, totalHoursYear, fteCapacity, strategicHours, reqsDeferred, delayedInitiatives, supportCostAnnual, engineeringCostAnnual, wasteCostAnnual, totalBurnAnnual, totalRecoveredAnnual, monthlyCostOfWaiting, cycleStandardApps, cycleComplexApps, awCycleHours, tradCycleHours, cycleHoursSaved, cycleTimeMultiple, cycleDollarsSaved, awAnnualInvestment, recurringAnnualValue, oneTimePackagingValue, year1Value, year1Net, year1ROIMultiple, recurringROIMultiple, paybackMonths, threeYearValue, threeYearInvestment, threeYearNet, awBlendedPerUserMonth };
+        STATE.calcResult = {
+          // Raw monthly hours — the view-layer partition is built from these
+          currentSupportHoursRaw, supportRetRaw, pkgRetRaw, patchRetRaw, totalRetRaw, baselineRaw,
+          // Rounded for direct display
+          currentSupportHours, ticketHoursReturned, ticketsAvoided, pkgHoursReturned, patchHoursReturned,
+          totalHoursMonth, totalHoursYear, fteCapacity, strategicHours, reqsDeferred, delayedInitiatives,
+          // Dollars (single-rate)
+          supportCostAnnual, engineeringCostAnnual, wasteCostAnnual, totalBurnAnnual,
+          totalRecoveredAnnual, monthlyCostOfWaiting, rate,
+          // Packaging cycle
+          cycleStandardApps, cycleComplexApps, awCycleHours, tradCycleHours, cycleHoursSaved,
+          cycleTimeMultiple, cycleDollarsSaved,
+          // Speed hero (blended per-app build time)
+          awBlendedHrs, tradBlendedHrs, pctFaster,
+          // Scale Row 2 (delivery touchpoints)
+          streamsToday, streamsAw, touchpointReduction,
+          // Investment vs return
+          awAnnualInvestment, recurringAnnualValue, oneTimePackagingValue,
+          year1Value, year1Net, year1ROIMultiple, recurringROIMultiple,
+          paybackMonths, threeYearValue, threeYearInvestment, threeYearNet, awBlendedPerUserMonth,
+        };
       }
 
       const USER_ID = String(window.APP_USER_ID || "guest");
