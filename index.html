@@ -4567,21 +4567,22 @@
         gap: 12px;
       }
       .bi-pillar {
+        position: relative;
         background: #fff;
         border: 1px solid var(--r-divider);
-        border-left: 4px solid var(--r-blue);
+        border-left: 6px solid var(--r-blue);
         border-radius: 8px;
-        padding: 14px 18px;
-        box-shadow: var(--shadow-card);
+        padding: 16px 20px 14px;
+        box-shadow: 0 1px 2px rgba(26,26,46,0.05), 0 4px 12px rgba(26,26,46,0.06);
       }
       .bi-pillar.is-speed { border-left-color: var(--r-blue); }
       .bi-pillar.is-scale { border-left-color: var(--r-green); }
       .bi-pillar.is-risk  { border-left-color: var(--r-amber); }
       .bi-pillar-head {
         display: flex;
-        align-items: baseline;
+        align-items: center;
         gap: 10px;
-        margin-bottom: 8px;
+        margin-bottom: 10px;
       }
       .bi-pillar-eyebrow {
         font-size: 10px;
@@ -4589,29 +4590,37 @@
         letter-spacing: 0.14em;
         text-transform: uppercase;
         color: var(--r-blue);
+        background: rgba(0, 0, 204, 0.09);
+        padding: 3px 7px 2px;
+        border-radius: 3px;
+        line-height: 1;
       }
-      .is-scale .bi-pillar-eyebrow { color: var(--r-green); }
-      .is-risk  .bi-pillar-eyebrow { color: var(--r-amber); }
+      .is-scale .bi-pillar-eyebrow { color: var(--r-green); background: rgba(15, 122, 63, 0.10); }
+      .is-risk  .bi-pillar-eyebrow { color: var(--r-amber); background: rgba(204, 136, 0, 0.12); }
       .bi-pillar-title {
-        font-size: 13px;
+        font-size: 14px;
         font-weight: 700;
         color: var(--r-ink);
         margin: 0;
         line-height: 1.2;
+        letter-spacing: -0.005em;
       }
       .bi-pillar-hero {
         display: flex;
         align-items: baseline;
         gap: 12px;
         flex-wrap: wrap;
-        padding: 2px 0 10px;
-        border-bottom: 1px solid var(--r-divider);
-        margin-bottom: 10px;
+        padding: 10px 14px;
+        margin: 0 -6px 12px;
+        border-radius: 6px;
+        background: rgba(0, 0, 204, 0.045);
       }
+      .is-scale .bi-pillar-hero { background: rgba(15, 122, 63, 0.055); }
+      .is-risk  .bi-pillar-hero { background: rgba(204, 136, 0, 0.065); }
       .bi-pillar-hero-num {
-        font-size: 30px;
+        font-size: 36px;
         font-weight: 800;
-        letter-spacing: -0.02em;
+        letter-spacing: -0.025em;
         color: var(--r-blue);
         line-height: 1;
         font-variant-numeric: tabular-nums;
@@ -4619,13 +4628,13 @@
       .is-scale .bi-pillar-hero-num { color: var(--r-green); }
       .is-risk  .bi-pillar-hero-num { color: var(--r-amber); }
       .bi-pillar-hero-num.bi-pillar-hero-text {
-        font-size: 19px;
-        letter-spacing: -0.01em;
+        font-size: 22px;
+        letter-spacing: -0.015em;
         font-variant-numeric: normal;
         line-height: 1.15;
       }
       .bi-pillar-hero-unit {
-        font-size: 14px;
+        font-size: 15px;
         font-weight: 700;
         color: inherit;
         letter-spacing: 0;
@@ -4639,6 +4648,13 @@
         align-items: baseline;
         gap: 5px;
         flex-wrap: wrap;
+      }
+      .bi-pillar-hero-note {
+        font-size: 11px;
+        font-weight: 500;
+        color: var(--r-ink-2);
+        opacity: 0.85;
+        font-style: italic;
       }
       .bi-pillar-rows {
         list-style: none;
@@ -4706,14 +4722,14 @@
       }
       @media (max-height: 900px) {
         #panel-roi .bi-pillars { gap: 10px !important; }
-        #panel-roi .bi-pillar { padding: 11px 14px !important; }
-        #panel-roi .bi-pillar-head { margin-bottom: 6px !important; }
-        #panel-roi .bi-pillar-hero { padding: 1px 0 8px !important; margin-bottom: 8px !important; }
-        #panel-roi .bi-pillar-hero-num { font-size: 24px !important; }
-        #panel-roi .bi-pillar-hero-num.bi-pillar-hero-text { font-size: 16px !important; }
-        #panel-roi .bi-pillar-hero-unit { font-size: 12px !important; }
+        #panel-roi .bi-pillar { padding: 13px 16px 11px !important; }
+        #panel-roi .bi-pillar-head { margin-bottom: 8px !important; }
+        #panel-roi .bi-pillar-hero { padding: 8px 12px !important; margin: 0 -4px 9px !important; }
+        #panel-roi .bi-pillar-hero-num { font-size: 28px !important; }
+        #panel-roi .bi-pillar-hero-num.bi-pillar-hero-text { font-size: 18px !important; }
+        #panel-roi .bi-pillar-hero-unit { font-size: 13px !important; }
         #panel-roi .bi-pillar-hero-sub { font-size: 11px !important; }
-        #panel-roi .bi-pillar-title { font-size: 12px !important; }
+        #panel-roi .bi-pillar-title { font-size: 13px !important; }
         #panel-roi .bi-pillar-row { font-size: 11px !important; gap: 10px !important; }
         #panel-roi .bi-pillar-rows { gap: 5px !important; }
         #panel-roi .bi-pillars-foot { font-size: 10px !important; margin-top: 6px !important; }
@@ -9537,22 +9553,23 @@
         return `<div class="flex items-center justify-between mt-4" aria-hidden="true">${phases.map((p, i) => `${i > 0 ? '<div class="flex-1 h-px bg-slate-200 mx-2"></div>' : ''}<div class="flex flex-col items-center"><i data-lucide="${p.icon}" class="w-5 h-5 text-[#0070F3]"></i><span class="text-xs mt-1 text-[#4A5568]">${p.label}</span></div>`).join('')}</div>`;
       }
 
+      // Packaging reductions are split into two pools so a catalog-heavy
+      // stack doesn't get the same answer as a custom-heavy one. Anchored
+      // to side-by-side field measurements: store/catalog apps collapse
+      // to near-zero touch time, while complex custom apps still need
+      // packaging engineering (just far less of it).
       const ROI_ASSUMPTIONS = {
-        conservative: { ticketReduction: 0.20, strategicRealloc: 0.40, fteHours: 1920, uxShare: 0.55, dashShare: 0.20, mtShare: 0.25, label: 'Conservative' },
-        expected:     { ticketReduction: 0.70, strategicRealloc: 0.50, fteHours: 1920, uxShare: 0.55, dashShare: 0.20, mtShare: 0.25, label: 'Expected' },
-        high:         { ticketReduction: 0.90, strategicRealloc: 0.70, fteHours: 1920, uxShare: 0.55, dashShare: 0.20, mtShare: 0.25, label: 'High' },
+        conservative: { ticketReduction: 0.20, catalogPkgReduction: 0.85, customPkgReduction: 0.55, patchReduction: 0.30, strategicRealloc: 0.40, fteHours: 1920, uxShare: 0.55, dashShare: 0.20, mtShare: 0.25, label: 'Conservative' },
+        expected:     { ticketReduction: 0.70, catalogPkgReduction: 0.95, customPkgReduction: 0.79, patchReduction: 0.45, strategicRealloc: 0.50, fteHours: 1920, uxShare: 0.55, dashShare: 0.20, mtShare: 0.25, label: 'Expected' },
+        high:         { ticketReduction: 0.90, catalogPkgReduction: 0.97, customPkgReduction: 0.85, patchReduction: 0.60, strategicRealloc: 0.70, fteHours: 1920, uxShare: 0.55, dashShare: 0.20, mtShare: 0.25, label: 'High' },
       };
 
-      // Field-test packaging benchmarks. AW: 3 standard apps in 38 min
-      // (38/180 ≈ 0.2111 hrs each); 3.0 hrs per complex app.
-      // Traditional: 27 hrs total − 14 hrs (complex) = 13 hrs across 3
-      // standard apps (13/3 ≈ 4.3333 hrs each); 14.0 hrs per complex.
-      // These four numbers drive the Managed apps / Custom packaging
-      // bar reductions: 1 − 0.2111/4.3333 = 95.1%, 1 − 3.0/14.0 = 78.6%.
+      // Field-test packaging benchmarks. AW: 3 standard apps in 38 min = 0.21 hrs each; 3.0 hrs per complex app.
+      // Traditional: 27 hrs total − 14 hrs (complex) = 13 hrs across 3 standard apps = 4.33 hrs each; 14.0 hrs per complex.
       const PACKAGING_BENCHMARKS = {
-        awStdHrs: 0.2111,
+        awStdHrs: 0.21,
         awComplexHrs: 3.0,
-        tradStdHrs: 4.3333,
+        tradStdHrs: 4.33,
         tradComplexHrs: 14.0
       };
 
@@ -9779,13 +9796,11 @@
         y += 46;
         y = secBarFull(y, 'WHERE IT COMES FROM');
         y += 6;
-        const pkgPatchPct = (ci.pkgHours + ci.patchHours) > 0
-          ? Math.round(((r.pkgHoursReturned + r.patchHoursReturned) / (ci.pkgHours + ci.patchHours)) * 100)
-          : 0;
+        const pkgPct = ci.pkgHours > 0 ? Math.round((r.pkgHoursReturned / ci.pkgHours) * 100) : 0;
         const bars = [
           {label:'Support & tickets', hrs: r.ticketHoursReturned, pct: Math.round(a.ticketReduction*100), detail: num(r.ticketsAvoided)+' tickets avoided per month', color: GR},
-          {label:'Packaging', hrs: r.pkgHoursReturned, pct: pkgPatchPct, detail: 'Field-test rates: 95% standard, 79% complex apps', color: PB},
-          {label:'Patching', hrs: r.patchHoursReturned, pct: pkgPatchPct, detail: 'Staged pipeline replaces per-platform rebuilds', color: AC}
+          {label:'Packaging', hrs: r.pkgHoursReturned, pct: pkgPct, detail: pkgPct+'% blended reduction across catalog + custom apps', color: PB},
+          {label:'Patching', hrs: r.patchHoursReturned, pct: Math.round(a.patchReduction*100), detail: 'Staged pipeline replaces per-platform rebuilds', color: AC}
         ];
         bars.forEach(b => {
           doc.setFont('Helvetica','bold'); doc.setFontSize(10); setC(DT); doc.text(b.label, ML, y + 9);
@@ -9892,7 +9907,7 @@
         doc.text('Prepared for ' + companyName + '  \u00b7  ' + num(ci.users) + ' employees  \u00b7  ' + ci.envs + ' environments  \u00b7  ' + ci.apps + ' apps  \u00b7  ' + a.label + ' scenario', ML, y + 4);
         y += 11;
         doc.setFontSize(7);
-        doc.text('Ticket reduction: ' + Math.round(a.ticketReduction*100) + '%  \u00b7  Catalog apps: ' + Math.round((r.catalogReductionRate||0)*100) + '%  \u00b7  Custom apps: ' + Math.round((r.customReductionRate||0)*100) + '%  \u00b7  Strategic reallocation: ' + Math.round(a.strategicRealloc*100) + '%', ML, y + 4);
+        doc.text('Ticket reduction: ' + Math.round(a.ticketReduction*100) + '%  \u00b7  Packaging: ' + (ci.pkgHours > 0 ? Math.round((r.pkgHoursReturned / ci.pkgHours) * 100) : 0) + '% blended (catalog ' + Math.round(a.catalogPkgReduction*100) + '% / custom ' + Math.round(a.customPkgReduction*100) + '%)  \u00b7  Patching: ' + Math.round(a.patchReduction*100) + '%  \u00b7  Strategic reallocation: ' + Math.round(a.strategicRealloc*100) + '%', ML, y + 4);
         y += 9;
         doc.text('Generated from Recast Software Business Impact Model  \u00b7  ' + today, ML, y + 4);
         drawFooter(2);
@@ -9947,6 +9962,9 @@
                   <div class="bi-assumptions-title" style="margin-top:16px">Reduction rates (%)</div>
                   <div class="bi-assumptions-grid four">
                     <label class="bi-rate"><span>Ticket reduction</span><input type="number" id="asn-ticket" min="0" max="100" value="${Math.round(a.ticketReduction * 100)}"></label>
+                    <label class="bi-rate"><span>Catalog packaging</span><input type="number" id="asn-pkg-catalog" min="0" max="100" value="${Math.round(a.catalogPkgReduction * 100)}"></label>
+                    <label class="bi-rate"><span>Custom packaging</span><input type="number" id="asn-pkg-custom" min="0" max="100" value="${Math.round(a.customPkgReduction * 100)}"></label>
+                    <label class="bi-rate"><span>Patching reduction</span><input type="number" id="asn-patch" min="0" max="100" value="${Math.round(a.patchReduction * 100)}"></label>
                     <label class="bi-rate"><span>Strategic reallocation</span><input type="number" id="asn-strategic" min="0" max="100" value="${Math.round(a.strategicRealloc * 100)}"></label>
                   </div>
                   <div class="bi-assumptions-title" style="margin-top:16px">Support-hours allocation (%) — drives UX / Dashboarding / Multi-tenant bars</div>
@@ -10029,80 +10047,128 @@
         const a = ROI_ASSUMPTIONS[STATE.calcScenario];
         const ci = STATE.calcInputs;
 
-        // ── 5-bar partition. Managed apps + Custom packaging come
-        // straight from the engine's catalog/custom split (field-test
-        // benchmarks: standard apps 95.1% faster, complex apps 78.6%
-        // faster). Support hours split into UX / Dashboarding /
-        // Multi-tenant via the assumption shares. Largest-remainder
-        // rounding then locks the rounded bars to the rounded engine
-        // totals so the bar chart, summary strip, and Speed/Scale/Risk
-        // cards always agree. ──
-        const shareSum = (a.uxShare + a.dashShare + a.mtShare) || 1;
-        const uxShare = a.uxShare / shareSum;
-        const dashShare = a.dashShare / shareSum;
-        const mtShare = a.mtShare / shareSum;
+        // ── 5-bar distribution, partitioning the engine's raw pools ──
+        // The bars represent the same pools the engine adds up
+        // (currentSupportHoursRaw + pkgHours + patchHours), so on raw
+        // values the parts sum to the whole exactly. To keep that true
+        // after rounding, we apply largest-remainder rounding with the
+        // bar totals locked to the engine's headline.
+        //
+        // Packaging is split by app-mix into catalog/custom pools with
+        // distinct reduction rates (catalog collapses much harder than
+        // custom). Patching shares the same catalog/custom split for
+        // display but applies a single uniform patch reduction.
+        const apps = Math.max(1, ci.apps);
+        const customShare = Math.min(1, ci.customApps / apps);
+        const catalogShare = 1 - customShare;
+        // Support hours split across UX, dashboarding, multi-tenant — from assumptions.
+        // Normalized so the three always sum to 1, even if the user enters off-totals.
+        const rawSum = (a.uxShare + a.dashShare + a.mtShare) || 1;
+        const uxShare = a.uxShare / rawSum;
+        const dashShare = a.dashShare / rawSum;
+        const mtShare = a.mtShare / rawSum;
 
-        const supOldRaw = r.currentSupportHoursRaw;
-        const supRetRaw = r.supportRetRaw;
+        // Hover narratives for each row — longer-form explanations of
+        // why this pool collapses with AW, written for a sales-facing
+        // audience. Surfaced via the row's `title` tooltip.
+        const BAR_NARRATIVES = {
+          'Managed apps':     'Vendor apps come pre-built from the Recast Setup Store — Recast packages, tests, and keeps each one current, so new versions apply automatically instead of being repackaged by hand.',
+          'Custom packaging': 'Your in-house apps are packaged once with reusable install, update, and detection logic, then delivered through the same automation engine — no manual scripting per environment.',
+          'User experience':  'Users install what they need on demand from one self-service catalog with single sign-on — instant access and far fewer help-desk tickets for installs and logins.',
+          'Dashboarding':     'Every action is logged automatically and surfaced through built-in reporting and OData — audit evidence and usage dashboards generate themselves instead of being compiled by hand.',
+          'Multi-tenant':     'One package promotes identically across every environment and tenant — build once, get the same result everywhere, with no drift between dev, test, and prod.'
+        };
 
-        const rawBars = [
-          { label: 'Managed apps',     sub: 'Standard / catalog apps',  old: r.catalogHoursRaw, ret: r.catalogRetRaw },
-          { label: 'Custom packaging', sub: 'Complex / in-house apps',  old: r.customHoursRaw,  ret: r.customRetRaw  },
-          { label: 'User experience',  sub: 'Self-serve + auth',        old: supOldRaw * uxShare,   ret: supRetRaw * uxShare   },
-          { label: 'Dashboarding',     sub: 'Reporting + audit',        old: supOldRaw * dashShare, ret: supRetRaw * dashShare },
-          { label: 'Multi-tenant',     sub: 'Cross-env consistency',    old: supOldRaw * mtShare,   ret: supRetRaw * mtShare   },
-        ];
+        // Per-pool raw values, sourced from the engine. Patching is
+        // excluded from this visualization — it lives in the Risk card's
+        // "Patch validation effort" row. The Scale card headline still
+        // includes patching reclaim (engine truth); these bars only
+        // partition the packaging + support pools that they actually
+        // visualize, and the rounding targets are locked to that subset.
+        const supRaw    = r.currentSupportHoursRaw;
+        const supRetRaw = r.ticketHoursReturnedRaw;
 
-        // Largest-remainder rounding: floor each part, then distribute
-        // the residual (target − sum_of_floors) to the parts with the
-        // largest fractional remainder. parts.sum() === target by
-        // construction, so rounded bars always sum to the engine total.
-        const roundToTotal = (rawParts, target) => {
-          const fl = rawParts.map(Math.floor);
-          let rem = Math.round(target - fl.reduce((s,v) => s + v, 0));
-          const order = rawParts.map((v,i) => ({i, frac: v - Math.floor(v)}))
+        const barsRaw = [
+          { label: 'Managed apps',     sub: 'Catalog + lifecycle',    old: r.catalogPkgHoursRaw,   ret: r.catalogPkgReturnedRaw },
+          { label: 'Custom packaging', sub: 'In-house apps',          old: r.customPkgHoursRaw,    ret: r.customPkgReturnedRaw  },
+          { label: 'User experience',  sub: 'Self-serve + auth',      old: supRaw * uxShare,       ret: supRetRaw * uxShare     },
+          { label: 'Dashboarding',     sub: 'Reporting + audit',      old: supRaw * dashShare,     ret: supRetRaw * dashShare   },
+          { label: 'Multi-tenant',     sub: 'Cross-env consistency',  old: supRaw * mtShare,       ret: supRetRaw * mtShare     },
+        ].map(b => ({ ...b, neww: Math.max(0, b.old - b.ret) }));
+
+        // Visible totals (excluding patching), used as rounding targets
+        // so the bars reconcile to what they actually display.
+        const visibleBaselineRaw = supRaw + r.catalogPkgHoursRaw + r.customPkgHoursRaw;
+        const visibleReturnedRaw = supRetRaw + r.catalogPkgReturnedRaw + r.customPkgReturnedRaw;
+        const visibleReclaim     = Math.round(visibleReturnedRaw);
+        const patchingReclaim    = r.patchHoursReturned; // shown as a separate note below the bars
+
+        // Largest-remainder rounding: residuals are absorbed into the
+        // rows with the largest fractional parts so the integer parts
+        // sum exactly to the integer target.
+        function roundToTotal(rawParts, target){
+          const fl = rawParts.map(v => Math.floor(v));
+          let rem = target - fl.reduce((s,n) => s+n, 0);
+          if (rem <= 0) return fl;
+          const order = rawParts.map((v,i) => ({ i, frac: v - Math.floor(v) }))
                                 .sort((x,y) => y.frac - x.frac);
           for (let k = 0; k < rem && k < order.length; k++) fl[order[k].i]++;
           return fl;
-        };
-
-        const oldTotal = Math.round(r.baselineRaw);                          // == ci.pkgHours + ci.patchHours + currentSupportHours
-        const totalReturned = r.totalHoursMonth;                             // engine value, not recomputed
-        const newTotal = Math.max(0, oldTotal - totalReturned);
-        const oldParts = roundToTotal(rawBars.map(b => b.old), oldTotal);
-        const newRawParts = rawBars.map(b => Math.max(0, b.old - b.ret));
-        const newParts = roundToTotal(newRawParts, newTotal);
-        // Defensive clamp: largest-remainder can in theory push a unit
-        // anywhere; "new" must never exceed "old" for the same bar.
-        for (let i = 0; i < newParts.length; i++) {
-          if (newParts[i] > oldParts[i]) newParts[i] = oldParts[i];
         }
 
-        // Format pct to 1 decimal, drop the decimal when it's a whole number.
-        // The catalog/custom bars expose the field-test reduction directly
-        // (so a reviewer can see "95.1%" / "78.6%" without scraping the
-        // bar pixel ratio); other bars use their raw old/ret ratio.
-        const fmtPct = n => {
-          const v = Math.round(n * 10) / 10;
-          return (v % 1 === 0) ? String(v.toFixed(0)) : v.toFixed(1);
-        };
-        const bars = rawBars.map((b, i) => {
-          const oldR = oldParts[i];
-          const neww = newParts[i];
-          const reclaimed = oldR - neww;
-          const pctRaw = b.old > 0 ? (b.ret / b.old) * 100 : 0;
-          const pctStr = fmtPct(pctRaw);
-          const pctNum = Math.round(pctRaw);
-          return { label: b.label, sub: b.sub, old: oldR, neww, reclaimed, pctStr, pctNum };
+        // Force bar totals to match the engine's visible pools exactly:
+        //   sum(oldR) === Math.round(visibleBaselineRaw)
+        //   sum(newR) === Math.round(visibleBaselineRaw) − visibleReclaim
+        // → sum(oldR) − sum(newR) === visibleReclaim, always.
+        const oldTarget = Math.round(visibleBaselineRaw);
+        const newTarget = Math.max(0, oldTarget - visibleReclaim);
+        const oldR = roundToTotal(barsRaw.map(b => b.old),  oldTarget);
+        const newR = roundToTotal(barsRaw.map(b => b.neww), newTarget);
+
+        // Clamp new[i] ≤ old[i]; redistribute any rounding overflow
+        // into rows that still have slack (preserves the total).
+        for (let i = 0; i < oldR.length; i++) {
+          if (newR[i] > oldR[i]) {
+            let excess = newR[i] - oldR[i];
+            newR[i] = oldR[i];
+            for (let j = 0; j < newR.length && excess > 0; j++) {
+              if (j === i) continue;
+              const slack = oldR[j] - newR[j];
+              if (slack > 0) {
+                const take = Math.min(slack, excess);
+                newR[j] += take;
+                excess  -= take;
+              }
+            }
+          }
+        }
+
+        const bars = barsRaw.map((b, i) => {
+          const oldV = oldR[i];
+          const newV = newR[i];
+          const reclaimed = oldV - newV;
+          const pct = oldV > 0 ? Math.round((reclaimed / oldV) * 100) : 0;
+          return { label: b.label, sub: b.sub, narrative: BAR_NARRATIVES[b.label] || '', old: oldV, neww: newV, reclaimed, pct };
         });
 
+        const oldTotal = bars.reduce((s,b) => s + b.old,  0);
+        const newTotal = bars.reduce((s,b) => s + b.neww, 0);
+        const totalReturned = visibleReclaim; // visible bars only; full engine reclaim is on the Scale card
         const pctReduction = oldTotal ? Math.round((totalReturned / oldTotal) * 100) : 0;
+        const ftesAbsorbed = oldTotal && a.fteHours > 0 ? (oldTotal * 12 / a.fteHours).toFixed(1) : '0.0';
 
-        // Dev-only invariant: rounded bars must reconcile to the engine
-        // reclaim. If this ever fails the cards/bars/summary are drifting.
+        // Scale-card numbers use the full engine reclaim (includes
+        // patching). Right-panel bars+summary use the visible-pool
+        // reclaim. Both are honest within their scope; the small note
+        // under the summary bridges them.
+        const fullReclaim = r.totalHoursMonth;
+        const fullPctReduction = r.baselineRaw > 0 ? Math.round((fullReclaim / r.baselineRaw) * 100) : 0;
+
+        // Dev guardrail — fails loudly if engine and bar partition ever diverge.
         console.assert(
-          bars.reduce((s,b) => s + b.old, 0) - bars.reduce((s,b) => s + b.neww, 0) === r.totalHoursMonth,
-          "bars don't reconcile to engine reclaim"
+          oldTotal - newTotal === visibleReclaim,
+          'bars do not reconcile to visible reclaim',
+          { barReclaim: oldTotal - newTotal, visibleReclaim }
         );
 
         // Nice axis ceiling for the chart (round up to a clean tick).
@@ -10118,10 +10184,11 @@
         const ticks = Array.from({length: tickCount}, (_, i) => Math.round(i * tickStep));
 
         const barRow = (b) => {
-          const tip = `${b.label}: ${num(b.old)} hrs today → ${num(b.neww)} hrs with App Workspace (−${b.pctStr}%, ${num(b.reclaimed)} hrs reclaimed)`;
-          const isFlat = b.pctNum === 0;
+          const detail = `${num(b.old)} hrs today → ${num(b.neww)} hrs with App Workspace (−${b.pct}%, ${num(b.reclaimed)} hrs reclaimed)`;
+          const narrative = b.narrative ? `\n\n${b.narrative}` : '';
+          const tip = `${b.label} · ${b.sub}\n${detail}${narrative}`;
           return `
-          <div class="bi-compare-row" title="${tip}">
+          <div class="bi-compare-row" title="${tip.replace(/"/g, '&quot;')}">
             <div class="bi-compare-label">
               ${b.label}
               <span class="bi-compare-label-sub">${b.sub}</span>
@@ -10137,20 +10204,43 @@
               </div>
             </div>
             <div class="bi-compare-stat">
-              <span class="bi-compare-stat-pct${isFlat ? ' is-flat' : ''}">${isFlat ? '' : '−'}${b.pctStr}%</span>
+              <span class="bi-compare-stat-pct${b.pct === 0 ? ' is-flat' : ''}">${b.pct > 0 ? '−' : ''}${b.pct}%</span>
               <span class="bi-compare-stat-sub">${num(b.reclaimed)} hrs reclaimed</span>
             </div>
           </div>`;
         };
 
-        // ─── Card bindings — every value reads from the engine (r) so
-        // the cards, the bar chart, and the summary strip stay in sync
-        // by construction. No card recomputes a savings or dollar
-        // figure with its own arithmetic.
+        // ─── SPEED / SCALE / RISK card derivations ───────────────────
+        // Every value below feeds the same r/ci/a state that drives the
+        // right-hand "Where time gets returned" panel — both update
+        // together on Recalculate or assumption edits, so the two
+        // columns can never show inconsistent numbers. Only two values
+        // are new derivations: blended per-app build time (Speed hero)
+        // and reclaimed-hour dollar value (Scale hero sub).
+        const pb = PACKAGING_BENCHMARKS;
+        const complexMix  = Math.max(0, Math.min(1, (ci.complexMixPct ?? 20) / 100));
+        const standardMix = 1 - complexMix;
+        const tradBlended = standardMix * pb.tradStdHrs + complexMix * pb.tradComplexHrs;
+        const awBlended   = standardMix * pb.awStdHrs   + complexMix * pb.awComplexHrs;
+        const pctFaster   = tradBlended > 0 ? Math.round((1 - awBlended / tradBlended) * 100) : 0;
+
+        const loadedRate = r.rate;
+        const reclaimedDollarsAnnual = r.totalRecoveredAnnual; // engine value, no recompute
         const fmtDollarsK = (n) => '$' + Math.round(n / 1000).toLocaleString() + 'K';
+
+        // Cross-platform touchpoints — same formula the removed env
+        // picker used, driven by ci.envs and a fixed 50% coverage (a
+        // typical app lives on ~half the platforms in a stack).
+        const ENV_COVERAGE = 0.5;
+        const streamsToday = Math.max(ci.apps, Math.round(ci.apps * ci.envs * ENV_COVERAGE));
+        const streamsAw    = ci.apps;
+        const touchpointReduction = streamsToday > 0 ? Math.max(0, Math.round(((streamsToday - streamsAw) / streamsToday) * 100)) : 0;
+
+        // After-state hours read from the engine, not recomputed — so the
+        // row totals match `pkgHoursReturned` / `patchHoursReturned` exactly.
         const pkgAfter   = Math.max(0, ci.pkgHours   - r.pkgHoursReturned);
         const patchAfter = Math.max(0, ci.patchHours - r.patchHoursReturned);
-        const dashRow    = bars[3]; // Dashboarding row, also rendered on the right
+        const dashRow    = bars.find(b => b.label === 'Dashboarding') || { old: 0, neww: 0 };
         const envsLabel  = ci.envs === 1 ? 'env' : 'envs';
 
         return `
@@ -10166,12 +10256,12 @@
                     <h3 class="bi-pillar-title">Time to deliver</h3>
                   </header>
                   <div class="bi-pillar-hero">
-                    <div class="bi-pillar-hero-num">&minus;${r.pctFaster}<span class="bi-pillar-hero-unit">%</span></div>
+                    <div class="bi-pillar-hero-num">&minus;${pctFaster}<span class="bi-pillar-hero-unit">%</span></div>
                     <div class="bi-pillar-hero-sub">
                       per-app build time &middot;
-                      <span class="bi-pillar-from">${r.tradBlendedHrs.toFixed(1)} hrs</span>
+                      <span class="bi-pillar-from">${tradBlended.toFixed(1)} hrs</span>
                       <span class="bi-pillar-arrow">&rarr;</span>
-                      <span class="bi-pillar-to">${r.awBlendedHrs.toFixed(1)} hrs</span>
+                      <span class="bi-pillar-to">${awBlended.toFixed(1)} hrs</span>
                     </div>
                   </div>
                   <ul class="bi-pillar-rows">
@@ -10208,10 +10298,11 @@
                     <h3 class="bi-pillar-title">Capacity reclaimed</h3>
                   </header>
                   <div class="bi-pillar-hero">
-                    <div class="bi-pillar-hero-num">${num(r.totalHoursMonth)}<span class="bi-pillar-hero-unit"> hrs/mo</span></div>
+                    <div class="bi-pillar-hero-num">${num(fullReclaim)}<span class="bi-pillar-hero-unit"> hrs/mo</span></div>
                     <div class="bi-pillar-hero-sub">
-                      &asymp; <span class="bi-pillar-to">${fmtDollarsK(r.totalRecoveredAnnual)}/yr</span>
-                      &middot; <span class="bi-pillar-to">&minus;${pctReduction}%</span> of ops baseline
+                      &asymp; <span class="bi-pillar-to">${fmtDollarsK(reclaimedDollarsAnnual)}/yr</span>
+                      &middot; <span class="bi-pillar-to">&minus;${fullPctReduction}%</span>
+                      <span class="bi-pillar-hero-note">of operational hours</span>
                     </div>
                   </div>
                   <ul class="bi-pillar-rows">
@@ -10226,10 +10317,10 @@
                     <li class="bi-pillar-row">
                       <span class="bi-pillar-row-lbl">Delivery touchpoints</span>
                       <span class="bi-pillar-row-val">
-                        <span class="bi-pillar-from">${num(r.streamsToday)}</span>
+                        <span class="bi-pillar-from">${num(streamsToday)}</span>
                         <span class="bi-pillar-arrow">&rarr;</span>
-                        <span class="bi-pillar-to">${num(r.streamsAw)}</span>
-                        <span class="bi-pillar-tag">&minus;${r.touchpointReduction}%</span>
+                        <span class="bi-pillar-to">${num(streamsAw)}</span>
+                        <span class="bi-pillar-tag">&minus;${touchpointReduction}%</span>
                       </span>
                     </li>
                     <li class="bi-pillar-row">
@@ -10314,7 +10405,7 @@
                     <span class="bi-compare-summary-tag">with Application Workspace</span>
                   </div>
                   <div class="bi-compare-summary-right">
-                    <span class="bi-compare-summary-pct">${pctReduction}% of ops baseline</span>
+                    <span class="bi-compare-summary-pct">${pctReduction}% of operational hours</span>
                     <span class="bi-compare-summary-detail">&middot; <b>${num(totalReturned)} hrs/mo</b> returned to strategy</span>
                   </div>
                 </div>
@@ -10331,93 +10422,70 @@
       function calculateImpact(){
         const ci = STATE.calcInputs;
         const a = ROI_ASSUMPTIONS[STATE.calcScenario];
+        const rate = ci.loadedRate || 95; // single editable loaded rate, used everywhere
 
-        // ─── Raw (unrounded) monthly hours — canonical source of truth.
-        // Packaging+patching reclaim is driven by field-test benchmarks
-        // (PACKAGING_BENCHMARKS): catalog/managed apps follow the
-        // standard-app ratio (AW hrs ÷ Traditional hrs), custom apps
-        // follow the complex-app ratio. The pool of pkg+patch hours is
-        // split by app count (customApps / apps), each side gets its
-        // own reduction rate, and the two reclaims sum to the engine
-        // pkg+patch total. pkgRetRaw / patchRetRaw are then derived as
-        // proportional shares so back-compat fields stay consistent.
-        const pb_ = PACKAGING_BENCHMARKS;
-        const catalogReductionRate = pb_.tradStdHrs     > 0 ? Math.max(0, 1 - pb_.awStdHrs     / pb_.tradStdHrs)     : 0;
-        const customReductionRate  = pb_.tradComplexHrs > 0 ? Math.max(0, 1 - pb_.awComplexHrs / pb_.tradComplexHrs) : 0;
-        const appsCount    = Math.max(1, ci.apps);
-        const customAppShare  = Math.min(1, Math.max(0, ci.customApps / appsCount));
-        const catalogAppShare = 1 - customAppShare;
-
+        // ── Raw (unrounded) values are the canonical source of truth ──
+        // Every monthly-hours figure flows from these. We round only on output
+        // so rounded parts can never disagree with the rounded whole.
         const currentSupportHoursRaw = (ci.monthlyTickets * ci.avgTicketMins) / 60;
-        const supportRetRaw = currentSupportHoursRaw * a.ticketReduction;
+        const ticketHoursReturnedRaw = currentSupportHoursRaw * a.ticketReduction;
 
-        const pkgPatchOldRaw = ci.pkgHours + ci.patchHours;
-        const catalogHoursRaw = pkgPatchOldRaw * catalogAppShare;
-        const customHoursRaw  = pkgPatchOldRaw * customAppShare;
-        const catalogRetRaw   = catalogHoursRaw * catalogReductionRate;
-        const customRetRaw    = customHoursRaw  * customReductionRate;
-        const pkgPatchRetRaw  = catalogRetRaw + customRetRaw;
-        // Blended rate so the activity-type fields (pkgRetRaw, patchRetRaw)
-        // sum exactly to pkgPatchRetRaw. Same blended rate on both pools.
-        const pkgPatchBlendedRate = pkgPatchOldRaw > 0 ? pkgPatchRetRaw / pkgPatchOldRaw : 0;
-        const pkgRetRaw   = ci.pkgHours   * pkgPatchBlendedRate;
-        const patchRetRaw = ci.patchHours * pkgPatchBlendedRate;
+        // Packaging is two distinct pools — catalog/store apps collapse
+        // near-completely; custom apps still need engineering. Split the
+        // pool by app share, apply per-pool reductions, then recombine.
+        const totalApps    = Math.max(0, ci.apps);
+        const customApps   = Math.max(0, Math.min(ci.customApps, totalApps));
+        const customShare  = totalApps > 0 ? customApps / totalApps : 0;
+        const catalogShareEngine = 1 - customShare;
+        const catalogPkgHoursRaw    = ci.pkgHours * catalogShareEngine;
+        const customPkgHoursRaw     = ci.pkgHours * customShare;
+        const catalogPkgReturnedRaw = catalogPkgHoursRaw * a.catalogPkgReduction;
+        const customPkgReturnedRaw  = customPkgHoursRaw  * a.customPkgReduction;
+        const pkgHoursReturnedRaw   = catalogPkgReturnedRaw + customPkgReturnedRaw;
+        const blendedPkgReduction   = ci.pkgHours > 0 ? (pkgHoursReturnedRaw / ci.pkgHours) : 0;
 
-        const totalRetRaw   = supportRetRaw + pkgPatchRetRaw;
-        const baselineRaw   = currentSupportHoursRaw + pkgPatchOldRaw;
+        const patchHoursReturnedRaw  = ci.patchHours * a.patchReduction;
+        const totalReturnedRaw       = ticketHoursReturnedRaw + pkgHoursReturnedRaw + patchHoursReturnedRaw;
+        const baselineRaw            = currentSupportHoursRaw + ci.pkgHours + ci.patchHours;
 
+        // ── Rounded outputs (display-only) ──
         const currentSupportHours = Math.round(currentSupportHoursRaw);
-        const ticketHoursReturned = Math.round(supportRetRaw);
+        const ticketHoursReturned = Math.round(ticketHoursReturnedRaw);
         const ticketsAvoided      = Math.round(ci.monthlyTickets * a.ticketReduction);
-        const pkgHoursReturned    = Math.round(pkgRetRaw);
-        const patchHoursReturned  = Math.round(patchRetRaw);
-        const totalHoursMonth     = Math.round(totalRetRaw);
-        const totalHoursYear      = Math.round(totalRetRaw * 12);
-        const fteCapacity         = round(totalHoursYear / a.fteHours);
+        const pkgHoursReturned    = Math.round(pkgHoursReturnedRaw);
+        const patchHoursReturned  = Math.round(patchHoursReturnedRaw);
+        const totalHoursMonth     = Math.round(totalReturnedRaw); // canonical monthly reclaim
+        const totalHoursYear      = Math.round(totalReturnedRaw * 12);
+        const fteCapacity         = a.fteHours > 0 ? Math.round(totalHoursYear / a.fteHours) : 0;
         const strategicHours      = Math.round(totalHoursYear * a.strategicRealloc);
         const reqsDeferred        = ci.openReqs > 0 ? Math.min(ci.openReqs, Math.floor(fteCapacity)) : 0;
         const delayedInitiatives  = ci.delayedInitiatives;
 
-        // ─── Single declared rate for every dollar figure. Editable via
-        // the Assumptions panel (loadedRate, default 95 $/hr). Replaces
-        // the prior $90 (support) / $120 (engineering) split so the
-        // Scale card's dollar value matches the engine by construction.
-        const rate = ci.loadedRate || 95;
+        // ── Dollars: one declared rate for every figure ──
+        // Replaces the previous hardcoded $90 (support) / $120 (engineering)
+        // mix with the single editable Assumptions rate so all $ values agree.
         const supportCostAnnual     = Math.round(currentSupportHoursRaw * rate * 12);
         const engineeringCostAnnual = Math.round((ci.pkgHours + ci.patchHours) * rate * 12);
         const wasteCostAnnual       = Math.round((supportCostAnnual + engineeringCostAnnual) * 0.25);
         const totalBurnAnnual       = supportCostAnnual + engineeringCostAnnual + wasteCostAnnual;
-        const totalRecoveredAnnual  = Math.round(totalRetRaw * rate * 12);
+        const totalRecoveredAnnual  = Math.round(totalReturnedRaw * rate * 12);
         const monthlyCostOfWaiting  = Math.round(totalRecoveredAnnual / 12);
 
         // ── Packaging cycle ROI (field-test model) ──
         // Standard_Apps  = Total_Apps × (1 − complex%);   Complex_Apps = Total_Apps × complex%
         // AW_Hours       = (Std × awStd) + (Complex × awComplex)
         // Trad_Hours     = (Std × tradStd) + (Complex × tradComplex)
-        // Hours_Saved    = Trad − AW;   Time_Multiple = Trad ÷ AW;   $_Saved = Hours_Saved × rate
+        // Hours_Saved    = Trad − AW;   Time_Multiple = Trad ÷ AW;   $_Saved = Hours_Saved × loadedRate
+        const pb = PACKAGING_BENCHMARKS;
         const complexMix = Math.max(0, Math.min(1, (ci.complexMixPct ?? 20) / 100));
         const standardMix = 1 - complexMix;
-        const cycleStandardApps = Math.round(appsCount * standardMix);
-        const cycleComplexApps  = Math.max(0, appsCount - cycleStandardApps);
-        const awCycleHours      = (cycleStandardApps * pb_.awStdHrs)   + (cycleComplexApps * pb_.awComplexHrs);
-        const tradCycleHours    = (cycleStandardApps * pb_.tradStdHrs) + (cycleComplexApps * pb_.tradComplexHrs);
+        const cycleStandardApps = Math.round(ci.apps * standardMix);
+        const cycleComplexApps  = Math.max(0, ci.apps - cycleStandardApps);
+        const awCycleHours      = (cycleStandardApps * pb.awStdHrs)   + (cycleComplexApps * pb.awComplexHrs);
+        const tradCycleHours    = (cycleStandardApps * pb.tradStdHrs) + (cycleComplexApps * pb.tradComplexHrs);
         const cycleHoursSaved   = Math.max(0, tradCycleHours - awCycleHours);
         const cycleTimeMultiple = awCycleHours > 0 ? (tradCycleHours / awCycleHours) : 0;
-        const cycleDollarsSaved = Math.round(cycleHoursSaved * rate);
-
-        // Blended per-app build time (drives the Speed hero).
-        const awBlendedHrs   = standardMix * pb_.awStdHrs   + complexMix * pb_.awComplexHrs;
-        const tradBlendedHrs = standardMix * pb_.tradStdHrs + complexMix * pb_.tradComplexHrs;
-        const pctFaster      = tradBlendedHrs > 0 ? Math.round((1 - awBlendedHrs / tradBlendedHrs) * 100) : 0;
-
-        // Delivery touchpoints — apps × envs they ship to. A typical
-        // app lives on ~50% of the platforms in a stack.
-        const ENV_COVERAGE = 0.5;
-        const streamsToday = Math.max(ci.apps, Math.round(ci.apps * ci.envs * ENV_COVERAGE));
-        const streamsAw    = ci.apps;
-        const touchpointReduction = streamsToday > 0
-          ? Math.max(0, Math.round(((streamsToday - streamsAw) / streamsToday) * 100))
-          : 0;
+        const cycleDollarsSaved = Math.round(cycleHoursSaved * (ci.loadedRate || 95));
 
         // ── Investment vs Return (full 3-year financial model) ──
         // Investment is real list pricing; value is recurring annual savings + one-time packaging cycle savings.
@@ -10439,29 +10507,22 @@
         const awBlendedPerUserMonth = ci.users > 0 ? (awAnnualInvestment / 12 / ci.users) : 0;
 
         STATE.calcResult = {
-          // Raw monthly hours — the view-layer partition is built from these
-          currentSupportHoursRaw, supportRetRaw, pkgRetRaw, patchRetRaw, totalRetRaw, baselineRaw,
-          // Catalog/custom (field-test driven) — feeds the Managed apps + Custom packaging bars
-          catalogReductionRate, customReductionRate,
-          catalogHoursRaw, customHoursRaw, catalogRetRaw, customRetRaw,
-          pkgPatchBlendedRate,
-          // Rounded for direct display
+          // Display-rounded fields the view reads directly.
           currentSupportHours, ticketHoursReturned, ticketsAvoided, pkgHoursReturned, patchHoursReturned,
           totalHoursMonth, totalHoursYear, fteCapacity, strategicHours, reqsDeferred, delayedInitiatives,
-          // Dollars (single-rate)
           supportCostAnnual, engineeringCostAnnual, wasteCostAnnual, totalBurnAnnual,
-          totalRecoveredAnnual, monthlyCostOfWaiting, rate,
-          // Packaging cycle
+          totalRecoveredAnnual, monthlyCostOfWaiting,
           cycleStandardApps, cycleComplexApps, awCycleHours, tradCycleHours, cycleHoursSaved,
           cycleTimeMultiple, cycleDollarsSaved,
-          // Speed hero (blended per-app build time)
-          awBlendedHrs, tradBlendedHrs, pctFaster,
-          // Scale Row 2 (delivery touchpoints)
-          streamsToday, streamsAw, touchpointReduction,
-          // Investment vs return
-          awAnnualInvestment, recurringAnnualValue, oneTimePackagingValue,
-          year1Value, year1Net, year1ROIMultiple, recurringROIMultiple,
-          paybackMonths, threeYearValue, threeYearInvestment, threeYearNet, awBlendedPerUserMonth,
+          awAnnualInvestment, recurringAnnualValue, oneTimePackagingValue, year1Value, year1Net,
+          year1ROIMultiple, recurringROIMultiple, paybackMonths,
+          threeYearValue, threeYearInvestment, threeYearNet, awBlendedPerUserMonth,
+          // Raw fields the bar partition reads to stay in lockstep with the engine.
+          currentSupportHoursRaw, ticketHoursReturnedRaw, pkgHoursReturnedRaw, patchHoursReturnedRaw,
+          totalReturnedRaw, baselineRaw, rate,
+          // Per-pool packaging split + blended pct (used by bars and the PDF).
+          catalogPkgHoursRaw, customPkgHoursRaw, catalogPkgReturnedRaw, customPkgReturnedRaw,
+          blendedPkgReduction
         };
       }
 
@@ -10824,9 +10885,12 @@
           if (action === 'toggle-assumptions') { STATE.showAssumptions = !STATE.showAssumptions; render(); return; }
           if (action === 'save-assumptions') {
             const sc = STATE.calcScenario; const clamp = (v) => Math.max(0, Math.min(100, cleanNum(v))) / 100;
-            const t = document.getElementById('asn-ticket'); const s = document.getElementById('asn-strategic');
+            const t = document.getElementById('asn-ticket'); const pCat = document.getElementById('asn-pkg-catalog'); const pCust = document.getElementById('asn-pkg-custom'); const pa = document.getElementById('asn-patch'); const s = document.getElementById('asn-strategic');
             const ux = document.getElementById('asn-ux'); const dh = document.getElementById('asn-dash'); const mt = document.getElementById('asn-mt');
-            if (t) ROI_ASSUMPTIONS[sc].ticketReduction = clamp(t.value); if (s) ROI_ASSUMPTIONS[sc].strategicRealloc = clamp(s.value);
+            if (t) ROI_ASSUMPTIONS[sc].ticketReduction = clamp(t.value);
+            if (pCat)  ROI_ASSUMPTIONS[sc].catalogPkgReduction = clamp(pCat.value);
+            if (pCust) ROI_ASSUMPTIONS[sc].customPkgReduction  = clamp(pCust.value);
+            if (pa) ROI_ASSUMPTIONS[sc].patchReduction = clamp(pa.value); if (s) ROI_ASSUMPTIONS[sc].strategicRealloc = clamp(s.value);
             if (ux) ROI_ASSUMPTIONS[sc].uxShare = clamp(ux.value); if (dh) ROI_ASSUMPTIONS[sc].dashShare = clamp(dh.value); if (mt) ROI_ASSUMPTIONS[sc].mtShare = clamp(mt.value);
             // Packaging cycle inputs + per-app benchmarks
             const cmix = document.getElementById('asn-complex-mix'); const lrate = document.getElementById('asn-loaded-rate');
