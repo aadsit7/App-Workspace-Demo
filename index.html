@@ -918,9 +918,477 @@
       .dr-zone-badge.dr-active { border-color: #8b5cf6; background: #f5f3ff; color: #6d28d9; }
       .dr-global-badge { display: inline-flex; align-items: center; gap: 4px; padding: 6px 14px; border-radius: 8px; font-size: 11px; font-weight: 700; background: linear-gradient(135deg, #0070F3, #8b5cf6); color: white; box-shadow: 0 2px 8px rgba(0,112,243,0.3); }
       .dr-arrow-line { width: 2px; height: 0; background: linear-gradient(180deg, #8b5cf6, #0070F3); margin: 0 auto; transition: height 0.6s ease; border-radius: 2px; }
-      .dr-arrow-line.dr-drawn { height: 20px; }
-      @keyframes drPulse { 0% { box-shadow: 0 0 0 0 rgba(0,112,243,0); } 50% { box-shadow: 0 0 12px 3px rgba(0,112,243,0.15); } 100% { box-shadow: 0 0 0 0 rgba(0,112,243,0); } }
+      .dr-arrow-line.dr-drawn { height: 20px; }      @keyframes drPulse { 0% { box-shadow: 0 0 0 0 rgba(0,112,243,0); } 50% { box-shadow: 0 0 12px 3px rgba(0,112,243,0.15); } 100% { box-shadow: 0 0 0 0 rgba(0,112,243,0); } }
       .dr-pulse { animation: drPulse 2s ease-in-out infinite; }
+
+      /* ===== AI Copilot view ===== */
+      .ai-shell {
+        background: #ffffff;
+        position: relative;
+        overflow: hidden;
+      }
+      .ai-shell::before {
+        content: "";
+        position: absolute; inset: -20px -20px auto auto;
+        width: 220px; height: 220px;
+        background: radial-gradient(circle at 70% 30%, rgba(139,92,246,0.10), transparent 60%);
+        pointer-events: none;
+      }
+      .ai-shell::after {
+        content: "";
+        position: absolute; left: -40px; bottom: -40px;
+        width: 240px; height: 240px;
+        background: radial-gradient(circle at 30% 70%, rgba(0,191,255,0.10), transparent 60%);
+        pointer-events: none;
+      }
+      /* Co-branded lockup: Microsoft Copilot + Recast */
+      .ai-cobrand-row {
+        display: flex; align-items: center; justify-content: space-between;
+        gap: 12px; margin-bottom: 12px;
+        position: relative; z-index: 1;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #e2e8f0;
+      }
+      .ai-cobrand {
+        display: flex; align-items: center; gap: 10px;
+      }
+      .ai-copilot-badge {
+        display: inline-grid; place-items: center;
+        width: 32px; height: 32px;
+      }
+      .copilot-mark-img { width: 100%; height: 100%; display: block; object-fit: contain; }
+      .ai-cobrand-stack {
+        display: flex; flex-direction: column;
+        line-height: 1.15;
+      }
+      .ai-cobrand-name {
+        font-size: 13px; font-weight: 700;
+        color: #0A1C60; letter-spacing: -0.01em;
+      }
+      .ai-cobrand-sub {
+        font-size: 9.5px; font-weight: 500;
+        color: #64748b; letter-spacing: 0.02em;
+        text-transform: none;
+      }
+      .ai-cobrand-x {
+        font-size: 18px; font-weight: 300;
+        color: #cbd5e1;
+        margin: 0 4px;
+        line-height: 1;
+        user-select: none;
+      }
+      .ai-recast-logo {
+        height: 22px; width: auto;
+        display: block;
+      }
+      .ai-recast-text {
+        font-family: Inter, -apple-system, "Segoe UI", sans-serif;
+        font-weight: 700;
+        font-size: 22px;
+        letter-spacing: -0.04em;
+        line-height: 1;
+        display: inline-block;
+      }
+      .ai-recast-re { color: #0066FF; }
+      .ai-recast-cast { color: #0A1C60; }
+      .ai-eyebrow {
+        display: inline-flex; align-items: center; gap: 6px;
+        font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+        color: #0A1C60; text-transform: uppercase;
+      }
+      .ai-spark {
+        display: inline-grid; place-items: center;
+        width: 18px; height: 18px; border-radius: 5px;
+        background: conic-gradient(from 140deg, #0070F3, #8b5cf6, #00BFFF, #0070F3);
+        color: #fff;
+        box-shadow: 0 4px 10px rgba(139,92,246,0.25);
+        animation: aiSparkSpin 6s linear infinite;
+      }
+      @keyframes aiSparkSpin { to { filter: hue-rotate(40deg); } }
+      .ai-tab {
+        display: inline-flex; align-items: center; gap: 5px;
+        padding: 4px 10px; border-radius: 999px;
+        font-size: 10px; font-weight: 600;
+        color: #475569; background: #f1f5f9;
+        border: 1px solid transparent;
+        transition: all 0.2s ease;
+      }
+      .ai-tab:hover { color: #0A1C60; background: #e0e7ff; }
+      .ai-tab.is-active {
+        color: #fff;
+        background: linear-gradient(135deg, #0070F3 0%, #6d28d9 100%);
+        box-shadow: 0 4px 12px rgba(109,40,217,0.25);
+      }
+
+      .ai-empty {
+        display: flex; flex-direction: column; align-items: center;
+        text-align: center; padding: 22px 12px 8px;
+        position: relative;
+      }
+      .ai-empty-orb {
+        width: 64px; height: 64px; border-radius: 18px;
+        display: grid; place-items: center;
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 10px 28px rgba(109,40,217,0.18);
+        margin-bottom: 14px;
+        animation: aiOrb 4s ease-in-out infinite;
+      }
+      .ai-empty-orb .copilot-mark-img { width: 44px; height: 44px; }
+      @keyframes aiOrb {
+        0%, 100% { transform: scale(1); box-shadow: 0 10px 28px rgba(109,40,217,0.18); }
+        50% { transform: scale(1.04); box-shadow: 0 14px 36px rgba(109,40,217,0.28); }
+      }
+      .ai-empty-title { font-size: 14px; font-weight: 700; color: #0A1C60; margin-bottom: 4px; }
+      .ai-empty-sub { font-size: 11px; color: #64748b; max-width: 540px; line-height: 1.5; }
+      .ai-empty-chips { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-top: 12px; }
+      .ai-empty-chip {
+        display: inline-flex; align-items: center; gap: 4px;
+        font-size: 10px; font-weight: 600; color: #475569;
+        background: #f8fafc; border: 1px solid #e2e8f0;
+        padding: 3px 8px; border-radius: 999px;
+      }
+
+      .ai-row { display: flex; gap: 8px; margin-top: 4px; align-items: flex-start; position: relative; z-index: 1; }
+      .ai-row-user { justify-content: flex-end; }
+
+      /* Chat turns */
+      .ai-chat {
+        display: flex; flex-direction: column;
+        gap: 14px;
+        position: relative; z-index: 1;
+      }
+      .ai-turn {
+        display: flex; flex-direction: column; gap: 4px;
+      }
+      .ai-turn-meta {
+        display: flex; align-items: center; gap: 6px;
+        font-size: 10px; color: #64748b;
+        font-weight: 500;
+      }
+      .ai-turn-user .ai-turn-meta {
+        justify-content: flex-end;
+        padding-right: 36px;
+      }
+      .ai-turn-bot .ai-turn-meta {
+        padding-left: 36px;
+      }
+      .ai-turn-name { font-weight: 700; color: #0A1C60; }
+      .ai-turn-time { color: #94a3b8; }
+      .ai-turn-avatar-mini {
+        display: inline-grid; place-items: center;
+        width: 14px; height: 14px;
+      }
+      .ai-turn-avatar-mini .copilot-mark-img { width: 14px; height: 14px; }
+
+      .ai-avatar {
+        flex-shrink: 0;
+        width: 28px; height: 28px; border-radius: 8px;
+        display: grid; place-items: center;
+        color: #fff;
+        overflow: hidden;
+      }
+      .ai-avatar-user { background: #0A1C60; }
+      .ai-avatar-user svg { width: 14px; height: 14px; }
+      .ai-avatar-bot {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 2px 8px rgba(109,40,217,0.12);
+      }
+      .ai-avatar-bot .copilot-mark-img { width: 22px; height: 22px; }
+      .ai-avatar-bot.is-thinking { animation: aiPulse 1.4s ease-in-out infinite; }
+      @keyframes aiPulse {
+        0%, 100% { box-shadow: 0 2px 8px rgba(109,40,217,0.15); }
+        50% { box-shadow: 0 2px 16px rgba(109,40,217,0.45); transform: scale(1.06); }
+      }
+
+      .ai-bubble {
+        max-width: 760px;
+        padding: 8px 12px;
+        border-radius: 12px;
+        font-size: 11.5px;
+        line-height: 1.5;
+      }
+      .ai-bubble-user {
+        background: #0A1C60; color: #fff;
+        border-bottom-right-radius: 4px;
+        font-weight: 500;
+        max-width: 540px;
+      }
+      .ai-bubble-bot {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-bottom-left-radius: 4px;
+        flex: 1;
+      }
+      .ai-typed { display: inline; }
+      .ai-caret {
+        display: inline-block; width: 1px; height: 11px;
+        background: #fff; margin-left: 2px; vertical-align: -1px;
+        animation: aiCaret 0.7s steps(2) infinite;
+      }
+      @keyframes aiCaret { 50% { opacity: 0; } }
+
+      /* Inline tool-call card inside the Copilot bubble */
+      .ai-toolcall {
+        margin-bottom: 10px;
+        padding: 6px 10px;
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-left: 2px solid #8b5cf6;
+        border-radius: 6px;
+      }
+      .ai-toolcall-head {
+        display: flex; align-items: center; gap: 6px;
+        font-size: 9.5px; font-weight: 700;
+        color: #6d28d9;
+        text-transform: uppercase; letter-spacing: 0.06em;
+        margin-bottom: 5px;
+      }
+      .ai-toolcall-head svg { color: #8b5cf6; }
+      .ai-toolcall-window {
+        margin-left: auto;
+        font-size: 9px; font-weight: 500;
+        color: #94a3b8;
+        text-transform: none; letter-spacing: 0;
+      }
+      .ai-toolcall-chips { display: flex; flex-wrap: wrap; gap: 4px; }
+
+      /* Next-step cue at end of conversation */
+      .ai-next-cue {
+        margin-top: 4px;
+        padding: 10px 14px;
+        background: linear-gradient(135deg, #f5f3ff 0%, #eff6ff 100%);
+        border: 1px dashed #c4b5fd;
+        border-radius: 10px;
+        display: flex; align-items: center; gap: 8px;
+        font-size: 11px;
+        color: #475569;
+        animation: aiCueIn 0.5s ease both;
+      }
+      @keyframes aiCueIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+      .ai-next-arrow {
+        display: inline-grid; place-items: center;
+        width: 22px; height: 22px; border-radius: 50%;
+        background: #fff;
+        color: #6d28d9;
+        border: 1px solid #c4b5fd;
+        flex-shrink: 0;
+      }
+      .ai-next-link {
+        display: inline-flex; align-items: center; gap: 4px;
+        padding: 3px 8px; margin: 0 2px;
+        border-radius: 999px;
+        background: #fff;
+        border: 1px solid #8b5cf6;
+        color: #6d28d9;
+        font-weight: 700; font-size: 10.5px;
+        transition: all 0.2s ease;
+      }
+      .ai-next-link:hover {
+        background: #6d28d9; color: #fff;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(109,40,217,0.25);
+      }
+
+      .ai-sources {
+        margin: 8px 0 4px;
+        padding: 6px 10px;
+        background: #fafbff;
+        border: 1px dashed #c7d2fe;
+        border-radius: 8px;
+        display: flex; align-items: center; gap: 10px;
+        font-size: 10px; color: #475569;
+        position: relative; z-index: 1;
+      }
+      .ai-sources-label {
+        display: inline-flex; align-items: center; gap: 4px;
+        font-weight: 700; color: #0A1C60;
+        text-transform: uppercase; letter-spacing: 0.06em;
+        font-size: 9px;
+      }
+      .ai-sources-list { display: flex; gap: 4px; flex-wrap: wrap; flex: 1; }
+      .ai-source-chip {
+        display: inline-flex; align-items: center; gap: 3px;
+        padding: 2px 7px; border-radius: 5px;
+        font-size: 9px; font-weight: 600;
+        color: #6d28d9; background: #f5f3ff;
+        border: 1px solid #c4b5fd;
+      }
+      .ai-source-chip.is-lit { color: #6d28d9; border-color: #c4b5fd; background: #f5f3ff; }
+      .ai-sources-window {
+        font-size: 9px; color: #94a3b8;
+        white-space: nowrap;
+      }
+
+      .ai-thinking {
+        display: inline-flex; align-items: center; gap: 4px;
+        color: #64748b; font-size: 10.5px;
+      }
+      .ai-thinking span {
+        width: 5px; height: 5px; border-radius: 50%;
+        background: #8b5cf6;
+        animation: aiDot 1.2s ease-in-out infinite;
+      }
+      .ai-thinking span:nth-child(2) { animation-delay: 0.15s; }
+      .ai-thinking span:nth-child(3) { animation-delay: 0.3s; }
+      .ai-thinking em { font-style: normal; margin-left: 4px; }
+      @keyframes aiDot {
+        0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+        30% { transform: translateY(-3px); opacity: 1; }
+      }
+
+      .ai-answer { /* visible immediately when this branch renders */ }
+      .ai-headline {
+        font-size: 12.5px; font-weight: 700;
+        color: #0A1C60; margin-bottom: 8px;
+        letter-spacing: -0.01em;
+      }
+      /* Scope strip — Environments + Devices the answer spans */
+      .ai-scope {
+        display: flex; flex-direction: column; gap: 4px;
+        margin-bottom: 10px;
+        padding: 8px 10px;
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+      }
+      .ai-scope-line {
+        display: flex; align-items: center; gap: 8px;
+        flex-wrap: wrap;
+      }
+      .ai-scope-label {
+        display: inline-flex; align-items: center; gap: 4px;
+        font-size: 9px; font-weight: 700;
+        color: #475569;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        flex-shrink: 0;
+        min-width: 100px;
+      }
+      .ai-scope-label svg { color: #0A1C60; }
+      .ai-scope-chips {
+        display: flex; flex-wrap: wrap; gap: 4px; flex: 1;
+      }
+      .ai-scope-chip {
+        display: inline-flex; align-items: center;
+        padding: 2px 8px; border-radius: 999px;
+        font-size: 9.5px; font-weight: 600;
+        line-height: 1.5;
+      }
+      .ai-scope-chip-env {
+        background: #f0f9ff;
+        color: #0A1C60;
+        border: 1px solid #bae6fd;
+      }
+      .ai-scope-chip-dev {
+        background: #fafbff;
+        color: #4338ca;
+        border: 1px solid #c7d2fe;
+      }
+      .ai-insights {
+        display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
+      }
+      .ai-insight {
+        display: flex; gap: 8px; align-items: flex-start;
+        padding: 8px 10px;
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-left: 3px solid #cbd5e1;
+        border-radius: 6px;
+      }
+      .ai-insight-icon {
+        width: 22px; height: 22px; border-radius: 6px;
+        display: grid; place-items: center; flex-shrink: 0;
+        background: #f1f5f9; color: #475569;
+      }
+      .ai-insight-body { flex: 1; min-width: 0; }
+      .ai-insight-top {
+        display: flex; justify-content: space-between; align-items: baseline;
+        gap: 4px;
+      }
+      .ai-insight-label { font-size: 10px; font-weight: 600; color: #475569; }
+      .ai-insight-value { font-size: 13px; font-weight: 700; color: #0A1C60; letter-spacing: -0.01em; }
+      .ai-insight-delta { font-size: 9px; font-weight: 600; margin-top: 1px; }
+      .ai-insight-note { font-size: 9px; color: #64748b; margin-top: 3px; line-height: 1.4; }
+      .ai-tone-good { border-left-color: #10b981; }
+      .ai-tone-good .ai-insight-icon { background: #d1fae5; color: #065f46; }
+      .ai-tone-good .ai-insight-delta { color: #065f46; }
+      .ai-tone-warn { border-left-color: #f59e0b; }
+      .ai-tone-warn .ai-insight-icon { background: #fef3c7; color: #92400e; }
+      .ai-tone-warn .ai-insight-delta { color: #92400e; }
+      .ai-tone-risk { border-left-color: #ef4444; }
+      .ai-tone-risk .ai-insight-icon { background: #fee2e2; color: #991b1b; }
+      .ai-tone-risk .ai-insight-delta { color: #991b1b; }
+
+      .ai-actions { margin-top: 10px; }
+      .ai-actions-label {
+        display: inline-flex; align-items: center; gap: 4px;
+        font-size: 9px; font-weight: 700;
+        color: #6d28d9; text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-bottom: 4px;
+      }
+      .ai-actions-list { display: flex; flex-wrap: wrap; gap: 5px; }
+      .ai-action {
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 5px 10px; border-radius: 999px;
+        background: #fff;
+        border: 1px solid #ddd6fe;
+        font-size: 10.5px; font-weight: 600;
+        color: #0A1C60;
+        transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+      }
+      .ai-action:hover {
+        background: linear-gradient(135deg, #eff6ff, #f5f3ff);
+        border-color: #8b5cf6;
+        transform: translateY(-1px);
+      }
+      .ai-action-icon {
+        display: grid; place-items: center;
+        width: 16px; height: 16px; border-radius: 5px;
+        background: conic-gradient(from 140deg, #0070F3, #8b5cf6, #00BFFF, #0070F3);
+        color: #fff;
+      }
+      .ai-action-arrow { color: #8b5cf6; opacity: 0; transform: translateX(-4px); transition: all 0.2s ease; }
+      .ai-action:hover .ai-action-arrow { opacity: 1; transform: translateX(0); }
+
+      .ai-impact {
+        margin-top: 10px;
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 5px 10px; border-radius: 6px;
+        background: linear-gradient(135deg, #eff6ff, #f5f3ff);
+        color: #0A1C60;
+        font-size: 11px; font-weight: 600;
+        border: 1px solid #ddd6fe;
+      }
+
+      .ai-rail {
+        position: relative; z-index: 1;
+        margin-top: 12px; padding-top: 8px;
+        border-top: 1px solid #e2e8f0;
+        display: flex; align-items: center; gap: 6px;
+      }
+      .ai-rail-dot {
+        width: 18px; height: 6px; border-radius: 3px;
+        background: #e2e8f0; padding: 0; border: 0;
+        transition: all 0.3s ease;
+      }
+      .ai-rail-dot.is-past { background: #c4b5fd; }
+      .ai-rail-dot.is-active {
+        width: 32px;
+        background: linear-gradient(90deg, #0070F3, #8b5cf6);
+      }
+      .ai-rail-caption {
+        margin-left: auto; font-size: 9px; color: #94a3b8;
+        letter-spacing: 0.04em;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .ai-spark, .ai-empty-orb, .ai-avatar-bot.is-thinking,
+        .ai-caret, .ai-thinking span { animation: none !important; }
+      }
+
       /* Onboarding view */
       .ob-device { border-radius: 12px; padding: 12px; transition: opacity 0.5s ease, transform 0.5s ease; }
       .ob-device.ob-hidden { opacity: 0; transform: translateY(10px); }
@@ -5168,6 +5636,13 @@
         drQueue: [],
         drQueueIdx: 0,
         solutionViewDashboard: false,
+        solutionViewAi: false,
+        aiPhase: 'idle',
+        aiScenarioIdx: 0,
+        aiRunning: false,
+        aiPaused: false,
+        aiQueue: [],
+        aiQueueIdx: 0,
         solutionViewOnboarding: false,
         obPhase: 'idle',
         obRunning: false,
@@ -5447,12 +5922,13 @@
         {view:'onboarding', stage:'DELIVER',   name:'Onboarding',            icon:'user-plus'},
         {view:'user',       stage:'RUN',       name:'User Experience',       icon:'monitor-smartphone'},
         {view:'dashboard',  stage:'MEASURE',   name:'Dashboard & Reporting', icon:'bar-chart-3'},
+        {view:'ai',         stage:'ASSIST',    name:'AI Copilot',            icon:'sparkles'},
         {view:'multitenant',stage:'SCALE',     name:'Multi-Tenant',          icon:'building-2'},
       ];
       const lifecycleViewFlag = (view) => ({
         setupstore:'solutionViewSetupStore', admin:'solutionViewAdmin',
         onboarding:'solutionViewOnboarding', user:'solutionViewUser',
-        dashboard:'solutionViewDashboard', multitenant:'solutionViewMultiTenant',
+        dashboard:'solutionViewDashboard', ai:'solutionViewAi', multitenant:'solutionViewMultiTenant',
       })[view];
       const activeLifecycleView = () =>
         LIFECYCLE_MODULES.find(m => STATE[lifecycleViewFlag(m.view)])?.view || null;
@@ -8356,6 +8832,258 @@
         `;
       }
 
+      /* ========== AI COPILOT VIEW ========== */
+      // Microsoft Copilot brand mark (used in header, avatar, and empty-state orb).
+      const COPILOT_MARK_SVG = `<img src="assets/copilot-logo.png" alt="Microsoft Copilot" class="copilot-mark-img"/>`;
+      const RECAST_LOGO_IMG = `<span class="ai-recast-text" aria-label="Recast"><span class="ai-recast-re">Re</span><span class="ai-recast-cast">cast</span></span>`;
+
+      const AI_SCENARIOS = [
+        {
+          id: 'brief',
+          tag: 'Morning brief',
+          icon: 'sunrise',
+          prompt: "Summarize today's app & device health for my standup.",
+          sources: ['deployments','devices','events','users'],
+          window: 'Last 24 hours · all zones',
+          scopeEnvs: ['Intune','ConfigMgr','Citrix','AVD / W365','macOS','Jamf'],
+          scopeDevices: ['Windows','Windows on ARM','macOS','Virtual Desktop','Cloud PC / W365','BYOD'],
+          headline: 'Stable overall — one anomaly to act on, spanning every environment you manage.',
+          insights: [
+            { tone:'good', icon:'activity',       label:'Install health',     value:'98.2%', delta:'\u25B2 0.4% vs. yesterday', note:'7,842 of 7,983 installs healthy — consistent across Intune, ConfigMgr, Citrix, AVD' },
+            { tone:'risk', icon:'alert-triangle', label:'Failed logins',      value:'47',    delta:'3\u00D7 normal · Zone A',    note:'42 on Intune-Windows, 5 on Cloud PC / W365 — correlates with Okta SSO change at 02:14' },
+            { tone:'warn', icon:'shield-check',   label:'Patch compliance',   value:'94%',   delta:'312 endpoints behind',       note:'218 ConfigMgr Windows + 94 Cloud PC missing KB5034122' },
+          ],
+          actions: [
+            { icon:'pause-circle', label:'Pause Okta rollout to Zone B' },
+            { icon:'rocket',       label:'Push KB5034122 to 312 endpoints' },
+            { icon:'send',         label:'Post brief to #it-ops in Teams' },
+          ],
+          impact: '\u2248 3 hrs of triage avoided this morning.'
+        },
+        {
+          id: 'reclaim',
+          tag: 'Cost optimization',
+          icon: 'piggy-bank',
+          prompt: "Find software licenses we pay for but don't use.",
+          sources: ['licenses','users','events','packages'],
+          window: 'Trailing 90 days · all tenants',
+          scopeEnvs: ['Intune','ConfigMgr','Citrix','AVD / W365','macOS','Jamf'],
+          scopeDevices: ['Windows','macOS','Virtual Desktop','Cloud PC / W365','Browser-Based'],
+          headline: '$94,200 / year reclaimable across 3 vendors and every delivery surface.',
+          insights: [
+            { tone:'risk', icon:'image',    label:'Adobe Creative Cloud', value:'312 seats', delta:'Unused 60+ days', note:'$58,400/yr · 184 Intune Windows + 78 Jamf macOS + 50 Citrix VDI' },
+            { tone:'risk', icon:'workflow', label:'Visio Plan 2',         value:'87 seats',  delta:'Unused 90+ days', note:'$24,800/yr · 71 ConfigMgr Windows + 16 AVD / W365 (Field services)' },
+            { tone:'warn', icon:'bar-chart',label:'Tableau Creator',      value:'34 seats',  delta:'Unused 45+ days', note:'$11,000/yr · 22 Cloud PC + 12 Browser-Based (Finance)' },
+          ],
+          actions: [
+            { icon:'recycle',    label:'Generate 7-day reclaim policy' },
+            { icon:'mail',       label:'Notify 433 users (Outlook)' },
+            { icon:'file-text',  label:'Export reclaim plan for finance' },
+          ],
+          impact: 'Pays back one quarter of Application Workspace.'
+        },
+        {
+          id: 'audit',
+          tag: 'Compliance investigation',
+          icon: 'shield-alert',
+          prompt: "Which devices failed last night's scan, and why?",
+          sources: ['devices','packages','servers','deployments'],
+          window: 'Scan window 22:00 \u2192 04:00 UTC',
+          scopeEnvs: ['Intune','ConfigMgr','Jamf','AVD / W365'],
+          scopeDevices: ['Windows','Windows on ARM','macOS','Cloud PC / W365','BYOD'],
+          headline: '47 devices flagged across 4 management surfaces · 3 root causes · 43 one-click fixable.',
+          insights: [
+            { tone:'risk', icon:'cpu',          label:'Missing endpoint agent',  value:'31', delta:'Engineering subnet', note:'24 ConfigMgr Windows + 7 BYOD — re-deploy Recast agent from Setup Store' },
+            { tone:'warn', icon:'monitor-down', label:'Outdated Windows build',  value:'12', delta:'22H2 \u2192 23H2',   note:'8 Intune Windows + 4 Cloud PC / W365 — patch via Right Click Tools \u2192 Compliance' },
+            { tone:'warn', icon:'lock',         label:'BitLocker / FileVault',   value:'4',  delta:'Awaiting key escrow', note:'2 Intune Windows + 2 Jamf macOS — reissue policy via management plane' },
+          ],
+          actions: [
+            { icon:'zap',          label:'Auto-remediate 43 with one click' },
+            { icon:'external-link',label:'Open device list in Right Click Tools' },
+            { icon:'file-check',   label:'Export evidence pack (SOC2)' },
+          ],
+          impact: 'Closes audit gap 9 days before SOC2 review.'
+        },
+      ];
+
+      function renderAiView(){
+        const p = STATE.aiPhase;
+        const order = ['idle','prompt','thinking','sources','answer','actions','done'];
+        const past = (target) => order.indexOf(p) >= order.indexOf(target);
+        const sIdx = STATE.aiScenarioIdx || 0;
+        const s = AI_SCENARIOS[sIdx];
+
+        // Type the prompt out by character while in 'prompt' phase, then keep full text.
+        const promptChars = s.prompt.length;
+        const showPrompt = past('prompt');
+        const showThinking = past('thinking') && !past('answer');
+        const sourcesLit = past('sources');
+        const showAnswer = past('answer');
+        const showActions = past('actions');
+        const showImpact = past('done');
+
+        if (!past('prompt')) {
+          return `
+            <div class="section-card p-4 ai-shell">
+              <div class="ai-cobrand-row">
+                <div class="ai-cobrand">
+                  <span class="ai-copilot-badge">${COPILOT_MARK_SVG}</span>
+                  <span class="ai-cobrand-stack">
+                    <span class="ai-cobrand-name">Microsoft Copilot</span>
+                    <span class="ai-cobrand-sub">for Application Workspace</span>
+                  </span>
+                  <span class="ai-cobrand-x" aria-hidden="true">+</span>
+                  ${RECAST_LOGO_IMG}
+                </div>
+                <div class="flex items-center gap-1">
+                  ${AI_SCENARIOS.map((sc, i) => `
+                    <button type="button" data-action="ai-pick-scenario" data-idx="${i}" class="ai-tab ${i===sIdx?'is-active':''}">
+                      <i data-lucide="${sc.icon}" class="w-3 h-3"></i> ${sc.tag}
+                    </button>
+                  `).join('')}
+                </div>
+              </div>
+              <div class="ai-empty">
+                <div class="ai-empty-orb">${COPILOT_MARK_SVG}</div>
+                <div class="ai-empty-title">Ask Copilot what's hiding in your dashboards.</div>
+                <div class="ai-empty-sub">Copilot reads the same OData feed you saw in <strong>Dashboard &amp; Reporting</strong> and answers in plain English. Press <strong>Auto</strong> or <strong>Step</strong> to watch three high-impact scenarios.</div>
+                <div class="ai-empty-chips">
+                  ${AI_SCENARIOS.map(sc => `<span class="ai-empty-chip"><i data-lucide="${sc.icon}" class="w-3 h-3"></i> ${sc.tag}</span>`).join('')}
+                </div>
+              </div>
+            </div>
+          `;
+        }
+
+        return `
+          <div class="section-card p-4 ai-shell">
+            <!-- Co-branded header -->
+            <div class="ai-cobrand-row">
+              <div class="ai-cobrand">
+                <span class="ai-copilot-badge">${COPILOT_MARK_SVG}</span>
+                <span class="ai-cobrand-stack">
+                  <span class="ai-cobrand-name">Microsoft Copilot</span>
+                  <span class="ai-cobrand-sub">for Application Workspace</span>
+                </span>
+                <span class="ai-cobrand-x" aria-hidden="true">+</span>
+                ${RECAST_LOGO_IMG}
+              </div>
+              <div class="flex items-center gap-1">
+                ${AI_SCENARIOS.map((sc, i) => `
+                  <button type="button" data-action="ai-pick-scenario" data-idx="${i}" class="ai-tab ${i===sIdx?'is-active':''}">
+                    <i data-lucide="${sc.icon}" class="w-3 h-3"></i> ${sc.tag}
+                  </button>
+                `).join('')}
+              </div>
+            </div>
+
+            <!-- Chat conversation -->
+            <div class="ai-chat">
+
+              <!-- User turn -->
+              <div class="ai-turn ai-turn-user">
+                <div class="ai-turn-meta">
+                  <span class="ai-turn-name">You</span>
+                  <span class="ai-turn-time">just now</span>
+                </div>
+                <div class="ai-row ai-row-user">
+                  <div class="ai-bubble ai-bubble-user">
+                    <span>${s.prompt}</span>
+                  </div>
+                  <div class="ai-avatar ai-avatar-user"><i data-lucide="user" class="w-3.5 h-3.5"></i></div>
+                </div>
+              </div>
+
+              <!-- Copilot turn -->
+              <div class="ai-turn ai-turn-bot">
+                <div class="ai-turn-meta">
+                  <span class="ai-turn-avatar-mini">${COPILOT_MARK_SVG}</span>
+                  <span class="ai-turn-name">Copilot</span>
+                  <span class="ai-turn-time">${showImpact ? 'responded' : 'replying…'}</span>
+                </div>
+                <div class="ai-row ai-row-bot">
+                  <div class="ai-avatar ai-avatar-bot ${showThinking ? 'is-thinking' : ''}">${COPILOT_MARK_SVG}</div>
+                  <div class="ai-bubble ai-bubble-bot">
+
+                    ${showThinking ? `
+                      <div class="ai-thinking"><span></span><span></span><span></span><em>Thinking\u2026 reading ${s.sources.length} datasets from Application Workspace</em></div>
+                    ` : ''}
+
+                    ${sourcesLit ? `
+                      <div class="ai-toolcall">
+                        <div class="ai-toolcall-head">
+                          <i data-lucide="database" class="w-3 h-3"></i>
+                          <span>Grounded in OData</span>
+                          <span class="ai-toolcall-window">${s.window}</span>
+                        </div>
+                        <div class="ai-toolcall-chips">
+                          ${s.sources.map((src, i) => `<span class="ai-source-chip is-lit" style="transition-delay:${i*0.12}s"><i data-lucide="check" class="w-2.5 h-2.5"></i> ${src}</span>`).join('')}
+                        </div>
+                      </div>
+                    ` : ''}
+
+                    ${showAnswer ? `
+                      <div class="ai-answer">
+                        <div class="ai-headline">${s.headline}</div>
+                        <div class="ai-scope">
+                          <div class="ai-scope-line">
+                            <span class="ai-scope-label"><i data-lucide="layers" class="w-3 h-3"></i> Environments</span>
+                            <div class="ai-scope-chips">
+                              ${s.scopeEnvs.map(e => `<span class="ai-scope-chip ai-scope-chip-env">${e}</span>`).join('')}
+                            </div>
+                          </div>
+                          <div class="ai-scope-line">
+                            <span class="ai-scope-label"><i data-lucide="laptop" class="w-3 h-3"></i> Devices</span>
+                            <div class="ai-scope-chips">
+                              ${s.scopeDevices.map(d => `<span class="ai-scope-chip ai-scope-chip-dev">${d}</span>`).join('')}
+                            </div>
+                          </div>
+                        </div>
+                        <div class="ai-insights">
+                          ${s.insights.map((it, i) => `
+                            <div class="ai-insight ai-tone-${it.tone}">
+                              <div class="ai-insight-icon"><i data-lucide="${it.icon}" class="w-3.5 h-3.5"></i></div>
+                              <div class="ai-insight-body">
+                                <div class="ai-insight-top">
+                                  <span class="ai-insight-label">${it.label}</span>
+                                  <span class="ai-insight-value">${it.value}</span>
+                                </div>
+                                <div class="ai-insight-delta">${it.delta}</div>
+                                <div class="ai-insight-note">${it.note}</div>
+                              </div>
+                            </div>
+                          `).join('')}
+                        </div>
+                      </div>
+                    ` : ''}
+
+                    ${showActions ? `` : ''}
+
+                    ${showImpact ? `<div class="ai-impact"><i data-lucide="trending-up" class="w-3.5 h-3.5"></i> ${s.impact}</div>` : ''}
+
+                  </div>
+                </div>
+              </div>
+
+              ${showImpact ? (() => {
+                const nextIdx = (sIdx + 1) % AI_SCENARIOS.length;
+                const isLast = sIdx === AI_SCENARIOS.length - 1;
+                const next = AI_SCENARIOS[nextIdx];
+                return `
+                  <div class="ai-next-cue">
+                    <span class="ai-next-arrow"><i data-lucide="${isLast ? 'rotate-ccw' : 'arrow-right'}" class="w-3 h-3"></i></span>
+                    ${isLast
+                      ? `That's all three scenarios. Tap any tab above to replay.`
+                      : `Want to try another? Tap <button type="button" data-action="ai-pick-scenario" data-idx="${nextIdx}" class="ai-next-link"><i data-lucide="${next.icon}" class="w-3 h-3"></i> ${next.tag}</button> to continue.`}
+                  </div>
+                `;
+              })() : ''}
+
+            </div>
+          </div>
+        `;
+      }
+
       /* ========== ONBOARDING VIEW ========== */
       function renderOnboardingView(){
         const p = STATE.obPhase;
@@ -8733,6 +9461,71 @@
         scrollPreserveRender();
       }
 
+      /* ========== AI COPILOT ANIMATION ENGINE ========== */
+      // Each Auto/Step play runs ONE scenario only. User clicks the next
+      // scenario tab to play that one.
+      function buildAiQueue(){
+        const queue = [];
+        const phases = ['prompt','thinking','sources','answer','actions','done'];
+        const delays = [1400, 1600, 1400, 1900, 1500, 800];
+        phases.forEach((phase, i) => {
+          queue.push({ delay: delays[i], fn(){ STATE.aiPhase = phase; scrollPreserveRender(); } });
+        });
+        queue.push({ delay: 400, fn(){ STATE.aiRunning = false; STATE.aiPaused = false; scrollPreserveRender(); } });
+        return queue;
+      }
+
+      function runAiQueue(){
+        if (STATE.aiPaused || STATE.aiQueueIdx >= STATE.aiQueue.length) return;
+        const step = STATE.aiQueue[STATE.aiQueueIdx];
+        const tid = setTimeout(() => {
+          if (STATE.aiPaused) return;
+          step.fn();
+          STATE.aiQueueIdx++;
+          runAiQueue();
+        }, step.delay);
+        STATE.flowTimers.timeouts.push(tid);
+      }
+
+      function startAi(){
+        if (STATE.aiRunning) return;
+        STATE.flowTimers.timeouts.forEach(id => clearTimeout(id));
+        STATE.flowTimers.timeouts = [];
+        STATE.aiRunning = true;
+        STATE.aiPaused = false;
+        STATE.aiPhase = 'idle';
+        // Keep current scenario index; user controls scenario via tabs.
+        STATE.aiQueue = buildAiQueue();
+        STATE.aiQueueIdx = 0;
+        scrollPreserveRender();
+        runAiQueue();
+      }
+
+      function stepAi(){
+        if (STATE.aiRunning) return;
+        if (!STATE.aiQueue || STATE.aiQueue.length === 0 || STATE.aiPhase === 'done') {
+          STATE.aiQueue = buildAiQueue();
+          STATE.aiQueueIdx = 0;
+          STATE.aiPhase = 'idle';
+        }
+        if (STATE.aiQueueIdx >= STATE.aiQueue.length) return;
+        const step = STATE.aiQueue[STATE.aiQueueIdx];
+        step.fn();
+        STATE.aiQueueIdx++;
+      }
+
+      function resetAi(){
+        STATE.flowTimers.timeouts.forEach(id => clearTimeout(id));
+        STATE.flowTimers.timeouts = [];
+        STATE.aiPhase = 'idle';
+        STATE.aiScenarioIdx = 0;
+        STATE.aiRunning = false;
+        STATE.aiPaused = false;
+        STATE.aiQueue = [];
+        STATE.aiQueueIdx = 0;
+        scrollPreserveRender();
+      }
+
       /* ========== MT ANIMATION ENGINE ========== */
       function buildMtQueue(){
         const phases = ['primary','catalog','syncing','customers','controls','done'];
@@ -9097,7 +9890,7 @@
         const sc = STATE.flowScenarioIdx;
         const phase = STATE.flowPhase;
         const scenario = sc >= 0 && sc < SCENARIOS.length ? SCENARIOS[sc] : null;
-        const activeViewCount = [STATE.solutionViewUser, STATE.solutionViewAdmin, STATE.solutionViewSetupStore, STATE.solutionViewMultiTenant, STATE.solutionViewDashboard, STATE.solutionViewOnboarding].filter(Boolean).length;
+        const activeViewCount = [STATE.solutionViewUser, STATE.solutionViewAdmin, STATE.solutionViewSetupStore, STATE.solutionViewMultiTenant, STATE.solutionViewDashboard, STATE.solutionViewAi, STATE.solutionViewOnboarding].filter(Boolean).length;
         const multiCol = activeViewCount >= 2;
 
         return `
@@ -9174,11 +9967,12 @@
                     ${idx < arr.length - 1 ? '<div class="lifecycle-connector ' + connClass + '"></div>' : ''}
                   `;}).join('')}
                   <!-- Flow controls (icon-only) -->
-                  ${(STATE.solutionViewUser || STATE.solutionViewAdmin || STATE.solutionViewSetupStore || STATE.solutionViewMultiTenant || STATE.solutionViewDashboard || STATE.solutionViewOnboarding) ? (() => {
+                  ${(STATE.solutionViewUser || STATE.solutionViewAdmin || STATE.solutionViewSetupStore || STATE.solutionViewMultiTenant || STATE.solutionViewDashboard || STATE.solutionViewAi || STATE.solutionViewOnboarding) ? (() => {
                     const _running =
                       (STATE.solutionViewSetupStore && STATE.ssRunning && !STATE.ssPaused) ||
                       (STATE.solutionViewMultiTenant && STATE.mtRunning && !STATE.mtPaused) ||
                       (STATE.solutionViewDashboard && STATE.drRunning && !STATE.drPaused) ||
+                      (STATE.solutionViewAi && STATE.aiRunning && !STATE.aiPaused) ||
                       (STATE.solutionViewOnboarding && STATE.obRunning && !STATE.obPaused) ||
                       ((STATE.solutionViewUser || STATE.solutionViewAdmin) && STATE.flowRunning && !STATE.flowPaused);
                     const _label = _running ? 'Pause' : 'Play';
@@ -9236,6 +10030,7 @@
                       ${STATE.solutionViewOnboarding ? renderOnboardingView() : ''}
                       ${STATE.solutionViewUser ? renderUserView() : ''}
                       ${STATE.solutionViewDashboard ? renderDashboardView() : ''}
+                      ${STATE.solutionViewAi ? renderAiView() : ''}
                       ${STATE.solutionViewMultiTenant ? renderMultiTenantView() : ''}
                     </div>
                   </div>
@@ -10661,6 +11456,7 @@
               if (typeof ssTickerStop === 'function') ssTickerStop();
               STATE.obRunning = false; STATE.obPaused = false; STATE.obPhase = 'idle'; STATE.obQueue = []; STATE.obQueueIdx = 0;
               STATE.drRunning = false; STATE.drPaused = false; STATE.drPhase = 'idle'; STATE.drQueue = []; STATE.drQueueIdx = 0;
+              STATE.aiRunning = false; STATE.aiPaused = false; STATE.aiPhase = 'idle'; STATE.aiQueue = []; STATE.aiQueueIdx = 0; STATE.aiScenarioIdx = 0;
               STATE.mtRunning = false; STATE.mtPaused = false; STATE.mtPhase = 'idle'; STATE.mtQueue = []; STATE.mtQueueIdx = 0;
               STATE.flowAppOpened = false; STATE._firstOpenDone = false; STATE._firstDeliveryBadgeDone = false; STATE._acSeen = {};
             };
@@ -10675,10 +11471,11 @@
               (view === 'setupstore' && STATE.solutionViewSetupStore) ||
               (view === 'multitenant' && STATE.solutionViewMultiTenant) ||
               (view === 'dashboard' && STATE.solutionViewDashboard) ||
+              (view === 'ai' && STATE.solutionViewAi) ||
               (view === 'onboarding' && STATE.solutionViewOnboarding)
             );
             STATE.solutionViewSetupStore = false; STATE.solutionViewAdmin = false; STATE.solutionViewOnboarding = false;
-            STATE.solutionViewUser = false; STATE.solutionViewDashboard = false; STATE.solutionViewMultiTenant = false;
+            STATE.solutionViewUser = false; STATE.solutionViewDashboard = false; STATE.solutionViewAi = false; STATE.solutionViewMultiTenant = false;
             if (wasActive) { scrollPreserveRender(); return; }   // toggle off → close
 
             if (view === 'user') STATE.solutionViewUser = true;
@@ -10686,6 +11483,7 @@
             else if (view === 'setupstore') STATE.solutionViewSetupStore = true;
             else if (view === 'multitenant') STATE.solutionViewMultiTenant = true;
             else if (view === 'dashboard') STATE.solutionViewDashboard = true;
+            else if (view === 'ai') STATE.solutionViewAi = true;
             else if (view === 'onboarding') STATE.solutionViewOnboarding = true;
 
             // Mark this render as a FRESH modal mount so the backdrop and
@@ -10703,6 +11501,7 @@
               else if (view === 'onboarding' && !STATE.obRunning) startOb();
               else if (view === 'user' && !STATE.flowRunning) startFlow();
               else if (view === 'dashboard' && !STATE.drRunning) startDr();
+              else if (view === 'ai' && !STATE.aiRunning) startAi();
               else if (view === 'multitenant' && !STATE.mtRunning) startMt();
             }));
             return;
@@ -10717,11 +11516,12 @@
             STATE.ssRunning = false; STATE.ssPaused = false; STATE.ssPhase = 'idle';
             STATE.obRunning = false; STATE.obPaused = false; STATE.obPhase = 'idle';
             STATE.drRunning = false; STATE.drPaused = false; STATE.drPhase = 'idle';
+            STATE.aiRunning = false; STATE.aiPaused = false; STATE.aiPhase = 'idle';
             STATE.mtRunning = false; STATE.mtPaused = false; STATE.mtPhase = 'idle';
             if (STATE.ssCounterRaf) { cancelAnimationFrame(STATE.ssCounterRaf); STATE.ssCounterRaf = null; }
             if (typeof ssTickerStop === 'function') ssTickerStop();
             STATE.solutionViewSetupStore = false; STATE.solutionViewAdmin = false; STATE.solutionViewOnboarding = false;
-            STATE.solutionViewUser = false; STATE.solutionViewDashboard = false; STATE.solutionViewMultiTenant = false;
+            STATE.solutionViewUser = false; STATE.solutionViewDashboard = false; STATE.solutionViewAi = false; STATE.solutionViewMultiTenant = false;
             scrollPreserveRender();
             return;
           }
@@ -10746,9 +11546,10 @@
             if (typeof ssTickerStop === 'function') ssTickerStop();
             STATE.obRunning = false; STATE.obPaused = false; STATE.obPhase = 'idle'; STATE.obQueue = []; STATE.obQueueIdx = 0;
             STATE.drRunning = false; STATE.drPaused = false; STATE.drPhase = 'idle'; STATE.drQueue = []; STATE.drQueueIdx = 0;
+              STATE.aiRunning = false; STATE.aiPaused = false; STATE.aiPhase = 'idle'; STATE.aiQueue = []; STATE.aiQueueIdx = 0; STATE.aiScenarioIdx = 0;
             STATE.mtRunning = false; STATE.mtPaused = false; STATE.mtPhase = 'idle'; STATE.mtQueue = []; STATE.mtQueueIdx = 0;
             STATE.solutionViewSetupStore = false; STATE.solutionViewAdmin = false; STATE.solutionViewOnboarding = false;
-            STATE.solutionViewUser = false; STATE.solutionViewDashboard = false; STATE.solutionViewMultiTenant = false;
+            STATE.solutionViewUser = false; STATE.solutionViewDashboard = false; STATE.solutionViewAi = false; STATE.solutionViewMultiTenant = false;
             STATE.lifecyclePlaying = true; STATE.lcStep = -1;
 
             // Dwell = sum of all animation phase delays + breathing room after "done"
@@ -10762,6 +11563,7 @@
               { key: 'solutionViewOnboarding',  start: () => startOb(),   dwell: 17500 },
               { key: 'solutionViewUser',        start: () => startFlow(), dwell: 12000 },
               { key: 'solutionViewDashboard',   start: () => startDr(),   dwell: 10900 },
+              { key: 'solutionViewAi',          start: () => startAi(),   dwell: 12000 },
               { key: 'solutionViewMultiTenant', start: () => startMt(),   dwell: 10900 },
             ];
 
@@ -10775,10 +11577,11 @@
                 STATE.ssRunning = false; STATE.ssPaused = false;
                 STATE.obRunning = false; STATE.obPaused = false;
                 STATE.drRunning = false; STATE.drPaused = false;
+                STATE.aiRunning = false; STATE.aiPaused = false;
                 STATE.mtRunning = false; STATE.mtPaused = false;
                 // Open this step's view
                 STATE.solutionViewSetupStore = false; STATE.solutionViewAdmin = false; STATE.solutionViewOnboarding = false;
-                STATE.solutionViewUser = false; STATE.solutionViewDashboard = false; STATE.solutionViewMultiTenant = false;
+                STATE.solutionViewUser = false; STATE.solutionViewDashboard = false; STATE.solutionViewAi = false; STATE.solutionViewMultiTenant = false;
                 STATE[step.key] = true; STATE.lcStep = i;
                 scrollPreserveRender();
                 // Trigger animation after the render has settled
@@ -10905,6 +11708,24 @@
             calculateImpact(); STATE.showAssumptions = false; render(); return;
           }
           if (action === 'toggle-regulated') { STATE.calcInputs.regulated = act.getAttribute('data-val') === 'true'; render(); return; }
+          if (action === 'ai-pick-scenario') {
+            const idx = parseInt(act.getAttribute('data-idx'), 10);
+            if (!isNaN(idx)) {
+              // Switch scenario and play it from the top. Animation does NOT
+              // auto-advance to other scenarios — user clicks the next tab.
+              STATE.flowTimers.timeouts.forEach(id => clearTimeout(id));
+              STATE.flowTimers.timeouts = [];
+              STATE.aiRunning = false;
+              STATE.aiPaused = false;
+              STATE.aiScenarioIdx = idx;
+              STATE.aiPhase = 'idle';
+              STATE.aiQueue = [];
+              STATE.aiQueueIdx = 0;
+              scrollPreserveRender();
+              startAi();
+            }
+            return;
+          }
           if (action === 'pick-ux-scenario') {
             const idx = parseInt(act.getAttribute('data-idx'), 10);
             if (!isNaN(idx)) {
@@ -10923,6 +11744,7 @@
             if (STATE.solutionViewSetupStore) targets.push('ss');
             if (STATE.solutionViewMultiTenant) targets.push('mt');
             if (STATE.solutionViewDashboard) targets.push('dr');
+            if (STATE.solutionViewAi) targets.push('ai');
             if (STATE.solutionViewOnboarding) targets.push('ob');
             if (targets.length === 0) targets.push('flow'); // safe default
 
@@ -10932,6 +11754,7 @@
               (targets.includes('ss')   && STATE.ssRunning   && !STATE.ssPaused)   ||
               (targets.includes('mt')   && STATE.mtRunning   && !STATE.mtPaused)   ||
               (targets.includes('dr')   && STATE.drRunning   && !STATE.drPaused)   ||
+              (targets.includes('ai')   && STATE.aiRunning   && !STATE.aiPaused)   ||
               (targets.includes('ob')   && STATE.obRunning   && !STATE.obPaused)
             );
 
@@ -10966,6 +11789,13 @@
                   else if (STATE.drPaused) { STATE.drPaused = false; runDrQueue(); }
                 } else if (action === 'step-flow') { stepDr(); }
                 else if (action === 'reset-flow') { resetDr(); }
+              } else if (t === 'ai') {
+                if (action === 'toggle-flow') {
+                  if (!STATE.aiRunning) { startAi(); }
+                  else if (anyActive) { STATE.aiPaused = true; clearTimers(); }
+                  else if (STATE.aiPaused) { STATE.aiPaused = false; runAiQueue(); }
+                } else if (action === 'step-flow') { stepAi(); }
+                else if (action === 'reset-flow') { resetAi(); }
               } else if (t === 'ob') {
                 if (action === 'toggle-flow') {
                   if (!STATE.obRunning) { startOb(); }
