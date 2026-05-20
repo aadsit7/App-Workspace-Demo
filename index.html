@@ -1120,6 +1120,8 @@
         border: 1px solid #e2e8f0;
         border-bottom-left-radius: 4px;
         flex: 1;
+        /* Reserve space so the bubble doesn't expand visibly between phases */
+        min-height: 360px;
       }
       .ai-typed { display: inline; }
       .ai-caret {
@@ -1189,6 +1191,38 @@
         background: #6d28d9; color: #fff;
         transform: translateY(-1px);
         box-shadow: 0 4px 12px rgba(109,40,217,0.25);
+      }
+
+      /* Executive close — quote-style callout after the final scenario */
+      .ai-close {
+        margin-top: 4px;
+        padding: 14px 18px;
+        background: #0A1C60;
+        color: #fff;
+        border-radius: 12px;
+        display: flex; align-items: flex-start; gap: 14px;
+        position: relative; z-index: 1;
+        animation: aiCueIn 0.5s ease both;
+      }
+      .ai-close-mark {
+        width: 32px; height: 32px; flex-shrink: 0;
+        background: #fff; border-radius: 8px;
+        display: grid; place-items: center;
+        padding: 4px;
+      }
+      .ai-close-mark .copilot-mark-img { width: 24px; height: 24px; }
+      .ai-close-body { flex: 1; }
+      .ai-close-line {
+        font-size: 13px; font-weight: 500;
+        line-height: 1.5;
+        font-style: italic;
+        color: #fff;
+        letter-spacing: -0.005em;
+      }
+      .ai-close-meta {
+        margin-top: 8px;
+        font-size: 10px; color: #94a3b8;
+        font-weight: 500;
       }
 
       .ai-sources {
@@ -1320,6 +1354,82 @@
       .ai-tone-risk { border-left-color: #ef4444; }
       .ai-tone-risk .ai-insight-icon { background: #fee2e2; color: #991b1b; }
       .ai-tone-risk .ai-insight-delta { color: #991b1b; }
+
+      /* Table output (used by 'Adoption & cost') */
+      .ai-table-wrap {
+        margin-top: 4px;
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        overflow: hidden;
+      }
+      .ai-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+      .ai-table-th {
+        text-align: left;
+        padding: 8px 10px;
+        background: #0A1C60;
+        color: #fff;
+        font-size: 9.5px; font-weight: 700;
+        letter-spacing: 0.06em; text-transform: uppercase;
+        border-right: 1px solid rgba(255,255,255,0.08);
+        white-space: nowrap;
+      }
+      .ai-table-th:last-child { border-right: 0; }
+      .ai-table-row {
+        border-top: 1px solid #e2e8f0;
+        transition: background 0.15s ease;
+        border-left: 3px solid transparent;
+      }
+      .ai-table-row.ai-tone-good { border-left-color: #10b981; background: #f7fdf9; }
+      .ai-table-row.ai-tone-warn { border-left-color: #f59e0b; background: #fffaf2; }
+      .ai-table-row.ai-tone-risk { border-left-color: #ef4444; background: #fff7f7; }
+      .ai-table-td {
+        padding: 9px 10px;
+        vertical-align: top;
+        color: #1e293b;
+        line-height: 1.45;
+        border-right: 1px solid #f1f5f9;
+      }
+      .ai-table-td:last-child { border-right: 0; }
+      .ai-table-td:first-child {
+        display: flex; align-items: center; gap: 7px;
+        font-weight: 600; color: #0A1C60;
+      }
+      .ai-table-icon {
+        display: inline-grid; place-items: center;
+        width: 22px; height: 22px; border-radius: 6px;
+        background: #f1f5f9; color: #475569;
+        flex-shrink: 0;
+      }
+      .ai-table-row.ai-tone-good .ai-table-icon { background: #d1fae5; color: #065f46; }
+      .ai-table-row.ai-tone-warn .ai-table-icon { background: #fef3c7; color: #92400e; }
+      .ai-table-row.ai-tone-risk .ai-table-icon { background: #fee2e2; color: #991b1b; }
+      .ai-table-cell { display: inline; }
+      .ai-table-sub { color: #64748b; font-weight: 400; }
+      .ai-align-left { text-align: left; }
+      .ai-align-right { text-align: right; }
+      .ai-table-td.ai-align-right { white-space: nowrap; }
+
+      .ai-pill {
+        display: inline-flex; align-items: center;
+        padding: 2px 8px; border-radius: 999px;
+        font-size: 9.5px; font-weight: 700;
+        letter-spacing: 0.02em;
+        white-space: nowrap;
+      }
+      .ai-pill-good { background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
+      .ai-pill-warn { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+      .ai-pill-risk { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+
+      .ai-table-footnote {
+        display: flex; align-items: center; gap: 5px;
+        padding: 6px 10px;
+        background: #fafbff;
+        border-top: 1px dashed #c7d2fe;
+        font-size: 10px; color: #475569;
+        font-style: italic;
+      }
+      .ai-table-footnote svg { color: #8b5cf6; flex-shrink: 0; }
 
       .ai-actions { margin-top: 10px; }
       .ai-actions-label {
@@ -8839,70 +8949,92 @@
 
       const AI_SCENARIOS = [
         {
-          id: 'brief',
-          tag: 'Morning brief',
-          icon: 'sunrise',
-          prompt: "Summarize today's app & device health for my standup.",
-          sources: ['deployments','devices','events','users'],
-          window: 'Last 24 hours · all zones',
+          id: 'adoption',
+          tag: 'Adoption & cost',
+          icon: 'wallet',
+          prompt: "Which apps are we paying for but barely using — and where are users blocked from apps they should have?",
+          sources: ['licenses','events','identities','users'],
+          window: 'Snapshot on refresh · trailing 90 days · all tenants',
+          scopeEnvs: ['Intune','ConfigMgr','Citrix','AVD / W365','macOS','Jamf'],
+          scopeDevices: ['Windows','Windows on ARM','macOS','Virtual Desktop','Cloud PC / W365','BYOD','Browser-Based'],
+          headline: 'Reclaim candidates and access friction — both visible in one answer.',
+          table: {
+            columns: [
+              { label: 'Item',              align: 'left' },
+              { label: 'Install / Launch',  align: 'left' },
+              { label: 'Where it lives',    align: 'left' },
+              { label: 'Status',            align: 'left' },
+              { label: 'Annual cost',       align: 'right' },
+            ],
+            rows: [
+              {
+                icon: 'image', tone: 'warn',
+                cells: [
+                  '<strong>Adobe Creative Cloud</strong>',
+                  '312 installs<span class="ai-table-sub"> · &lt;5 launches per quarter</span>',
+                  'Intune · Jamf · Citrix',
+                  '<span class="ai-pill ai-pill-warn">Reclaim candidate</span>',
+                  '<strong>~$58K</strong><span class="ai-table-sub">/yr</span>'
+                ]
+              },
+              {
+                icon: 'workflow', tone: 'warn',
+                cells: [
+                  '<strong>Visio Plan 2</strong>',
+                  '87 installs<span class="ai-table-sub"> · no launches 90+ days</span>',
+                  'ConfigMgr · AVD / W365 <span class="ai-table-sub">(Field Services)</span>',
+                  '<span class="ai-pill ai-pill-warn">Reclaim candidate</span>',
+                  '<strong>~$24K</strong><span class="ai-table-sub">/yr</span>'
+                ]
+              },
+              {
+                icon: 'user-x', tone: 'risk',
+                cells: [
+                  '<strong>Access friction</strong>',
+                  '47 users<span class="ai-table-sub"> · denied / failed logins · 7 d</span>',
+                  'Tableau <span class="ai-table-sub">(Cloud PC)</span> · Salesforce <span class="ai-table-sub">(Browser)</span>',
+                  '<span class="ai-pill ai-pill-risk">Identity-Based Access misalignment</span>',
+                  '<span class="ai-table-sub">—</span>'
+                ]
+              },
+            ],
+            footnote: 'Reclaim figures are <strong>candidates</strong> — verify contract terms before action.'
+          },
+          impact: 'Reclaim candidates surface as questions, not quarterly audits — finance and end users both win.'
+        },
+        {
+          id: 'currency',
+          tag: 'Currency & exposure',
+          icon: 'shield-alert',
+          prompt: "Which apps are out of date or unpatched, on which devices — across Intune, ConfigMgr, Jamf, macOS, ARM and virtual?",
+          sources: ['packages','servers','devices','deployments'],
+          window: 'Snapshot on refresh · latest agent check-in · all consoles',
           scopeEnvs: ['Intune','ConfigMgr','Citrix','AVD / W365','macOS','Jamf'],
           scopeDevices: ['Windows','Windows on ARM','macOS','Virtual Desktop','Cloud PC / W365','BYOD'],
-          headline: 'Stable overall — one anomaly to act on, spanning every environment you manage.',
+          headline: 'Currency gaps cluster exactly where coverage falls through — macOS, BYOD, virtual.',
           insights: [
-            { tone:'good', icon:'activity',       label:'Install health',     value:'98.2%', delta:'\u25B2 0.4% vs. yesterday', note:'7,842 of 7,983 installs healthy — consistent across Intune, ConfigMgr, Citrix, AVD' },
-            { tone:'risk', icon:'alert-triangle', label:'Failed logins',      value:'47',    delta:'3\u00D7 normal · Zone A',    note:'42 on Intune-Windows, 5 on Cloud PC / W365 — correlates with Okta SSO change at 02:14' },
-            { tone:'warn', icon:'shield-check',   label:'Patch compliance',   value:'94%',   delta:'312 endpoints behind',       note:'218 ConfigMgr Windows + 94 Cloud PC missing KB5034122' },
+            { tone:'risk', icon:'monitor-down',  label:'Outdated Windows builds',  value:'218', delta:'22H2 \u2192 23H2 missing',   note:'184 ConfigMgr Windows + 34 Cloud PC / W365 — Agent Info shows Last Seen current, just unpatched.' },
+            { tone:'risk', icon:'laptop-minimal',label:'macOS apps unpatched',     value:'94',  delta:'Jamf · 30+ days behind',     note:'Chrome, Slack, Zoom · Package Status reports current channel available but not deployed.' },
+            { tone:'warn', icon:'cpu',           label:'Virtual / ARM coverage',   value:'47 devices', delta:'Agent stale or missing', note:'31 AVD Windows on ARM + 16 Citrix VDI — Last Seen > 14 days. Compliance finding waiting to happen.' },
           ],
-          actions: [
-            { icon:'pause-circle', label:'Pause Okta rollout to Zone B' },
-            { icon:'rocket',       label:'Push KB5034122 to 312 endpoints' },
-            { icon:'send',         label:'Post brief to #it-ops in Teams' },
-          ],
-          impact: '\u2248 3 hrs of triage avoided this morning.'
+          impact: 'A board-level exposure picture — credible because the data already spans Jamf and the Microsoft estate together.'
         },
         {
-          id: 'reclaim',
-          tag: 'Cost optimization',
-          icon: 'piggy-bank',
-          prompt: "Find software licenses we pay for but don't use.",
-          sources: ['licenses','users','events','packages'],
-          window: 'Trailing 90 days · all tenants',
+          id: 'health',
+          tag: 'Deployment health',
+          icon: 'layers',
+          prompt: "What's the deployment health of Microsoft Teams across our entire estate?",
+          sources: ['deployments','devices','events'],
+          window: 'Snapshot on refresh · last 24 hours · all consoles',
           scopeEnvs: ['Intune','ConfigMgr','Citrix','AVD / W365','macOS','Jamf'],
-          scopeDevices: ['Windows','macOS','Virtual Desktop','Cloud PC / W365','Browser-Based'],
-          headline: '$94,200 / year reclaimable across 3 vendors and every delivery surface.',
+          scopeDevices: ['Windows','Windows on ARM','macOS','Virtual Desktop','Cloud PC / W365','BYOD','Browser-Based'],
+          headline: 'Teams health rolls up across every console — one answer instead of four consoles to reconcile.',
           insights: [
-            { tone:'risk', icon:'image',    label:'Adobe Creative Cloud', value:'312 seats', delta:'Unused 60+ days', note:'$58,400/yr · 184 Intune Windows + 78 Jamf macOS + 50 Citrix VDI' },
-            { tone:'risk', icon:'workflow', label:'Visio Plan 2',         value:'87 seats',  delta:'Unused 90+ days', note:'$24,800/yr · 71 ConfigMgr Windows + 16 AVD / W365 (Field services)' },
-            { tone:'warn', icon:'bar-chart',label:'Tableau Creator',      value:'34 seats',  delta:'Unused 45+ days', note:'$11,000/yr · 22 Cloud PC + 12 Browser-Based (Finance)' },
+            { tone:'good', icon:'activity',    label:'Install Health %',     value:'98.2%', delta:'7,842 / 7,983 healthy',     note:'Endpoint Info reconciled across Intune, ConfigMgr, Citrix, AVD / W365, Jamf — no manual stitching.' },
+            { tone:'warn', icon:'play-circle', label:'Launch Health %',      value:'93.4%', delta:'Soft regression on macOS',  note:'App Status: Jamf-managed Macs at 87% launches. Distribution Success is 99%, so the gap is post-install, not delivery.' },
+            { tone:'good', icon:'truck',       label:'Distribution Success', value:'99.4%', delta:'Stable across surfaces',    note:'All package targets reached, including ARM, Cloud PC / W365, and Browser-Based delivery.' },
           ],
-          actions: [
-            { icon:'recycle',    label:'Generate 7-day reclaim policy' },
-            { icon:'mail',       label:'Notify 433 users (Outlook)' },
-            { icon:'file-text',  label:'Export reclaim plan for finance' },
-          ],
-          impact: 'Pays back one quarter of Application Workspace.'
-        },
-        {
-          id: 'audit',
-          tag: 'Compliance investigation',
-          icon: 'shield-alert',
-          prompt: "Which devices failed last night's scan, and why?",
-          sources: ['devices','packages','servers','deployments'],
-          window: 'Scan window 22:00 \u2192 04:00 UTC',
-          scopeEnvs: ['Intune','ConfigMgr','Jamf','AVD / W365'],
-          scopeDevices: ['Windows','Windows on ARM','macOS','Cloud PC / W365','BYOD'],
-          headline: '47 devices flagged across 4 management surfaces · 3 root causes · 43 one-click fixable.',
-          insights: [
-            { tone:'risk', icon:'cpu',          label:'Missing endpoint agent',  value:'31', delta:'Engineering subnet', note:'24 ConfigMgr Windows + 7 BYOD — re-deploy Recast agent from Setup Store' },
-            { tone:'warn', icon:'monitor-down', label:'Outdated Windows build',  value:'12', delta:'22H2 \u2192 23H2',   note:'8 Intune Windows + 4 Cloud PC / W365 — patch via Right Click Tools \u2192 Compliance' },
-            { tone:'warn', icon:'lock',         label:'BitLocker / FileVault',   value:'4',  delta:'Awaiting key escrow', note:'2 Intune Windows + 2 Jamf macOS — reissue policy via management plane' },
-          ],
-          actions: [
-            { icon:'zap',          label:'Auto-remediate 43 with one click' },
-            { icon:'external-link',label:'Open device list in Right Click Tools' },
-            { icon:'file-check',   label:'Export evidence pack (SOC2)' },
-          ],
-          impact: 'Closes audit gap 9 days before SOC2 review.'
+          impact: "The view Copilot couldn't produce against the raw consoles — Recast's normalization is the unlock."
         },
       ];
 
@@ -9039,45 +9171,58 @@
                             </div>
                           </div>
                         </div>
-                        <div class="ai-insights">
-                          ${s.insights.map((it, i) => `
-                            <div class="ai-insight ai-tone-${it.tone}">
-                              <div class="ai-insight-icon"><i data-lucide="${it.icon}" class="w-3.5 h-3.5"></i></div>
-                              <div class="ai-insight-body">
-                                <div class="ai-insight-top">
-                                  <span class="ai-insight-label">${it.label}</span>
-                                  <span class="ai-insight-value">${it.value}</span>
+                        ${s.table ? `
+                          <div class="ai-table-wrap">
+                            <table class="ai-table">
+                              <thead>
+                                <tr>
+                                  ${s.table.columns.map(c => `<th class="ai-table-th ai-align-${c.align||'left'}">${c.label}</th>`).join('')}
+                                </tr>
+                              </thead>
+                              <tbody>
+                                ${s.table.rows.map(r => `
+                                  <tr class="ai-table-row ai-tone-${r.tone}">
+                                    ${r.cells.map((cell, ci) => `
+                                      <td class="ai-table-td ai-align-${(s.table.columns[ci] && s.table.columns[ci].align) || 'left'}">
+                                        ${ci === 0 && r.icon ? `<span class="ai-table-icon"><i data-lucide="${r.icon}" class="w-3.5 h-3.5"></i></span>` : ''}
+                                        <span class="ai-table-cell">${cell}</span>
+                                      </td>
+                                    `).join('')}
+                                  </tr>
+                                `).join('')}
+                              </tbody>
+                            </table>
+                            ${s.table.footnote ? `<div class="ai-table-footnote"><i data-lucide="info" class="w-3 h-3"></i> ${s.table.footnote}</div>` : ''}
+                          </div>
+                        ` : `
+                          <div class="ai-insights">
+                            ${s.insights.map((it, i) => `
+                              <div class="ai-insight ai-tone-${it.tone}">
+                                <div class="ai-insight-icon"><i data-lucide="${it.icon}" class="w-3.5 h-3.5"></i></div>
+                                <div class="ai-insight-body">
+                                  <div class="ai-insight-top">
+                                    <span class="ai-insight-label">${it.label}</span>
+                                    <span class="ai-insight-value">${it.value}</span>
+                                  </div>
+                                  <div class="ai-insight-delta">${it.delta}</div>
+                                  <div class="ai-insight-note">${it.note}</div>
                                 </div>
-                                <div class="ai-insight-delta">${it.delta}</div>
-                                <div class="ai-insight-note">${it.note}</div>
                               </div>
-                            </div>
-                          `).join('')}
-                        </div>
+                            `).join('')}
+                          </div>
+                        `}
                       </div>
                     ` : ''}
 
                     ${showActions ? `` : ''}
 
-                    ${showImpact ? `<div class="ai-impact"><i data-lucide="trending-up" class="w-3.5 h-3.5"></i> ${s.impact}</div>` : ''}
+                    ${showImpact ? `` : ''}
 
                   </div>
                 </div>
               </div>
 
-              ${showImpact ? (() => {
-                const nextIdx = (sIdx + 1) % AI_SCENARIOS.length;
-                const isLast = sIdx === AI_SCENARIOS.length - 1;
-                const next = AI_SCENARIOS[nextIdx];
-                return `
-                  <div class="ai-next-cue">
-                    <span class="ai-next-arrow"><i data-lucide="${isLast ? 'rotate-ccw' : 'arrow-right'}" class="w-3 h-3"></i></span>
-                    ${isLast
-                      ? `That's all three scenarios. Tap any tab above to replay.`
-                      : `Want to try another? Tap <button type="button" data-action="ai-pick-scenario" data-idx="${nextIdx}" class="ai-next-link"><i data-lucide="${next.icon}" class="w-3 h-3"></i> ${next.tag}</button> to continue.`}
-                  </div>
-                `;
-              })() : ''}
+              ${showImpact && sIdx === AI_SCENARIOS.length - 1 ? `` : ''}
 
             </div>
           </div>
@@ -9463,15 +9608,16 @@
 
       /* ========== AI COPILOT ANIMATION ENGINE ========== */
       // Each Auto/Step play runs ONE scenario only. User clicks the next
-      // scenario tab to play that one.
+      // scenario tab to play that one. Prompt is shown immediately, so the
+      // queue picks up at 'thinking' to avoid an empty-state flash.
       function buildAiQueue(){
         const queue = [];
-        const phases = ['prompt','thinking','sources','answer','actions','done'];
-        const delays = [1400, 1600, 1400, 1900, 1500, 800];
+        const phases = ['thinking','sources','answer','done'];
+        const delays = [1200, 1300, 1700, 600];
         phases.forEach((phase, i) => {
           queue.push({ delay: delays[i], fn(){ STATE.aiPhase = phase; scrollPreserveRender(); } });
         });
-        queue.push({ delay: 400, fn(){ STATE.aiRunning = false; STATE.aiPaused = false; scrollPreserveRender(); } });
+        queue.push({ delay: 300, fn(){ STATE.aiRunning = false; STATE.aiPaused = false; scrollPreserveRender(); } });
         return queue;
       }
 
@@ -9493,8 +9639,8 @@
         STATE.flowTimers.timeouts = [];
         STATE.aiRunning = true;
         STATE.aiPaused = false;
-        STATE.aiPhase = 'idle';
-        // Keep current scenario index; user controls scenario via tabs.
+        // Show the user's prompt immediately so there's no empty-state flash.
+        STATE.aiPhase = 'prompt';
         STATE.aiQueue = buildAiQueue();
         STATE.aiQueueIdx = 0;
         scrollPreserveRender();
@@ -11718,10 +11864,9 @@
               STATE.aiRunning = false;
               STATE.aiPaused = false;
               STATE.aiScenarioIdx = idx;
-              STATE.aiPhase = 'idle';
+              STATE.aiPhase = 'prompt';  // Show user message immediately, no idle flash.
               STATE.aiQueue = [];
               STATE.aiQueueIdx = 0;
-              scrollPreserveRender();
               startAi();
             }
             return;
