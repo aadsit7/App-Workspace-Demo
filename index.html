@@ -9538,17 +9538,21 @@
       }
 
       const ROI_ASSUMPTIONS = {
-        conservative: { ticketReduction: 0.20, pkgReduction: 0.35, patchReduction: 0.30, strategicRealloc: 0.40, fteHours: 1920, uxShare: 0.55, dashShare: 0.20, mtShare: 0.25, label: 'Conservative' },
-        expected:     { ticketReduction: 0.70, pkgReduction: 0.50, patchReduction: 0.45, strategicRealloc: 0.50, fteHours: 1920, uxShare: 0.55, dashShare: 0.20, mtShare: 0.25, label: 'Expected' },
-        high:         { ticketReduction: 0.90, pkgReduction: 0.65, patchReduction: 0.60, strategicRealloc: 0.70, fteHours: 1920, uxShare: 0.55, dashShare: 0.20, mtShare: 0.25, label: 'High' },
+        conservative: { ticketReduction: 0.20, strategicRealloc: 0.40, fteHours: 1920, uxShare: 0.55, dashShare: 0.20, mtShare: 0.25, label: 'Conservative' },
+        expected:     { ticketReduction: 0.70, strategicRealloc: 0.50, fteHours: 1920, uxShare: 0.55, dashShare: 0.20, mtShare: 0.25, label: 'Expected' },
+        high:         { ticketReduction: 0.90, strategicRealloc: 0.70, fteHours: 1920, uxShare: 0.55, dashShare: 0.20, mtShare: 0.25, label: 'High' },
       };
 
-      // Field-test packaging benchmarks. AW: 3 standard apps in 38 min = 0.21 hrs each; 3.0 hrs per complex app.
-      // Traditional: 27 hrs total − 14 hrs (complex) = 13 hrs across 3 standard apps = 4.33 hrs each; 14.0 hrs per complex.
+      // Field-test packaging benchmarks. AW: 3 standard apps in 38 min
+      // (38/180 ≈ 0.2111 hrs each); 3.0 hrs per complex app.
+      // Traditional: 27 hrs total − 14 hrs (complex) = 13 hrs across 3
+      // standard apps (13/3 ≈ 4.3333 hrs each); 14.0 hrs per complex.
+      // These four numbers drive the Managed apps / Custom packaging
+      // bar reductions: 1 − 0.2111/4.3333 = 95.1%, 1 − 3.0/14.0 = 78.6%.
       const PACKAGING_BENCHMARKS = {
-        awStdHrs: 0.21,
+        awStdHrs: 0.2111,
         awComplexHrs: 3.0,
-        tradStdHrs: 4.33,
+        tradStdHrs: 4.3333,
         tradComplexHrs: 14.0
       };
 
@@ -9775,10 +9779,13 @@
         y += 46;
         y = secBarFull(y, 'WHERE IT COMES FROM');
         y += 6;
+        const pkgPatchPct = (ci.pkgHours + ci.patchHours) > 0
+          ? Math.round(((r.pkgHoursReturned + r.patchHoursReturned) / (ci.pkgHours + ci.patchHours)) * 100)
+          : 0;
         const bars = [
           {label:'Support & tickets', hrs: r.ticketHoursReturned, pct: Math.round(a.ticketReduction*100), detail: num(r.ticketsAvoided)+' tickets avoided per month', color: GR},
-          {label:'Packaging', hrs: r.pkgHoursReturned, pct: Math.round(a.pkgReduction*100), detail: Math.round(a.pkgReduction*100)+'% reduction across '+ci.envs+' environments', color: PB},
-          {label:'Patching', hrs: r.patchHoursReturned, pct: Math.round(a.patchReduction*100), detail: 'Staged pipeline replaces per-platform rebuilds', color: AC}
+          {label:'Packaging', hrs: r.pkgHoursReturned, pct: pkgPatchPct, detail: 'Field-test rates: 95% standard, 79% complex apps', color: PB},
+          {label:'Patching', hrs: r.patchHoursReturned, pct: pkgPatchPct, detail: 'Staged pipeline replaces per-platform rebuilds', color: AC}
         ];
         bars.forEach(b => {
           doc.setFont('Helvetica','bold'); doc.setFontSize(10); setC(DT); doc.text(b.label, ML, y + 9);
@@ -9885,7 +9892,7 @@
         doc.text('Prepared for ' + companyName + '  \u00b7  ' + num(ci.users) + ' employees  \u00b7  ' + ci.envs + ' environments  \u00b7  ' + ci.apps + ' apps  \u00b7  ' + a.label + ' scenario', ML, y + 4);
         y += 11;
         doc.setFontSize(7);
-        doc.text('Ticket reduction: ' + Math.round(a.ticketReduction*100) + '%  \u00b7  Packaging: ' + Math.round(a.pkgReduction*100) + '%  \u00b7  Patching: ' + Math.round(a.patchReduction*100) + '%  \u00b7  Strategic reallocation: ' + Math.round(a.strategicRealloc*100) + '%', ML, y + 4);
+        doc.text('Ticket reduction: ' + Math.round(a.ticketReduction*100) + '%  \u00b7  Catalog apps: ' + Math.round((r.catalogReductionRate||0)*100) + '%  \u00b7  Custom apps: ' + Math.round((r.customReductionRate||0)*100) + '%  \u00b7  Strategic reallocation: ' + Math.round(a.strategicRealloc*100) + '%', ML, y + 4);
         y += 9;
         doc.text('Generated from Recast Software Business Impact Model  \u00b7  ' + today, ML, y + 4);
         drawFooter(2);
@@ -9940,8 +9947,6 @@
                   <div class="bi-assumptions-title" style="margin-top:16px">Reduction rates (%)</div>
                   <div class="bi-assumptions-grid four">
                     <label class="bi-rate"><span>Ticket reduction</span><input type="number" id="asn-ticket" min="0" max="100" value="${Math.round(a.ticketReduction * 100)}"></label>
-                    <label class="bi-rate"><span>Packaging reduction</span><input type="number" id="asn-pkg" min="0" max="100" value="${Math.round(a.pkgReduction * 100)}"></label>
-                    <label class="bi-rate"><span>Patching reduction</span><input type="number" id="asn-patch" min="0" max="100" value="${Math.round(a.patchReduction * 100)}"></label>
                     <label class="bi-rate"><span>Strategic reallocation</span><input type="number" id="asn-strategic" min="0" max="100" value="${Math.round(a.strategicRealloc * 100)}"></label>
                   </div>
                   <div class="bi-assumptions-title" style="margin-top:16px">Support-hours allocation (%) — drives UX / Dashboarding / Multi-tenant bars</div>
@@ -10024,32 +10029,28 @@
         const a = ROI_ASSUMPTIONS[STATE.calcScenario];
         const ci = STATE.calcInputs;
 
-        // ── 5-bar partition. Built from the engine's RAW monthly hours
-        // so the parts sum to the engine totals exactly. Largest-remainder
-        // rounding then locks the displayed integers to those totals, so
-        // the bar chart, the summary strip, and the Speed/Scale/Risk
-        // cards can never disagree about how many hours come back. ──
-        const apps = Math.max(1, ci.apps);
-        const customShare = Math.min(1, ci.customApps / apps);
-        const catalogShare = 1 - customShare;
-        // Support hours split across UX, dashboarding, multi-tenant — from assumptions.
-        // Normalized so the three always sum to 1, even if the user enters off-totals.
+        // ── 5-bar partition. Managed apps + Custom packaging come
+        // straight from the engine's catalog/custom split (field-test
+        // benchmarks: standard apps 95.1% faster, complex apps 78.6%
+        // faster). Support hours split into UX / Dashboarding /
+        // Multi-tenant via the assumption shares. Largest-remainder
+        // rounding then locks the rounded bars to the rounded engine
+        // totals so the bar chart, summary strip, and Speed/Scale/Risk
+        // cards always agree. ──
         const shareSum = (a.uxShare + a.dashShare + a.mtShare) || 1;
         const uxShare = a.uxShare / shareSum;
         const dashShare = a.dashShare / shareSum;
         const mtShare = a.mtShare / shareSum;
 
-        const pkgPatchOldRaw = ci.pkgHours + ci.patchHours;
-        const pkgPatchRetRaw = r.pkgRetRaw + r.patchRetRaw;
-        const supOldRaw      = r.currentSupportHoursRaw;
-        const supRetRaw      = r.supportRetRaw;
+        const supOldRaw = r.currentSupportHoursRaw;
+        const supRetRaw = r.supportRetRaw;
 
         const rawBars = [
-          { label: 'Managed apps',     sub: 'Deploy + lifecycle',     old: pkgPatchOldRaw * catalogShare, ret: pkgPatchRetRaw * catalogShare },
-          { label: 'Custom packaging', sub: 'In-house apps',          old: pkgPatchOldRaw * customShare,  ret: pkgPatchRetRaw * customShare  },
-          { label: 'User experience',  sub: 'Self-serve + auth',      old: supOldRaw * uxShare,           ret: supRetRaw * uxShare           },
-          { label: 'Dashboarding',     sub: 'Reporting + audit',      old: supOldRaw * dashShare,         ret: supRetRaw * dashShare         },
-          { label: 'Multi-tenant',     sub: 'Cross-env consistency',  old: supOldRaw * mtShare,           ret: supRetRaw * mtShare           },
+          { label: 'Managed apps',     sub: 'Standard / catalog apps',  old: r.catalogHoursRaw, ret: r.catalogRetRaw },
+          { label: 'Custom packaging', sub: 'Complex / in-house apps',  old: r.customHoursRaw,  ret: r.customRetRaw  },
+          { label: 'User experience',  sub: 'Self-serve + auth',        old: supOldRaw * uxShare,   ret: supRetRaw * uxShare   },
+          { label: 'Dashboarding',     sub: 'Reporting + audit',        old: supOldRaw * dashShare, ret: supRetRaw * dashShare },
+          { label: 'Multi-tenant',     sub: 'Cross-env consistency',    old: supOldRaw * mtShare,   ret: supRetRaw * mtShare   },
         ];
 
         // Largest-remainder rounding: floor each part, then distribute
@@ -10077,12 +10078,22 @@
           if (newParts[i] > oldParts[i]) newParts[i] = oldParts[i];
         }
 
+        // Format pct to 1 decimal, drop the decimal when it's a whole number.
+        // The catalog/custom bars expose the field-test reduction directly
+        // (so a reviewer can see "95.1%" / "78.6%" without scraping the
+        // bar pixel ratio); other bars use their raw old/ret ratio.
+        const fmtPct = n => {
+          const v = Math.round(n * 10) / 10;
+          return (v % 1 === 0) ? String(v.toFixed(0)) : v.toFixed(1);
+        };
         const bars = rawBars.map((b, i) => {
           const oldR = oldParts[i];
           const neww = newParts[i];
           const reclaimed = oldR - neww;
-          const pct = oldR > 0 ? Math.round((reclaimed / oldR) * 100) : 0;
-          return { label: b.label, sub: b.sub, old: oldR, neww, reclaimed, pct };
+          const pctRaw = b.old > 0 ? (b.ret / b.old) * 100 : 0;
+          const pctStr = fmtPct(pctRaw);
+          const pctNum = Math.round(pctRaw);
+          return { label: b.label, sub: b.sub, old: oldR, neww, reclaimed, pctStr, pctNum };
         });
 
         const pctReduction = oldTotal ? Math.round((totalReturned / oldTotal) * 100) : 0;
@@ -10107,7 +10118,8 @@
         const ticks = Array.from({length: tickCount}, (_, i) => Math.round(i * tickStep));
 
         const barRow = (b) => {
-          const tip = `${b.label}: ${num(b.old)} hrs today → ${num(b.neww)} hrs with App Workspace (−${b.pct}%, ${num(b.reclaimed)} hrs reclaimed)`;
+          const tip = `${b.label}: ${num(b.old)} hrs today → ${num(b.neww)} hrs with App Workspace (−${b.pctStr}%, ${num(b.reclaimed)} hrs reclaimed)`;
+          const isFlat = b.pctNum === 0;
           return `
           <div class="bi-compare-row" title="${tip}">
             <div class="bi-compare-label">
@@ -10125,7 +10137,7 @@
               </div>
             </div>
             <div class="bi-compare-stat">
-              <span class="bi-compare-stat-pct${b.pct === 0 ? ' is-flat' : ''}">${b.pct > 0 ? '−' : ''}${b.pct}%</span>
+              <span class="bi-compare-stat-pct${isFlat ? ' is-flat' : ''}">${isFlat ? '' : '−'}${b.pctStr}%</span>
               <span class="bi-compare-stat-sub">${num(b.reclaimed)} hrs reclaimed</span>
             </div>
           </div>`;
@@ -10321,16 +10333,38 @@
         const a = ROI_ASSUMPTIONS[STATE.calcScenario];
 
         // ─── Raw (unrounded) monthly hours — canonical source of truth.
-        // The view layer partitions these into bars and only rounds at
-        // render time (with largest-remainder so parts sum to the whole).
-        // Rounded display fields below are derived from the raws so the
-        // headline, the bars, and the cards can never drift apart.
+        // Packaging+patching reclaim is driven by field-test benchmarks
+        // (PACKAGING_BENCHMARKS): catalog/managed apps follow the
+        // standard-app ratio (AW hrs ÷ Traditional hrs), custom apps
+        // follow the complex-app ratio. The pool of pkg+patch hours is
+        // split by app count (customApps / apps), each side gets its
+        // own reduction rate, and the two reclaims sum to the engine
+        // pkg+patch total. pkgRetRaw / patchRetRaw are then derived as
+        // proportional shares so back-compat fields stay consistent.
+        const pb_ = PACKAGING_BENCHMARKS;
+        const catalogReductionRate = pb_.tradStdHrs     > 0 ? Math.max(0, 1 - pb_.awStdHrs     / pb_.tradStdHrs)     : 0;
+        const customReductionRate  = pb_.tradComplexHrs > 0 ? Math.max(0, 1 - pb_.awComplexHrs / pb_.tradComplexHrs) : 0;
+        const appsCount    = Math.max(1, ci.apps);
+        const customAppShare  = Math.min(1, Math.max(0, ci.customApps / appsCount));
+        const catalogAppShare = 1 - customAppShare;
+
         const currentSupportHoursRaw = (ci.monthlyTickets * ci.avgTicketMins) / 60;
         const supportRetRaw = currentSupportHoursRaw * a.ticketReduction;
-        const pkgRetRaw     = ci.pkgHours  * a.pkgReduction;
-        const patchRetRaw   = ci.patchHours * a.patchReduction;
-        const totalRetRaw   = supportRetRaw + pkgRetRaw + patchRetRaw;
-        const baselineRaw   = currentSupportHoursRaw + ci.pkgHours + ci.patchHours;
+
+        const pkgPatchOldRaw = ci.pkgHours + ci.patchHours;
+        const catalogHoursRaw = pkgPatchOldRaw * catalogAppShare;
+        const customHoursRaw  = pkgPatchOldRaw * customAppShare;
+        const catalogRetRaw   = catalogHoursRaw * catalogReductionRate;
+        const customRetRaw    = customHoursRaw  * customReductionRate;
+        const pkgPatchRetRaw  = catalogRetRaw + customRetRaw;
+        // Blended rate so the activity-type fields (pkgRetRaw, patchRetRaw)
+        // sum exactly to pkgPatchRetRaw. Same blended rate on both pools.
+        const pkgPatchBlendedRate = pkgPatchOldRaw > 0 ? pkgPatchRetRaw / pkgPatchOldRaw : 0;
+        const pkgRetRaw   = ci.pkgHours   * pkgPatchBlendedRate;
+        const patchRetRaw = ci.patchHours * pkgPatchBlendedRate;
+
+        const totalRetRaw   = supportRetRaw + pkgPatchRetRaw;
+        const baselineRaw   = currentSupportHoursRaw + pkgPatchOldRaw;
 
         const currentSupportHours = Math.round(currentSupportHoursRaw);
         const ticketHoursReturned = Math.round(supportRetRaw);
@@ -10361,21 +10395,19 @@
         // AW_Hours       = (Std × awStd) + (Complex × awComplex)
         // Trad_Hours     = (Std × tradStd) + (Complex × tradComplex)
         // Hours_Saved    = Trad − AW;   Time_Multiple = Trad ÷ AW;   $_Saved = Hours_Saved × rate
-        const pb = PACKAGING_BENCHMARKS;
         const complexMix = Math.max(0, Math.min(1, (ci.complexMixPct ?? 20) / 100));
         const standardMix = 1 - complexMix;
-        const apps = Math.max(1, ci.apps);
-        const cycleStandardApps = Math.round(apps * standardMix);
-        const cycleComplexApps  = Math.max(0, apps - cycleStandardApps);
-        const awCycleHours      = (cycleStandardApps * pb.awStdHrs)   + (cycleComplexApps * pb.awComplexHrs);
-        const tradCycleHours    = (cycleStandardApps * pb.tradStdHrs) + (cycleComplexApps * pb.tradComplexHrs);
+        const cycleStandardApps = Math.round(appsCount * standardMix);
+        const cycleComplexApps  = Math.max(0, appsCount - cycleStandardApps);
+        const awCycleHours      = (cycleStandardApps * pb_.awStdHrs)   + (cycleComplexApps * pb_.awComplexHrs);
+        const tradCycleHours    = (cycleStandardApps * pb_.tradStdHrs) + (cycleComplexApps * pb_.tradComplexHrs);
         const cycleHoursSaved   = Math.max(0, tradCycleHours - awCycleHours);
         const cycleTimeMultiple = awCycleHours > 0 ? (tradCycleHours / awCycleHours) : 0;
         const cycleDollarsSaved = Math.round(cycleHoursSaved * rate);
 
         // Blended per-app build time (drives the Speed hero).
-        const awBlendedHrs   = standardMix * pb.awStdHrs   + complexMix * pb.awComplexHrs;
-        const tradBlendedHrs = standardMix * pb.tradStdHrs + complexMix * pb.tradComplexHrs;
+        const awBlendedHrs   = standardMix * pb_.awStdHrs   + complexMix * pb_.awComplexHrs;
+        const tradBlendedHrs = standardMix * pb_.tradStdHrs + complexMix * pb_.tradComplexHrs;
         const pctFaster      = tradBlendedHrs > 0 ? Math.round((1 - awBlendedHrs / tradBlendedHrs) * 100) : 0;
 
         // Delivery touchpoints — apps × envs they ship to. A typical
@@ -10409,6 +10441,10 @@
         STATE.calcResult = {
           // Raw monthly hours — the view-layer partition is built from these
           currentSupportHoursRaw, supportRetRaw, pkgRetRaw, patchRetRaw, totalRetRaw, baselineRaw,
+          // Catalog/custom (field-test driven) — feeds the Managed apps + Custom packaging bars
+          catalogReductionRate, customReductionRate,
+          catalogHoursRaw, customHoursRaw, catalogRetRaw, customRetRaw,
+          pkgPatchBlendedRate,
           // Rounded for direct display
           currentSupportHours, ticketHoursReturned, ticketsAvoided, pkgHoursReturned, patchHoursReturned,
           totalHoursMonth, totalHoursYear, fteCapacity, strategicHours, reqsDeferred, delayedInitiatives,
@@ -10788,9 +10824,9 @@
           if (action === 'toggle-assumptions') { STATE.showAssumptions = !STATE.showAssumptions; render(); return; }
           if (action === 'save-assumptions') {
             const sc = STATE.calcScenario; const clamp = (v) => Math.max(0, Math.min(100, cleanNum(v))) / 100;
-            const t = document.getElementById('asn-ticket'); const p = document.getElementById('asn-pkg'); const pa = document.getElementById('asn-patch'); const s = document.getElementById('asn-strategic');
+            const t = document.getElementById('asn-ticket'); const s = document.getElementById('asn-strategic');
             const ux = document.getElementById('asn-ux'); const dh = document.getElementById('asn-dash'); const mt = document.getElementById('asn-mt');
-            if (t) ROI_ASSUMPTIONS[sc].ticketReduction = clamp(t.value); if (p) ROI_ASSUMPTIONS[sc].pkgReduction = clamp(p.value); if (pa) ROI_ASSUMPTIONS[sc].patchReduction = clamp(pa.value); if (s) ROI_ASSUMPTIONS[sc].strategicRealloc = clamp(s.value);
+            if (t) ROI_ASSUMPTIONS[sc].ticketReduction = clamp(t.value); if (s) ROI_ASSUMPTIONS[sc].strategicRealloc = clamp(s.value);
             if (ux) ROI_ASSUMPTIONS[sc].uxShare = clamp(ux.value); if (dh) ROI_ASSUMPTIONS[sc].dashShare = clamp(dh.value); if (mt) ROI_ASSUMPTIONS[sc].mtShare = clamp(mt.value);
             // Packaging cycle inputs + per-app benchmarks
             const cmix = document.getElementById('asn-complex-mix'); const lrate = document.getElementById('asn-loaded-rate');
