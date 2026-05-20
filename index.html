@@ -4401,49 +4401,6 @@
         border-radius: 1px;
         flex-shrink: 0;
       }
-      .bi-section-eyebrow.is-cycle::before { background: #B45309; }
-      .bi-section-eyebrow.is-compound::before { background: #047857; }
-      .bi-section-eyebrow.is-toggle {
-        background: none;
-        border: 0;
-        cursor: pointer;
-        font: inherit;
-        color: inherit;
-        letter-spacing: inherit;
-        text-transform: inherit;
-        text-align: left;
-        padding: 5px 10px 5px 0;
-        margin-left: 0;
-        width: fit-content;
-        border-radius: 6px;
-        transition: color 150ms, background 150ms;
-      }
-      .bi-section-eyebrow.is-toggle:hover {
-        color: var(--r-ink);
-        background: rgba(15, 23, 42, 0.04);
-      }
-      .bi-section-eyebrow.is-toggle:focus-visible {
-        outline: 2px solid var(--r-blue);
-        outline-offset: 2px;
-      }
-      .bi-section-chevron {
-        width: 13px;
-        height: 13px;
-        stroke: currentColor;
-        stroke-width: 2;
-        stroke-linecap: round;
-        stroke-linejoin: round;
-        fill: none;
-        transition: transform 200ms cubic-bezier(.2,.8,.2,1);
-        flex-shrink: 0;
-        opacity: 0.7;
-      }
-      .bi-section-eyebrow.is-toggle:hover .bi-section-chevron { opacity: 1; }
-      .bi-section-eyebrow.is-toggle[aria-expanded="false"] .bi-section-chevron {
-        transform: rotate(-90deg);
-      }
-      .bi-section-content.is-collapsed { display: none; }
-
       /* Compounding-value card — stacks one-time + recurring across Year 1, 2, 3 */
       .bi-compound {
         background: #fff;
@@ -4598,215 +4555,168 @@
         #panel-roi .bi-compound-inputs { padding: 8px 12px !important; margin-bottom: 12px !important; }
       }
 
-      /* ─── Environment Impact (right-column replacement for 3-year horizon) ─── */
-      .bi-envi { display: flex; flex-direction: column; gap: 14px; padding: 16px; background: var(--r-surface); border: 1px solid var(--r-divider); border-radius: 12px; }
-      .bi-envi-head { display: flex; flex-direction: column; gap: 4px; }
-      .bi-envi-title { font-size: 16px; font-weight: 700; color: var(--r-ink); line-height: 1.35; }
-      .bi-envi-sub { font-size: 12px; color: var(--r-ink-2); line-height: 1.5; }
-      .bi-envi-chips { display: flex; flex-wrap: wrap; gap: 5px; }
-      .bi-envi-chip { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px 3px 3px; background: var(--r-surface); border: 1px solid var(--r-divider); border-radius: 999px; font-size: 11px; font-weight: 600; color: var(--r-ink-2); cursor: pointer; transition: all 150ms ease; user-select: none; line-height: 1; }
-      .bi-envi-chip:hover { border-color: var(--r-blue); color: var(--r-ink); box-shadow: 0 1px 3px rgba(0,0,204,0.08); }
-      .bi-envi-chip.is-active { background: #EEF2FF; color: var(--r-blue); border-color: var(--r-blue); }
-      .bi-envi-chip-logo { width: 20px; height: 20px; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; }
-      .bi-envi-chip-logo svg { width: 100%; height: 100%; display: block; }
-      .bi-envi-chip-check { width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid #C8D0E0; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; transition: all 150ms ease; }
-      .bi-envi-chip.is-active .bi-envi-chip-check { background: var(--r-blue); border-color: var(--r-blue); }
-      .bi-envi-chip.is-active .bi-envi-chip-check::after { content: ''; width: 4px; height: 4px; background: white; border-radius: 50%; display: block; }
-      .bi-envi-eq { background: var(--r-quote-bg); border: 1px solid #DAE3F2; border-radius: 8px; padding: 11px 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
-      .bi-envi-eq-text { font-size: 12px; color: var(--r-ink); line-height: 1.5; }
-      .bi-envi-eq-text strong { color: var(--r-blue); font-weight: 700; }
-      .bi-envi-eq-result { font-size: 14px; font-weight: 700; color: var(--r-blue); white-space: nowrap; }
-      .bi-envi-mode { display: flex; gap: 6px; }
-      .bi-envi-mode-btn { flex: 1; padding: 10px 12px; background: var(--r-surface); border: 1px solid var(--r-divider); border-radius: 8px; font-size: 12px; font-weight: 600; color: var(--r-ink-2); cursor: pointer; transition: all 150ms ease; text-align: center; font-family: inherit; }
-      .bi-envi-mode-btn:hover { border-color: var(--r-blue); }
-      .bi-envi-mode-btn.is-active.is-today { background: #F8FAFC; border-color: #CBD5E1; color: #334155; }
-      .bi-envi-mode-btn.is-active.is-aw { background: #EEF2FF; border-color: #C7D2FE; color: #3730A3; }
-
-      /* ── Persona ribbon — five "who wins" chips above the stage ──
-         The five-up grid stays five-up at every breakpoint. Each chip is
-         a constant shape; only its color shifts between modes (slate-amber
-         today / indigo-cyan with AW). The transformation between modes is
-         the entire pitch for each persona. */
-      .ss-personas {
-        display: grid;
-        grid-template-columns: repeat(5, minmax(0, 1fr));
-        gap: 6px;
-      }
-      .ss-persona {
-        display: flex;
-        align-items: center;
-        gap: 7px;
-        padding: 8px 9px;
-        background: #FFFFFF;
-        border: 1px solid var(--r-divider);
-        border-radius: 8px;
-        min-width: 0;
-        transition: background 220ms ease, border-color 220ms ease;
-      }
-      .ss-persona-icon {
-        width: 22px;
-        height: 22px;
-        border-radius: 50%;
-        background: #F1F5F9;
-        color: #475569;
-        flex-shrink: 0;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        transition: background 220ms ease, color 220ms ease;
-      }
-      .ss-persona-icon svg { width: 12px; height: 12px; display: block; }
-      .ss-persona-body { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
-      .ss-persona-role {
-        font-size: 10px;
-        font-weight: 700;
-        color: #0F172A;
-        letter-spacing: 0;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-      .ss-persona-stat {
-        font-size: 11.5px;
-        font-weight: 800;
-        font-variant-numeric: tabular-nums;
-        letter-spacing: -0.01em;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        transition: color 220ms ease;
-      }
-      .ss-personas.is-today .ss-persona { background: #F8FAFC; border-color: #E2E8F0; }
-      .ss-personas.is-today .ss-persona-icon { background: #FEF3C7; color: #92400E; }
-      .ss-personas.is-today .ss-persona-stat { color: #92400E; }
-      .ss-personas.is-aw .ss-persona { background: #EEF2FF; border-color: #C7D2FE; }
-      .ss-personas.is-aw .ss-persona-icon { background: #CFFAFE; color: #155E75; }
-      .ss-personas.is-aw .ss-persona-stat { color: #155E75; }
-
-      /* ── Single-Stream stage ──
-         The SVG canvas itself sits on a soft gradient; the mechanic carries
-         the color. CSS transitions are limited to opacity/filter only —
-         elements that carry an SVG transform="" attribute must not receive
-         a CSS transform animation (CSS replaces the attribute, collapsing
-         to (0,0)). SMIL <animateMotion> handles all motion. */
-      .bi-envi-viz.ss-viz {
-        background: linear-gradient(180deg, #FBFCFE 0%, #F3F5FB 100%);
-        border: 1px solid var(--r-divider);
-        border-radius: 12px;
-        padding: 16px;
-        transition: background 320ms ease;
-      }
-      .bi-envi.is-today .bi-envi-viz.ss-viz {
-        background: linear-gradient(180deg, #FCFCFC 0%, #F5F6F8 100%);
-      }
-      .bi-envi.is-aw .bi-envi-viz.ss-viz {
-        background: linear-gradient(180deg, #FBFCFF 0%, #EEF2FF 100%);
-      }
-      .bi-envi-viz-svg { width: 100%; height: auto; display: block; }
-      .ss-svg .ss-app,
-      .ss-svg .ss-env,
-      .ss-svg .ss-badge,
-      .ss-svg .ss-flow { animation: ssSoftIn 280ms ease-out both; }
-      .ss-svg .ss-env { animation-delay: 60ms; }
-      .ss-svg .ss-badge { animation-delay: 120ms; }
-      .ss-svg .ss-env:hover { filter: drop-shadow(0 4px 10px rgba(99,102,241,0.15)); cursor: default; }
-      @keyframes ssSoftIn { from { opacity: 0; } to { opacity: 1; } }
-      .bi-envi-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-      .bi-envi-metric {
-        background: var(--r-surface);
-        border: 1px solid var(--r-divider);
-        border-radius: 8px;
-        padding: 12px 14px;
+      /* ─── Outcomes pillars: Speed / Scale / Risk ───────────────────
+         Three stacked cards on the left side of the result split.
+         Same white-card + light-border vocabulary as the rest of the
+         tab. Accent lives on the left rule only — blue / green /
+         amber — so the three categories are distinct without competing
+         with the right-hand bar chart. */
+      .bi-pillars {
         display: flex;
         flex-direction: column;
-        gap: 2px;
-        min-height: 92px;
+        gap: 12px;
       }
-      .bi-envi-metric.is-highlight { background: #F0FDF4; border-color: #BBF7D0; }
-      .bi-envi-metric-label {
+      .bi-pillar {
+        background: #fff;
+        border: 1px solid var(--r-divider);
+        border-left: 4px solid var(--r-blue);
+        border-radius: 8px;
+        padding: 14px 18px;
+        box-shadow: var(--shadow-card);
+      }
+      .bi-pillar.is-speed { border-left-color: var(--r-blue); }
+      .bi-pillar.is-scale { border-left-color: var(--r-green); }
+      .bi-pillar.is-risk  { border-left-color: var(--r-amber); }
+      .bi-pillar-head {
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+        margin-bottom: 8px;
+      }
+      .bi-pillar-eyebrow {
         font-size: 10px;
-        color: var(--r-ink-2);
-        font-weight: 700;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        margin-bottom: 4px;
-      }
-      .bi-envi-metric-value {
-        font-size: 20px;
         font-weight: 800;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--r-blue);
+      }
+      .is-scale .bi-pillar-eyebrow { color: var(--r-green); }
+      .is-risk  .bi-pillar-eyebrow { color: var(--r-amber); }
+      .bi-pillar-title {
+        font-size: 13px;
+        font-weight: 700;
         color: var(--r-ink);
-        line-height: 1.15;
+        margin: 0;
+        line-height: 1.2;
+      }
+      .bi-pillar-hero {
+        display: flex;
+        align-items: baseline;
+        gap: 12px;
+        flex-wrap: wrap;
+        padding: 2px 0 10px;
+        border-bottom: 1px solid var(--r-divider);
+        margin-bottom: 10px;
+      }
+      .bi-pillar-hero-num {
+        font-size: 30px;
+        font-weight: 800;
         letter-spacing: -0.02em;
+        color: var(--r-blue);
+        line-height: 1;
         font-variant-numeric: tabular-nums;
       }
-      .bi-envi-metric.is-highlight .bi-envi-metric-value { color: #047857; }
-      .bi-envi-metric-sub {
-        font-size: 11px;
-        font-weight: 500;
-        color: var(--r-ink-2);
-        margin-top: 2px;
-        line-height: 1.35;
+      .is-scale .bi-pillar-hero-num { color: var(--r-green); }
+      .is-risk  .bi-pillar-hero-num { color: var(--r-amber); }
+      .bi-pillar-hero-num.bi-pillar-hero-text {
+        font-size: 19px;
+        letter-spacing: -0.01em;
+        font-variant-numeric: normal;
+        line-height: 1.15;
       }
-      .bi-envi-outcomes { background: var(--r-blue); color: white; padding: 14px 16px; border-radius: 10px; }
-      .bi-envi-outcomes-label { font-size: 10px; color: var(--r-muted-blue); letter-spacing: 0.06em; font-weight: 600; margin-bottom: 6px; text-transform: uppercase; }
-      .bi-envi-outcomes-head { font-size: 13px; font-weight: 600; line-height: 1.4; margin-bottom: 10px; color: white; }
-      .bi-envi-outcomes-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
-      .bi-envi-outcome { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; padding: 9px 10px; }
-      .bi-envi-outcome-title { font-size: 11px; font-weight: 600; color: white; line-height: 1.3; }
-      .bi-envi-outcome-sub { font-size: 10px; color: var(--r-muted-blue); line-height: 1.4; margin-top: 3px; }
-      .bi-envi-foot { font-size: 11px; color: var(--r-ink-2); line-height: 1.5; padding: 0 4px; }
-      .bi-envi-foot strong { color: var(--r-ink); font-weight: 600; }
-      .bi-envi-coverage { margin-top: 8px; padding-top: 8px; border-top: 1px dashed rgba(15,122,63,0.25); display: flex; flex-direction: column; gap: 4px; }
-      .bi-envi-coverage-lbl { font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--r-ink-2); }
-      .bi-envi-coverage-btns { display: flex; gap: 3px; }
-      .bi-envi-coverage-btn { flex: 1; padding: 3px 0; background: rgba(255,255,255,0.6); border: 1px solid rgba(15,122,63,0.18); border-radius: 4px; font-size: 10px; font-weight: 600; color: var(--r-ink-2); cursor: pointer; font-family: inherit; transition: all 120ms ease; }
-      .bi-envi-coverage-btn:hover { border-color: var(--r-green); color: var(--r-green); }
-      .bi-envi-coverage-btn.is-active { background: var(--r-green); color: white; border-color: var(--r-green); }
-
-      /* Bottom summary band for the env-impact story side. Mirrors
-         .bi-compare-summary on the bar-chart side so the two cards finish
-         on the same visual beat when displayed side by side. */
-      .bi-envi-summary {
+      .bi-pillar-hero-unit {
+        font-size: 14px;
+        font-weight: 700;
+        color: inherit;
+        letter-spacing: 0;
+      }
+      .bi-pillar-hero-sub {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--r-ink-2);
+        line-height: 1.45;
+        display: inline-flex;
+        align-items: baseline;
+        gap: 5px;
+        flex-wrap: wrap;
+      }
+      .bi-pillar-rows {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+      }
+      .bi-pillar-row {
         display: flex;
         justify-content: space-between;
-        align-items: center;
-        gap: 16px;
-        margin: 14px -16px -16px;
-        padding: 14px 18px;
-        background: linear-gradient(90deg, #F0FDF4 0%, #ECFDF5 100%);
-        border-top: 1px solid #BBF7D0;
-        border-radius: 0 0 12px 12px;
-        font-size: 13px;
-        color: #065F46;
+        align-items: baseline;
+        gap: 12px;
+        font-size: 12px;
+        line-height: 1.4;
+      }
+      .bi-pillar-row-lbl {
+        color: var(--r-ink-2);
+        font-weight: 600;
+        flex-shrink: 0;
+      }
+      .bi-pillar-row-val {
+        font-weight: 700;
+        color: var(--r-ink);
+        font-variant-numeric: tabular-nums;
+        display: inline-flex;
+        align-items: baseline;
+        gap: 5px;
         flex-wrap: wrap;
-        line-height: 1.35;
+        justify-content: flex-end;
       }
-      .bi-envi-summary.is-today {
-        background: linear-gradient(90deg, #FEF7F7 0%, #FFF1F1 100%);
-        border-top-color: #F3CCCC;
-        color: #7F1D1D;
+      .bi-pillar-row-val-single {
+        font-weight: 700;
+        color: var(--r-ink);
       }
-      .bi-envi-summary-left { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
-      .bi-envi-summary-stat {
-        font-size: 18px; font-weight: 800; letter-spacing: -0.015em;
-        font-variant-numeric: tabular-nums; color: #047857;
+      .bi-pillar-from {
+        color: var(--r-ink-2);
+        font-weight: 600;
       }
-      .bi-envi-summary.is-today .bi-envi-summary-stat { color: #991B1B; }
-      .bi-envi-summary-arrow { color: var(--r-ink-2); font-weight: 700; margin: 0 2px; }
-      .bi-envi-summary-to {
-        font-size: 18px; font-weight: 800; letter-spacing: -0.015em;
-        font-variant-numeric: tabular-nums; color: var(--r-blue);
+      .bi-pillar-arrow {
+        color: var(--r-ink-2);
+        font-weight: 700;
       }
-      .bi-envi-summary-tag { font-size: 12px; font-weight: 600; color: var(--r-ink-2); }
-      .bi-envi-summary-right { display: flex; align-items: baseline; gap: 8px; font-weight: 600; }
-      .bi-envi-summary-pct {
-        font-size: 22px; font-weight: 800; letter-spacing: -0.02em;
-        font-variant-numeric: tabular-nums; color: #047857;
+      .bi-pillar-to {
+        color: var(--r-blue);
+        font-weight: 800;
       }
-      .bi-envi-summary.is-today .bi-envi-summary-pct { color: #991B1B; }
-      .bi-envi-summary-detail b { font-weight: 800; font-variant-numeric: tabular-nums; }
-      @media (min-width: 1024px) {
-        .bi-envi-outcomes-grid { grid-template-columns: repeat(4, 1fr); }
+      .is-scale .bi-pillar-to { color: var(--r-green); }
+      .is-risk  .bi-pillar-to { color: var(--r-amber); }
+      .bi-pillar-tag {
+        font-size: 10px;
+        font-weight: 800;
+        padding: 1px 6px;
+        border-radius: 3px;
+        background: rgba(15, 122, 63, 0.10);
+        color: var(--r-green);
+        letter-spacing: 0;
+      }
+      .bi-pillars-foot {
+        margin: 10px 2px 0;
+        font-size: 11px;
+        color: var(--r-ink-2);
+        font-style: italic;
+      }
+      @media (max-height: 900px) {
+        #panel-roi .bi-pillars { gap: 10px !important; }
+        #panel-roi .bi-pillar { padding: 11px 14px !important; }
+        #panel-roi .bi-pillar-head { margin-bottom: 6px !important; }
+        #panel-roi .bi-pillar-hero { padding: 1px 0 8px !important; margin-bottom: 8px !important; }
+        #panel-roi .bi-pillar-hero-num { font-size: 24px !important; }
+        #panel-roi .bi-pillar-hero-num.bi-pillar-hero-text { font-size: 16px !important; }
+        #panel-roi .bi-pillar-hero-unit { font-size: 12px !important; }
+        #panel-roi .bi-pillar-hero-sub { font-size: 11px !important; }
+        #panel-roi .bi-pillar-title { font-size: 12px !important; }
+        #panel-roi .bi-pillar-row { font-size: 11px !important; gap: 10px !important; }
+        #panel-roi .bi-pillar-rows { gap: 5px !important; }
+        #panel-roi .bi-pillars-foot { font-size: 10px !important; margin-top: 6px !important; }
       }
 
       /* ─── Side-by-side split: Ongoing × 3-year horizon ─── */
@@ -4822,8 +4732,7 @@
         min-width: 0;
       }
       /* Pin the eyebrow header heights so both columns line up at the top. */
-      .bi-split-col > .bi-section-eyebrow,
-      .bi-split-col > .bi-section-eyebrow.is-toggle {
+      .bi-split-col > .bi-section-eyebrow {
         min-height: 22px;
         margin-bottom: 8px;
       }
@@ -4832,27 +4741,16 @@
       @media (min-width: 1100px) {
         .bi-split:not(.is-single) { grid-template-columns: 1fr 1fr; }
 
-        /* Stretch both column cards so the right side matches the left's
+        /* Stretch column cards so the right side matches the left's
            natural height (no ragged bottoms when the panel sits side-by-side). */
-        .bi-split:not(.is-single) .bi-split-col > .bi-compare,
-        .bi-split:not(.is-single) .bi-split-col > .bi-section-content {
+        .bi-split:not(.is-single) .bi-split-col > .bi-compare {
           flex: 1;
           display: flex;
           flex-direction: column;
         }
-        .bi-split:not(.is-single) .bi-section-content > .bi-compound {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-        }
-        /* Same treatment for the story side so its bottom band lands at the
-           same baseline as the bar chart's green summary band. */
-        .bi-split:not(.is-single) .bi-section-content > .bi-envi {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-        }
-        .bi-split:not(.is-single) .bi-envi-summary { margin-top: auto; }
+        /* Stretch the outcomes pillars stack on the left to match the
+           right-hand bar chart's natural height. */
+        .bi-split:not(.is-single) .bi-split-col > .bi-pillars { flex: 1; }
         /* Year rows expand and distribute to fill any spare vertical space. */
         .bi-split:not(.is-single) .bi-compound-rows {
           flex: 1;
@@ -5415,8 +5313,6 @@
         calcScenario: 'expected',
         calcResult: null,
         showAssumptions: false,
-        collapsedSections: { compound: false },
-        envImpact: { selected: ['intune','sccm','avd'], mode: 'today', coverage: 0.5 },
         editingAssumptions: false,
         pdfCompanyInput: false,
         pdfCompanyName: '',
@@ -10203,513 +10099,166 @@
           </div>`;
         };
 
-        // ── Packaging cycle ROI (field-test benchmarks) ──
-        const awCycle    = r.awCycleHours      ?? 0;
-        const tradCycle  = r.tradCycleHours    ?? 0;
-        const hrsSaved   = r.cycleHoursSaved   ?? 0;
-        const timeMult   = r.cycleTimeMultiple ?? 0;
-        const $saved     = r.cycleDollarsSaved ?? 0;
-        const hasCycle   = awCycle > 0 && tradCycle > 0;
-        const cycleScale = Math.max(tradCycle, awCycle, 1);
-        const awPct      = (awCycle   / cycleScale) * 100;
-        const tradPct    = (tradCycle / cycleScale) * 100;
-        const tradVal    = `${num(Math.round(tradCycle))} hrs`;
-        const awVal      = `${num(Math.round(awCycle))} hrs`;
-        // If the bar is too short to fit text inside, render the value outside.
-        const tradOutside = tradPct < 18;
-        const awOutside   = awPct < 18;
-        const cycleStdApps = r.cycleStandardApps ?? 0;
-        const cycleCmpApps = r.cycleComplexApps  ?? 0;
-        const pctLess      = hasCycle ? Math.round((1 - awCycle / tradCycle) * 100) : 0;
-        const timeMultStr  = hasCycle ? timeMult.toFixed(1) : '—';
-        const timeMultUnit = hasCycle ? '× faster' : '';
+        // ─── SPEED / SCALE / RISK card derivations ───────────────────
+        // Every value below feeds the same r/ci/a state that drives the
+        // right-hand "Where time gets returned" panel — both update
+        // together on Recalculate or assumption edits, so the two
+        // columns can never show inconsistent numbers. Only two values
+        // are new derivations: blended per-app build time (Speed hero)
+        // and reclaimed-hour dollar value (Scale hero sub).
+        const pb = PACKAGING_BENCHMARKS;
+        const complexMix  = Math.max(0, Math.min(1, (ci.complexMixPct ?? 20) / 100));
+        const standardMix = 1 - complexMix;
+        const tradBlended = standardMix * pb.tradStdHrs + complexMix * pb.tradComplexHrs;
+        const awBlended   = standardMix * pb.awStdHrs   + complexMix * pb.awComplexHrs;
+        const pctFaster   = tradBlended > 0 ? Math.round((1 - awBlended / tradBlended) * 100) : 0;
 
-        const compoundCol = (() => {
-            const oneTimeHrs = Math.round(hasCycle ? hrsSaved : 0);
-            const recurHrs   = Math.round(r.totalHoursYear || 0);
-            if ((oneTimeHrs + recurHrs) <= 0) return '';
-            const yr1Hrs = oneTimeHrs + recurHrs;
-            const yr2Hrs = oneTimeHrs + recurHrs * 2;
-            const yr3Hrs = oneTimeHrs + recurHrs * 3;
-            const max = Math.max(yr3Hrs, 1);
-            const otPct  = (oneTimeHrs / max) * 100;
-            const recPct = (recurHrs   / max) * 100;
-            const labelInside = (pct, value, unit) => pct >= 7 ? `+${num(value)}${unit}` : '';
-            const engYears = yr3Hrs / 1920;
-            const useYears = engYears >= 1;
-            const heroNum  = useYears ? engYears.toFixed(1) : (engYears * 12).toFixed(1);
-            const heroUnit = useYears ? 'engineer-years' : 'engineer-months';
-            const envCount = ci.envs || 1;
-            const ticketsAnnual = Math.round((r.ticketsAvoided || 0) * 12);
-            const ticketsTotal  = ticketsAnnual * 3;
-            const tixReductionPct = Math.round(a.ticketReduction * 100);
-            const engMonths = hasCycle ? (hrsSaved / 160).toFixed(1) : '0';
+        const loadedRate = ci.loadedRate || 95;
+        const reclaimedDollarsAnnual = totalReturned * loadedRate * 12;
+        const fmtDollarsK = (n) => '$' + Math.round(n / 1000).toLocaleString() + 'K';
 
-            // ══════════════════════════════════════════════════════════
-            //  THE SINGLE STREAM — Environment Impact, redesigned
-            //
-            //  Read the diagram in 3 seconds without labels:
-            //    TODAY  one release branches BEFORE the work — N parallel
-            //           rebuild stacks. The multiplication is geometric.
-            //    AW     one release flows through ONE stack and branches
-            //           AFTER the work. The fan-out is routing, not labor.
-            //
-            //  The fork point literally moves left → right between modes,
-            //  and that movement IS the story. Palette is dual cool tones
-            //  (slate + amber for friction; indigo + cyan for flow) — no
-            //  red-vs-green, so the customer's status quo reads as "heavy"
-            //  rather than "broken".
-            // ══════════════════════════════════════════════════════════
+        // Cross-platform touchpoints — same formula the removed env
+        // picker used, driven by ci.envs and a fixed 50% coverage (a
+        // typical app lives on ~half the platforms in a stack).
+        const ENV_COVERAGE = 0.5;
+        const streamsToday = Math.max(ci.apps, Math.round(ci.apps * ci.envs * ENV_COVERAGE));
+        const streamsAw    = ci.apps;
+        const touchpointReduction = streamsToday > 0 ? Math.max(0, Math.round(((streamsToday - streamsAw) / streamsToday) * 100)) : 0;
 
-            // Brand glyphs are the only inline symbols we keep — every
-            // bitmap from the old diagram (ticket icons, device sprites,
-            // admin avatar, clock, etc) has been retired in favor of
-            // line-only mechanics.
-            const BRAND_SYMBOLS = {
-              intune: '<symbol id="brand-intune" viewBox="0 0 32 32">' +
-                '<rect width="32" height="32" rx="7" fill="#0078D4"/>' +
-                '<path d="M16 6 L26 16 L16 26 L6 16 Z" fill="#fff"/>' +
-                '<path d="M11 17 Q11 13.8 14 13.8 L18 13.8 Q21 13.8 21.6 16 Q23 16 23 17.6 Q23 19.2 21.2 19.2 L11.8 19.2 Q9.5 19.2 9.5 17.6 Q9.5 16 11 17 Z" fill="#0078D4"/>' +
-                '<path d="M13.5 16.7 L15.3 18.5 L18.5 14.7" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>' +
-                '</symbol>',
-              sccm: '<symbol id="brand-sccm" viewBox="0 0 32 32">' +
-                '<rect width="32" height="32" rx="7" fill="#005EA6"/>' +
-                '<ellipse cx="16" cy="9.5" rx="8" ry="2.4" fill="#fff"/>' +
-                '<path d="M8 9.5 L8 14 Q8 16.4 16 16.4 Q24 16.4 24 14 L24 9.5" fill="#fff"/>' +
-                '<ellipse cx="16" cy="14" rx="8" ry="2.4" fill="#36A2EB"/>' +
-                '<path d="M8 14 L8 18.5 Q8 20.9 16 20.9 Q24 20.9 24 18.5 L24 14" fill="#fff"/>' +
-                '<ellipse cx="16" cy="18.5" rx="8" ry="2.4" fill="#36A2EB"/>' +
-                '<path d="M8 18.5 L8 23 Q8 25.4 16 25.4 Q24 25.4 24 23 L24 18.5" fill="#fff"/>' +
-                '<ellipse cx="16" cy="23" rx="8" ry="2.4" fill="#36A2EB"/>' +
-                '<circle cx="11" cy="23" r="0.9" fill="#22C55E"/>' +
-                '</symbol>',
-              avd: '<symbol id="brand-avd" viewBox="0 0 32 32">' +
-                '<rect width="32" height="32" rx="7" fill="#0061A8"/>' +
-                '<path d="M9 14 Q9 10 13 10 Q14 8 17 8 Q20 8 21 11 Q24 11 24 14 Q26 14 26 16.5 Q26 19 23 19 L9 19 Q6 19 6 16.5 Q6 14 9 14 Z" fill="#fff"/>' +
-                '<rect x="10" y="20" width="12" height="6.5" rx="0.6" fill="#fff"/>' +
-                '<rect x="11" y="21" width="10" height="4.5" rx="0.3" fill="#36A2EB"/>' +
-                '<rect x="14" y="26" width="4" height="0.8" fill="#fff"/>' +
-                '<rect x="11.5" y="27" width="9" height="1" rx="0.3" fill="#fff"/>' +
-                '</symbol>',
-              citrix: '<symbol id="brand-citrix" viewBox="0 0 32 32">' +
-                '<rect width="32" height="32" rx="7" fill="#000"/>' +
-                '<path d="M23 12 Q20 8.5 16 8.5 Q9 8.5 9 16 Q9 23.5 16 23.5 Q20 23.5 23 20" stroke="#fff" stroke-width="3.6" stroke-linecap="round" fill="none"/>' +
-                '<circle cx="23" cy="20" r="2.2" fill="#fff"/>' +
-                '</symbol>',
-              macos: '<symbol id="brand-macos" viewBox="0 0 32 32">' +
-                '<rect width="32" height="32" rx="7" fill="#1d1d1f"/>' +
-                '<path d="M19.4 8 C19.9 7 21 6.4 22.1 6.4 C22 7.6 21.2 8.5 19.4 8 Z" fill="#fff"/>' +
-                '<path d="M23.6 18.6 C23.6 14.4 19.8 13.4 18 13.4 C16.6 13.4 15.6 13.9 14.9 14.3 C14.2 13.9 13.2 13.4 11.8 13.4 C8.2 13.4 6.6 16.2 6.6 18.9 C6.6 22.4 8.6 25.8 10.7 25.8 C12 25.8 12.6 25.2 13.9 25.2 C15.2 25.2 15.6 25.8 17.3 25.8 C19.4 25.8 21.1 23.1 21.7 20.4 C21 20.1 23.6 18.6 23.6 18.6 Z" fill="#fff"/>' +
-                '</symbol>',
-              jamf: '<symbol id="brand-jamf" viewBox="0 0 32 32">' +
-                '<rect width="32" height="32" rx="7" fill="#E13B40"/>' +
-                '<text x="16" y="22" text-anchor="middle" font-family="Inter, -apple-system, sans-serif" font-weight="800" font-size="13" fill="#fff" letter-spacing="-0.05em">jamf</text>' +
-                '</symbol>'
-            };
-            const BRAND_DEFS = Object.values(BRAND_SYMBOLS).join('');
-
-            const ENV_LIST = [
-              { id: 'intune', name: 'Intune',     brand: 'brand-intune' },
-              { id: 'sccm',   name: 'ConfigMgr',  brand: 'brand-sccm' },
-              { id: 'avd',    name: 'AVD / W365', brand: 'brand-avd' },
-              { id: 'citrix', name: 'Citrix',     brand: 'brand-citrix' },
-              { id: 'macos',  name: 'macOS',      brand: 'brand-macos' },
-              { id: 'jamf',   name: 'Jamf',       brand: 'brand-jamf' }
-            ];
-            const _sel = (STATE.envImpact && Array.isArray(STATE.envImpact.selected)) ? STATE.envImpact.selected : ['intune','sccm','avd'];
-            const _mode = (STATE.envImpact && STATE.envImpact.mode) || 'today';
-            const _cov  = (STATE.envImpact && typeof STATE.envImpact.coverage === 'number') ? STATE.envImpact.coverage : 0.5;
-            const activeEnvs = ENV_LIST.filter(e => _sel.includes(e.id));
-            const nEnvs = Math.max(activeEnvs.length, 1);
-            const appsCount = ci.apps || 150;
-            const ticketsMo = ci.tickets || 600;
-            // Coverage factor: a typical app only lives on ~50% of the envs in a
-            // stack (Windows apps don't ship to macOS; Citrix hosts specialised
-            // tools; AVD serves a subset; etc). Multiply touchpoints by it so
-            // the math is defensible to a real IT manager.
-            const streamsToday = Math.max(appsCount, Math.round(appsCount * nEnvs * _cov));
-            const streamsAw    = appsCount;
-            const streamReduction = streamsToday > 0 ? Math.max(0, Math.round(((streamsToday - streamsAw) / streamsToday) * 100)) : 0;
-            const ticketReductionPct = 70; // headline AW number, also reflected in metric card
-            const ticketsAw = Math.round(ticketsMo * (1 - ticketReductionPct / 100));
-            const isToday = _mode === 'today';
-
-            // ── Geometry ──
-            // The redesigned diagram is a left-to-right tri-band:
-            //   APP RELEASE (single card)  →  STAGE (mechanic)  →  ENVIRONMENTS (column)
-            // The stage rewrites itself for each mode; the app card and env
-            // tiles stay put. Heights scale to env count up to a cap.
-            const VB_W = 940;
-            const PAD = 24;
-            const APP_W = 156, APP_H = 132;
-            const APP_X = PAD;
-            const ENV_TILE_W = 224, ENV_TILE_H = 44, ENV_GAP = 10;
-            const ENV_X = VB_W - PAD - ENV_TILE_W;
-            const totalEnvH = nEnvs * ENV_TILE_H + (nEnvs - 1) * ENV_GAP;
-            const TOP_PAD = 36, BOTTOM_PAD = 36;
-            const VB_H = Math.max(380, TOP_PAD + totalEnvH + BOTTOM_PAD);
-            const centerY = VB_H / 2;
-            const APP_Y = centerY - APP_H / 2;
-            const envStartY = centerY - totalEnvH / 2;
-            const envYs = Array.from({length: nEnvs}, function(_, i) { return envStartY + i * (ENV_TILE_H + ENV_GAP); });
-            const STAGE_X1 = APP_X + APP_W + 28;     // stage starts after app card
-            const STAGE_X2 = ENV_X - 28;              // stage ends before env tiles
-
-            // ── Palette ──
-            // Two cool tones — slate-amber for friction, indigo-cyan for flow.
-            // No red, no green. The customer's status quo reads "heavy", not
-            // "broken".
-            const C_T_STROKE  = '#94A3B8';   // slate-400
-            const C_T_LINE    = '#CBD5E1';   // slate-300
-            const C_T_TEXT    = '#475569';   // slate-600
-            const C_T_TEXT_D  = '#1E293B';   // slate-800
-            const C_T_FILL    = '#F8FAFC';   // slate-50
-            const C_T_ACCENT  = '#F59E0B';   // amber-500
-            const C_T_ACCENT_BG = '#FEF3C7'; // amber-100
-            const C_T_ACCENT_TX = '#92400E'; // amber-800
-
-            const C_A_STROKE  = '#6366F1';   // indigo-500
-            const C_A_LINE    = '#C7D2FE';   // indigo-200
-            const C_A_TEXT    = '#3730A3';   // indigo-800
-            const C_A_TEXT_D  = '#1E1B4B';   // indigo-950
-            const C_A_FILL    = '#EEF2FF';   // indigo-50
-            const C_A_ACCENT  = '#06B6D4';   // cyan-500
-            const C_A_ACCENT_BG = '#CFFAFE'; // cyan-100
-            const C_A_ACCENT_TX = '#155E75'; // cyan-800
-
-            const C_STROKE = isToday ? C_T_STROKE : C_A_STROKE;
-            const C_TEXT   = isToday ? C_T_TEXT   : C_A_TEXT;
-            const C_LINE   = isToday ? C_T_LINE   : C_A_LINE;
-            const C_FILL   = isToday ? C_T_FILL   : C_A_FILL;
-
-            const BUILD_STEPS = [
-              { id: 'pkg',  label: 'Package' },
-              { id: 'test', label: 'Test'    },
-              { id: 'dep',  label: 'Deploy'  },
-              { id: 'pat',  label: 'Patch'   }
-            ];
-
-            // ── App release card (left column, both modes) ──
-            // A single, neutral "release event" with apps-in-portfolio context.
-            // The card itself doesn't change between modes; only its accent does.
-            const appCardSVG = ''
-              + '<g class="ss-app">'
-              +   '<rect x="' + APP_X + '" y="' + APP_Y + '" width="' + APP_W + '" height="' + APP_H + '" rx="14" fill="#FFFFFF" stroke="' + C_STROKE + '" stroke-width="1.4"/>'
-              +   '<text x="' + (APP_X + 16) + '" y="' + (APP_Y + 26) + '" font-family="Inter, sans-serif" font-size="9.5" font-weight="700" fill="' + C_TEXT + '" letter-spacing="0.14em">ONE  RELEASE</text>'
-              +   '<rect x="' + (APP_X + 16) + '" y="' + (APP_Y + 38) + '" width="40" height="40" rx="9" fill="' + (isToday ? '#F1F5F9' : '#E0E7FF') + '"/>'
-              +   '<g transform="translate(' + (APP_X + 22) + ',' + (APP_Y + 44) + ')">'
-              +     '<rect width="28" height="28" rx="6" fill="none" stroke="' + C_STROKE + '" stroke-width="1.8"/>'
-              +     '<path d="M8 14 L13 19 L20 10" stroke="' + C_STROKE + '" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>'
-              +   '</g>'
-              +   '<text x="' + (APP_X + 64) + '" y="' + (APP_Y + 54) + '" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#0F172A">App update</text>'
-              +   '<text x="' + (APP_X + 64) + '" y="' + (APP_Y + 70) + '" font-family="Inter, sans-serif" font-size="11" font-weight="500" fill="' + C_TEXT + '">v ' + (10 + Math.min(nEnvs * 2, 12)) + '.0</text>'
-              +   '<line x1="' + (APP_X + 16) + '" y1="' + (APP_Y + APP_H - 42) + '" x2="' + (APP_X + APP_W - 16) + '" y2="' + (APP_Y + APP_H - 42) + '" stroke="' + (isToday ? '#E2E8F0' : '#E0E7FF') + '" stroke-width="1"/>'
-              +   '<text x="' + (APP_X + 16) + '" y="' + (APP_Y + APP_H - 24) + '" font-family="Inter, sans-serif" font-size="11" font-weight="700" fill="' + C_TEXT + '">' + num(appsCount) + ' apps</text>'
-              +   '<text x="' + (APP_X + 16) + '" y="' + (APP_Y + APP_H - 11) + '" font-family="Inter, sans-serif" font-size="9.5" font-weight="500" fill="#64748B">in your portfolio</text>'
-              + '</g>';
-
-            // ── Env tiles (right column, both modes) ──
-            // The destinations. Brand glyph + name + status. The left edge
-            // accent picks up the mode color so each row visually belongs to
-            // its mode without being colored as "good" or "bad".
-            const envBlocksSVG = activeEnvs.map(function(e, i) {
-              const y = envYs[i];
-              const statClr = isToday ? '#94A3B8' : C_A_TEXT;
-              const stat = isToday ? num(appsCount) + ' apps · queued' : num(appsCount) + ' apps · live';
-              const accent = isToday ? '#CBD5E1' : C_A_ACCENT;
-              return ''
-                + '<g class="ss-env" transform="translate(' + ENV_X + ',' + y.toFixed(1) + ')">'
-                +   '<rect width="' + ENV_TILE_W + '" height="' + ENV_TILE_H + '" rx="9" fill="#FFFFFF" stroke="' + (isToday ? '#E2E8F0' : '#C7D2FE') + '" stroke-width="1"/>'
-                +   '<rect x="0" y="0" width="3" height="' + ENV_TILE_H + '" rx="1.5" fill="' + accent + '" opacity="' + (isToday ? '0.6' : '0.95') + '"/>'
-                +   '<use href="#' + e.brand + '" x="14" y="' + ((ENV_TILE_H - 26) / 2) + '" width="26" height="26"/>'
-                +   '<text x="48" y="19" font-family="Inter, sans-serif" font-size="12.5" font-weight="700" fill="#0F172A">' + e.name + '</text>'
-                +   '<text x="48" y="33" font-family="Inter, sans-serif" font-size="10.5" font-weight="500" fill="' + statClr + '">' + stat + '</text>'
-                + '</g>';
-            }).join('');
-
-            // ── Stage body (the mechanic that flips between modes) ──
-            let stageBodySVG = '';
-
-            if (isToday) {
-              // ── TODAY: multiplication is visible. ──
-              // The release branches BEFORE the work, fanning into N parallel
-              // rebuild stacks. Each stack is the same four steps. Seeing the
-              // same row of work repeat n times IS the multiplication story.
-              const BLOCK_W = 62, BLOCK_H = 28, BLOCK_GAP = 6;
-              const stackW = BUILD_STEPS.length * BLOCK_W + (BUILD_STEPS.length - 1) * BLOCK_GAP;
-              const stackX = STAGE_X1 + Math.max(0, (STAGE_X2 - STAGE_X1 - stackW) / 2);
-              const stackEndX = stackX + stackW;
-              const trunkX = APP_X + APP_W;
-              const forkX  = trunkX + 18;
-
-              // Trunk: app card → fork point
-              const trunkPath = ''
-                + '<line x1="' + trunkX + '" y1="' + centerY + '" x2="' + forkX + '" y2="' + centerY + '" stroke="' + C_T_STROKE + '" stroke-width="2" stroke-linecap="round"/>';
-
-              // Pre-work fan — one branch per env, each curving to that env's row
-              const forkBranches = activeEnvs.map(function(e, i) {
-                const rowY = envYs[i] + ENV_TILE_H / 2;
-                const c1x  = forkX + 32;
-                return '<path class="ss-flow ss-flow-in" d="M ' + forkX + ' ' + centerY + ' C ' + c1x + ' ' + centerY + ', ' + c1x + ' ' + rowY.toFixed(1) + ', ' + stackX + ' ' + rowY.toFixed(1) + '" stroke="' + C_T_LINE + '" stroke-width="1.4" fill="none" stroke-linecap="round"/>';
-              }).join('');
-
-              // Per-env rebuild stack
-              const stacks = activeEnvs.map(function(e, i) {
-                const rowY = envYs[i] + ENV_TILE_H / 2;
-                const blockY = rowY - BLOCK_H / 2;
-                const stack = BUILD_STEPS.map(function(s, j) {
-                  const bx = stackX + j * (BLOCK_W + BLOCK_GAP);
-                  return ''
-                    + '<rect x="' + bx + '" y="' + blockY.toFixed(1) + '" width="' + BLOCK_W + '" height="' + BLOCK_H + '" rx="6" fill="#FFFFFF" stroke="' + C_T_STROKE + '" stroke-width="1"/>'
-                    + '<rect x="' + bx + '" y="' + blockY.toFixed(1) + '" width="' + BLOCK_W + '" height="3" rx="1.5" fill="' + C_T_LINE + '"/>'
-                    + '<text x="' + (bx + BLOCK_W/2) + '" y="' + (rowY + 4).toFixed(1) + '" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" font-weight="600" fill="' + C_T_TEXT + '">' + s.label + '</text>';
-                }).join('');
-                const out = '<line class="ss-flow ss-flow-out" x1="' + stackEndX + '" y1="' + rowY.toFixed(1) + '" x2="' + ENV_X + '" y2="' + rowY.toFixed(1) + '" stroke="' + C_T_LINE + '" stroke-width="1.4" stroke-linecap="round"/>';
-                return stack + out;
-              }).join('');
-
-              // Amber "×N rebuilds" badge — the one editorial accent that
-              // names the problem. Lives above the topmost rebuild row.
-              const badgeY = Math.max(envYs[0] - 24, TOP_PAD - 4);
-              const badgeCx = stackX + stackW / 2;
-              const multBadge = ''
-                + '<g class="ss-badge ss-badge-today">'
-                +   '<rect x="' + (badgeCx - 92) + '" y="' + badgeY + '" width="184" height="22" rx="11" fill="' + C_T_ACCENT_BG + '" stroke="' + C_T_ACCENT + '" stroke-width="1"/>'
-                +   '<circle cx="' + (badgeCx - 76) + '" cy="' + (badgeY + 11) + '" r="3" fill="' + C_T_ACCENT + '"/>'
-                +   '<text x="' + (badgeCx - 64) + '" y="' + (badgeY + 15) + '" font-family="Inter, sans-serif" font-size="11" font-weight="800" fill="' + C_T_ACCENT_TX + '">×' + nEnvs + ' rebuilds &middot; same release</text>'
-                + '</g>';
-
-              // Subtle amber ghost particles — one per env, traveling through
-              // its own stack at slightly different speeds. The parallelism
-              // makes the duplicated labor feel like a beat, not random.
-              const ghosts = activeEnvs.map(function(e, i) {
-                const rowY = envYs[i] + ENV_TILE_H / 2;
-                const path = 'M ' + (stackX + 2) + ' ' + rowY.toFixed(1) + ' L ' + (stackEndX - 2) + ' ' + rowY.toFixed(1);
-                return ''
-                  + '<circle r="2.4" fill="' + C_T_ACCENT + '" opacity="0.75">'
-                  +   '<animateMotion dur="' + (4.6 + i * 0.3).toFixed(2) + 's" repeatCount="indefinite" begin="' + (i * 0.55).toFixed(2) + 's" path="' + path + '"/>'
-                  + '</circle>';
-              }).join('');
-
-              stageBodySVG = trunkPath + forkBranches + stacks + multBadge + ghosts;
-
-            } else {
-              // ── AW: routing visible. ──
-              // One lane. Four blocks. After the last block, the stream fans
-              // out to every env tile. Fork point is at the END of the work,
-              // not the start — that's the entire pitch in one shape.
-              const LANE_BLOCK_W = 86, LANE_BLOCK_H = 56, LANE_BLOCK_GAP = 10;
-              const laneW = BUILD_STEPS.length * LANE_BLOCK_W + (BUILD_STEPS.length - 1) * LANE_BLOCK_GAP;
-              const laneX = STAGE_X1 + Math.max(0, (STAGE_X2 - STAGE_X1 - laneW - 80) / 2);
-              const laneEndX = laneX + laneW;
-              const laneY = centerY - LANE_BLOCK_H / 2;
-              const trunkX = APP_X + APP_W;
-
-              // Trunk: app card → lane start
-              const trunkPath = '<line x1="' + trunkX + '" y1="' + centerY + '" x2="' + laneX + '" y2="' + centerY + '" stroke="' + C_A_STROKE + '" stroke-width="2.2" stroke-linecap="round"/>';
-
-              // Backbone: a thin indigo bar connecting the 4 blocks visually
-              const backbone = '<rect x="' + laneX + '" y="' + (centerY - 3) + '" width="' + laneW + '" height="6" rx="3" fill="' + C_A_LINE + '" opacity="0.6"/>';
-
-              // The lane: four cards with a colored "header" stripe each.
-              const blocks = BUILD_STEPS.map(function(s, j) {
-                const bx = laneX + j * (LANE_BLOCK_W + LANE_BLOCK_GAP);
-                return ''
-                  + '<rect x="' + bx + '" y="' + laneY + '" width="' + LANE_BLOCK_W + '" height="' + LANE_BLOCK_H + '" rx="9" fill="#FFFFFF" stroke="' + C_A_STROKE + '" stroke-width="1.4"/>'
-                  + '<rect x="' + bx + '" y="' + laneY + '" width="' + LANE_BLOCK_W + '" height="6" rx="3" fill="' + C_A_STROKE + '"/>'
-                  + '<rect x="' + (bx + 12) + '" y="' + (laneY + 18) + '" width="22" height="22" rx="5" fill="' + C_A_FILL + '"/>'
-                  + '<text x="' + (bx + LANE_BLOCK_W/2) + '" y="' + (laneY + 36) + '" text-anchor="middle" font-family="Inter, sans-serif" font-size="12.5" font-weight="700" fill="' + C_A_TEXT_D + '">' + s.label + '</text>'
-                  + '<text x="' + (bx + LANE_BLOCK_W/2) + '" y="' + (laneY + LANE_BLOCK_H - 8) + '" text-anchor="middle" font-family="Inter, sans-serif" font-size="9.5" font-weight="600" fill="' + C_A_TEXT + '" letter-spacing="0.06em">' + (j === 0 ? 'DEFINE  ONCE' : 'ROUTED') + '</text>';
-              }).join('');
-
-              // Post-work fan — single point (laneEndX) branches to each env
-              const fanBranches = activeEnvs.map(function(e, i) {
-                const rowY = envYs[i] + ENV_TILE_H / 2;
-                const mid = (laneEndX + ENV_X) / 2;
-                return '<path class="ss-flow ss-flow-out" d="M ' + laneEndX + ' ' + centerY + ' C ' + mid + ' ' + centerY + ', ' + mid + ' ' + rowY.toFixed(1) + ', ' + ENV_X + ' ' + rowY.toFixed(1) + '" stroke="' + C_A_LINE + '" stroke-width="1.6" fill="none" stroke-linecap="round"/>';
-              }).join('');
-
-              // Cyan "×1 build · N deliveries" badge — names the routing.
-              const badgeY = Math.max(laneY - 28, TOP_PAD - 4);
-              const badgeCx = laneX + laneW / 2;
-              const routeBadge = ''
-                + '<g class="ss-badge ss-badge-aw">'
-                +   '<rect x="' + (badgeCx - 96) + '" y="' + badgeY + '" width="192" height="22" rx="11" fill="' + C_A_ACCENT_BG + '" stroke="' + C_A_ACCENT + '" stroke-width="1"/>'
-                +   '<circle cx="' + (badgeCx - 80) + '" cy="' + (badgeY + 11) + '" r="3" fill="' + C_A_ACCENT + '"/>'
-                +   '<text x="' + (badgeCx - 68) + '" y="' + (badgeY + 15) + '" font-family="Inter, sans-serif" font-size="11" font-weight="800" fill="' + C_A_ACCENT_TX + '">×1 build &middot; ' + nEnvs + ' delivery point' + (nEnvs===1?'':'s') + '</text>'
-                + '</g>';
-
-              // Single ghost particle moves along the lane, then a quick
-              // batch of small particles fan out to each env on arrival —
-              // the routing motion mimics what the geometry already says.
-              const lanePath = 'M ' + (laneX - 4) + ' ' + centerY + ' L ' + (laneEndX + 4) + ' ' + centerY;
-              const laneGhost = ''
-                + '<circle r="3.2" fill="' + C_A_ACCENT + '">'
-                +   '<animateMotion dur="2.4s" repeatCount="indefinite" path="' + lanePath + '"/>'
-                + '</circle>';
-              const fanGhosts = activeEnvs.map(function(e, i) {
-                const rowY = envYs[i] + ENV_TILE_H / 2;
-                const mid = (laneEndX + ENV_X) / 2;
-                const path = 'M ' + laneEndX + ' ' + centerY + ' C ' + mid + ' ' + centerY + ', ' + mid + ' ' + rowY.toFixed(1) + ', ' + (ENV_X - 2) + ' ' + rowY.toFixed(1);
-                return ''
-                  + '<circle r="2.4" fill="' + C_A_ACCENT + '" opacity="0.85">'
-                  +   '<animateMotion dur="1.3s" repeatCount="indefinite" begin="' + (1.8 + i * 0.12).toFixed(2) + 's" path="' + path + '"/>'
-                  + '</circle>';
-              }).join('');
-
-              stageBodySVG = trunkPath + backbone + blocks + fanBranches + routeBadge + laneGhost + fanGhosts;
-            }
-
-            // ── Persona ribbon (HTML, sits between mode toggle and SVG) ──
-            // Five personas, always visible. The transformation between today
-            // and AW IS the story for each one: end user goes from "5–14d
-            // wait" to "<1 min"; engineer goes from "rebuild ×N" to "1 build";
-            // etc. Today: muted slate-amber chips (heavy, but not insulting).
-            // AW: indigo chips with cyan stat (lift, but not loud).
-            const PERSONAS = [
-              {
-                role: 'End user',
-                icon: '<circle cx="12" cy="8" r="4" fill="currentColor"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8" fill="currentColor"/>',
-                today: '5–14d',
-                aw:    '<1 min'
-              },
-              {
-                role: 'Help desk',
-                icon: '<path d="M21 12a8.5 8.5 0 0 1-8.5 8.5h-.5L4 23l1.5-4A8.5 8.5 0 1 1 21 12z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="8" cy="12" r="1.2" fill="currentColor"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/><circle cx="16" cy="12" r="1.2" fill="currentColor"/>',
-                today: '+ queue',
-                aw:    '−70%'
-              },
-              {
-                role: 'Engineer',
-                icon: '<path d="M14.7 6.3a4 4 0 0 0-5.4 5.4l-7 7 2 2 7-7a4 4 0 0 0 5.4-5.4l-2 2-1.4-1.4 2-2z" fill="currentColor"/><circle cx="18.5" cy="5.5" r="1.4" fill="currentColor"/>',
-                today: '×' + nEnvs + ' builds',
-                aw:    '×1 build'
-              },
-              {
-                role: 'IT leader',
-                icon: '<rect x="3" y="3" width="8" height="8" rx="1.4" fill="currentColor"/><rect x="13" y="3" width="8" height="8" rx="1.4" fill="currentColor" opacity="0.45"/><rect x="3" y="13" width="8" height="8" rx="1.4" fill="currentColor" opacity="0.45"/><rect x="13" y="13" width="8" height="8" rx="1.4" fill="currentColor"/>',
-                today: 'paused',
-                aw:    'unblocked'
-              },
-              {
-                role: 'Security',
-                icon: '<path d="M12 2 L20 6 V12 C20 17 16 21 12 22 C8 21 4 17 4 12 V6 Z" fill="currentColor"/><path d="M8.5 12 L11 14.5 L15.5 9.5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>',
-                today: 'drift',
-                aw:    'day-zero'
-              }
-            ];
-            const personasHtml = ''
-              + '<div class="ss-personas' + (isToday ? ' is-today' : ' is-aw') + '" role="group" aria-label="Who wins">'
-              +   PERSONAS.map(function(p) {
-                    return ''
-                      + '<div class="ss-persona">'
-                      +   '<div class="ss-persona-icon"><svg viewBox="0 0 24 24" aria-hidden="true">' + p.icon + '</svg></div>'
-                      +   '<div class="ss-persona-body">'
-                      +     '<div class="ss-persona-role">' + p.role + '</div>'
-                      +     '<div class="ss-persona-stat">' + (isToday ? p.today : p.aw) + '</div>'
-                      +   '</div>'
-                      + '</div>';
-                  }).join('')
-              + '</div>';
-
-            // ── Env chips (HTML, sit above the SVG and drive the picker) ──
-            // Re-uses the same brand symbols inline so the chip glyphs and
-            // the right-column tiles are visually identical marks.
-            const chipsHtml = ENV_LIST.map(function(e) {
-              const active = _sel.includes(e.id);
-              return ''
-                + '<button type="button" class="bi-envi-chip' + (active ? ' is-active' : '') + '" data-action="toggle-env-chip" data-env="' + e.id + '" aria-pressed="' + active + '">'
-                +   '<span class="bi-envi-chip-logo">'
-                +     '<svg viewBox="0 0 32 32" aria-hidden="true">' + BRAND_SYMBOLS[e.id].replace(/<symbol[^>]*>/, '<g>').replace('</symbol>', '</g>') + '</svg>'
-                +   '</span>'
-                +   '<span>' + e.name + '</span>'
-                +   '<span class="bi-envi-chip-check" aria-hidden="true"></span>'
-                + '</button>';
-            }).join('');
-
-            return `
-          <!-- ENVIRONMENT IMPACT — The Single Stream: multiplication vs routing -->
-          <section class="bi-split-col">
-            <button class="bi-section-eyebrow is-compound is-toggle" type="button" data-action="toggle-section" data-section="compound" aria-expanded="${STATE.collapsedSections.compound ? 'false' : 'true'}" aria-controls="section-compound">
-              <span class="bi-section-eyebrow-label">Environment impact · who wins, and how</span>
-              <svg class="bi-section-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
-            </button>
-            <div class="bi-section-content${STATE.collapsedSections.compound ? ' is-collapsed' : ''}" id="section-compound">
-              <div class="bi-envi ss-card ${isToday ? 'is-today' : 'is-aw'}">
-                <div class="bi-envi-head">
-                  <div class="bi-envi-title">${isToday ? 'One app. ' + nEnvs + ' rebuilds. Same team.' : 'One app. ' + nEnvs + ' deliveries. Same minute.'}</div>
-                  <div class="bi-envi-sub">Pick the envs you run. The picture and the math respond.</div>
-                </div>
-
-                <div class="bi-envi-chips">
-                  ${chipsHtml}
-                </div>
-
-                <div class="bi-envi-eq">
-                  <div class="bi-envi-eq-text"><strong>${nEnvs}</strong> env${nEnvs===1?'':'s'} &middot; <strong>${num(appsCount)}</strong> apps &middot; <strong>${num(ticketsMo)}</strong> tickets/mo &middot; <strong>${Math.round(_cov*100)}%</strong> coverage</div>
-                  <div class="bi-envi-eq-result">${num(streamsToday)} touchpoints today</div>
-                </div>
-
-                <div class="bi-envi-mode">
-                  <button type="button" class="bi-envi-mode-btn is-today${isToday ? ' is-active' : ''}" data-action="set-env-mode" data-mode="today">Today</button>
-                  <button type="button" class="bi-envi-mode-btn is-aw${!isToday ? ' is-active' : ''}" data-action="set-env-mode" data-mode="aw">With Application Workspace</button>
-                </div>
-
-                ${personasHtml}
-
-                <div class="bi-envi-viz ss-viz">
-                  <svg class="bi-envi-viz-svg ss-svg ${isToday ? 'is-today' : 'is-aw'}" viewBox="0 0 ${VB_W} ${VB_H}" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
-                    <defs>${BRAND_DEFS}</defs>
-                    ${appCardSVG}
-                    ${stageBodySVG}
-                    ${envBlocksSVG}
-                  </svg>
-                </div>
-
-                <div class="bi-envi-metrics">
-                  <div class="bi-envi-metric">
-                    <div class="bi-envi-metric-label">User wait</div>
-                    <div class="bi-envi-metric-value">${isToday ? '5&ndash;14d' : '&lt;1 min'}</div>
-                    <div class="bi-envi-metric-sub">${isToday ? 'package per env' : 'any device'}</div>
-                  </div>
-                  <div class="bi-envi-metric">
-                    <div class="bi-envi-metric-label">Tickets / mo</div>
-                    <div class="bi-envi-metric-value">${isToday ? num(ticketsMo) : num(ticketsAw)}</div>
-                    <div class="bi-envi-metric-sub">${isToday ? 'package &amp; ship' : '70% fewer'}</div>
-                  </div>
-                  <div class="bi-envi-metric is-highlight">
-                    <div class="bi-envi-metric-label">Touchpoints</div>
-                    <div class="bi-envi-metric-value">${isToday ? num(streamsToday) + ' → ' + num(streamsAw) : '&minus;' + streamReduction + '%'}</div>
-                    <div class="bi-envi-metric-sub">apps × envs they ship to</div>
-                    <div class="bi-envi-coverage">
-                      <span class="bi-envi-coverage-lbl">Cross-platform coverage</span>
-                      <div class="bi-envi-coverage-btns">
-                        ${[0.3, 0.5, 0.7, 1.0].map(c => `<button type="button" class="bi-envi-coverage-btn${Math.abs(_cov - c) < 0.01 ? ' is-active' : ''}" data-action="set-env-coverage" data-cov="${c}">${Math.round(c*100)}%</button>`).join('')}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="bi-envi-summary${isToday ? ' is-today' : ''}">
-                  <div class="bi-envi-summary-left">
-                    <span class="bi-envi-summary-stat">${isToday ? '5&ndash;14 days' : '&lt; 1 min'}</span>
-                    ${isToday ? '' : `<span class="bi-envi-summary-arrow">&rarr;</span><span class="bi-envi-summary-tag" style="font-weight:700">to access</span>`}
-                    <span class="bi-envi-summary-tag">${isToday ? 'per release · packaged per env' : '· from any device'}</span>
-                  </div>
-                  <div class="bi-envi-summary-right">
-                    <span class="bi-envi-summary-pct">${isToday ? num(streamsToday) + ' touchpoints' : '70% fewer'}</span>
-                    <span class="bi-envi-summary-detail">${isToday ? '<b>· every release</b>' : 'support <b>tickets / mo</b>'}</span>
-                  </div>
-                </div>
-
-              </div>
-            </div>
-          </section>`;
-          })();
+        const pkgAfter   = Math.round(ci.pkgHours   * (1 - a.pkgReduction));
+        const patchAfter = Math.round(ci.patchHours * (1 - a.patchReduction));
+        const dashRow    = bars[3]; // Dashboarding row, also rendered on the right
+        const envsLabel  = ci.envs === 1 ? 'env' : 'envs';
 
         return `
-          <div class="bi-split${compoundCol ? '' : ' is-single'}">
-            ${compoundCol}
+          <div class="bi-split">
+            <!-- OUTCOMES — Speed / Scale / Risk (left side: the headline story) -->
+            <section class="bi-split-col">
+              <div class="bi-section-eyebrow">Outcomes &middot; speed, scale, risk</div>
+              <div class="bi-pillars">
+
+                <article class="bi-pillar is-speed">
+                  <header class="bi-pillar-head">
+                    <span class="bi-pillar-eyebrow">Speed</span>
+                    <h3 class="bi-pillar-title">Time to deliver</h3>
+                  </header>
+                  <div class="bi-pillar-hero">
+                    <div class="bi-pillar-hero-num">&minus;${pctFaster}<span class="bi-pillar-hero-unit">%</span></div>
+                    <div class="bi-pillar-hero-sub">
+                      per-app build time &middot;
+                      <span class="bi-pillar-from">${tradBlended.toFixed(1)} hrs</span>
+                      <span class="bi-pillar-arrow">&rarr;</span>
+                      <span class="bi-pillar-to">${awBlended.toFixed(1)} hrs</span>
+                    </div>
+                  </div>
+                  <ul class="bi-pillar-rows">
+                    <li class="bi-pillar-row">
+                      <span class="bi-pillar-row-lbl">Builds per release</span>
+                      <span class="bi-pillar-row-val">
+                        <span class="bi-pillar-from">${ci.envs}</span>
+                        <span class="bi-pillar-arrow">&rarr;</span>
+                        <span class="bi-pillar-to">1</span>
+                      </span>
+                    </li>
+                    <li class="bi-pillar-row">
+                      <span class="bi-pillar-row-lbl">User access</span>
+                      <span class="bi-pillar-row-val">
+                        <span class="bi-pillar-from">days</span>
+                        <span class="bi-pillar-arrow">&rarr;</span>
+                        <span class="bi-pillar-to">&lt;1 min</span>
+                      </span>
+                    </li>
+                    <li class="bi-pillar-row">
+                      <span class="bi-pillar-row-lbl">Patch window</span>
+                      <span class="bi-pillar-row-val">
+                        <span class="bi-pillar-from">5&ndash;10 days</span>
+                        <span class="bi-pillar-arrow">&rarr;</span>
+                        <span class="bi-pillar-to">day-zero</span>
+                      </span>
+                    </li>
+                  </ul>
+                </article>
+
+                <article class="bi-pillar is-scale">
+                  <header class="bi-pillar-head">
+                    <span class="bi-pillar-eyebrow">Scale</span>
+                    <h3 class="bi-pillar-title">Capacity reclaimed</h3>
+                  </header>
+                  <div class="bi-pillar-hero">
+                    <div class="bi-pillar-hero-num">${num(totalReturned)}<span class="bi-pillar-hero-unit"> hrs/mo</span></div>
+                    <div class="bi-pillar-hero-sub">
+                      &asymp; <span class="bi-pillar-to">${fmtDollarsK(reclaimedDollarsAnnual)}/yr</span>
+                      &middot; <span class="bi-pillar-to">&minus;${pctReduction}%</span>
+                    </div>
+                  </div>
+                  <ul class="bi-pillar-rows">
+                    <li class="bi-pillar-row">
+                      <span class="bi-pillar-row-lbl">Packaging effort</span>
+                      <span class="bi-pillar-row-val">
+                        <span class="bi-pillar-from">${num(ci.pkgHours)} hrs/mo</span>
+                        <span class="bi-pillar-arrow">&rarr;</span>
+                        <span class="bi-pillar-to">${num(pkgAfter)} hrs/mo</span>
+                      </span>
+                    </li>
+                    <li class="bi-pillar-row">
+                      <span class="bi-pillar-row-lbl">Delivery touchpoints</span>
+                      <span class="bi-pillar-row-val">
+                        <span class="bi-pillar-from">${num(streamsToday)}</span>
+                        <span class="bi-pillar-arrow">&rarr;</span>
+                        <span class="bi-pillar-to">${num(streamsAw)}</span>
+                        <span class="bi-pillar-tag">&minus;${touchpointReduction}%</span>
+                      </span>
+                    </li>
+                    <li class="bi-pillar-row">
+                      <span class="bi-pillar-row-lbl">Engineer time</span>
+                      <span class="bi-pillar-row-val">
+                        <span class="bi-pillar-from">repetitive packaging</span>
+                        <span class="bi-pillar-arrow">&rarr;</span>
+                        <span class="bi-pillar-to">strategy</span>
+                      </span>
+                    </li>
+                  </ul>
+                </article>
+
+                <article class="bi-pillar is-risk">
+                  <header class="bi-pillar-head">
+                    <span class="bi-pillar-eyebrow">Risk</span>
+                    <h3 class="bi-pillar-title">Audit-ready by default</h3>
+                  </header>
+                  <div class="bi-pillar-hero">
+                    <div class="bi-pillar-hero-num bi-pillar-hero-text">Per-action log</div>
+                    <div class="bi-pillar-hero-sub">replaces manual evidence &middot; every change captured</div>
+                  </div>
+                  <ul class="bi-pillar-rows">
+                    <li class="bi-pillar-row">
+                      <span class="bi-pillar-row-lbl">Reporting + audit effort</span>
+                      <span class="bi-pillar-row-val">
+                        <span class="bi-pillar-from">${num(dashRow.old)} hrs/mo</span>
+                        <span class="bi-pillar-arrow">&rarr;</span>
+                        <span class="bi-pillar-to">${num(dashRow.neww)} hrs/mo</span>
+                      </span>
+                    </li>
+                    <li class="bi-pillar-row">
+                      <span class="bi-pillar-row-lbl">Patch validation effort</span>
+                      <span class="bi-pillar-row-val">
+                        <span class="bi-pillar-from">${num(ci.patchHours)} hrs/mo</span>
+                        <span class="bi-pillar-arrow">&rarr;</span>
+                        <span class="bi-pillar-to">${num(patchAfter)} hrs/mo</span>
+                      </span>
+                    </li>
+                    <li class="bi-pillar-row">
+                      <span class="bi-pillar-row-lbl">App consistency</span>
+                      <span class="bi-pillar-row-val bi-pillar-row-val-single">
+                        1 build &equals; all ${ci.envs} ${envsLabel}
+                      </span>
+                    </li>
+                  </ul>
+                </article>
+
+              </div>
+              <p class="bi-pillars-foot">Modeled from your Assumptions &mdash; editable above.</p>
+            </section>
+
             <!-- ONGOING IMPACT — monthly recurring (right side: data backs the story) -->
             <section class="bi-split-col">
               <div class="bi-section-eyebrow">Ongoing &middot; hours per month</div>
@@ -11172,52 +10721,6 @@
           if (action === 'expand-all') { Object.keys(STATE.openCards).forEach(k => STATE.openCards[k] = true); STATE.visitedCards = ['core','onboarding','trust']; render(); return; }
           if (action === 'calculate-impact') { calculateImpact(); render(); return; }
           if (action === 'toggle-assumptions') { STATE.showAssumptions = !STATE.showAssumptions; render(); return; }
-          if (action === 'toggle-section') {
-            const section = act.getAttribute('data-section');
-            if (section && STATE.collapsedSections.hasOwnProperty(section)) {
-              STATE.collapsedSections[section] = !STATE.collapsedSections[section];
-              render();
-            }
-            return;
-          }
-          if (action === 'toggle-env-chip') {
-            const env = act.getAttribute('data-env');
-            if (!env) return;
-            if (!STATE.envImpact) STATE.envImpact = { selected: ['intune','sccm','avd'], mode: 'today' };
-            const sel = STATE.envImpact.selected || [];
-            const idx = sel.indexOf(env);
-            if (idx >= 0) {
-              // Don't allow deselecting the last chip — keep at least 1
-              if (sel.length <= 1) return;
-              sel.splice(idx, 1);
-            } else {
-              sel.push(env);
-            }
-            STATE.envImpact.selected = sel;
-            // Sync to calculator inputs and recalculate so left side stays consistent
-            if (STATE.calcInputs) {
-              STATE.calcInputs.envs = sel.length;
-              calculateImpact();
-            }
-            render();
-            return;
-          }
-          if (action === 'set-env-mode') {
-            const mode = act.getAttribute('data-mode');
-            if (mode !== 'today' && mode !== 'aw') return;
-            if (!STATE.envImpact) STATE.envImpact = { selected: ['intune','sccm','avd'], mode: 'today', coverage: 0.5 };
-            STATE.envImpact.mode = mode;
-            render();
-            return;
-          }
-          if (action === 'set-env-coverage') {
-            const cov = parseFloat(act.getAttribute('data-cov'));
-            if (!(cov > 0 && cov <= 1)) return;
-            if (!STATE.envImpact) STATE.envImpact = { selected: ['intune','sccm','avd'], mode: 'today', coverage: 0.5 };
-            STATE.envImpact.coverage = cov;
-            render();
-            return;
-          }
           if (action === 'save-assumptions') {
             const sc = STATE.calcScenario; const clamp = (v) => Math.max(0, Math.min(100, cleanNum(v))) / 100;
             const t = document.getElementById('asn-ticket'); const p = document.getElementById('asn-pkg'); const pa = document.getElementById('asn-patch'); const s = document.getElementById('asn-strategic');
