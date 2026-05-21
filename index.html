@@ -9004,23 +9004,6 @@
           impact: 'Reclaim candidates surface as questions, not quarterly audits — finance and end users both win.'
         },
         {
-          id: 'currency',
-          tag: 'Currency & exposure',
-          icon: 'shield-alert',
-          prompt: "Which apps are out of date or unpatched, on which devices — across Intune, ConfigMgr, Jamf, macOS, ARM and virtual?",
-          sources: ['packages','servers','devices','deployments'],
-          window: 'latest agent check-in · all consoles',
-          scopeEnvs: ['Intune','ConfigMgr','Citrix','AVD / W365','Jamf'],
-          scopeDevices: ['Windows','Windows on ARM','macOS','Virtual Desktop','Cloud PC / W365','BYOD','Browser-Based'],
-          headline: 'Currency gaps cluster exactly where coverage falls through — macOS, BYOD, virtual.',
-          insights: [
-            { tone:'risk', icon:'monitor-down',  label:'Outdated Windows builds',  value:'218', delta:'22H2 \u2192 23H2 missing',   note:'184 ConfigMgr Windows + 34 Cloud PC / W365 — Agent Info shows Last Seen current, just unpatched.' },
-            { tone:'risk', icon:'laptop-minimal',label:'macOS apps unpatched',     value:'94',  delta:'Jamf · 30+ days behind',     note:'Chrome, Slack, Zoom · Package Status reports current channel available but not deployed.' },
-            { tone:'warn', icon:'cpu',           label:'Virtual / ARM coverage',   value:'47 devices', delta:'Agent stale or missing', note:'31 AVD Windows on ARM + 16 Citrix VDI — Last Seen > 14 days. Compliance finding waiting to happen.' },
-          ],
-          impact: 'A board-level exposure picture — credible because the data already spans Jamf and the Microsoft estate together.'
-        },
-        {
           id: 'health',
           tag: 'Deployment health',
           icon: 'layers',
@@ -9036,6 +9019,23 @@
             { tone:'good', icon:'truck',       label:'Distribution Success', value:'99.4%', delta:'Stable across surfaces',    note:'All package targets reached, including ARM, Cloud PC / W365, and Browser-Based delivery.' },
           ],
           impact: "The view Copilot couldn't produce against the raw consoles — Recast's normalization is the unlock."
+        },
+        {
+          id: 'currency',
+          tag: 'Currency & exposure',
+          icon: 'shield-alert',
+          prompt: "Which apps are out of date or unpatched, on which devices — across Intune, ConfigMgr, Jamf, macOS, ARM and virtual?",
+          sources: ['packages','servers','devices','deployments'],
+          window: 'latest agent check-in · all consoles',
+          scopeEnvs: ['Intune','ConfigMgr','Citrix','AVD / W365','Jamf'],
+          scopeDevices: ['Windows','Windows on ARM','macOS','Virtual Desktop','Cloud PC / W365','BYOD','Browser-Based'],
+          headline: 'Currency gaps cluster exactly where coverage falls through — macOS, BYOD, virtual.',
+          insights: [
+            { tone:'risk', icon:'monitor-down',  label:'Outdated Windows builds',  value:'218', delta:'22H2 \u2192 23H2 missing',   note:'184 ConfigMgr Windows + 34 Cloud PC / W365 — Agent Info shows Last Seen current, just unpatched.' },
+            { tone:'risk', icon:'laptop-minimal',label:'macOS apps unpatched',     value:'94',  delta:'Jamf · 30+ days behind',     note:'Chrome, Slack, Zoom · Package Status reports current channel available but not deployed.' },
+            { tone:'warn', icon:'cpu',           label:'Virtual / ARM coverage',   value:'47 devices', delta:'Agent stale or missing', note:'31 AVD Windows on ARM + 16 Citrix VDI — Last Seen > 14 days. Compliance finding waiting to happen.' },
+          ],
+          impact: 'A board-level exposure picture — credible because the data already spans Jamf and the Microsoft estate together.'
         },
       ];
 
