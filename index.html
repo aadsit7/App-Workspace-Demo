@@ -1420,6 +1420,7 @@
       .ai-pill-good { background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
       .ai-pill-warn { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
       .ai-pill-risk { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+      .ai-pill-info { background: #ddd6fe; color: #5b21b6; border: 1px solid #c4b5fd; }
 
       .ai-table-footnote {
         display: flex; align-items: center; gap: 5px;
@@ -9011,6 +9012,73 @@
             footnote: 'Reclaim and consolidation figures are <strong>candidates</strong> — verify contract terms and stakeholder needs before action.'
           },
           impact: 'Reclaim candidates surface as questions, not quarterly audits — finance and end users both win.'
+        },
+        {
+          id: 'consolidate',
+          tag: 'Stack consolidation',
+          icon: 'git-merge',
+          prompt: "Identify overlapping application delivery, patching, and storefront platforms.",
+          sources: ['packages','deployments','servers','workspaces'],
+          window: 'current tooling footprint',
+          scopeDevices: ['Windows','Windows on ARM','macOS','Virtual Desktop','Cloud PC / W365','BYOD','Browser-Based'],
+          headline: 'Three app-delivery layers doing one job — clear sunset / reduce / expand picture.',
+          table: {
+            columns: [
+              { label: 'Platform',         align: 'left' },
+              { label: 'Current role',     align: 'left' },
+              { label: 'Overlap with AW',  align: 'left' },
+              { label: 'Recommendation',   align: 'left' },
+            ],
+            rows: [
+              {
+                icon: 'monitor', tone: 'risk',
+                cells: [
+                  '<strong>Citrix XenApp</strong>',
+                  'App storefront<span class="ai-table-sub"> · primary launcher for VDI titles</span>',
+                  '<strong>High</strong>',
+                  '<span class="ai-pill ai-pill-risk">Sunset</span>'
+                ]
+              },
+              {
+                icon: 'shield-check', tone: 'risk',
+                cells: [
+                  '<strong>Patch My PC</strong>',
+                  '3rd-party patching<span class="ai-table-sub"> · Adobe, Chrome, Zoom, etc.</span>',
+                  '<strong>High</strong>',
+                  '<span class="ai-pill ai-pill-risk">Sunset</span>'
+                ]
+              },
+              {
+                icon: 'package', tone: 'warn',
+                cells: [
+                  '<strong>SCCM app deploy</strong>',
+                  'Packaging &amp; deployment<span class="ai-table-sub"> · legacy line-of-business apps</span>',
+                  '<strong>Medium-high</strong>',
+                  '<span class="ai-pill ai-pill-warn">Reduce</span>'
+                ]
+              },
+              {
+                icon: 'smartphone', tone: 'good',
+                cells: [
+                  '<strong>Intune</strong>',
+                  'Device management<span class="ai-table-sub"> · MDM, compliance, security</span>',
+                  '<strong>Low</strong>',
+                  '<span class="ai-pill ai-pill-good">Retain</span>'
+                ]
+              },
+              {
+                icon: 'sparkles', tone: 'good',
+                cells: [
+                  '<strong>Application Workspace</strong>',
+                  'Unified app delivery<span class="ai-table-sub"> · catalog, install, update, audit</span>',
+                  '<strong>Strategic</strong>',
+                  '<span class="ai-pill ai-pill-info">Expand</span>'
+                ]
+              },
+            ],
+            footnote: 'Future state: <strong>Intune manages devices · Application Workspace delivers apps</strong> — eliminate redundant layers in between.'
+          },
+          impact: '~60% less packaging effort · 3 legacy delivery tools sunset · one app layer, one device layer.'
         },
         {
           id: 'health',
