@@ -8955,7 +8955,7 @@
           icon: 'wallet',
           prompt: "Which apps are we paying for but barely using — and where are users blocked from apps they should have?",
           sources: ['licenses','events','identities','users'],
-          window: 'trailing 90 days · all tenants',
+          window: 'all tenants',
           scopeDevices: ['Windows','Windows on ARM','macOS','Virtual Desktop','Cloud PC / W365','BYOD','Browser-Based'],
           headline: 'Reclaim candidates and access friction — both visible in one answer.',
           table: {
@@ -9007,11 +9007,43 @@
           window: 'last 24 hours',
           scopeDevices: ['Windows','Windows on ARM','macOS','Virtual Desktop','Cloud PC / W365','BYOD','Browser-Based'],
           headline: 'Teams health rolls up across every device type — one normalized answer, no manual stitching.',
-          insights: [
-            { tone:'good', icon:'activity',    label:'Install Health %',     value:'98.2%', delta:'7,842 / 7,983 healthy',     note:'Endpoint Info reconciled across every device type — no manual stitching.' },
-            { tone:'warn', icon:'play-circle', label:'Launch Health %',      value:'93.4%', delta:'Soft regression on macOS',  note:'App Status: Macs at 87% launches. Distribution Success is 99%, so the gap is post-install, not delivery.' },
-            { tone:'good', icon:'truck',       label:'Distribution Success', value:'99.4%', delta:'Stable across surfaces',    note:'All package targets reached, including ARM, Cloud PC / W365, and Browser-Based delivery.' },
-          ],
+          table: {
+            columns: [
+              { label: 'Metric',  align: 'left' },
+              { label: 'Value',   align: 'left' },
+              { label: 'Trend',   align: 'left' },
+              { label: 'Detail',  align: 'left' },
+            ],
+            rows: [
+              {
+                icon: 'activity', tone: 'good',
+                cells: [
+                  '<strong>Install Health %</strong>',
+                  '<strong>98.2%</strong>',
+                  '7,842 / 7,983 healthy',
+                  'Endpoint Info reconciled across every device type<span class="ai-table-sub"> — no manual stitching.</span>'
+                ]
+              },
+              {
+                icon: 'play-circle', tone: 'warn',
+                cells: [
+                  '<strong>Launch Health %</strong>',
+                  '<strong>93.4%</strong>',
+                  'Soft regression on macOS',
+                  'Macs at 87% launches.<span class="ai-table-sub"> Distribution Success is 99%, so the gap is post-install, not delivery.</span>'
+                ]
+              },
+              {
+                icon: 'truck', tone: 'good',
+                cells: [
+                  '<strong>Distribution Success</strong>',
+                  '<strong>99.4%</strong>',
+                  'Stable across surfaces',
+                  'All package targets reached<span class="ai-table-sub"> — including ARM, Cloud PC / W365, and Browser-Based delivery.</span>'
+                ]
+              },
+            ]
+          },
           impact: "The view Copilot couldn't produce against raw consoles — Recast's normalization is the unlock."
         },
         {
@@ -9023,12 +9055,44 @@
           window: 'latest agent check-in',
           scopeDevices: ['Windows','Windows on ARM','macOS','Virtual Desktop','Cloud PC / W365','BYOD','Browser-Based'],
           headline: 'Currency gaps cluster exactly where coverage falls through — macOS, BYOD, virtual.',
-          insights: [
-            { tone:'risk', icon:'monitor-down',  label:'Outdated Windows builds',  value:'218', delta:'22H2 \u2192 23H2 missing',   note:'Agent Info shows Last Seen current, just unpatched.' },
-            { tone:'risk', icon:'laptop-minimal',label:'macOS apps unpatched',     value:'94',  delta:'30+ days behind',            note:'Chrome, Slack, Zoom · Package Status reports current channel available but not deployed.' },
-            { tone:'warn', icon:'cpu',           label:'Virtual / ARM coverage',   value:'47 devices', delta:'Agent stale or missing', note:'Last Seen > 14 days. Compliance finding waiting to happen.' },
-          ],
-          impact: 'A board-level exposure picture — credible because the data already spans Jamf and the Microsoft estate together.'
+          table: {
+            columns: [
+              { label: 'Issue',   align: 'left' },
+              { label: 'Count',   align: 'left' },
+              { label: 'Trend',   align: 'left' },
+              { label: 'Detail',  align: 'left' },
+            ],
+            rows: [
+              {
+                icon: 'monitor-down', tone: 'risk',
+                cells: [
+                  '<strong>Outdated Windows builds</strong>',
+                  '<strong>218</strong>',
+                  '22H2 → 23H2 missing',
+                  'Agent Info shows Last Seen current<span class="ai-table-sub"> — just unpatched.</span>'
+                ]
+              },
+              {
+                icon: 'laptop-minimal', tone: 'risk',
+                cells: [
+                  '<strong>macOS apps unpatched</strong>',
+                  '<strong>94</strong>',
+                  '30+ days behind',
+                  'Chrome, Slack, Zoom<span class="ai-table-sub"> · Package Status reports current channel available but not deployed.</span>'
+                ]
+              },
+              {
+                icon: 'cpu', tone: 'warn',
+                cells: [
+                  '<strong>Virtual / ARM coverage</strong>',
+                  '<strong>47 devices</strong>',
+                  'Agent stale or missing',
+                  'Last Seen > 14 days.<span class="ai-table-sub"> Compliance finding waiting to happen.</span>'
+                ]
+              },
+            ]
+          },
+          impact: 'A board-level exposure picture — credible because the data already spans every device type together.'
         },
       ];
 
