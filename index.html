@@ -8960,17 +8960,19 @@
           headline: 'Reclaim candidates and access friction — both visible in one answer.',
           table: {
             columns: [
-              { label: 'Item',              align: 'left' },
-              { label: 'Install / Launch',  align: 'left' },
-              { label: 'Status',            align: 'left' },
-              { label: 'Annual cost',       align: 'right' },
+              { label: 'Item',         align: 'left'  },
+              { label: 'Installs',     align: 'left'  },
+              { label: 'Launches',     align: 'left'  },
+              { label: 'Status',       align: 'left'  },
+              { label: 'Annual cost',  align: 'right' },
             ],
             rows: [
               {
                 icon: 'image', tone: 'warn',
                 cells: [
                   '<strong>Adobe Creative Cloud</strong>',
-                  '312 installs<span class="ai-table-sub"> · &lt;5 launches per quarter</span>',
+                  '<strong>312</strong><span class="ai-table-sub"> seats</span>',
+                  '<strong>&lt;5</strong><span class="ai-table-sub"> / quarter</span>',
                   '<span class="ai-pill ai-pill-warn">Reclaim candidate</span>',
                   '<strong>~$58K</strong><span class="ai-table-sub">/yr</span>'
                 ]
@@ -8979,22 +8981,34 @@
                 icon: 'workflow', tone: 'warn',
                 cells: [
                   '<strong>Visio Plan 2</strong>',
-                  '87 installs<span class="ai-table-sub"> · no launches 90+ days</span>',
+                  '<strong>87</strong><span class="ai-table-sub"> seats</span>',
+                  '<strong>0</strong><span class="ai-table-sub"> · 90+ days dormant</span>',
                   '<span class="ai-pill ai-pill-warn">Reclaim candidate</span>',
                   '<strong>~$24K</strong><span class="ai-table-sub">/yr</span>'
+                ]
+              },
+              {
+                icon: 'copy', tone: 'warn',
+                cells: [
+                  '<strong>DocuSign vs Adobe Sign</strong><span class="ai-table-sub"><br/>Same job, two vendors</span>',
+                  'DocuSign <strong>1,240</strong> <span class="ai-table-sub">(Sales, Legal)</span><br/>Adobe Sign <strong>380</strong> <span class="ai-table-sub">(Marketing, HR)</span>',
+                  'DocuSign <strong>78%</strong> MAU<br/>Adobe Sign <strong>18%</strong> MAU',
+                  '<span class="ai-pill ai-pill-warn">Consolidation candidate</span>',
+                  '<strong>~$32K</strong><span class="ai-table-sub">/yr if standardized</span>'
                 ]
               },
               {
                 icon: 'user-x', tone: 'risk',
                 cells: [
                   '<strong>Access friction</strong>',
-                  '47 users<span class="ai-table-sub"> · denied / failed logins · 7 d</span>',
+                  '<span class="ai-table-sub">47 users entitled</span>',
+                  '<span class="ai-table-sub">Denied / failed · 7 d</span>',
                   '<span class="ai-pill ai-pill-risk">Identity-Based Access misalignment</span>',
                   '<span class="ai-table-sub">—</span>'
                 ]
               },
             ],
-            footnote: 'Reclaim figures are <strong>candidates</strong> — verify contract terms before action.'
+            footnote: 'Reclaim and consolidation figures are <strong>candidates</strong> — verify contract terms and stakeholder needs before action.'
           },
           impact: 'Reclaim candidates surface as questions, not quarterly audits — finance and end users both win.'
         },
