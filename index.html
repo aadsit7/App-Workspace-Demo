@@ -9138,79 +9138,70 @@
         },
         {
           id: 'consolidate',
-          tag: 'Stack consolidation',
+          tag: 'Tool consolidation',
           icon: 'git-merge',
-          prompt: "Identify overlapping application delivery, patching, and storefront platforms.",
-          sources: ['packages','deployments','servers','workspaces'],
+          prompt: "Find overlapping apps where two regions run different tools for the same job.",
+          sources: ['packages','deployments','workspaces','licenses'],
           window: 'current tooling footprint',
           scopeDevices: ['Windows','Windows on ARM','macOS','Virtual Desktop','Cloud PC / W365','BYOD','Browser-Based'],
-          headline: 'Three app-delivery layers doing one job — clear sunset / reduce / expand picture.',
+          headline: 'Two e-signature tools split by region — same job, double the licensing and fractured adoption.',
           table: {
             columns: [
-              { label: 'Platform',         align: 'left' },
-              { label: 'Current role',     align: 'left' },
-              { label: 'Overlap with AW',  align: 'left' },
-              { label: 'Recommendation',   align: 'left' },
+              { label: 'Application',     align: 'left' },
+              { label: 'Role · region',   align: 'left' },
+              { label: 'Annual spend',    align: 'left' },
+              { label: 'Recommendation',  align: 'left' },
             ],
             rows: [
               {
-                icon: 'monitor', tone: 'risk',
+                icon: 'pen-tool', tone: 'warn',
                 cells: [
-                  '<strong>Citrix XenApp</strong>',
-                  'App storefront<span class="ai-table-sub"> · primary launcher for VDI titles</span>',
-                  '<strong>High</strong>',
-                  '<span class="ai-pill ai-pill-risk">Sunset</span>'
+                  '<strong>DocuSign</strong>',
+                  'E-signature<span class="ai-table-sub"> · EMEA standard · 4,200 seats · 48% active</span>',
+                  '<strong>$0.62M/yr</strong>',
+                  '<span class="ai-pill ai-pill-warn">Consolidate</span>'
                 ]
               },
               {
-                icon: 'shield-check', tone: 'risk',
+                icon: 'file-signature', tone: 'good',
                 cells: [
-                  '<strong>Patch My PC</strong>',
-                  '3rd-party patching<span class="ai-table-sub"> · Adobe, Chrome, Zoom, etc.</span>',
-                  '<strong>High</strong>',
-                  '<span class="ai-pill ai-pill-risk">Sunset</span>'
+                  '<strong>Adobe Acrobat Sign</strong>',
+                  'E-signature<span class="ai-table-sub"> · Americas standard · 3,600 seats · 79% active · rides Acrobat ELA</span>',
+                  '<strong>$0 incremental</strong>',
+                  '<span class="ai-pill ai-pill-good">Standardize</span>'
                 ]
               },
               {
-                icon: 'laptop-minimal', tone: 'risk',
+                icon: 'workflow', tone: 'warn',
                 cells: [
-                  '<strong>Jamf</strong>',
-                  'macOS MDM &amp; app delivery<span class="ai-table-sub"> · separate Mac-only management plane</span>',
-                  '<strong>High</strong>',
-                  '<span class="ai-pill ai-pill-risk">Sunset</span>'
+                  '<strong>Lucidchart</strong>',
+                  'Diagramming<span class="ai-table-sub"> · Americas standard · 1,900 seats</span>',
+                  '<strong>$0.34M/yr</strong>',
+                  '<span class="ai-pill ai-pill-warn">Consolidate</span>'
                 ]
               },
               {
-                icon: 'package', tone: 'warn',
+                icon: 'shapes', tone: 'good',
                 cells: [
-                  '<strong>SCCM app deploy</strong>',
-                  'Packaging &amp; deployment<span class="ai-table-sub"> · legacy line-of-business apps</span>',
-                  '<strong>Medium-high</strong>',
-                  '<span class="ai-pill ai-pill-warn">Reduce</span>'
-                ]
-              },
-              {
-                icon: 'smartphone', tone: 'good',
-                cells: [
-                  '<strong>Intune</strong>',
-                  'Device management<span class="ai-table-sub"> · MDM, compliance, security</span>',
-                  '<strong>Low</strong>',
-                  '<span class="ai-pill ai-pill-good">Retain</span>'
+                  '<strong>Microsoft Visio</strong>',
+                  'Diagramming<span class="ai-table-sub"> · EMEA standard · 2,400 seats · already in M365 E5</span>',
+                  '<strong>$0 incremental</strong>',
+                  '<span class="ai-pill ai-pill-good">Standardize</span>'
                 ]
               },
               {
                 icon: 'sparkles', tone: 'good',
                 cells: [
                   '<strong>Application Workspace</strong>',
-                  'Unified app delivery<span class="ai-table-sub"> · catalog, install, update, audit</span>',
+                  'Identity-based delivery<span class="ai-table-sub"> · push one standard to every region, retire the rest</span>',
                   '<strong>Strategic</strong>',
-                  '<span class="ai-pill ai-pill-info">Expand</span>'
+                  '<span class="ai-pill ai-pill-info">Deliver</span>'
                 ]
               },
             ],
-            footnote: 'Future state: <strong>Intune manages devices · Application Workspace delivers apps</strong> — eliminate redundant layers in between.'
+            footnote: 'Future state: <strong>one e-signature standard · one diagramming standard</strong> — delivered by Application Workspace to every region, by identity.'
           },
-          impact: '~60% less packaging effort · 3 legacy delivery tools sunset · one app layer, one device layer.'
+          impact: '~$0.96M/yr licensing reclaimed · 2 duplicate tools retired · +30% adoption on the surviving standards.'
         },
       ];
 
