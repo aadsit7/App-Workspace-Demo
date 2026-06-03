@@ -1272,7 +1272,58 @@
         30% { transform: translateY(-3px); opacity: 1; }
       }
 
-      .ai-answer { /* visible immediately when this branch renders */ }
+      /* ===== Phase-driven reveal system (no DOM rebuild between phases) ===== */
+      /* Thinking indicator lives in a slot that slides closed once the answer arrives. */
+      .ai-think-slot {
+        overflow: hidden;
+        max-height: 0; opacity: 0;
+        transition: max-height 0.42s cubic-bezier(0.2,0.8,0.2,1), opacity 0.3s ease;
+        will-change: max-height, opacity;
+      }
+      [data-ai-phase="prompt"] .ai-think-slot,
+      [data-ai-phase="thinking"] .ai-think-slot { max-height: 30px; opacity: 1; }
+
+      /* Generic reveal: collapsed + hidden until its phase, then grows + fades
+         into place via animated height (no layout jump, no DOM rebuild). */
+      .ai-reveal {
+        box-sizing: border-box;
+        opacity: 0;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.55s cubic-bezier(0.2,0.8,0.2,1), opacity 0.4s ease;
+        will-change: max-height, opacity;
+      }
+      [data-ai-phase="sources"] .ai-reveal-sources,
+      [data-ai-phase="answer"]  .ai-reveal-sources,
+      [data-ai-phase="done"]    .ai-reveal-sources { opacity: 1; max-height: 200px; }
+      [data-ai-phase="answer"] .ai-reveal-answer,
+      [data-ai-phase="done"]   .ai-reveal-answer { opacity: 1; max-height: 1400px; }
+
+      /* Source chips pop in, staggered (inline transition-delay set per chip). */
+      .ai-toolcall-chips .ai-source-chip {
+        opacity: 0; transform: translateY(5px) scale(0.95);
+        transition: opacity 0.34s ease, transform 0.34s cubic-bezier(0.2,0.8,0.2,1);
+      }
+      [data-ai-phase="sources"] .ai-toolcall-chips .ai-source-chip,
+      [data-ai-phase="answer"]  .ai-toolcall-chips .ai-source-chip,
+      [data-ai-phase="done"]    .ai-toolcall-chips .ai-source-chip { opacity: 1; transform: none; }
+
+      /* Insight cards reveal, staggered (inline transition-delay set per card). */
+      .ai-insights .ai-insight {
+        opacity: 0; transform: translateY(10px);
+        transition: opacity 0.42s ease, transform 0.42s cubic-bezier(0.2,0.8,0.2,1);
+      }
+      [data-ai-phase="answer"] .ai-insights .ai-insight,
+      [data-ai-phase="done"]   .ai-insights .ai-insight { opacity: 1; transform: none; }
+
+      @media (prefers-reduced-motion: reduce) {
+        .ai-think-slot, .ai-reveal, .ai-toolcall-chips .ai-source-chip,
+        .ai-table-row, .ai-insights .ai-insight { transition: none !important; }
+        .ai-toolcall-chips .ai-source-chip,
+        .ai-table-row, .ai-insights .ai-insight { opacity: 1 !important; transform: none !important; }
+      }
+
+      .ai-answer { /* container; children carry the reveal */ }
       .ai-headline {
         font-size: 12.5px; font-weight: 700;
         color: #0A1C60; margin-bottom: 8px;
@@ -1377,9 +1428,13 @@
       .ai-table-th:last-child { border-right: 0; }
       .ai-table-row {
         border-top: 1px solid #e2e8f0;
-        transition: background 0.15s ease;
         border-left: 3px solid transparent;
+        opacity: 0;
+        transform: translateY(9px);
+        transition: opacity 0.42s ease, transform 0.42s cubic-bezier(0.2,0.8,0.2,1), background 0.15s ease;
       }
+      [data-ai-phase="answer"] .ai-table-row,
+      [data-ai-phase="done"]   .ai-table-row { opacity: 1; transform: none; }
       .ai-table-row.ai-tone-good { border-left-color: #10b981; background: #f7fdf9; }
       .ai-table-row.ai-tone-warn { border-left-color: #f59e0b; background: #fffaf2; }
       .ai-table-row.ai-tone-risk { border-left-color: #ef4444; background: #fff7f7; }
@@ -5750,6 +5805,7 @@
         solutionViewDashboard: false,
         solutionViewAi: false,
         aiPhase: 'idle',
+        aiTyping: false,
         aiScenarioIdx: 0,
         aiRunning: false,
         aiPaused: false,
@@ -9255,7 +9311,7 @@
         }
 
         return `
-          <div class="section-card p-4 ai-shell">
+          <div class="section-card p-4 ai-shell" data-ai-phase="${p}">
             <!-- Co-branded header -->
             <div class="ai-cobrand-row">
               <div class="ai-cobrand">
@@ -9287,7 +9343,7 @@
                 </div>
                 <div class="ai-row ai-row-user">
                   <div class="ai-bubble ai-bubble-user">
-                    <span>${s.prompt}</span>
+                    <span>${STATE.aiTyping ? '' : s.prompt}</span>
                   </div>
                   <div class="ai-avatar ai-avatar-user"><i data-lucide="user" class="w-3.5 h-3.5"></i></div>
                 </div>
@@ -9301,28 +9357,25 @@
                   <span class="ai-turn-time">${showImpact ? 'responded' : 'replying…'}</span>
                 </div>
                 <div class="ai-row ai-row-bot">
-                  <div class="ai-avatar ai-avatar-bot ${showThinking ? 'is-thinking' : ''}">${COPILOT_MARK_SVG}</div>
+                  <div class="ai-avatar ai-avatar-bot ${(showThinking || p === 'prompt') ? 'is-thinking' : ''}">${COPILOT_MARK_SVG}</div>
                   <div class="ai-bubble ai-bubble-bot">
 
-                    ${showThinking ? `
+                    <div class="ai-think-slot">
                       <div class="ai-thinking"><span></span><span></span><span></span><em>Thinking\u2026 reading ${s.sources.length} datasets from Application Workspace</em></div>
-                    ` : ''}
+                    </div>
 
-                    ${sourcesLit ? `
-                      <div class="ai-toolcall">
-                        <div class="ai-toolcall-head">
-                          <i data-lucide="database" class="w-3 h-3"></i>
-                          <span>Grounded in OData</span>
-                          <span class="ai-toolcall-window">${s.window}</span>
-                        </div>
-                        <div class="ai-toolcall-chips">
-                          ${s.sources.map((src, i) => `<span class="ai-source-chip is-lit" style="transition-delay:${i*0.12}s"><i data-lucide="check" class="w-2.5 h-2.5"></i> ${src}</span>`).join('')}
-                        </div>
+                    <div class="ai-toolcall ai-reveal ai-reveal-sources">
+                      <div class="ai-toolcall-head">
+                        <i data-lucide="database" class="w-3 h-3"></i>
+                        <span>Grounded in OData</span>
+                        <span class="ai-toolcall-window">${s.window}</span>
                       </div>
-                    ` : ''}
+                      <div class="ai-toolcall-chips">
+                        ${s.sources.map((src, i) => `<span class="ai-source-chip is-lit" style="transition-delay:${0.06 + i*0.09}s"><i data-lucide="check" class="w-2.5 h-2.5"></i> ${src}</span>`).join('')}
+                      </div>
+                    </div>
 
-                    ${showAnswer ? `
-                      <div class="ai-answer">
+                    <div class="ai-answer ai-reveal ai-reveal-answer">
                         <div class="ai-headline">${s.headline}</div>
                         <div class="ai-scope">
                           <div class="ai-scope-line">
@@ -9341,8 +9394,8 @@
                                 </tr>
                               </thead>
                               <tbody>
-                                ${s.table.rows.map(r => `
-                                  <tr class="ai-table-row ai-tone-${r.tone}">
+                                ${s.table.rows.map((r, ri) => `
+                                  <tr class="ai-table-row ai-tone-${r.tone}" style="transition-delay:${0.14 + ri*0.07}s">
                                     ${r.cells.map((cell, ci) => `
                                       <td class="ai-table-td ai-align-${(s.table.columns[ci] && s.table.columns[ci].align) || 'left'}">
                                         ${ci === 0 && r.icon ? `<span class="ai-table-icon"><i data-lucide="${r.icon}" class="w-3.5 h-3.5"></i></span>` : ''}
@@ -9358,7 +9411,7 @@
                         ` : `
                           <div class="ai-insights">
                             ${s.insights.map((it, i) => `
-                              <div class="ai-insight ai-tone-${it.tone}">
+                              <div class="ai-insight ai-tone-${it.tone}" style="transition-delay:${0.14 + i*0.08}s">
                                 <div class="ai-insight-icon"><i data-lucide="${it.icon}" class="w-3.5 h-3.5"></i></div>
                                 <div class="ai-insight-body">
                                   <div class="ai-insight-top">
@@ -9373,11 +9426,6 @@
                           </div>
                         `}
                       </div>
-                    ` : ''}
-
-                    ${showActions ? `` : ''}
-
-                    ${showImpact ? `` : ''}
 
                   </div>
                 </div>
@@ -9769,17 +9817,58 @@
 
       /* ========== AI COPILOT ANIMATION ENGINE ========== */
       // Each Auto/Step play runs ONE scenario only. User clicks the next
-      // scenario tab to play that one. Prompt is shown immediately, so the
-      // queue picks up at 'thinking' to avoid an empty-state flash.
+      // scenario tab to play that one. The answer DOM is built once (at the
+      // 'prompt' phase) with every block present-but-hidden; phase changes
+      // then only flip a data-ai-phase attribute, so CSS transitions reveal
+      // content with zero DOM rebuilds, icon re-conversions, or reflow.
       function buildAiQueue(){
         const queue = [];
         const phases = ['thinking','sources','answer','done'];
-        const delays = [1200, 1300, 1700, 600];
+        const delays = [1100, 1200, 1500, 700];
         phases.forEach((phase, i) => {
-          queue.push({ delay: delays[i], fn(){ STATE.aiPhase = phase; scrollPreserveRender(); } });
+          queue.push({ delay: delays[i], fn(){ STATE.aiPhase = phase; updateAiDOM(); } });
         });
-        queue.push({ delay: 300, fn(){ STATE.aiRunning = false; STATE.aiPaused = false; scrollPreserveRender(); } });
+        queue.push({ delay: 400, fn(){ STATE.aiRunning = false; STATE.aiPaused = false; scrollPreserveRender(); } });
         return queue;
+      }
+
+      // Lightweight in-place phase update: never rebuilds the DOM, so live
+      // animations don't restart and Lucide icons never re-flicker.
+      function updateAiDOM(){
+        const shell = document.querySelector('.ai-shell');
+        // If the answer bubble isn't built yet (still on empty/idle shell), do a
+        // one-time full render to construct it; subsequent phases flip in place.
+        if (!shell || !shell.querySelector('.ai-bubble-bot') || STATE.activeTab !== 'solution' || !STATE.solutionViewAi) { scrollPreserveRender(); return; }
+        shell.setAttribute('data-ai-phase', STATE.aiPhase);
+        const avatar = shell.querySelector('.ai-avatar-bot');
+        if (avatar) avatar.classList.toggle('is-thinking', STATE.aiPhase === 'thinking' || STATE.aiPhase === 'prompt');
+        const time = shell.querySelector('.ai-turn-bot .ai-turn-time');
+        if (time) time.textContent = (STATE.aiPhase === 'done') ? 'responded' : 'replying\u2026';
+      }
+
+      // Type the user's prompt out character-by-character into the existing
+      // bubble — no re-render, timers tracked so reset/switch cancels cleanly.
+      function typeAiPrompt(done){
+        const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const span = document.querySelector('.ai-bubble-user > span');
+        const full = (AI_SCENARIOS[STATE.aiScenarioIdx || 0] || {}).prompt || '';
+        if (!span || reduce || !full) { STATE.aiTyping = false; if (span) span.textContent = full; if (done) done(); return; }
+        span.innerHTML = '<span class="ai-typed"></span><span class="ai-caret"></span>';
+        const typed = span.querySelector('.ai-typed');
+        let i = 0;
+        (function tick(){
+          if (STATE.aiPaused) { const t = setTimeout(tick, 120); STATE.flowTimers.timeouts.push(t); return; }
+          i = Math.min(full.length, i + (Math.random() < 0.28 ? 2 : 1));
+          typed.textContent = full.slice(0, i);
+          if (i < full.length) {
+            const t = setTimeout(tick, 16 + Math.random() * 24);
+            STATE.flowTimers.timeouts.push(t);
+          } else {
+            const caret = span.querySelector('.ai-caret'); if (caret) caret.remove();
+            STATE.aiTyping = false;
+            if (done) done();
+          }
+        })();
       }
 
       function runAiQueue(){
@@ -9800,12 +9889,13 @@
         STATE.flowTimers.timeouts = [];
         STATE.aiRunning = true;
         STATE.aiPaused = false;
-        // Show the user's prompt immediately so there's no empty-state flash.
+        // Build the shell at 'prompt' with the prompt empty, then type it in.
         STATE.aiPhase = 'prompt';
+        STATE.aiTyping = true;
         STATE.aiQueue = buildAiQueue();
         STATE.aiQueueIdx = 0;
         scrollPreserveRender();
-        runAiQueue();
+        typeAiPrompt(() => { runAiQueue(); });
       }
 
       function stepAi(){
@@ -9825,6 +9915,7 @@
         STATE.flowTimers.timeouts.forEach(id => clearTimeout(id));
         STATE.flowTimers.timeouts = [];
         STATE.aiPhase = 'idle';
+        STATE.aiTyping = false;
         STATE.aiScenarioIdx = 0;
         STATE.aiRunning = false;
         STATE.aiPaused = false;
