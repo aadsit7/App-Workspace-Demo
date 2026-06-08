@@ -5971,6 +5971,7 @@
         },
         calcScenario: 'expected',
         calcResult: null,
+        ipCalc: { open: false, engineers: '', environments: '', bothDevices: null, employees: '', result: null },
         showAssumptions: false,
         editingAssumptions: false,
         pdfCompanyInput: false,
@@ -7268,6 +7269,61 @@
                   <div class="flex items-start gap-4 p-4 rounded-xl bg-white/70 backdrop-blur-lg shadow-sm hover:shadow-md transition-shadow"><div class="text-sm font-bold min-w-[120px] flex-shrink-0" style="color:#0070F3">Gartner, 2025</div><div class="text-sm text-[#475569] italic">"By 2027, organizations that fail to modernize application delivery will spend 40% more on operational overhead than those that do."</div></div>
                   <div class="flex items-start gap-4 p-4 rounded-xl bg-white/70 backdrop-blur-lg shadow-sm hover:shadow-md transition-shadow"><div class="text-sm font-bold min-w-[120px] flex-shrink-0" style="color:#006B3F">Forrester, 2025</div><div class="text-sm text-[#475569] italic">"Application complexity has overtaken infrastructure as the primary bottleneck in IT operations. The breaking point is not a staffing issue — it's architectural."</div></div>
                   <div class="flex items-start gap-4 p-4 rounded-xl bg-white/70 backdrop-blur-lg shadow-sm hover:shadow-md transition-shadow"><div class="text-sm font-bold min-w-[120px] flex-shrink-0" style="color:#D4213D">IDC, 2025</div><div class="text-sm text-[#475569] italic">"Application sprawl across hybrid environments is now the leading driver of unplanned IT work, consuming up to 60% of IT operations capacity."</div></div>
+                </div>
+
+                <div class="mt-5 pt-5" style="border-top:1px solid var(--border-subtle)">
+                  <button type="button" data-action="toggle-ip-calc" class="w-full inline-flex items-center justify-center gap-2 bg-[#0070F3] text-white px-4 py-2.5 rounded-xl text-sm font-semibold hover:bg-[#005AD0] transition shadow-sm">
+                    <i data-lucide="calculator" class="w-4 h-4"></i>
+                    ${STATE.ipCalc.open ? 'Hide the inflection point estimator' : 'Estimate your own inflection point'}
+                  </button>
+                  ${STATE.ipCalc.open ? `
+                  <div class="mt-4 p-5 rounded-xl bg-white/70 backdrop-blur-lg shadow-sm space-y-4">
+                    <p class="text-xs text-[#64748b]">Four quick inputs. We project the point where application workload outgrows your team, using the ~40% annual growth pattern from the scenarios above.</p>
+
+                    <div>
+                      <label class="block text-[11px] font-semibold text-[#0A1C60] uppercase tracking-wide mb-1">1. Engineers / IT staff working on applications</label>
+                      <input type="number" min="1" id="ip-engineers" value="${STATE.ipCalc.engineers}" placeholder="e.g. 4" class="focus-ring w-full px-3 py-2 rounded-lg border border-slate-200 text-sm">
+                    </div>
+
+                    <div>
+                      <label class="block text-[11px] font-semibold text-[#0A1C60] uppercase tracking-wide mb-1">2. Number of environments you deliver to</label>
+                      <input type="number" min="1" id="ip-environments" value="${STATE.ipCalc.environments}" placeholder="e.g. 3 (Intune, SCCM, AVD)" class="focus-ring w-full px-3 py-2 rounded-lg border border-slate-200 text-sm">
+                    </div>
+
+                    <div>
+                      <label class="block text-[11px] font-semibold text-[#0A1C60] uppercase tracking-wide mb-1">3. Do you deploy to both virtual and physical devices?</label>
+                      <div class="flex gap-2">
+                        <button type="button" data-action="ip-set-devices" data-val="true" class="px-3 py-1.5 text-xs rounded-lg border ${STATE.ipCalc.bothDevices === true ? 'bg-[#0070F3] text-white border-[#0070F3]' : 'bg-white text-slate-500 border-slate-200'}">Yes — both</button>
+                        <button type="button" data-action="ip-set-devices" data-val="false" class="px-3 py-1.5 text-xs rounded-lg border ${STATE.ipCalc.bothDevices === false ? 'bg-[#0070F3] text-white border-[#0070F3]' : 'bg-white text-slate-500 border-slate-200'}">No — one type</button>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label class="block text-[11px] font-semibold text-[#0A1C60] uppercase tracking-wide mb-1">4. Total employee count</label>
+                      <input type="number" min="1" id="ip-employees" value="${STATE.ipCalc.employees}" placeholder="e.g. 5000" class="focus-ring w-full px-3 py-2 rounded-lg border border-slate-200 text-sm">
+                    </div>
+
+                    <button type="button" data-action="calculate-ip" class="w-full bg-[#0A1C60] text-white px-4 py-2.5 rounded-xl text-sm font-semibold hover:bg-[#0070F3] transition">Calculate my inflection point</button>
+
+                    ${(() => {
+                      const r = STATE.ipCalc.result; if (!r) return '';
+                      if (r.error) return `<p class="text-sm text-[#D4213D] font-medium">${r.error}</p>`;
+                      const headline = r.status === 'past' ? 'Already past it' : r.status === 'healthy' ? 'Healthy headroom' : r.label;
+                      const msg = r.status === 'past'
+                        ? 'Your application workload already exceeds what this team can sustainably absorb — the inflection point is behind you, not ahead.'
+                        : r.status === 'healthy'
+                          ? 'At your current scale the team stays ahead of the curve for 5+ years. Worth re-checking as environments or headcount grow.'
+                          : `At roughly 40% annual workload growth, demand crosses your team's sustainable capacity around <strong>${r.label}</strong>.`;
+                      return `<div class="mt-2 p-4 rounded-xl text-center" style="background:#0A1C60">
+                          <div class="text-[10px] uppercase tracking-wider text-white/60 mb-1">Projected inflection point</div>
+                          <div class="text-3xl font-bold text-white">${headline}</div>
+                          <div class="text-xs text-white/70 mt-1">Current load on team: ~${r.loadPct}% of sustainable capacity</div>
+                        </div>
+                        <p class="text-sm text-[#475569] mt-3">${msg}</p>
+                        <p class="text-[10px] text-[#94a3b8] mt-2 italic">Illustrative, directional model built on the analyst scenarios shown above — assumptions are tunable and this is not a guaranteed forecast.</p>`;
+                    })()}
+                  </div>
+                  ` : ''}
                 </div>
                 ` : `
                 ${intro ? `<p class="text-base leading-relaxed text-[#4A5568] mb-4">${intro}</p>` : ''}
@@ -11611,6 +11667,38 @@
 
       function setText(id, value){ const el=document.getElementById(id); if(el) el.textContent = String(value); }
 
+      function computeInflectionPoint(){
+        const c = STATE.ipCalc;
+        const E = parseFloat(c.engineers);     // engineers / IT staff on apps
+        const V = parseFloat(c.environments);  // delivery environments
+        const N = parseFloat(c.employees);     // total employees
+        if (!(E > 0) || !(V >= 1) || !(N > 0) || c.bothDevices === null) {
+          c.result = { error: 'Answer all four questions to see your projected inflection point.' };
+          return;
+        }
+        // ---- Illustrative model constants (tunable ASSUMPTIONS, not measured data) ----
+        const BASE_YEAR = 2026;                 // "now"
+        const GROWTH    = 0.40;                  // annual demand growth — mirrors the Gartner 40% scenario figure
+        const PER_ENG   = 10;                    // sustainable workload units one engineer carries
+        const DIVISOR   = 1000;                  // ~1 demand unit per 1000 employees of app/support load
+        const MIX       = c.bothDevices === true ? 1.5 : 1.0; // mixed virtual+physical estate adds ~50% overhead
+        const demand    = (N / DIVISOR) * V * MIX;
+        const capacity  = E * PER_ENG;
+        const load      = demand / capacity;     // 1.0 = saturation
+        let status, label;
+        if (load >= 1) {
+          status = 'past'; label = 'Now';
+        } else {
+          const years   = Math.log(capacity / demand) / Math.log(1 + GROWTH);
+          const yearInt = BASE_YEAR + Math.floor(years);
+          const frac    = years - Math.floor(years);
+          const season  = frac < 0.34 ? 'Early' : frac < 0.67 ? 'Mid' : 'Late';
+          if (years > 5) { status = 'healthy'; label = (BASE_YEAR + 5) + '+'; }
+          else           { status = 'soon';    label = season + ' ' + yearInt; }
+        }
+        c.result = { status, label, loadPct: Math.round(load * 100) };
+      }
+
       function calculateImpact(){
         const ci = STATE.calcInputs;
         const a = ROI_ASSUMPTIONS[STATE.calcScenario];
@@ -12049,6 +12137,9 @@
           if (action === 'open-ai-agent') { STATE.showAIAgent = true; render(); return; }
           if (action === 'close-ai-agent') { STATE.showAIAgent = false; render(); return; }
           if (action === 'close-insight-modal') { STATE.insightContent = null; STATE.highlightDriverId = null; render(); return; }
+          if (action === 'toggle-ip-calc') { STATE.ipCalc.open = !STATE.ipCalc.open; render(); return; }
+          if (action === 'ip-set-devices') { STATE.ipCalc.bothDevices = act.getAttribute('data-val') === 'true'; render(); return; }
+          if (action === 'calculate-ip') { computeInflectionPoint(); render(); return; }
           if (action === 'why-nav') { STATE.openWhyModal = act.getAttribute('data-to'); render(); return; }
           if (action === 'step-driver') {
             const dir = parseInt(act.getAttribute('data-dir'), 10) || 1;
@@ -12269,6 +12360,9 @@
 
         let _roiDebounce = null;
         root.addEventListener('input', (e) => {
+          if (e.target?.id === 'ip-engineers')    { STATE.ipCalc.engineers = e.target.value; return; }
+          if (e.target?.id === 'ip-environments') { STATE.ipCalc.environments = e.target.value; return; }
+          if (e.target?.id === 'ip-employees')    { STATE.ipCalc.employees = e.target.value; return; }
           if (e.target?.id === 'roi-employees') { const n = cleanNum(e.target.value); if (n > 0) { deriveFromEmployees(n); calculateImpact(); clearTimeout(_roiDebounce); _roiDebounce = setTimeout(() => render(), 600); } return; }
           if (e.target?.id === 'roi-users') { STATE.calcInputs.users = cleanNum(e.target.value); return; }
           if (e.target?.id === 'roi-endpoints') { STATE.calcInputs.endpoints = cleanNum(e.target.value); return; }
