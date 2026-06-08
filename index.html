@@ -5971,7 +5971,7 @@
         },
         calcScenario: 'expected',
         calcResult: null,
-        ipCalc: { open: false, engineers: '', environments: '', bothDevices: null, employees: '', result: null },
+        ipCalc: { open: false, engineers: '', envs: [], devices: [], employees: '', result: null },
         showAssumptions: false,
         editingAssumptions: false,
         pdfCompanyInput: false,
@@ -7228,6 +7228,33 @@
 
       function openInsight(content){ STATE.insightContent = content; STATE.highlightDriverId = content?.id || null; render(); }
 
+      const IP_ENVS = [
+        { key:'intune', icon:'cloud',        label:'Intune',          color:'#5B53D6' },
+        { key:'sccm',   icon:'server',       label:'SCCM',            color:'#E84D1A' },
+        { key:'citrix', icon:'monitor-play', label:'Citrix',          color:'#0070F3' },
+        { key:'avd',    icon:'box',          label:'Azure VD / W365', color:'#0A1C60' },
+        { key:'jamf',   icon:'laptop-minimal', label:'Jamf Pro',      color:'#006B3F' },
+      ];
+      const IP_DEVICES = [
+        { key:'windows', icon:'monitor',   label:'Windows',     color:'#0070F3' },
+        { key:'mac',     icon:'laptop',    label:'macOS',       color:'#0A1C60' },
+        { key:'arm',     icon:'cpu',       label:'Windows ARM', color:'#5B53D6' },
+        { key:'virtual', icon:'cloud-cog', label:'Virtual',     color:'#006B3F' },
+      ];
+
+      function renderIPTileGroup(group, options, selected, cols){
+        return `<div class="grid ${cols} gap-2">` + options.map(o => {
+          const sel = selected.includes(o.key);
+          return `<button type="button" data-action="ip-toggle-${group}" data-val="${o.key}" aria-pressed="${sel}" title="${o.label}"
+            class="relative flex flex-col items-center justify-center gap-1.5 px-1 py-2.5 rounded-lg border-2 transition focus-ring"
+            style="${sel ? `border-color:${o.color};background:${o.color}14` : 'border-color:#e2e8f0;background:#fff'}">
+            ${sel ? `<span class="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full flex items-center justify-center shadow-sm" style="background:${o.color}"><i data-lucide="check" class="w-2.5 h-2.5 text-white"></i></span>` : ''}
+            <i data-lucide="${o.icon}" class="w-5 h-5" style="color:${sel ? o.color : '#94a3b8'}"></i>
+            <span class="text-[10px] font-semibold leading-tight text-center" style="color:${sel ? '#0A1C60' : '#64748b'}">${o.label}</span>
+          </button>`;
+        }).join('') + `</div>`;
+      }
+
       function renderIPChart(r){
         const C = { navy:'#0A1C60', blue:'#0070F3', red:'#D4213D', ink:'#475569', mute:'#94a3b8' };
         const headline = r.status === 'past' ? 'Already past it' : r.status === 'healthy' ? 'Healthy headroom' : r.label;
@@ -7427,7 +7454,23 @@
                   </button>
                   ${STATE.ipCalc.open ? `
                   <div class="mt-4 p-5 rounded-xl bg-white/70 backdrop-blur-lg shadow-sm space-y-4">
-                    <p class="text-xs text-[#64748b]">Four quick inputs — we project where your application workload outgrows your team, using the ~40%/yr growth pattern Gartner, Forrester &amp; IDC describe above.</p>
+                    <p class="text-xs text-[#64748b]">A few quick inputs — we project where your application workload outgrows your team, using the ~40%/yr growth pattern Gartner, Forrester &amp; IDC describe above.</p>
+
+                    <div>
+                      <label class="flex items-center justify-between text-[11px] font-semibold text-[#0A1C60] uppercase tracking-wide mb-1.5">
+                        <span>Delivery environments <span class="text-slate-400 normal-case font-medium">— select all you manage</span></span>
+                        <span class="text-[10px] font-bold text-[#0070F3] tabular-nums">${STATE.ipCalc.envs.length || ''}</span>
+                      </label>
+                      ${renderIPTileGroup('env', IP_ENVS, STATE.ipCalc.envs, 'grid-cols-5')}
+                    </div>
+
+                    <div>
+                      <label class="flex items-center justify-between text-[11px] font-semibold text-[#0A1C60] uppercase tracking-wide mb-1.5">
+                        <span>Device estate <span class="text-slate-400 normal-case font-medium">— what you deliver to</span></span>
+                        <span class="text-[10px] font-bold text-[#0070F3] tabular-nums">${STATE.ipCalc.devices.length || ''}</span>
+                      </label>
+                      ${renderIPTileGroup('device', IP_DEVICES, STATE.ipCalc.devices, 'grid-cols-4')}
+                    </div>
 
                     <div class="grid grid-cols-2 gap-x-3 gap-y-3">
                       <div>
@@ -7437,17 +7480,6 @@
                       <div>
                         <label class="block text-[11px] font-semibold text-[#0A1C60] uppercase tracking-wide mb-1">Total employees</label>
                         <input type="number" min="1" id="ip-employees" value="${STATE.ipCalc.employees}" placeholder="e.g. 5000" class="focus-ring w-full px-3 py-2 rounded-lg border border-slate-200 text-sm">
-                      </div>
-                      <div>
-                        <label class="block text-[11px] font-semibold text-[#0A1C60] uppercase tracking-wide mb-1">Delivery environments</label>
-                        <input type="number" min="1" id="ip-environments" value="${STATE.ipCalc.environments}" placeholder="e.g. 3" class="focus-ring w-full px-3 py-2 rounded-lg border border-slate-200 text-sm">
-                      </div>
-                      <div>
-                        <label class="block text-[11px] font-semibold text-[#0A1C60] uppercase tracking-wide mb-1">Virtual + physical devices?</label>
-                        <div class="flex gap-2">
-                          <button type="button" data-action="ip-set-devices" data-val="true" class="flex-1 px-3 py-2 text-xs rounded-lg border ${STATE.ipCalc.bothDevices === true ? 'bg-[#0070F3] text-white border-[#0070F3]' : 'bg-white text-slate-500 border-slate-200'}">Both</button>
-                          <button type="button" data-action="ip-set-devices" data-val="false" class="flex-1 px-3 py-2 text-xs rounded-lg border ${STATE.ipCalc.bothDevices === false ? 'bg-[#0070F3] text-white border-[#0070F3]' : 'bg-white text-slate-500 border-slate-200'}">One</button>
-                        </div>
                       </div>
                     </div>
 
@@ -11806,10 +11838,14 @@
       function computeInflectionPoint(){
         const c = STATE.ipCalc;
         const E = parseFloat(c.engineers);     // engineers / IT staff on apps
-        const V = parseFloat(c.environments);  // delivery environments
+        const V = (c.envs || []).length;       // delivery environments selected
         const N = parseFloat(c.employees);     // total employees
-        if (!(E > 0) || !(V >= 1) || !(N > 0) || c.bothDevices === null) {
-          c.result = { error: 'Answer all four questions to see your projected inflection point.' };
+        const devs = c.devices || [];
+        const hasVirtual  = devs.includes('virtual');
+        const hasPhysical = devs.some(d => d !== 'virtual');
+        const bothDevices = hasVirtual && hasPhysical;
+        if (!(E > 0) || !(V >= 1) || !(N > 0) || devs.length === 0) {
+          c.result = { error: 'Pick your environments and devices, then add engineers and employees to see your projected inflection point.' };
           return;
         }
         // ---- Illustrative model constants (tunable ASSUMPTIONS, not measured data) ----
@@ -11817,7 +11853,7 @@
         const GROWTH    = 0.40;                  // annual demand growth — mirrors the Gartner 40% scenario figure
         const PER_ENG   = 10;                    // sustainable workload units one engineer carries
         const DIVISOR   = 1000;                  // ~1 demand unit per 1000 employees of app/support load
-        const MIX       = c.bothDevices === true ? 1.5 : 1.0; // mixed virtual+physical estate adds ~50% overhead
+        const MIX       = bothDevices ? 1.5 : 1.0; // mixed virtual+physical estate adds ~50% overhead
         const demand    = (N / DIVISOR) * V * MIX;
         const capacity  = E * PER_ENG;
         const load      = demand / capacity;     // 1.0 = saturation
@@ -12274,7 +12310,8 @@
           if (action === 'close-ai-agent') { STATE.showAIAgent = false; render(); return; }
           if (action === 'close-insight-modal') { STATE.insightContent = null; STATE.highlightDriverId = null; render(); return; }
           if (action === 'toggle-ip-calc') { STATE.ipCalc.open = !STATE.ipCalc.open; render(); return; }
-          if (action === 'ip-set-devices') { STATE.ipCalc.bothDevices = act.getAttribute('data-val') === 'true'; render(); return; }
+          if (action === 'ip-toggle-env') { const k = act.getAttribute('data-val'); const a = STATE.ipCalc.envs; const i = a.indexOf(k); if (i >= 0) a.splice(i,1); else a.push(k); render(); return; }
+          if (action === 'ip-toggle-device') { const k = act.getAttribute('data-val'); const a = STATE.ipCalc.devices; const i = a.indexOf(k); if (i >= 0) a.splice(i,1); else a.push(k); render(); return; }
           if (action === 'calculate-ip') { computeInflectionPoint(); render(); return; }
           if (action === 'why-nav') { STATE.openWhyModal = act.getAttribute('data-to'); render(); return; }
           if (action === 'step-driver') {
@@ -12497,7 +12534,6 @@
         let _roiDebounce = null;
         root.addEventListener('input', (e) => {
           if (e.target?.id === 'ip-engineers')    { STATE.ipCalc.engineers = e.target.value; return; }
-          if (e.target?.id === 'ip-environments') { STATE.ipCalc.environments = e.target.value; return; }
           if (e.target?.id === 'ip-employees')    { STATE.ipCalc.employees = e.target.value; return; }
           if (e.target?.id === 'roi-employees') { const n = cleanNum(e.target.value); if (n > 0) { deriveFromEmployees(n); calculateImpact(); clearTimeout(_roiDebounce); _roiDebounce = setTimeout(() => render(), 600); } return; }
           if (e.target?.id === 'roi-users') { STATE.calcInputs.users = cleanNum(e.target.value); return; }
