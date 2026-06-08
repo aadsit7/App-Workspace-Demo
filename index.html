@@ -7246,11 +7246,10 @@
         return `<div class="grid ${cols} gap-2">` + options.map(o => {
           const sel = selected.includes(o.key);
           return `<button type="button" data-action="ip-toggle-${group}" data-val="${o.key}" aria-pressed="${sel}" title="${o.label}"
-            class="relative flex flex-col items-center justify-center gap-1.5 px-1 py-2.5 rounded-lg border-2 transition focus-ring"
-            style="${sel ? `border-color:${o.color};background:${o.color}14` : 'border-color:#e2e8f0;background:#fff'}">
-            ${sel ? `<span class="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full flex items-center justify-center shadow-sm" style="background:${o.color}"><i data-lucide="check" class="w-2.5 h-2.5 text-white"></i></span>` : ''}
-            <i data-lucide="${o.icon}" class="w-5 h-5" style="color:${sel ? o.color : '#94a3b8'}"></i>
-            <span class="text-[10px] font-semibold leading-tight text-center" style="color:${sel ? '#0A1C60' : '#64748b'}">${o.label}</span>
+            class="relative flex flex-col items-center justify-center gap-1.5 px-1 py-3 rounded-xl border-2 transition focus-ring ${sel ? 'border-[#0070F3] bg-blue-50' : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50'}">
+            ${sel ? `<span class="absolute -top-2 -right-2 w-4 h-4 rounded-full bg-[#0A1C60] flex items-center justify-center ring-2 ring-white"><i data-lucide="check" class="w-2.5 h-2.5 text-white"></i></span>` : ''}
+            <span class="${sel ? 'text-[#0070F3]' : 'text-slate-400'}"><i data-lucide="${o.icon}" class="w-5 h-5"></i></span>
+            <span class="text-[10px] font-semibold leading-tight text-center ${sel ? 'text-[#0A1C60]' : 'text-slate-500'}">${o.label}</span>
           </button>`;
         }).join('') + `</div>`;
       }
@@ -11853,8 +11852,9 @@
         const GROWTH    = 0.40;                  // annual demand growth — mirrors the Gartner 40% scenario figure
         const PER_ENG   = 10;                    // sustainable workload units one engineer carries
         const DIVISOR   = 1000;                  // ~1 demand unit per 1000 employees of app/support load
-        const MIX       = bothDevices ? 1.5 : 1.0; // mixed virtual+physical estate adds ~50% overhead
-        const demand    = (N / DIVISOR) * V * MIX;
+        // Each additional device type multiplies packaging/test/patch work; a mixed virtual+physical estate adds more again.
+        const DEVICE_OVERHEAD = 1 + 0.15 * Math.max(0, devs.length - 1) + (bothDevices ? 0.25 : 0);
+        const demand    = (N / DIVISOR) * V * DEVICE_OVERHEAD;
         const capacity  = E * PER_ENG;
         const load      = demand / capacity;     // 1.0 = saturation
         const years = Math.log(capacity / demand) / Math.log(1 + GROWTH);
