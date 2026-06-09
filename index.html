@@ -139,8 +139,8 @@
       .chart-draw .demand-line { animation-delay: 0.55s; }
       @keyframes chartLineDraw { to { stroke-dashoffset: 0; } }
       .chart-draw .gap-element { opacity: 0; animation: chartFadeIn 0.9s var(--mo-ease-out, ease) 1.15s forwards; }
-      .chart-draw .marker-element {
-        animation: chartMarkerPop 0.55s var(--mo-ease-spring, ease-out) var(--chart-d, 1.6s) forwards;
+      .marker-pop {
+        animation: chartMarkerPop 0.55s var(--mo-ease-spring, ease-out) var(--chart-d, 0s) both;
         transform-box: fill-box; transform-origin: center;
       }
       @keyframes chartMarkerPop {
@@ -5960,7 +5960,70 @@
       .view-toggle:active, .lifecycle-play-btn:active { transform: scale(0.95); }
       .flip-card-inner { transition: transform 0.7s var(--mo-ease-inout); }
 
-      /* ── 7. Respect reduced motion everywhere, including the new layer. ── */
+      /* ── 7. Chart story player: presenter-paced narrative controls. ── */
+      .story-play-btn {
+        position: absolute; top: 10px; right: 10px; z-index: 6;
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 6px 14px; border-radius: 9999px;
+        font-size: 11.5px; font-weight: 700; letter-spacing: 0.01em;
+        border: 1px solid #0070F3; background: #ffffff; color: #0070F3;
+        cursor: pointer; box-shadow: 0 2px 8px rgba(10, 28, 96, 0.10);
+        transition: background var(--mo-fast) ease, color var(--mo-fast) ease,
+                    border-color var(--mo-fast) ease, transform 220ms var(--mo-ease-spring);
+      }
+      .story-play-btn:hover { background: #eff6ff; }
+      .story-play-btn:active { transform: scale(0.95); }
+      .story-play-btn.is-playing { background: #fee2e2; border-color: #ef4444; color: #dc2626; }
+      .story-play-btn.is-playing:hover { background: #fecaca; }
+      .story-play-btn i, .story-play-btn svg { width: 12px; height: 12px; }
+      /* The caption lives in the chart's empty top-left quadrant (the curves
+         run bottom-left to top-right). Re-mounted once per story beat, so the
+         entrance plays exactly once per caption. */
+      .story-caption {
+        position: absolute; top: 7%; left: 11%; z-index: 5;
+        max-width: 46%;
+        display: flex; flex-direction: column; gap: 1px;
+        background: rgba(255, 255, 255, 0.88);
+        backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+        border-left: 3px solid #0070F3; border-radius: 10px;
+        padding: 9px 14px;
+        box-shadow: 0 6px 18px rgba(10, 28, 96, 0.12);
+        animation: moCaptionIn 480ms var(--mo-ease-out) both;
+        pointer-events: none;
+      }
+      @keyframes moCaptionIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+      .story-caption-kicker {
+        font-size: 9px; font-weight: 800; text-transform: uppercase;
+        letter-spacing: 0.14em; color: #0070F3;
+      }
+      .story-caption-main { font-size: 14px; font-weight: 700; color: #0A1C60; line-height: 1.25; }
+      .story-caption-sub { font-size: 11px; font-weight: 500; color: #475569; line-height: 1.35; }
+      .story-caption.is-peak { border-left-color: #CC2222; }
+      .story-caption.is-peak .story-caption-kicker { color: #CC2222; }
+      .story-caption.is-resolve { border-left-color: #10b981; }
+      .story-caption.is-resolve .story-caption-kicker { color: #059669; }
+      @media (max-width: 720px) {
+        .story-caption { max-width: 70%; left: 8%; }
+      }
+
+      /* Presenter keyboard hint in the demo modal header */
+      .demo-modal-kbd-hint {
+        margin-left: 12px;
+        font-size: 10px; font-weight: 600; color: #94a3b8;
+        letter-spacing: 0.02em; white-space: nowrap;
+      }
+      .demo-modal-kbd-hint kbd {
+        font-family: inherit; font-size: 9px; font-weight: 700;
+        color: #64748b; background: #f1f5f9;
+        border: 1px solid #e2e8f0; border-bottom-width: 2px;
+        border-radius: 4px; padding: 1px 5px;
+      }
+      @media (max-width: 1020px) { .demo-modal-kbd-hint { display: none; } }
+
+      /* ── 8. Respect reduced motion everywhere, including the new layer. ── */
       @media (prefers-reduced-motion: reduce) {
         *, *::before, *::after {
           animation-duration: 0.001ms !important;
@@ -5974,7 +6037,8 @@
         .modal-overlay:not(.is-fresh) .modal-content,
         .demo-modal-backdrop.is-fresh .demo-modal-panel,
         .chart-draw .chart-element,
-        .chart-draw .marker-element,
+        .marker-pop,
+        .story-caption,
         .tp-line.is-fresh, .tp-label.is-fresh,
         .rs-subtitle.is-fresh {
           animation: none !important;
@@ -6098,6 +6162,10 @@
         currentCapacitySlope: 0,
         targetCapacitySlope: 0,
         showTippingPoint: false,
+        storyPlaying: false,
+        storyTone: 'build',
+        storyCaption: '',
+        storyTimers: [],
         currentState: {
           change: {
             intro: "",
@@ -6958,6 +7026,29 @@
         STATE.flowQueueIdx++;
       }
 
+      // Presenter shortcut (Space): pause/resume whichever demo is on screen.
+      // Mirrors the per-demo pause-* click handlers, which all share the
+      // STATE.flowTimers timeout pool.
+      function toggleDemoPause(){
+        const clearShared = () => { STATE.flowTimers.timeouts.forEach(id => clearTimeout(id)); STATE.flowTimers.timeouts = []; };
+        if ((STATE.solutionViewAdmin || STATE.solutionViewUser) && STATE.flowRunning) {
+          if (STATE.flowPaused) resumeFlow(); else pauseFlow();
+          return;
+        }
+        const queues = [
+          ['solutionViewSetupStore', 'ssRunning', 'ssPaused', () => runSsQueue()],
+          ['solutionViewOnboarding', 'obRunning', 'obPaused', () => runObQueue()],
+          ['solutionViewDashboard',  'drRunning', 'drPaused', () => runDrQueue()],
+          ['solutionViewMultiTenant','mtRunning', 'mtPaused', () => runMtQueue()],
+        ];
+        for (const [viewKey, runKey, pausedKey, resume] of queues) {
+          if (!STATE[viewKey] || !STATE[runKey]) continue;
+          if (STATE[pausedKey]) { STATE[pausedKey] = false; scrollPreserveRender(); resume(); }
+          else { STATE[pausedKey] = true; clearShared(); scrollPreserveRender(); }
+          return;
+        }
+      }
+
       function startAppCascade(){
         STATE.autopilotAppCount = 0;
         let count = 0;
@@ -7112,6 +7203,10 @@
               <div class="grid grid-cols-1 lg:grid-cols-[1fr_220px] gap-3 items-stretch">
                 <div class="chart-container relative">
                   <svg id="capacity-gap-chart" viewBox="0 0 860 420" preserveAspectRatio="xMidYMid meet"></svg>
+                  <button type="button" class="story-play-btn focus-ring ${STATE.storyPlaying ? 'is-playing' : ''}" data-action="play-chart-story" aria-label="${STATE.storyPlaying ? 'Stop the story' : 'Play the story'}" title="${STATE.storyPlaying ? 'Stop the story' : 'Watch the pressure build, beat by beat'}">
+                    <i data-lucide="${STATE.storyPlaying ? 'square' : 'play'}" class="w-3 h-3"></i><span>${STATE.storyPlaying ? 'Stop' : 'Play the story'}</span>
+                  </button>
+                  ${STATE.storyCaption ? `<div class="story-caption is-${STATE.storyTone || 'build'}" role="status">${STATE.storyCaption}</div>` : ''}
                 </div>
                 <div class="w-full bg-white/70 backdrop-blur-lg rounded-xl shadow-sm p-3 border border-slate-200 cs-challenges">
                   <h3 class="text-xs font-semibold uppercase tracking-wide text-[#0A1C60] mb-2">Modern IT Challenges</h3>
@@ -7404,17 +7499,32 @@
         // Gap label
         const gapLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         gapLabel.setAttribute('x', xScale(0.45)); gapLabel.setAttribute('y', yScale(0.48)); gapLabel.setAttribute('text-anchor', 'middle'); gapLabel.classList.add('chart-annotation','label-element','chart-element'); gapLabel.textContent = STATE.chartConfig.center; svg.appendChild(gapLabel);
-        // Driver markers with navy pill labels
+        // Driver markers with navy pill labels. A marker that just became
+        // visible (driver toggled on, or a story beat) is withheld while the
+        // curve is still bending, then pops onto the settled curve — tracked
+        // per driver id in _seenMarkers so per-frame rebuilds never replay it.
+        STATE._seenMarkers = STATE._seenMarkers || {};
         let markerIdx = 0;
         STATE.drivers.forEach(function(d) {
-          if (d.markerYear && (d.state === 'normal' || d.state === 'accelerating')) {
+          const markerVisible = d.markerYear && (d.state === 'normal' || d.state === 'accelerating');
+          if (!markerVisible) { if (d.id) delete STATE._seenMarkers[d.id]; }
+          if (markerVisible) {
+            // _seenMarkers stores the timestamp a marker first landed. The
+            // pop class stays applied for a short window after that, because
+            // converging RAF loops can rebuild the chart a frame after the
+            // settle render — which would otherwise strip the pop mid-flight.
+            const seenAt = d.id ? STATE._seenMarkers[d.id] : 1;
+            if (!freshDraw && !seenAt && tweening) return; // pops once the curve settles
             const t = (d.markerYear - 2025) / 3; const dem = Math.pow(t, exp); const x = xScale(t); const y = yScale(dem);
             const isHot = d.id && STATE.highlightDriverId === d.id;
             const r = isHot ? 6 : 5;
             const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
             g.classList.add('marker-group','marker-element','chart-element');
-            // Markers enter one after another along the curve on a fresh draw.
-            if (freshDraw) g.style.setProperty('--chart-d', (1.6 + markerIdx * 0.13).toFixed(2) + 's');
+            // Markers enter one after another along the curve on a fresh
+            // draw; a newly-activated marker pops immediately on settle.
+            if (freshDraw) { g.classList.add('marker-pop'); g.style.setProperty('--chart-d', (1.6 + markerIdx * 0.13).toFixed(2) + 's'); }
+            else if (!seenAt || (performance.now() - seenAt) < 600) { g.classList.add('marker-pop'); g.style.setProperty('--chart-d', '0s'); }
+            if (d.id && !seenAt) STATE._seenMarkers[d.id] = performance.now();
             markerIdx++;
             g.setAttribute('role','button'); g.setAttribute('tabindex','0'); g.setAttribute('aria-label','Learn more about '+d.label);
             const lblW = d.label.length * 6 + 18;
@@ -7473,9 +7583,84 @@
         if (Math.abs(STATE.currentDemandExponent - STATE.targetDemandExponent) > 0.001 || Math.abs(STATE.currentCapacitySlope - STATE.targetCapacitySlope) > 0.001) { requestAnimationFrame(animateCurves); }
       }
 
-      function setSlider(id, value){ const driver = STATE.drivers.find(d => d.id === id); if (driver) { driver.state = ['off', 'normal', 'accelerating'][value]; STATE.recastMode = false; updateCurves(); requestAnimationFrame(animateCurves); } }
+      function setSlider(id, value){ const driver = STATE.drivers.find(d => d.id === id); if (driver) { if (STATE.storyPlaying) { stopChartStory(); STATE.storyCaption = ''; } driver.state = ['off', 'normal', 'accelerating'][value]; STATE.recastMode = false; updateCurves(); requestAnimationFrame(animateCurves); } }
 
-      function resetSliders(){ STATE.recastMode = false; STATE.drivers.forEach(d => d.state = 'off'); STATE.currentDemandExponent = 1.6; STATE.targetDemandExponent = 1.6; STATE.currentCapacitySlope = 0; STATE.targetCapacitySlope = 0; STATE.showTippingPoint = false; STATE.highlightDriverId = null; render(); }
+      function resetSliders(){ stopChartStory(); STATE.storyCaption = ''; STATE.recastMode = false; STATE.drivers.forEach(d => d.state = 'off'); STATE.currentDemandExponent = 1.6; STATE.targetDemandExponent = 1.6; STATE.currentCapacitySlope = 0; STATE.targetCapacitySlope = 0; STATE.showTippingPoint = false; STATE.highlightDriverId = null; render(); }
+
+      // ── Chart story player ──────────────────────────────────────────
+      // Presenter-paced narrative for the capacity-gap chart: start from a
+      // calm baseline, accelerate the five pressures one beat at a time
+      // (curve bends, marker pops, caption narrates), hold the breaking
+      // point, then resolve with the Recast reveal. ~16s, built to be
+      // talked over on a live call.
+      function stopChartStory(){
+        (STATE.storyTimers || []).forEach(id => clearTimeout(id));
+        STATE.storyTimers = [];
+        STATE.storyPlaying = false;
+      }
+
+      function storyCaptionHTML(kicker, main, sub){
+        return '<span class="story-caption-kicker">' + kicker + '</span>'
+          + '<span class="story-caption-main">' + main + '</span>'
+          + (sub ? '<span class="story-caption-sub">' + sub + '</span>' : '');
+      }
+
+      function playChartStory(){
+        if (STATE.storyPlaying) {
+          stopChartStory();
+          STATE.storyCaption = '';
+          STATE.highlightDriverId = null;
+          scrollPreserveRender();
+          return;
+        }
+        stopChartStory();
+        STATE.storyPlaying = true;
+        STATE.storyTone = 'build';
+        STATE.recastMode = false;
+        STATE.drivers.forEach(d => d.state = 'off');
+        STATE.highlightDriverId = null;
+        STATE._seenMarkers = {};
+        STATE.storyCaption = storyCaptionHTML('The setup', 'A manageable estate', 'Demand and capacity track together &mdash; for now.');
+        updateCurves();
+        scrollPreserveRender();
+        requestAnimationFrame(animateCurves);
+
+        const beat = (at, fn) => {
+          const tid = setTimeout(() => { if (!STATE.storyPlaying) return; fn(); }, at);
+          STATE.storyTimers.push(tid);
+        };
+        STATE.drivers.forEach((d, i) => {
+          beat(1700 + i * 1900, () => {
+            d.state = 'accelerating';
+            STATE.highlightDriverId = d.id;
+            STATE.storyTone = 'build';
+            STATE.storyCaption = storyCaptionHTML('Pressure ' + (i + 1) + ' of 5', d.label, d.subtext);
+            updateCurves();
+            scrollPreserveRender();
+            requestAnimationFrame(animateCurves);
+          });
+        });
+        beat(11600, () => {
+          STATE.highlightDriverId = null;
+          STATE.storyTone = 'peak';
+          STATE.storyCaption = storyCaptionHTML('The breaking point', 'The model stops scaling', 'Five pressures compound faster than headcount ever can.');
+          scrollPreserveRender();
+        });
+        beat(13700, () => {
+          STATE.recastMode = true;
+          STATE.storyTone = 'resolve';
+          STATE.storyCaption = storyCaptionHTML('The shift', 'Change the model, not the headcount', 'One workspace layer: demand flattens, capacity scales, the gap closes.');
+          updateCurves();
+          scrollPreserveRender();
+          requestAnimationFrame(animateCurves);
+        });
+        beat(16500, () => {
+          // Leave the resolved curve + closing caption on screen for the
+          // hand-off into the Recast Approach tab.
+          stopChartStory();
+          scrollPreserveRender();
+        });
+      }
 
       function openInsight(content){ STATE.insightContent = content; STATE.highlightDriverId = content?.id || null; render(); }
 
@@ -10961,6 +11146,7 @@
                     <span class="demo-modal-progress" aria-label="Step ${idx + 1} of ${LIFECYCLE_MODULES.length}">
                       ${LIFECYCLE_MODULES.map((m, i) => `<button type="button" class="demo-modal-progress-dot ${i === idx ? 'is-active' : ''}" data-action="next-demo-module" data-view="${m.view}" title="${m.name}" aria-label="Jump to ${m.name}"></button>`).join('')}
                     </span>
+                    <span class="demo-modal-kbd-hint" aria-hidden="true"><kbd>Space</kbd> pause &nbsp;<kbd>&larr;</kbd><kbd>&rarr;</kbd> modules &nbsp;<kbd>Esc</kbd> close</span>
                     <span class="demo-modal-controls">
                       ${nextMod ? `
                         <button type="button" class="demo-modal-btn demo-modal-btn-next" data-action="next-demo-module" data-view="${nextMod.view}" title="Next: ${nextMod.name}" aria-label="Next: ${nextMod.name}">
@@ -12423,8 +12609,8 @@
           if (node) { const id = node.dataset.id; STATE.activePopover = STATE.activePopover === id ? null : id; render(); return; }
           if (!action) return;
 
-          if (action === 'switch-tab') { STATE.activeTab = act.getAttribute('data-tab'); STATE.visitedCards = []; STATE.activePopover = null; if (STATE.openWhyModal && STATE._savedDriverStates) { STATE.drivers.forEach((d, i) => { d.state = STATE._savedDriverStates[i]; }); STATE.showTippingPoint = STATE._savedTippingPoint; STATE.recastMode = STATE._savedRecastMode; STATE.targetDemandExponent = STATE._savedDemandExp; STATE.targetCapacitySlope = STATE._savedCapSlope; STATE._savedDriverStates = null; updateCurves(); } STATE.openWhyModal = null; STATE.insightContent = null; STATE.flowStep = -1; STATE.flowRunning = false; STATE.flowPaused = false; STATE.flowScenarioIdx = -1; STATE.flowPhase = 'idle'; STATE.flowAppOpened = false; STATE._firstOpenDone = false; STATE.showAdminView = false; STATE.showAutopilot = false; STATE.autopilotStep = -1; STATE.autopilotAppCount = 0; STATE.drPhase = 'idle'; STATE.drRunning = false; STATE.drPaused = false; STATE.drQueue = []; STATE.drQueueIdx = 0; STATE.obPhase = 'idle'; STATE.obRunning = false; STATE.obPaused = false; STATE.obQueue = []; STATE.obQueueIdx = 0; STATE.ssPhase = 'idle'; STATE.ssRunning = false; STATE.ssPaused = false; STATE.ssQueue = []; STATE.ssQueueIdx = 0; STATE.ssTimers.forEach(id => clearTimeout(id)); STATE.ssTimers = []; STATE.lcTimers.forEach(id => clearTimeout(id)); STATE.lcTimers = []; STATE.lifecyclePlaying = false; STATE.lcStep = -1; clearFlowTimers(); STATE._tabFresh = true; STATE._chartDrawn = false; render(); STATE._tabFresh = false; return; }
-          if (action === 'advance') { STATE.activeTab = act.getAttribute('data-next'); if (STATE.openWhyModal && STATE._savedDriverStates) { STATE.drivers.forEach((d, i) => { d.state = STATE._savedDriverStates[i]; }); STATE.showTippingPoint = STATE._savedTippingPoint; STATE.recastMode = STATE._savedRecastMode; STATE.targetDemandExponent = STATE._savedDemandExp; STATE.targetCapacitySlope = STATE._savedCapSlope; STATE._savedDriverStates = null; updateCurves(); } STATE.openWhyModal = null; if (STATE.activeTab === 'roi') { calculateImpact(); } STATE._tabFresh = true; STATE._chartDrawn = false; render(); STATE._tabFresh = false; return; }
+          if (action === 'switch-tab') { STATE.activeTab = act.getAttribute('data-tab'); STATE.visitedCards = []; STATE.activePopover = null; stopChartStory(); STATE.storyCaption = ''; if (STATE.openWhyModal && STATE._savedDriverStates) { STATE.drivers.forEach((d, i) => { d.state = STATE._savedDriverStates[i]; }); STATE.showTippingPoint = STATE._savedTippingPoint; STATE.recastMode = STATE._savedRecastMode; STATE.targetDemandExponent = STATE._savedDemandExp; STATE.targetCapacitySlope = STATE._savedCapSlope; STATE._savedDriverStates = null; updateCurves(); } STATE.openWhyModal = null; STATE.insightContent = null; STATE.flowStep = -1; STATE.flowRunning = false; STATE.flowPaused = false; STATE.flowScenarioIdx = -1; STATE.flowPhase = 'idle'; STATE.flowAppOpened = false; STATE._firstOpenDone = false; STATE.showAdminView = false; STATE.showAutopilot = false; STATE.autopilotStep = -1; STATE.autopilotAppCount = 0; STATE.drPhase = 'idle'; STATE.drRunning = false; STATE.drPaused = false; STATE.drQueue = []; STATE.drQueueIdx = 0; STATE.obPhase = 'idle'; STATE.obRunning = false; STATE.obPaused = false; STATE.obQueue = []; STATE.obQueueIdx = 0; STATE.ssPhase = 'idle'; STATE.ssRunning = false; STATE.ssPaused = false; STATE.ssQueue = []; STATE.ssQueueIdx = 0; STATE.ssTimers.forEach(id => clearTimeout(id)); STATE.ssTimers = []; STATE.lcTimers.forEach(id => clearTimeout(id)); STATE.lcTimers = []; STATE.lifecyclePlaying = false; STATE.lcStep = -1; clearFlowTimers(); STATE._tabFresh = true; STATE._chartDrawn = false; render(); STATE._tabFresh = false; return; }
+          if (action === 'advance') { STATE.activeTab = act.getAttribute('data-next'); stopChartStory(); STATE.storyCaption = ''; if (STATE.openWhyModal && STATE._savedDriverStates) { STATE.drivers.forEach((d, i) => { d.state = STATE._savedDriverStates[i]; }); STATE.showTippingPoint = STATE._savedTippingPoint; STATE.recastMode = STATE._savedRecastMode; STATE.targetDemandExponent = STATE._savedDemandExp; STATE.targetCapacitySlope = STATE._savedCapSlope; STATE._savedDriverStates = null; updateCurves(); } STATE.openWhyModal = null; if (STATE.activeTab === 'roi') { calculateImpact(); } STATE._tabFresh = true; STATE._chartDrawn = false; render(); STATE._tabFresh = false; return; }
           if (action === 'toggle-proof-details') { STATE.proofDetailsOpen = !STATE.proofDetailsOpen; render(); return; }
           if (action === 'toggle-solution-view' || action === 'next-demo-module') {
             const view = act.getAttribute('data-view');
@@ -12676,6 +12862,8 @@
 
           if (action === 'open-why-modal') {
             const id = act.getAttribute('data-why');
+            // The why-modal restages the chart, so an in-flight story must stop first
+            stopChartStory(); STATE.storyCaption = '';
             // Save current chart state before temporarily changing it for the modal
             STATE._savedDriverStates = STATE.drivers.map(d => d.state);
             STATE._savedTippingPoint = STATE.showTippingPoint;
@@ -12876,6 +13064,7 @@
 
           if (action === 'reset-currentstate-defaults') { clearDraft(); const defaults = STATE.defaultsCurrentState(); STATE.currentState.change = defaults.change; STATE.currentState.now = defaults.now; STATE.editBuffers = { change: { intro: '', bullets: '', analyst: '' }, now: { intro: '', bullets: '', analyst: '' }, recast: { intro: '', bullets: '', analyst: '' } }; render(); return; }
           if (action === 'reset-sliders') { resetSliders(); return; }
+          if (action === 'play-chart-story') { playChartStory(); return; }
         });
 
         root.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { const flipTarget = e.target.closest('[data-action="flip-card"]'); if (flipTarget) { flipTarget.click(); e.preventDefault(); } } });
@@ -12939,6 +13128,39 @@
         STATE._tabFresh = false;
       });
       document.addEventListener('keydown',(e)=>{
+        // ── Presenter controls for the demo modal: Esc closes (the click
+        //    handler existed but was never wired to a key), ←/→ moves
+        //    between lifecycle modules, Space pauses/resumes the running
+        //    demo. Ignored while typing in a field.
+        const _kTag = (e.target && e.target.tagName) || '';
+        const _kTyping = _kTag === 'INPUT' || _kTag === 'TEXTAREA' || (e.target && e.target.isContentEditable);
+        const _demoOpen = STATE.solutionViewSetupStore || STATE.solutionViewAdmin || STATE.solutionViewOnboarding ||
+          STATE.solutionViewUser || STATE.solutionViewDashboard || STATE.solutionViewAi || STATE.solutionViewMultiTenant;
+        if (_demoOpen && !_kTyping) {
+          if (e.key === 'Escape') {
+            document.querySelector('.demo-modal-backdrop')?.click();
+            e.preventDefault(); return;
+          }
+          if (e.key === 'ArrowRight') {
+            document.querySelector('.demo-modal-btn-next')?.click();
+            e.preventDefault(); return;
+          }
+          if (e.key === 'ArrowLeft') {
+            const dots = Array.from(document.querySelectorAll('.demo-modal-progress-dot'));
+            const cur = dots.findIndex(d => d.classList.contains('is-active'));
+            if (cur > 0) dots[cur - 1].click();
+            e.preventDefault(); return;
+          }
+          if (e.key === ' ') {
+            toggleDemoPause();
+            e.preventDefault(); return;
+          }
+        }
+        // Esc also stops an in-flight chart story (when no modal is open to close)
+        if (e.key === 'Escape' && STATE.storyPlaying && !(STATE.modalOpen || STATE.openWhyModal || STATE.insightContent || STATE.showAnalystModal || STATE.showAIAgent)) {
+          stopChartStory(); STATE.storyCaption = ''; STATE.highlightDriverId = null; scrollPreserveRender();
+          return;
+        }
         if (STATE.insightContent && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
           const tag = (e.target && e.target.tagName) || '';
           if (tag === 'INPUT' || tag === 'TEXTAREA' || (e.target && e.target.isContentEditable)) return;
