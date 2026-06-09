@@ -14,8 +14,1223 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" crossorigin="anonymous"></script>
     <script>if (window.pdfjsLib) { window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'; }</script>
-    <link rel="stylesheet" href="recast-impact-motion.css">
-    <script src="recast-impact-upgrades.js"></script>
+    <style>
+/* ════════════════════════════════════════════════════════════════════
+   Recast — Impact motion system + PDF export experience styles
+   Loaded after the app's main styles; scoped to #impact-results and .pdfx-*
+   Motion vocabulary: 120–320ms UI moves, 550–800ms storytelling moves,
+   single easing curve cubic-bezier(0.2, 0.8, 0.2, 1). No bounces.
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ─── Hardening: pillar rows can wrap without colliding ─── */
+.bi-pillar-row { flex-wrap: wrap; row-gap: 2px; }
+.bi-pillar-row-val { text-align: right; row-gap: 2px; line-height: 1.45; }
+.bi-pillar-hero-sub { row-gap: 2px; }
+
+/* ─── Results entrance choreography (plays once per arrival) ─── */
+@media (prefers-reduced-motion: no-preference) {
+  #impact-results.is-fresh .bi-section-eyebrow {
+    animation: biRise 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+  #impact-results.is-fresh .bi-pillar {
+    animation: biRise 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+  #impact-results.is-fresh .bi-pillar:nth-child(1) { animation-delay: 0.05s; }
+  #impact-results.is-fresh .bi-pillar:nth-child(2) { animation-delay: 0.13s; }
+  #impact-results.is-fresh .bi-pillar:nth-child(3) { animation-delay: 0.21s; }
+
+  #impact-results.is-fresh .bi-compare {
+    animation: biRise 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) 0.18s both;
+  }
+  /* Bars draw from the left, value labels and stats land after the bar. */
+  #impact-results.is-fresh .bi-compare-bar-fill {
+    transform-origin: left center;
+    animation: biBarIn 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+  #impact-results.is-fresh .bi-compare-bar-value,
+  #impact-results.is-fresh .bi-compare-stat {
+    animation: biFade 0.45s ease-out both;
+  }
+  #impact-results.is-fresh .bi-compare-row:nth-child(1) .bi-compare-bar-fill { animation-delay: 0.30s; }
+  #impact-results.is-fresh .bi-compare-row:nth-child(2) .bi-compare-bar-fill { animation-delay: 0.38s; }
+  #impact-results.is-fresh .bi-compare-row:nth-child(3) .bi-compare-bar-fill { animation-delay: 0.46s; }
+  #impact-results.is-fresh .bi-compare-row:nth-child(4) .bi-compare-bar-fill { animation-delay: 0.54s; }
+  #impact-results.is-fresh .bi-compare-row:nth-child(5) .bi-compare-bar-fill { animation-delay: 0.62s; }
+  #impact-results.is-fresh .bi-compare-row:nth-child(1) .bi-compare-bar-value,
+  #impact-results.is-fresh .bi-compare-row:nth-child(1) .bi-compare-stat { animation-delay: 0.62s; }
+  #impact-results.is-fresh .bi-compare-row:nth-child(2) .bi-compare-bar-value,
+  #impact-results.is-fresh .bi-compare-row:nth-child(2) .bi-compare-stat { animation-delay: 0.70s; }
+  #impact-results.is-fresh .bi-compare-row:nth-child(3) .bi-compare-bar-value,
+  #impact-results.is-fresh .bi-compare-row:nth-child(3) .bi-compare-stat { animation-delay: 0.78s; }
+  #impact-results.is-fresh .bi-compare-row:nth-child(4) .bi-compare-bar-value,
+  #impact-results.is-fresh .bi-compare-row:nth-child(4) .bi-compare-stat { animation-delay: 0.86s; }
+  #impact-results.is-fresh .bi-compare-row:nth-child(5) .bi-compare-bar-value,
+  #impact-results.is-fresh .bi-compare-row:nth-child(5) .bi-compare-stat { animation-delay: 0.94s; }
+  #impact-results.is-fresh .bi-compare-summary {
+    animation: biRise 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) 0.9s both;
+  }
+}
+@keyframes biRise {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes biBarIn {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+@keyframes biFade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   PDF export modal (.pdfx-*)
+   ════════════════════════════════════════════════════════════════════ */
+.pdfx-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: rgba(10, 12, 40, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: pdfxFade 0.24s ease-out both;
+}
+.pdfx-modal {
+  width: min(860px, 94vw);
+  height: min(86vh, 740px);
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 204, 0.15), 0 24px 64px rgba(10, 12, 40, 0.25);
+  animation: pdfxRise 0.32s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@keyframes pdfxFade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes pdfxRise {
+  from { opacity: 0; transform: translateY(14px) scale(0.985); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pdfx-overlay, .pdfx-modal { animation: none; }
+}
+
+/* Header strip — Recast primary blue with decorative plus marks */
+.pdfx-head {
+  position: relative;
+  background: #0000CC;
+  color: #ffffff;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-shrink: 0;
+}
+.pdfx-head::before,
+.pdfx-head::after {
+  content: '+';
+  position: absolute;
+  color: #2222DD;
+  font-weight: 700;
+  pointer-events: none;
+}
+.pdfx-head::before { font-size: 17px; left: 38%; top: 4px; }
+.pdfx-head::after  { font-size: 13px; left: 71%; bottom: 3px; }
+.pdfx-head-eyebrow {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #00BFFF;
+}
+.pdfx-head-company {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin-top: 1px;
+}
+.pdfx-close {
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  font-size: 17px;
+  line-height: 1;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: background 0.16s ease;
+}
+.pdfx-close:hover { background: rgba(255, 255, 255, 0.24); }
+.pdfx-close:focus-visible { outline: 2px solid #00BFFF; outline-offset: 2px; }
+
+/* Body */
+.pdfx-body {
+  flex: 1;
+  min-height: 0;
+  background: #F0F0F6;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+}
+
+/* ─── Crafting stage ─── */
+.pdfx-crafting {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 44px;
+  width: 100%;
+  padding: 24px;
+}
+.pdfx-minipage {
+  width: 188px;
+  height: 243px; /* US letter ratio */
+  background: #ffffff;
+  border: 1px solid #DDDDEE;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(26, 26, 46, 0.08);
+  padding: 0 0 12px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.pdfx-minipage-band {
+  height: 26px;
+  background: #0000CC;
+  margin-bottom: 12px;
+  position: relative;
+}
+.pdfx-minipage-band::after {
+  content: '+';
+  position: absolute;
+  right: 18px;
+  top: 2px;
+  color: #2222DD;
+  font-size: 12px;
+  font-weight: 700;
+}
+.pdfx-skel {
+  height: 7px;
+  border-radius: 2px;
+  background: #E4E6F2;
+  margin: 7px 14px 0;
+  transform-origin: left center;
+}
+.pdfx-skel.is-title { height: 11px; width: 62%; background: #0000CC; opacity: 0.85; }
+.pdfx-skel.is-accent { width: 34%; background: #00BFFF; }
+.pdfx-skel.is-bar { background: #CC2222; opacity: 0.75; }
+.pdfx-skel.is-bar-blue { background: #0000CC; opacity: 0.8; }
+@media (prefers-reduced-motion: no-preference) {
+  .pdfx-skel { animation: pdfxSkelIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+  .pdfx-skel:nth-child(2)  { animation-delay: 0.10s; }
+  .pdfx-skel:nth-child(3)  { animation-delay: 0.22s; }
+  .pdfx-skel:nth-child(4)  { animation-delay: 0.34s; }
+  .pdfx-skel:nth-child(5)  { animation-delay: 0.46s; }
+  .pdfx-skel:nth-child(6)  { animation-delay: 0.58s; }
+  .pdfx-skel:nth-child(7)  { animation-delay: 0.70s; }
+  .pdfx-skel:nth-child(8)  { animation-delay: 0.82s; }
+  .pdfx-skel:nth-child(9)  { animation-delay: 0.94s; }
+  .pdfx-skel:nth-child(10) { animation-delay: 1.06s; }
+  .pdfx-skel:nth-child(11) { animation-delay: 1.18s; }
+}
+@keyframes pdfxSkelIn {
+  from { opacity: 0; transform: scaleX(0); }
+  to   { opacity: 1; transform: scaleX(1); }
+}
+.pdfx-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 240px;
+}
+.pdfx-steps-title {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #4A4A5A;
+  margin-bottom: 2px;
+}
+.pdfx-step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #9AA0B5;
+  transition: color 0.2s ease;
+}
+.pdfx-step-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  border: 2px solid #DDDDEE;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  transition: border-color 0.2s ease, background 0.2s ease;
+  position: relative;
+}
+.pdfx-step[data-state="active"] { color: #1A1A2E; }
+.pdfx-step[data-state="active"] .pdfx-step-dot {
+  border-color: #0000CC;
+}
+.pdfx-step[data-state="active"] .pdfx-step-dot::after {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #0000CC;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .pdfx-step[data-state="active"] .pdfx-step-dot::after {
+    animation: pdfxPulse 0.9s ease-in-out infinite alternate;
+  }
+}
+@keyframes pdfxPulse {
+  from { transform: scale(0.7); opacity: 0.6; }
+  to   { transform: scale(1); opacity: 1; }
+}
+.pdfx-step[data-state="done"] { color: #1A1A2E; }
+.pdfx-step[data-state="done"] .pdfx-step-dot {
+  border-color: #0F7A3F;
+  background: #0F7A3F;
+}
+.pdfx-step[data-state="done"] .pdfx-step-dot::after {
+  content: '';
+  width: 8px;
+  height: 5px;
+  border-left: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  transform: rotate(-45deg) translate(0.5px, -1px);
+}
+
+/* ─── Ready stage ─── */
+.pdfx-pages {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  padding: 22px 24px 28px;
+}
+.pdfx-page {
+  flex-shrink: 0;
+  background: #ffffff;
+  border: 1px solid #DDDDEE;
+  box-shadow: 0 2px 8px rgba(26, 26, 46, 0.08);
+  border-radius: 3px;
+  overflow: hidden;
+  line-height: 0;
+  position: relative;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .pdfx-page { animation: pdfxRise 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+}
+.pdfx-page-num {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  background: rgba(26, 26, 46, 0.62);
+  color: #ffffff;
+  font-size: 9.5px;
+  font-weight: 600;
+  line-height: 1;
+  padding: 4px 7px;
+  border-radius: 3px;
+  pointer-events: none;
+}
+.pdfx-frame-wrap {
+  width: 100%;
+  display: flex;
+  animation: pdfxFade 0.3s ease-out both;
+}
+.pdfx-frame {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  flex: 1;
+}
+.pdfx-fallback {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 32px;
+  text-align: center;
+}
+.pdfx-fallback-icon {
+  width: 52px;
+  height: 64px;
+  border-radius: 4px;
+  background: #ffffff;
+  border: 1px solid #DDDDEE;
+  box-shadow: 0 2px 8px rgba(26, 26, 46, 0.08);
+  position: relative;
+  margin-bottom: 4px;
+}
+.pdfx-fallback-icon::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 14px;
+  background: #0000CC;
+  border-radius: 3px 3px 0 0;
+}
+.pdfx-fallback-icon::after {
+  content: '✓';
+  position: absolute;
+  right: -8px;
+  bottom: -8px;
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  background: #0F7A3F;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+}
+.pdfx-fallback-title { font-size: 15px; font-weight: 700; color: #1A1A2E; }
+.pdfx-fallback-body { font-size: 12.5px; color: #4A4A5A; max-width: 360px; }
+
+/* ─── Error stage ─── */
+.pdfx-error {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 32px;
+  text-align: center;
+}
+.pdfx-error-title { font-size: 14px; font-weight: 700; color: #CC2222; }
+.pdfx-error-body { font-size: 12px; color: #4A4A5A; max-width: 380px; }
+
+/* Footer */
+.pdfx-foot {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 12px 18px;
+  background: #ffffff;
+  border-top: 1px solid #DDDDEE;
+}
+.pdfx-foot-meta {
+  font-size: 11.5px;
+  color: #4A4A5A;
+  line-height: 1.45;
+}
+.pdfx-foot-meta b { color: #1A1A2E; }
+.pdfx-download {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  border-radius: 6px;
+  background: #0000CC;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background 0.16s ease, transform 0.16s ease;
+  white-space: nowrap;
+}
+.pdfx-download:hover { background: #2222DD; }
+.pdfx-download:active { transform: translateY(1px); }
+.pdfx-download:focus-visible { outline: 2px solid #00BFFF; outline-offset: 2px; }
+.pdfx-download:disabled { opacity: 0.5; cursor: default; }
+.pdfx-download.is-done {
+  background: #0F7A3F;
+}
+.pdfx-download.is-done:hover { background: #0F7A3F; }
+
+    </style>
+    <script>
+/* ════════════════════════════════════════════════════════════════════
+   Recast — Executive Impact Summary
+   PDF engine (jsPDF, fully vector, brand-true) + export preview flow
+   + Business-Impact entrance choreography.
+
+   Loaded BEFORE the main app script. The app delegates:
+     generatePDF(name)  →  openPdfExport(name)
+   and calls renderPdfExportModal() / runImpactEntrance() from render().
+   Reads the same live state the UI reads: STATE.calcResult,
+   STATE.calcInputs, ROI_ASSUMPTIONS, PACKAGING_BENCHMARKS.
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ─────────────────────────────────────────────────────────────────────
+   Shared impact-pool partition — mirrors renderCalcResult()'s bars so
+   the PDF can never disagree with the on-screen chart. Patching is
+   appended as a sixth row (the UI shows it on the Risk card) and its
+   reclaim absorbs the rounding residual so the grand total always
+   equals the engine's canonical totalHoursMonth.
+   ──────────────────────────────────────────────────────────────────── */
+function pdfxComputePools() {
+  const r = STATE.calcResult, ci = STATE.calcInputs, a = ROI_ASSUMPTIONS[STATE.calcScenario];
+  const rawSum = (a.uxShare + a.dashShare + a.mtShare) || 1;
+  const uxShare = a.uxShare / rawSum, dashShare = a.dashShare / rawSum, mtShare = a.mtShare / rawSum;
+  const supRaw = r.currentSupportHoursRaw, supRetRaw = r.ticketHoursReturnedRaw;
+
+  const barsRaw = [
+    { label: 'Managed apps',     sub: 'Catalog + lifecycle',   old: r.catalogPkgHoursRaw, ret: r.catalogPkgReturnedRaw },
+    { label: 'Custom packaging', sub: 'In-house apps',         old: r.customPkgHoursRaw,  ret: r.customPkgReturnedRaw  },
+    { label: 'User experience',  sub: 'Self-serve + auth',     old: supRaw * uxShare,     ret: supRetRaw * uxShare     },
+    { label: 'Dashboarding',     sub: 'Reporting + audit',     old: supRaw * dashShare,   ret: supRetRaw * dashShare   },
+    { label: 'Multi-tenant',     sub: 'Cross-env consistency', old: supRaw * mtShare,     ret: supRetRaw * mtShare     }
+  ].map(b => ({ ...b, neww: Math.max(0, b.old - b.ret) }));
+
+  const visibleBaselineRaw = supRaw + r.catalogPkgHoursRaw + r.customPkgHoursRaw;
+  const visibleReturnedRaw = supRetRaw + r.catalogPkgReturnedRaw + r.customPkgReturnedRaw;
+  const visibleReclaim = Math.round(visibleReturnedRaw);
+
+  function roundToTotal(rawParts, target) {
+    const fl = rawParts.map(v => Math.floor(v));
+    let rem = target - fl.reduce((s, n) => s + n, 0);
+    if (rem <= 0) return fl;
+    const order = rawParts.map((v, i) => ({ i, frac: v - Math.floor(v) })).sort((x, y) => y.frac - x.frac);
+    for (let k = 0; k < rem && k < order.length; k++) fl[order[k].i]++;
+    return fl;
+  }
+  const oldTarget = Math.round(visibleBaselineRaw);
+  const newTarget = Math.max(0, oldTarget - visibleReclaim);
+  const oldR = roundToTotal(barsRaw.map(b => b.old), oldTarget);
+  const newR = roundToTotal(barsRaw.map(b => b.neww), newTarget);
+  for (let i = 0; i < oldR.length; i++) {
+    if (newR[i] > oldR[i]) {
+      let excess = newR[i] - oldR[i];
+      newR[i] = oldR[i];
+      for (let j = 0; j < newR.length && excess > 0; j++) {
+        if (j === i) continue;
+        const slack = oldR[j] - newR[j];
+        if (slack > 0) { const take = Math.min(slack, excess); newR[j] += take; excess -= take; }
+      }
+    }
+  }
+  const rows = barsRaw.map((b, i) => {
+    const oldV = oldR[i], newV = newR[i], reclaimed = oldV - newV;
+    return { label: b.label, sub: b.sub, old: oldV, neww: newV, reclaimed,
+             pct: oldV > 0 ? Math.round((reclaimed / oldV) * 100) : 0 };
+  });
+
+  // Sixth row: patching. Reclaim takes the rounding residual so that
+  // sum(reclaimed) === engine totalHoursMonth, exactly.
+  const patchOld = Math.round(ci.patchHours);
+  const patchReclaim = Math.max(0, Math.min(patchOld, r.totalHoursMonth - visibleReclaim));
+  rows.push({
+    label: 'Patching', sub: 'Validate + deploy',
+    old: patchOld, neww: patchOld - patchReclaim, reclaimed: patchReclaim,
+    pct: patchOld > 0 ? Math.round((patchReclaim / patchOld) * 100) : 0
+  });
+
+  const oldTotal = rows.reduce((s, b) => s + b.old, 0);
+  const newTotal = rows.reduce((s, b) => s + b.neww, 0);
+  return {
+    rows, oldTotal, newTotal,
+    totalReturned: oldTotal - newTotal,
+    pctReduction: oldTotal ? Math.round(((oldTotal - newTotal) / oldTotal) * 100) : 0
+  };
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   PDF builder — 3 pages, US Letter, all vector. Returns the jsPDF doc.
+   ──────────────────────────────────────────────────────────────────── */
+function buildImpactPdf(companyName) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'pt', format: 'letter' });
+  const W = 612, H = 792, ML = 42, MR = 42, CW = W - ML - MR;
+  const r = STATE.calcResult, ci = STATE.calcInputs, a = ROI_ASSUMPTIONS[STATE.calcScenario];
+  const pools = pdfxComputePools();
+  const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  const co = companyName, CO = companyName.toUpperCase();
+
+  // Brand palette (Recast design system, flat — no gradients)
+  const PB = [0, 0, 204], CY = [0, 191, 255], DEC = [34, 34, 221];
+  const INK = [26, 26, 46], GRAY = [74, 74, 90], SOFT = [122, 128, 150];
+  const LIGHT = [240, 240, 246], DIV = [221, 221, 238], TINT = [250, 250, 254];
+  const QUOTE = [246, 248, 255], MUTB = [170, 187, 238];
+  const GREEN = [15, 122, 63], RED = [204, 34, 34], WHITE = [255, 255, 255];
+  const GREEN_BG = [232, 246, 238], BLUE_BG = [234, 240, 254];
+
+  const setC = c => doc.setTextColor(c[0], c[1], c[2]);
+  const setF = c => doc.setFillColor(c[0], c[1], c[2]);
+  const setD = c => doc.setDrawColor(c[0], c[1], c[2]);
+  const font = (style, size, color) => { doc.setFont('Helvetica', style); doc.setFontSize(size); if (color) setC(color); };
+
+  function plus(x, y, size, color) {
+    font('bold', size, color || DEC); doc.text('+', x, y);
+  }
+
+  function header(pg) {
+    setF(PB); doc.rect(0, 0, W, 42, 'F');
+    plus(176 + pg * 38, 13, 11); plus(420 - pg * 24, 36, 9);
+    font('bold', 14, WHITE); doc.text('Recast', ML, 26);
+    const rw = doc.getTextWidth('Recast');
+    font('normal', 8, CY); doc.text('Software', ML + rw + 4, 26);
+    font('bold', 8.5, WHITE); doc.text('Prepared for ' + co, W - MR, 17, { align: 'right' });
+    font('normal', 7, MUTB); doc.text('Executive Impact Summary  \u00b7  ' + today, W - MR, 29, { align: 'right' });
+  }
+
+  function footer(pg) {
+    setF(PB); doc.rect(0, H - 16, W, 16, 'F');
+    font('normal', 6.5, MUTB);
+    doc.text('Recast Software  \u00b7  Executive Impact Summary  \u00b7  Confidential', ML, H - 5.5);
+    doc.text('Page ' + pg + ' of 3', W - MR, H - 5.5, { align: 'right' });
+  }
+
+  // Section title: bold blue sentence-case + short cyan rule
+  function secTitle(x, y, text) {
+    font('bold', 10.5, PB); doc.text(text, x, y + 9);
+    setF(CY); doc.rect(x, y + 14, 26, 2.2, 'F');
+    return y + 25;
+  }
+
+  // Cluster label: small filled band
+  function clusterLbl(x, y, w, text) {
+    setF(LIGHT); doc.rect(x, y, w, 11, 'F');
+    font('bold', 7, INK); doc.text(text, x + 5, y + 7.5);
+    return y + 15;
+  }
+
+  // Bullet with optional bold lead. Wrap-safe; returns next y.
+  function bullet(x, y, w, bold, desc, dotColor) {
+    const LH = 10.2, BF = 7.8;
+    setF(dotColor || CY); doc.circle(x + 2.6, y + 3.2, 1.6, 'F');
+    const bx = x + 10, mw = w - 11;
+    doc.setFontSize(BF);
+    if (bold) {
+      font('bold', BF, INK);
+      const bw = doc.getTextWidth(bold + ' ');
+      doc.text(bold, bx, y + 5.5);
+      font('normal', BF, GRAY);
+      const first = doc.splitTextToSize(desc, mw - bw);
+      doc.text(first[0] || '', bx + bw, y + 5.5);
+      const rest = desc.substring((first[0] || '').length).trim();
+      if (rest) {
+        const wl = doc.splitTextToSize(rest, mw);
+        for (let i = 0; i < wl.length; i++) doc.text(wl[i], bx, y + 5.5 + (i + 1) * LH);
+        return y + (wl.length + 1) * LH + 2.5;
+      }
+      return y + LH + 2.5;
+    }
+    font('normal', BF, GRAY);
+    const lines = doc.splitTextToSize(desc, mw);
+    doc.text(lines, bx, y + 5.5);
+    return y + lines.length * LH + 2.5;
+  }
+
+  function callout(x, y, w, text) {
+    setF(QUOTE); doc.rect(x, y, w, 16, 'F');
+    setF(CY); doc.rect(x, y, 2.4, 16, 'F');
+    font('italic', 7.6, INK); doc.text(text, x + 8, y + 10.5);
+    return y + 21;
+  }
+
+  function kpiTile(x, y, w, h, label, value, sub, bg, fg, sfg) {
+    setF(bg); doc.rect(x, y, w, h, 'F');
+    font('bold', 6.4, sfg); doc.text(label.toUpperCase(), x + 10, y + 13);
+    font('bold', 19, fg); doc.text(value, x + 10, y + 33);
+    font('normal', 7, sfg);
+    const sl = doc.splitTextToSize(sub, w - 20);
+    doc.text(sl[0] || '', x + 10, y + 45);
+    return y + h;
+  }
+
+  /* ════════ PAGE 1 — The story ════════ */
+  header(1);
+
+  // Hero band — the document leads with the prospect's own number.
+  setF(PB); doc.rect(0, 42, W, 116, 'F');
+  plus(64, 78, 13); plus(508, 146, 11); plus(456, 66, 9);
+  font('bold', 7.5, CY);
+  doc.text('EXECUTIVE IMPACT SUMMARY  \u2014  ' + (a.label || 'EXPECTED').toUpperCase() + ' SCENARIO', ML, 70);
+  font('bold', 25, WHITE);
+  doc.text(num(r.totalHoursYear) + ' Hours Back, Every Year.', ML, 98);
+  font('normal', 8.5, MUTB);
+  const heroSub = doc.splitTextToSize(
+    'Modeled for ' + co + '  \u00b7  ' + num(ci.users) + ' employees  \u00b7  ' + ci.envs +
+    ' environments  \u00b7  ' + ci.apps + ' applications', 320);
+  doc.text(heroSub, ML, 114);
+
+  // Right-side mini KPIs on the band
+  const hk = [
+    { v: String(r.fteCapacity) + ' FTE', l: 'capacity recoverable' },
+    { v: fmtDollars(r.totalRecoveredAnnual) + ' / yr', l: 'operational value returned' },
+    { v: r.paybackMonths <= 0 ? 'Immediate' : (r.paybackMonths < 1 ? '< 1 month' : r.paybackMonths.toFixed(1) + ' months'), l: 'payback period' }
+  ];
+  setD(DEC); doc.setLineWidth(1); doc.line(424, 62, 424, 142);
+  hk.forEach((k, i) => {
+    const ky = 74 + i * 27;
+    font('bold', 11.5, WHITE); doc.text(k.v, 438, ky);
+    font('normal', 6.6, MUTB); doc.text(k.l.toUpperCase(), 438, ky + 9);
+  });
+
+  const GAP = 18, COLW = (CW - GAP) / 2, LX = ML, RX = ML + COLW + GAP;
+  let ly = 174;
+
+  ly = secTitle(LX, ly, 'Market trends driving change');
+  ly = bullet(LX, ly, COLW, '', 'Endpoint complexity is accelerating \u2014 Windows, macOS, VDI, AVD, and cloud workspaces managed simultaneously.');
+  ly = bullet(LX, ly, COLW, '', 'AI and new tooling adoption is outpacing IT\u2019s delivery capacity. Requests stack on existing backlogs.');
+  ly = bullet(LX, ly, COLW, '', 'Security patching windows are shrinking. SOC 2, ISO 27001, and CIS benchmarks demand faster, documented cycles.');
+  ly = bullet(LX, ly, COLW, '', 'Packaging talent is scarce and expensive \u2014 hard to hire, harder to retain, impossible to scale.');
+  ly = bullet(LX, ly, COLW, '', 'Cloud and platform migrations multiply app-delivery work without a platform-agnostic layer.');
+  ly += 6;
+
+  ly = secTitle(LX, ly, 'Why teams are changing their approach');
+  ly = clusterLbl(LX, ly, COLW, 'SPEED \u2014 IT IS MOVING TOO SLOWLY');
+  ly = bullet(LX, ly, COLW, 'Multi-platform packaging:', 'the same app rebuilt per platform \u2014 ConfigMgr, Intune, Citrix, AVD, macOS.');
+  ly = bullet(LX, ly, COLW, 'Slow patching:', 'critical patches take 5\u201310 days to cross every platform.');
+  ly = bullet(LX, ly, COLW, 'Onboarding delays:', 'employees wait days for apps \u2014 manual tickets, lost productivity.');
+  ly += 3;
+  ly = clusterLbl(LX, ly, COLW, 'SCALE \u2014 EVERYTHING COMPOUNDS AS YOU GROW');
+  ly = bullet(LX, ly, COLW, 'Platform sprawl:', 'every new platform multiplies workload against every app.');
+  ly = bullet(LX, ly, COLW, 'Engineer burnout:', '30\u201340% of time on repetitive packaging; strategic work deprioritized.');
+  ly = bullet(LX, ly, COLW, 'Migration bottlenecks:', 'app delivery can\u2019t keep pace, so IT becomes the bottleneck.');
+  ly += 3;
+  ly = clusterLbl(LX, ly, COLW, 'RISK \u2014 WHAT KEEPS THE CIO UP AT NIGHT');
+  ly = bullet(LX, ly, COLW, 'Compliance gaps:', 'audit evidence built manually \u2014 spreadsheets and memory.');
+  ly = bullet(LX, ly, COLW, 'Single points of failure:', 'delivery capability lives in specific people\u2019s heads.');
+  ly = bullet(LX, ly, COLW, 'Capacity trapped:', '30\u201365% of IT hours consumed by reactive work.');
+
+  let ry = 174;
+  ry = secTitle(RX, ry, 'Where Application Workspace fits');
+  ry = bullet(RX, ry, COLW, 'Intune:', 'cloud-native endpoint management for Windows and macOS.');
+  ry = bullet(RX, ry, COLW, 'ConfigMgr / SCCM:', 'on-prem and co-managed device fleets.');
+  ry = bullet(RX, ry, COLW, 'AVD / VDI / Citrix:', 'virtual desktops and cloud-hosted workspaces.');
+  ry = bullet(RX, ry, COLW, '8,000+ pre-tested apps:', 'eliminates custom packaging for most third-party software.');
+  ry += 6;
+
+  ry = secTitle(RX, ry, 'What you get');
+  const feats = ['Unified packaging', 'Automated lifecycle', 'Ring-based deployment', 'Identity-based delivery', 'Automated compliance', 'Governance & RBAC'];
+  const fcw = COLW / 2;
+  feats.forEach((f, i) => {
+    const fx = RX + (i % 2) * fcw, fy = ry + Math.floor(i / 2) * 14;
+    font('bold', 8.5, CY); doc.text('+', fx, fy + 6);
+    font('bold', 7.6, INK); doc.text(f, fx + 9, fy + 6);
+  });
+  ry += Math.ceil(feats.length / 2) * 14 + 6;
+
+  ry = secTitle(RX, ry, 'Proven at scale');
+  ry = bullet(RX, ry, COLW, '60M+ devices', 'managed across 130+ countries worldwide.', GREEN);
+  ry = bullet(RX, ry, COLW, 'Trusted by:', 'Costco, Citibank, McKinsey, Johns Hopkins, U.S. Air Force, Government of Canada.', GREEN);
+  ry = bullet(RX, ry, COLW, '87 CSAT', '\u2014 highest in the industry. SOC 2 Type II + ISO 27001 certified.', GREEN);
+  ry = callout(RX, ry + 2, COLW, 'Built for teams that can\u2019t afford downtime.');
+  ry += 4;
+
+  ry = secTitle(RX, ry, 'Up and running fast');
+  ry = bullet(RX, ry, COLW, 'Live in 4\u20136 weeks', 'from kickoff to full rollout \u2014 no rip-and-replace.');
+  ry = bullet(RX, ry, COLW, 'Dedicated success manager', 'from day one to go-live.');
+  ry = bullet(RX, ry, COLW, '1\u20132 engineers part-time.', 'No big project team needed.');
+  ry += 8;
+  const steps = ['Kickoff', 'Assessment', 'Pilot', 'Validation', 'Rollout'];
+  const dotSp = (COLW - 20) / (steps.length - 1);
+  setD(DIV); doc.setLineWidth(1.2);
+  doc.line(RX + 10, ry, RX + 10 + dotSp * (steps.length - 1), ry);
+  steps.forEach((s, i) => {
+    const dx = RX + 10 + i * dotSp;
+    setF(i === steps.length - 1 ? GREEN : CY); doc.circle(dx, ry, 2.6, 'F');
+    font('normal', 5.8, GRAY); doc.text(s, dx, ry + 10, { align: 'center' });
+  });
+  footer(1);
+
+  /* ════════ PAGE 2 — Your numbers ════════ */
+  doc.addPage('letter', 'portrait');
+  header(2);
+  let y = 60;
+
+  font('bold', 15, INK); doc.text('Estimated Impact for ' + co, ML, y + 11);
+  const chipTxt = (a.label || 'Expected') + ' scenario';
+  font('bold', 7, WHITE);
+  const chipW = doc.getTextWidth(chipTxt.toUpperCase()) + 16;
+  setF(CY); doc.roundedRect(W - MR - chipW, y, chipW, 15, 2, 2, 'F');
+  doc.text(chipTxt.toUpperCase(), W - MR - chipW / 2, y + 10, { align: 'center' });
+  y += 26;
+
+  const tw = (CW - 20) / 3;
+  kpiTile(ML, y, tw, 60, 'Hours recovered / year', num(r.totalHoursYear), 'across packaging, patching & support', LIGHT, PB, GRAY);
+  kpiTile(ML + tw + 10, y, tw, 60, 'FTE-equivalents', String(r.fteCapacity), 'reallocated, not eliminated', GREEN_BG, GREEN, [6, 95, 70]);
+  kpiTile(ML + (tw + 10) * 2, y, tw, 60, 'Operational value / year', fmtDollars(r.totalRecoveredAnnual), 'at ' + fmtDollars(r.rate) + '/hr loaded rate', BLUE_BG, [29, 78, 216], [30, 64, 175]);
+  y += 74;
+
+  // ── Paired-bar chart: where the time comes back ──
+  y = secTitle(ML, y, 'Where the time comes back \u2014 hours per month');
+  // Legend
+  const legY = y - 21;
+  setF(RED); doc.rect(W - MR - 150, legY, 7, 7, 'F');
+  font('normal', 7, GRAY); doc.text('Today', W - MR - 139, legY + 6);
+  setF(PB); doc.rect(W - MR - 102, legY, 7, 7, 'F');
+  doc.text('With App Workspace', W - MR - 91, legY + 6);
+  y += 2;
+
+  const axisMax = Math.max(...pools.rows.map(b => b.old), 10);
+  const niceCeil = n => { const t = [10, 20, 50, 100, 150, 200, 300, 500, 1000]; for (const v of t) if (n <= v) return v; return Math.ceil(n / 500) * 500; };
+  const ceilV = niceCeil(axisMax);
+  const labW = 104, barX = ML + labW, barW = CW - labW - 64, rowH = 25;
+
+  // faint gridlines
+  setD(DIV); doc.setLineWidth(0.5);
+  for (let g = 1; g <= 4; g++) {
+    const gx = barX + (barW * g) / 4;
+    doc.line(gx, y, gx, y + pools.rows.length * rowH - 6);
+  }
+  pools.rows.forEach((b, i) => {
+    const by = y + i * rowH;
+    font('bold', 7.8, INK); doc.text(b.label, ML, by + 7);
+    font('normal', 6.2, SOFT); doc.text(b.sub, ML, by + 15);
+    // today
+    setF(LIGHT); doc.rect(barX, by + 1, barW, 6, 'F');
+    setF(RED); doc.rect(barX, by + 1, Math.max(1, barW * (b.old / ceilV)), 6, 'F');
+    // with AW
+    setF(LIGHT); doc.rect(barX, by + 9.5, barW, 6, 'F');
+    if (b.neww > 0) { setF(PB); doc.rect(barX, by + 9.5, Math.max(1, barW * (b.neww / ceilV)), 6, 'F'); }
+    // values + pct
+    font('bold', 7, RED); doc.text(num(b.old), barX + barW + 6, by + 6.5);
+    font('bold', 7, PB); doc.text(num(b.neww), barX + barW + 6, by + 15);
+    font('bold', 7.6, GREEN); doc.text(b.pct > 0 ? '-' + b.pct + '%' : '0%', W - MR, by + 11, { align: 'right' });
+  });
+  y += pools.rows.length * rowH + 2;
+  // axis labels
+  font('normal', 6, SOFT);
+  for (let g = 0; g <= 4; g++) doc.text(String(Math.round((ceilV * g) / 4)) + (g === 4 ? ' hrs' : ''), barX + (barW * g) / 4, y + 4, { align: g === 0 ? 'left' : 'center' });
+  y += 12;
+  // summary strip
+  setF(LIGHT); doc.rect(ML, y, CW, 18, 'F');
+  font('bold', 8, INK);
+  doc.text('From ' + num(pools.oldTotal) + ' to ' + num(pools.newTotal) + ' hrs/mo with Application Workspace', ML + 8, y + 12);
+  font('bold', 8, GREEN);
+  doc.text('-' + pools.pctReduction + '%  \u00b7  ' + num(pools.totalReturned) + ' hrs/mo returned', W - MR - 8, y + 12, { align: 'right' });
+  y += 30;
+
+  // ── Blue capacity band ──
+  const bandH = 76;
+  setF(PB); doc.rect(ML, y, CW, bandH, 'F');
+  plus(ML + 26, y + 24, 11); plus(W - MR - 34, y + bandH - 14, 9);
+  font('bold', 6.8, MUTB); doc.text('WHERE ' + CO + '\u2019S CAPACITY GOES', ML + CW / 2, y + 16, { align: 'center' });
+  font('bold', 26, WHITE); doc.text(num(r.strategicHours), ML + CW / 2, y + 42, { align: 'center' });
+  font('normal', 8.5, MUTB); doc.text('hours / year returned to strategic work', ML + CW / 2, y + 54, { align: 'center' });
+  font('bold', 8.5, WHITE); doc.text(r.fteCapacity + ' FTE-equivalents \u2014 reallocated, not eliminated', ML + CW / 2, y + 67, { align: 'center' });
+  y += bandH + 9;
+  font('normal', 7.6, GRAY);
+  doc.text('AI & Copilot rollouts  \u00b7  Cloud migrations  \u00b7  Compliance & security  \u00b7  Automation & self-service  \u00b7  Pilot programs', ML + CW / 2, y + 3, { align: 'center' });
+  y += 16;
+
+  // ── Investment vs return ──
+  y = secTitle(ML, y, 'Investment vs return \u2014 why it pays off');
+  const yr1Net = r.year1Net || 0;
+  const payM = r.paybackMonths || 0;
+  const payTxt = payM <= 0 ? 'Immediate' : payM < 1 ? 'Under a month' : payM.toFixed(1) + ' months';
+  kpiTile(ML, y, tw, 52, 'Annual investment', fmtDollars(r.awAnnualInvestment || 0), num(ci.users) + ' users \u00b7 list pricing', LIGHT, INK, GRAY);
+  kpiTile(ML + tw + 10, y, tw, 52, 'Year-1 net benefit', (yr1Net >= 0 ? '+' : '-') + fmtDollars(Math.abs(yr1Net)), (r.year1ROIMultiple || 0).toFixed(1) + '\u00d7 return on investment', GREEN_BG, GREEN, [6, 95, 70]);
+  kpiTile(ML + (tw + 10) * 2, y, tw, 52, 'Payback period', payTxt, 'then it keeps returning value', BLUE_BG, [29, 78, 216], [30, 64, 175]);
+  y += 62;
+
+  // Payback timeline — 12-month strip with the breakeven marker
+  const tlX = ML + 4, tlW = CW - 8, tlY = y + 8;
+  const payClamped = Math.max(0, Math.min(12, payM));
+  const payPx = tlX + (tlW * payClamped) / 12;
+  setF(LIGHT); doc.rect(tlX, tlY - 2.5, tlW, 5, 'F');
+  setF(GREEN_BG); doc.rect(payPx, tlY - 2.5, tlX + tlW - payPx, 5, 'F');
+  setF(GREEN); doc.rect(payPx, tlY - 2.5, Math.max(0, Math.min(2.4, tlX + tlW - payPx)), 5, 'F');
+  setD(DIV); doc.setLineWidth(0.5);
+  for (let m = 0; m <= 12; m += 3) {
+    const mx = tlX + (tlW * m) / 12;
+    doc.line(mx, tlY + 3.5, mx, tlY + 6);
+    font('normal', 5.8, SOFT); doc.text(m === 0 ? 'Month 0' : String(m), mx, tlY + 13, { align: m === 0 ? 'left' : 'center' });
+  }
+  setF(GREEN); doc.circle(payPx, tlY, 3.4, 'F');
+  setF(WHITE); doc.circle(payPx, tlY, 1.3, 'F');
+  font('bold', 6.6, GREEN);
+  const payLbl = payM <= 0 ? 'BREAKEVEN \u2014 IMMEDIATE' : 'BREAKEVEN \u00b7 ' + payTxt.toUpperCase();
+  const payAlign = payClamped > 9 ? 'right' : payClamped < 2 ? 'left' : 'center';
+  doc.text(payLbl, payPx, tlY - 8, { align: payAlign });
+  font('normal', 6.2, SOFT);
+  doc.text('PURE RETURN', tlX + tlW, tlY - 8, { align: 'right' });
+  y = tlY + 22;
+
+  font('italic', 7.2, GRAY);
+  doc.text('Year-1 value: ' + fmtDollars(r.year1Value || 0) + '  (' + fmtDollars(r.recurringAnnualValue || 0) + ' recurring + ' +
+    fmtDollars(r.oneTimePackagingValue || 0) + ' one-time packaging)  vs  ' + fmtDollars(r.awAnnualInvestment || 0) +
+    ' subscription.  3-year net: ' + ((r.threeYearNet || 0) >= 0 ? '+' : '-') + fmtDollars(Math.abs(r.threeYearNet || 0)) + '.', ML, y + 4);
+  footer(2);
+
+  /* ════════ PAGE 3 — Three-year view & the model ════════ */
+  doc.addPage('letter', 'portrait');
+  header(3);
+  y = 60;
+  font('bold', 15, INK); doc.text('The Three-Year View', ML, y + 11);
+  font('normal', 8, GRAY); doc.text('Value compounds; the investment stays flat.', ML, y + 24);
+  y += 38;
+
+  // Grouped columns: value vs investment per year + cumulative net line
+  const inv = r.awAnnualInvestment || 0;
+  const recVal = r.recurringAnnualValue || 0, oneVal = r.oneTimePackagingValue || 0;
+  const yearVals = [recVal + oneVal, recVal, recVal];
+  const cums = []; let acc = 0;
+  yearVals.forEach(v => { acc += v - inv; cums.push(acc); });
+  const chMax = Math.max(...yearVals, ...cums.map(c => Math.max(0, c)), inv, 1);
+  const chH = 120, chY = y + chH, chX = ML + 36, chW = CW - 48;
+  const vy = v => chY - (Math.max(0, v) / chMax) * chH;
+  // gridlines + y labels
+  setD(DIV); doc.setLineWidth(0.5);
+  for (let g = 0; g <= 3; g++) {
+    const gy = chY - (chH * g) / 3;
+    doc.line(chX, gy, chX + chW, gy);
+    font('normal', 6, SOFT); doc.text(fmtDollars((chMax * g) / 3), chX - 5, gy + 2, { align: 'right' });
+  }
+  const groupW = chW / 3, bw = 30;
+  yearVals.forEach((v, i) => {
+    const gx = chX + groupW * i + groupW / 2;
+    setF(PB); doc.rect(gx - bw - 4, vy(v), bw, chY - vy(v), 'F');
+    setF([168, 174, 192]); doc.rect(gx + 4, vy(inv), bw, chY - vy(inv), 'F');
+    font('bold', 6.8, PB); doc.text(fmtDollars(v), gx - bw / 2 - 4, vy(v) - 4, { align: 'center' });
+    font('bold', 6.4, GRAY); doc.text(fmtDollars(inv), gx + bw / 2 + 4, vy(inv) - 4, { align: 'center' });
+    font('bold', 7.4, INK); doc.text('Year ' + (i + 1), gx, chY + 11, { align: 'center' });
+  });
+  // cumulative net line
+  setD(GREEN); doc.setLineWidth(1.6);
+  const pts = cums.map((c, i) => [chX + groupW * i + groupW / 2, vy(c)]);
+  for (let i = 1; i < pts.length; i++) doc.line(pts[i - 1][0], pts[i - 1][1], pts[i][0], pts[i][1]);
+  pts.forEach((p, i) => {
+    font('bold', 6.8, GREEN);
+    const lblTxt = (cums[i] >= 0 ? '+' : '-') + fmtDollars(Math.abs(cums[i])) + ' net';
+    const lw = doc.getTextWidth(lblTxt);
+    setF(WHITE); doc.rect(p[0] + 6, p[1] - 10, lw + 5, 9, 'F');
+    setF(GREEN); doc.circle(p[0], p[1], 2.6, 'F');
+    setF(WHITE); doc.circle(p[0], p[1], 1, 'F');
+    setC(GREEN);
+    doc.text(lblTxt, p[0] + 8, p[1] - 3);
+  });
+  // legend
+  const lgY = y - 8;
+  setF(PB); doc.rect(chX + chW - 218, lgY, 7, 7, 'F');
+  font('normal', 6.6, GRAY); doc.text('Value created', chX + chW - 208, lgY + 6);
+  setF([168, 174, 192]); doc.rect(chX + chW - 150, lgY, 7, 7, 'F');
+  doc.text('Investment', chX + chW - 140, lgY + 6);
+  setF(GREEN); doc.circle(chX + chW - 88, lgY + 3.5, 3, 'F');
+  doc.text('Cumulative net', chX + chW - 81, lgY + 6);
+  y = chY + 22;
+
+  // Year table
+  const cols = ['', 'Recurring value', 'One-time value', 'Investment', 'Net', 'Cumulative net'];
+  const colW = [52, ...Array(5).fill((CW - 52) / 5)];
+  let tx = ML;
+  setF(LIGHT); doc.rect(ML, y, CW, 14, 'F');
+  cols.forEach((c, i) => {
+    font('bold', 6.6, GRAY);
+    doc.text(c.toUpperCase(), i === 0 ? tx + 6 : tx + colW[i] - 6, y + 9.5, { align: i === 0 ? 'left' : 'right' });
+    tx += colW[i];
+  });
+  y += 14;
+  for (let yr = 0; yr < 3; yr++) {
+    if (yr % 2 === 1) { setF(TINT); doc.rect(ML, y, CW, 15, 'F'); }
+    const net = yearVals[yr] - inv;
+    const cells = ['Year ' + (yr + 1), fmtDollars(recVal), yr === 0 ? fmtDollars(oneVal) : '\u2014', fmtDollars(inv),
+      (net >= 0 ? '+' : '-') + fmtDollars(Math.abs(net)), (cums[yr] >= 0 ? '+' : '-') + fmtDollars(Math.abs(cums[yr]))];
+    tx = ML;
+    cells.forEach((c, i) => {
+      font(i === 0 ? 'bold' : 'normal', 7.2, i === 4 || i === 5 ? GREEN : i === 0 ? INK : GRAY);
+      doc.text(c, i === 0 ? tx + 6 : tx + colW[i] - 6, y + 10.5, { align: i === 0 ? 'left' : 'right' });
+      tx += colW[i];
+    });
+    y += 15;
+  }
+  setD(DIV); doc.setLineWidth(0.5); doc.line(ML, y, ML + CW, y);
+  y += 14;
+
+  // Packaging cycle — one-time catalog value
+  y = secTitle(ML, y, 'Packaging cycle \u2014 one-time catalog value');
+  const pkScale = Math.max(r.tradCycleHours || 0, r.awCycleHours || 0, 1);
+  const pkX = ML + 92, pkW = CW - 92 - 64;
+  font('bold', 7.6, INK); doc.text('Traditional', ML, y + 8);
+  setF(LIGHT); doc.rect(pkX, y + 2, pkW, 8, 'F');
+  setF(RED); doc.rect(pkX, y + 2, pkW * ((r.tradCycleHours || 0) / pkScale), 8, 'F');
+  font('bold', 7.6, RED); doc.text(num(Math.round(r.tradCycleHours || 0)) + ' hrs', pkX + pkW + 6, y + 8.5);
+  y += 16;
+  font('bold', 7.6, INK); doc.text('App Workspace', ML, y + 8);
+  setF(LIGHT); doc.rect(pkX, y + 2, pkW, 8, 'F');
+  setF(PB); doc.rect(pkX, y + 2, Math.max(1.5, pkW * ((r.awCycleHours || 0) / pkScale)), 8, 'F');
+  font('bold', 7.6, PB); doc.text(num(Math.round(r.awCycleHours || 0)) + ' hrs', pkX + pkW + 6, y + 8.5);
+  y += 20;
+  const pkKpis = [
+    ['Hours saved', num(Math.round(r.cycleHoursSaved || 0)) + ' hrs'],
+    ['Time multiple', (r.cycleTimeMultiple || 0).toFixed(1) + '\u00d7 faster'],
+    ['One-time value', fmtDollars(r.cycleDollarsSaved || 0)],
+    ['Capacity reclaimed', ((r.cycleHoursSaved || 0) / 160).toFixed(1) + ' engineer-months']
+  ];
+  const pkw = (CW - 24) / 4;
+  pkKpis.forEach((k, i) => {
+    const kx = ML + (pkw + 8) * i;
+    setF(TINT); setD(DIV); doc.setLineWidth(0.5); doc.rect(kx, y, pkw, 30, 'FD');
+    font('normal', 6, SOFT); doc.text(k[0].toUpperCase(), kx + 7, y + 10);
+    font('bold', 9.5, i === 0 || i === 2 ? PB : GREEN); doc.text(k[1], kx + 7, y + 23);
+  });
+  y += 42;
+
+  // Model inputs & assumptions
+  y = secTitle(ML, y, 'Model inputs & assumptions \u2014 from this session');
+  const pb = PACKAGING_BENCHMARKS;
+  const items = [
+    ['Employees', num(ci.users)], ['Endpoints', num(ci.endpoints)], ['Environments', String(ci.envs)],
+    ['Active apps', String(ci.apps)], ['Custom apps', String(ci.customApps)], ['App tickets / mo', num(ci.monthlyTickets)],
+    ['Minutes / ticket', String(ci.avgTicketMins)], ['Packaging hrs / mo', num(ci.pkgHours)], ['Patching hrs / mo', num(ci.patchHours)],
+    ['Loaded rate', '$' + (ci.loadedRate || 95) + '/hr'], ['Complex-app mix', Math.round(ci.complexMixPct ?? 20) + '%'], ['Scenario', a.label || 'Expected'],
+    ['Ticket reduction', Math.round(a.ticketReduction * 100) + '%'], ['Catalog pkg reduction', Math.round(a.catalogPkgReduction * 100) + '%'], ['Custom pkg reduction', Math.round(a.customPkgReduction * 100) + '%'],
+    ['Patching reduction', Math.round(a.patchReduction * 100) + '%'], ['Strategic reallocation', Math.round(a.strategicRealloc * 100) + '%'], ['FTE hours / year', num(a.fteHours)],
+    ['AW std app (bench)', pb.awStdHrs + ' hrs'], ['AW complex app (bench)', pb.awComplexHrs + ' hrs'], ['Traditional std / complex', pb.tradStdHrs + ' / ' + pb.tradComplexHrs + ' hrs']
+  ];
+  const acw = CW / 3, arh = 13;
+  items.forEach((it, i) => {
+    const ax = ML + (i % 3) * acw, ay = y + Math.floor(i / 3) * arh;
+    font('normal', 6.6, SOFT); doc.text(it[0], ax, ay + 6);
+    font('bold', 6.8, INK); doc.text(it[1], ax + acw - 14, ay + 6, { align: 'right' });
+  });
+  y += Math.ceil(items.length / 3) * arh + 10;
+
+  setD(DIV); doc.setLineWidth(0.5); doc.line(ML, y, ML + CW, y);
+  y += 10;
+  font('italic', 6.8, GRAY);
+  const meth = doc.splitTextToSize(
+    'Methodology: generated live from the Recast Business Impact Model using the inputs above. Packaging benchmarks come from Recast field testing; ' +
+    'reduction rates reflect the selected ' + (a.label || 'Expected').toLowerCase() + ' scenario and are editable in the model. Figures are directional planning estimates, not a quote. ' +
+    'Prepared for ' + co + ' on ' + today + '.', CW);
+  doc.text(meth, ML, y + 5);
+  footer(3);
+
+  return doc;
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   Export experience — crafting choreography → live preview → download
+   ──────────────────────────────────────────────────────────────────── */
+const PDFX_STEPS = ['Reading your model', 'Drawing your charts', 'Composing pages'];
+
+function openPdfExport(companyName) {
+  if (!window.jspdf) { alert('PDF library not loaded. Please refresh and try again.'); return; }
+  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (STATE.pdfx && STATE.pdfx.url) { try { URL.revokeObjectURL(STATE.pdfx.url); } catch {} }
+  STATE.pdfx = { stage: 'crafting', company: companyName, step: 0 };
+  render();
+  const tick = n => () => {
+    if (!STATE.pdfx || STATE.pdfx.stage !== 'crafting') return;
+    STATE.pdfx.step = n;
+    document.querySelectorAll('.pdfx-step').forEach((el, i) => {
+      el.setAttribute('data-state', i < n ? 'done' : i === n ? 'active' : 'idle');
+    });
+  };
+  if (!reduce) { setTimeout(tick(1), 480); setTimeout(tick(2), 960); }
+  setTimeout(() => {
+    if (!STATE.pdfx) return; // closed mid-flight
+    try {
+      const doc = buildImpactPdf(companyName);
+      STATE.pdfx = { stage: 'ready', company: companyName, doc, url: doc.output('bloburl') };
+    } catch (err) {
+      console.error('PDF generation error:', err);
+      STATE.pdfx = { stage: 'error', company: companyName, message: err.message };
+    }
+    render();
+  }, reduce ? 60 : 1500);
+}
+
+function closePdfExport() {
+  if (STATE.pdfx && STATE.pdfx.url) { try { URL.revokeObjectURL(STATE.pdfx.url); } catch {} }
+  STATE.pdfx = null;
+  render();
+}
+
+function downloadPdfExport(btn) {
+  const p = STATE.pdfx;
+  if (!p || !p.doc) return;
+  try {
+    p.doc.save('Recast-Impact-Summary-' + p.company.replace(/[^a-zA-Z0-9]/g, '-') + '.pdf');
+    if (btn) {
+      btn.classList.add('is-done');
+      btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Downloaded';
+    }
+  } catch (err) { console.error('PDF save error:', err); alert('PDF error: ' + err.message); }
+}
+
+function renderPdfExportModal() {
+  const p = STATE.pdfx;
+  if (!p) return '';
+  const ci = STATE.calcInputs, a = ROI_ASSUMPTIONS[STATE.calcScenario];
+  let body = '';
+  if (p.stage === 'crafting') {
+    body = `
+      <div class="pdfx-crafting">
+        <div class="pdfx-minipage" aria-hidden="true">
+          <div class="pdfx-minipage-band"></div>
+          <div class="pdfx-skel is-title"></div>
+          <div class="pdfx-skel is-accent"></div>
+          <div class="pdfx-skel" style="width:88%"></div>
+          <div class="pdfx-skel" style="width:76%"></div>
+          <div class="pdfx-skel is-bar" style="width:82%"></div>
+          <div class="pdfx-skel is-bar-blue" style="width:34%"></div>
+          <div class="pdfx-skel is-bar" style="width:64%"></div>
+          <div class="pdfx-skel is-bar-blue" style="width:22%"></div>
+          <div class="pdfx-skel" style="width:90%"></div>
+          <div class="pdfx-skel" style="width:58%"></div>
+        </div>
+        <div class="pdfx-steps" role="status" aria-label="Building your summary">
+          <div class="pdfx-steps-title">Building your summary</div>
+          ${PDFX_STEPS.map((s, i) => `
+            <div class="pdfx-step" data-state="${i < p.step ? 'done' : i === p.step ? 'active' : 'idle'}">
+              <span class="pdfx-step-dot"></span><span>${s}</span>
+            </div>`).join('')}
+        </div>
+      </div>`;
+  } else if (p.stage === 'ready') {
+    // Prefer a true render of the generated bytes (pdf.js → canvases);
+    // fall back to the native <object> viewer, then to a static card.
+    if (window.pdfjsLib) {
+      body = `<div class="pdfx-pages" id="pdfx-pages" data-rendered="0"></div>`;
+      setTimeout(pdfxRenderPreviewPages, 0);
+    } else {
+      body = `
+      <div class="pdfx-frame-wrap">
+        <object class="pdfx-frame" data="${p.url}#toolbar=0&navpanes=0&view=FitH" type="application/pdf" aria-label="PDF preview">
+          <div class="pdfx-fallback">
+            <div class="pdfx-fallback-icon"></div>
+            <div class="pdfx-fallback-title">Your summary is ready</div>
+            <div class="pdfx-fallback-body">This browser can&rsquo;t preview PDFs inline &mdash; use the download button below to open it.</div>
+          </div>
+        </object>
+      </div>`;
+    }
+  } else {
+    body = `
+      <div class="pdfx-error">
+        <div class="pdfx-error-title">Something went wrong building the PDF</div>
+        <div class="pdfx-error-body">${(p.message || 'Unknown error')}. Close this dialog and try again &mdash; your inputs are preserved.</div>
+      </div>`;
+  }
+  return `
+    <div class="pdfx-overlay" data-action="pdfx-backdrop">
+      <div class="pdfx-modal" role="dialog" aria-modal="true" aria-label="Executive Impact Summary preview">
+        <header class="pdfx-head">
+          <div>
+            <span class="pdfx-head-eyebrow">Executive Impact Summary</span>
+            <span class="pdfx-head-company">Prepared for ${p.company}</span>
+          </div>
+          <button type="button" class="pdfx-close" data-action="pdfx-close" aria-label="Close preview">&times;</button>
+        </header>
+        <div class="pdfx-body" data-stage="${p.stage}">${body}</div>
+        <footer class="pdfx-foot">
+          <div class="pdfx-foot-meta">
+            3 pages &middot; US Letter &middot; built live from your model &mdash;
+            <b>${num(ci.users)} employees</b> &middot; <b>${(a.label || 'Expected')} scenario</b>
+          </div>
+          <button type="button" class="pdfx-download" data-action="pdfx-download" ${p.stage !== 'ready' ? 'disabled' : ''}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            Download PDF
+          </button>
+        </footer>
+      </div>
+    </div>`;
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   Business-Impact entrance: count-up the hero numbers once per arrival.
+   CSS in recast-impact-motion.css handles bar draw-ins and staggers.
+   ──────────────────────────────────────────────────────────────────── */
+/* Render the generated PDF's actual bytes into page canvases (pdf.js).
+   Idempotent per render pass; called after the modal lands in the DOM. */
+async function pdfxRenderPreviewPages() {
+  const host = document.getElementById('pdfx-pages');
+  const p = STATE.pdfx;
+  if (!host || !p || !p.doc || host.dataset.rendered === '1') return;
+  host.dataset.rendered = '1';
+  const fallback = () => {
+    const liveHost = document.getElementById('pdfx-pages');
+    if (liveHost && !liveHost.querySelector('.pdfx-page')) {
+      liveHost.innerHTML = '<div class="pdfx-fallback"><div class="pdfx-fallback-icon"></div><div class="pdfx-fallback-title">Your summary is ready</div><div class="pdfx-fallback-body">Preview unavailable in this browser &mdash; use the download button below to open it.</div></div>';
+    }
+  };
+  try {
+    // Cross-origin workers are blocked in sandboxed frames: pull the worker
+    // script over CORS and hand pdf.js a same-origin blob URL instead.
+    if (!window.__pdfxWorkerReady) {
+      try {
+        const resp = await fetch('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js', { mode: 'cors' });
+        const code = await resp.text();
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc = URL.createObjectURL(new Blob([code], { type: 'text/javascript' }));
+      } catch (e) { console.warn('pdf.js worker fetch failed, using default', e); }
+      window.__pdfxWorkerReady = true;
+    }
+    const data = p.doc.output('arraybuffer');
+    const timeout = new Promise((_, rej) => setTimeout(() => rej(new Error('preview timeout')), 6000));
+    const pdf = await Promise.race([window.pdfjsLib.getDocument({ data }).promise, timeout]);
+    if (!document.getElementById('pdfx-pages')) return; // modal closed mid-render
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    const cssW = Math.min(620, (host.clientWidth || 668) - 48);
+    for (let n = 1; n <= pdf.numPages; n++) {
+      const page = await pdf.getPage(n);
+      const v1 = page.getViewport({ scale: 1 });
+      const scale = (cssW / v1.width) * dpr;
+      const vp = page.getViewport({ scale });
+      const canvas = document.createElement('canvas');
+      canvas.width = vp.width; canvas.height = vp.height;
+      canvas.style.width = cssW + 'px';
+      canvas.style.height = (vp.height / dpr) + 'px';
+      await page.render({ canvasContext: canvas.getContext('2d'), viewport: vp }).promise;
+      const liveHost = document.getElementById('pdfx-pages');
+      if (!liveHost) return;
+      const card = document.createElement('div');
+      card.className = 'pdfx-page';
+      card.style.animationDelay = (0.06 * (n - 1)) + 's';
+      const lbl = document.createElement('div');
+      lbl.className = 'pdfx-page-num';
+      lbl.textContent = 'Page ' + n + ' of ' + pdf.numPages;
+      card.appendChild(canvas);
+      card.appendChild(lbl);
+      liveHost.appendChild(card);
+    }
+  } catch (err) {
+    console.error('PDF preview render error:', err);
+    fallback();
+  }
+}
+
+function runImpactEntrance() {
+  STATE._impactFresh = false;
+  const root = document.getElementById('impact-results');
+  if (!root) return;
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  root.querySelectorAll('.bi-count').forEach(el => {
+    const to = parseFloat(el.getAttribute('data-count'));
+    if (!isFinite(to)) return;
+    const fmt = el.getAttribute('data-fmt') || 'int';
+    const final = el.textContent;
+    const dur = 850, t0 = performance.now();
+    const fmtFn = fmt === 'k'
+      ? v => '$' + Math.round(v / 1000).toLocaleString() + 'K'
+      : v => Math.round(v).toLocaleString();
+    function frame(t) {
+      const p = Math.min(1, (t - t0) / dur);
+      const e = 1 - Math.pow(1 - p, 3); // ease-out cubic
+      if (p < 1) { el.textContent = fmtFn(to * e); requestAnimationFrame(frame); }
+      else { el.textContent = final; }
+    }
+    requestAnimationFrame(frame);
+  });
+}
+
+    </script>
 
 
     <style>
