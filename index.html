@@ -139,8 +139,8 @@
       .chart-draw .demand-line { animation-delay: 0.55s; }
       @keyframes chartLineDraw { to { stroke-dashoffset: 0; } }
       .chart-draw .gap-element { opacity: 0; animation: chartFadeIn 0.9s var(--mo-ease-out, ease) 1.15s forwards; }
-      .chart-draw .marker-element {
-        animation: chartMarkerPop 0.55s var(--mo-ease-spring, ease-out) var(--chart-d, 1.6s) forwards;
+      .marker-pop {
+        animation: chartMarkerPop 0.55s var(--mo-ease-spring, ease-out) var(--chart-d, 0s) both;
         transform-box: fill-box; transform-origin: center;
       }
       @keyframes chartMarkerPop {
@@ -5960,7 +5960,148 @@
       .view-toggle:active, .lifecycle-play-btn:active { transform: scale(0.95); }
       .flip-card-inner { transition: transform 0.7s var(--mo-ease-inout); }
 
-      /* ── 7. Respect reduced motion everywhere, including the new layer. ── */
+      /* ── 7. Chart story player: presenter-paced narrative controls. ── */
+      .story-play-btn {
+        position: absolute; top: 10px; right: 10px; z-index: 6;
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 6px 14px; border-radius: 9999px;
+        font-size: 11.5px; font-weight: 700; letter-spacing: 0.01em;
+        border: 1px solid #0070F3; background: #ffffff; color: #0070F3;
+        cursor: pointer; box-shadow: 0 2px 8px rgba(10, 28, 96, 0.10);
+        transition: background var(--mo-fast) ease, color var(--mo-fast) ease,
+                    border-color var(--mo-fast) ease, transform 220ms var(--mo-ease-spring);
+      }
+      .story-play-btn:hover { background: #eff6ff; }
+      .story-play-btn:active { transform: scale(0.95); }
+      .story-play-btn.is-playing { background: #fee2e2; border-color: #ef4444; color: #dc2626; }
+      .story-play-btn.is-playing:hover { background: #fecaca; }
+      .story-play-btn i, .story-play-btn svg { width: 12px; height: 12px; }
+      /* The caption lives in the chart's empty top-left quadrant (the curves
+         run bottom-left to top-right). Re-mounted once per story beat, so the
+         entrance plays exactly once per caption. */
+      .story-caption {
+        position: absolute; top: 7%; left: 11%; z-index: 5;
+        max-width: 46%;
+        display: flex; flex-direction: column; gap: 1px;
+        background: rgba(255, 255, 255, 0.88);
+        backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+        border-left: 3px solid #0070F3; border-radius: 10px;
+        padding: 9px 14px;
+        box-shadow: 0 6px 18px rgba(10, 28, 96, 0.12);
+        animation: moCaptionIn 480ms var(--mo-ease-out) both;
+        pointer-events: none;
+      }
+      @keyframes moCaptionIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+      .story-caption-kicker {
+        font-size: 9px; font-weight: 800; text-transform: uppercase;
+        letter-spacing: 0.14em; color: #0070F3;
+      }
+      .story-caption-main { font-size: 14px; font-weight: 700; color: #0A1C60; line-height: 1.25; }
+      .story-caption-sub { font-size: 11px; font-weight: 500; color: #475569; line-height: 1.35; }
+      .story-caption.is-peak { border-left-color: #CC2222; }
+      .story-caption.is-peak .story-caption-kicker { color: #CC2222; }
+      .story-caption.is-resolve { border-left-color: #10b981; }
+      .story-caption.is-resolve .story-caption-kicker { color: #059669; }
+      @media (max-width: 720px) {
+        .story-caption { max-width: 70%; left: 8%; }
+      }
+
+      /* Presenter keyboard hint in the demo modal header */
+      .demo-modal-kbd-hint {
+        margin-left: 12px;
+        font-size: 10px; font-weight: 600; color: #94a3b8;
+        letter-spacing: 0.02em; white-space: nowrap;
+      }
+      .demo-modal-kbd-hint kbd {
+        font-family: inherit; font-size: 9px; font-weight: 700;
+        color: #64748b; background: #f1f5f9;
+        border: 1px solid #e2e8f0; border-bottom-width: 2px;
+        border-radius: 4px; padding: 1px 5px;
+      }
+      @media (max-width: 1020px) { .demo-modal-kbd-hint { display: none; } }
+
+      /* ── 8. Business-impact calculator: results tell their story in order —
+             pillars cascade, hero numbers count up, bars draw today → with AW,
+             the verdict stamps last. Gated by .impact-fresh (one shot per
+             calculate / tab entry); debounced live re-renders stay static. ── */
+      .impact-fresh .bi-pillar { animation: moRise 560ms var(--mo-ease-out) both; }
+      .impact-fresh .bi-pillar:nth-child(1) { animation-delay: 60ms; }
+      .impact-fresh .bi-pillar:nth-child(2) { animation-delay: 180ms; }
+      .impact-fresh .bi-pillar:nth-child(3) { animation-delay: 300ms; }
+      .impact-fresh .bi-pillars-foot { animation: moRise 480ms var(--mo-ease-out) 420ms both; }
+      .impact-fresh .bi-compare { animation: moRise 560ms var(--mo-ease-out) 240ms both; }
+      .impact-fresh .bi-compare-bar-fill {
+        animation: biBarIn 850ms var(--mo-ease-out) both;
+      }
+      @keyframes biBarIn { from { width: 0; } }
+      .impact-fresh .bi-compare-row:nth-child(1) .bi-compare-bar-fill { animation-delay: 500ms; }
+      .impact-fresh .bi-compare-row:nth-child(2) .bi-compare-bar-fill { animation-delay: 620ms; }
+      .impact-fresh .bi-compare-row:nth-child(3) .bi-compare-bar-fill { animation-delay: 740ms; }
+      .impact-fresh .bi-compare-row:nth-child(4) .bi-compare-bar-fill { animation-delay: 860ms; }
+      .impact-fresh .bi-compare-row:nth-child(5) .bi-compare-bar-fill { animation-delay: 980ms; }
+      .impact-fresh .bi-compare-bar-fill.is-new { animation-duration: 700ms; }
+      .impact-fresh .bi-compare-row:nth-child(1) .bi-compare-bar-fill.is-new { animation-delay: 700ms; }
+      .impact-fresh .bi-compare-row:nth-child(2) .bi-compare-bar-fill.is-new { animation-delay: 820ms; }
+      .impact-fresh .bi-compare-row:nth-child(3) .bi-compare-bar-fill.is-new { animation-delay: 940ms; }
+      .impact-fresh .bi-compare-row:nth-child(4) .bi-compare-bar-fill.is-new { animation-delay: 1060ms; }
+      .impact-fresh .bi-compare-row:nth-child(5) .bi-compare-bar-fill.is-new { animation-delay: 1180ms; }
+      .impact-fresh .bi-compare-stat { animation: moRise 420ms var(--mo-ease-out) both; }
+      .impact-fresh .bi-compare-row:nth-child(1) .bi-compare-stat { animation-delay: 1150ms; }
+      .impact-fresh .bi-compare-row:nth-child(2) .bi-compare-stat { animation-delay: 1250ms; }
+      .impact-fresh .bi-compare-row:nth-child(3) .bi-compare-stat { animation-delay: 1350ms; }
+      .impact-fresh .bi-compare-row:nth-child(4) .bi-compare-stat { animation-delay: 1450ms; }
+      .impact-fresh .bi-compare-row:nth-child(5) .bi-compare-stat { animation-delay: 1550ms; }
+      .impact-fresh .bi-compare-summary { animation: moRise 520ms var(--mo-ease-out) 1500ms both; }
+      .impact-fresh .bi-actionbar-anim { animation: moRise 480ms var(--mo-ease-out) 1700ms both; }
+      [data-cu] { font-variant-numeric: tabular-nums; }
+      /* Empty state invites the click: ghost bars grow in, then breathe. */
+      .panel-fresh .bi-empty-bar {
+        animation: biGhostGrow 700ms var(--mo-ease-out) both, biGhostPulse 3.2s ease-in-out 900ms infinite;
+      }
+      .panel-fresh .bi-empty-bar:nth-child(1) { animation-delay: 250ms, 900ms; }
+      .panel-fresh .bi-empty-bar:nth-child(2) { animation-delay: 350ms, 1050ms; }
+      .panel-fresh .bi-empty-bar:nth-child(3) { animation-delay: 450ms, 1200ms; }
+      .panel-fresh .bi-empty-bar:nth-child(4) { animation-delay: 550ms, 1350ms; }
+      @keyframes biGhostGrow { from { height: 4px; opacity: 0; } }
+      @keyframes biGhostPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
+      /* Assumptions drawer slides open once per toggle */
+      .bi-assumptions.is-fresh { animation: moRise 420ms var(--mo-ease-out) both; }
+
+      /* ── 9. Inflection-point estimator: inputs on the left drive the
+             picture on the right. ── */
+      .ip-grid { display: grid; grid-template-columns: 1fr; gap: 18px; }
+      @media (min-width: 900px) { .ip-grid { grid-template-columns: 320px 1fr; align-items: start; } }
+      .ip-tile { transition: border-color var(--mo-fast) ease, background var(--mo-fast) ease, transform 220ms var(--mo-ease-spring), box-shadow var(--mo-fast) ease; }
+      .ip-tile:active { transform: scale(0.94); }
+      .ip-tile[aria-pressed="true"] { box-shadow: 0 2px 10px rgba(0, 112, 243, 0.14); }
+      .ip-tile .ip-tile-check { animation: moCheckPop 0.4s var(--mo-ease-spring); }
+      .ip-cta-hint { font-size: 10.5px; color: #94a3b8; line-height: 1.4; }
+      .ip-cta-hint b { color: #64748b; font-weight: 600; }
+      .ip-fresh-panel { animation: moRise 440ms var(--mo-ease-out) both; }
+      /* Ghost preview before the first calculation: a faint sketch of the
+         chart-to-come, so the layout never jumps and the right column sells
+         what the inputs unlock. */
+      .ip-preview {
+        border: 1.5px dashed #cbd5e1; border-radius: 12px;
+        min-height: 240px; height: 100%;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        gap: 10px; padding: 24px; text-align: center;
+        background: repeating-linear-gradient(-45deg, #fafbfd, #fafbfd 12px, #f6f8fb 12px, #f6f8fb 24px);
+      }
+      .ip-preview-sketch { width: 150px; height: 72px; opacity: 0.6; }
+      .ip-preview-title { font-size: 13px; font-weight: 700; color: #475569; }
+      .ip-preview-body { font-size: 11.5px; color: #94a3b8; max-width: 300px; line-height: 1.45; }
+      .ipc-result-card.ipc-animate { animation: moRise 520ms var(--mo-ease-out) both; }
+      .ipc-animate .ipc-headline { opacity: 0; animation: ipcStamp 560ms var(--mo-ease-out) 250ms both; }
+      @keyframes ipcStamp {
+        0% { opacity: 0; transform: translateY(8px) scale(1.06); filter: blur(3px); }
+        100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+      }
+
+      /* ── 10. Respect reduced motion everywhere, including the new layer. ── */
       @media (prefers-reduced-motion: reduce) {
         *, *::before, *::after {
           animation-duration: 0.001ms !important;
@@ -5974,7 +6115,8 @@
         .modal-overlay:not(.is-fresh) .modal-content,
         .demo-modal-backdrop.is-fresh .demo-modal-panel,
         .chart-draw .chart-element,
-        .chart-draw .marker-element,
+        .marker-pop,
+        .story-caption,
         .tp-line.is-fresh, .tp-label.is-fresh,
         .rs-subtitle.is-fresh {
           animation: none !important;
@@ -5984,6 +6126,17 @@
         .chart-draw .demand-line, .chart-draw .capacity-line {
           animation: none !important;
           stroke-dashoffset: 0 !important;
+        }
+        .impact-fresh .bi-pillar, .impact-fresh .bi-compare,
+        .impact-fresh .bi-compare-bar-fill, .impact-fresh .bi-compare-stat,
+        .impact-fresh .bi-compare-summary, .impact-fresh .bi-actionbar-anim,
+        .impact-fresh .bi-pillars-foot,
+        .panel-fresh .bi-empty-bar, .bi-assumptions.is-fresh,
+        .ip-fresh-panel, .ipc-result-card.ipc-animate, .ipc-animate .ipc-headline {
+          animation: none !important;
+          opacity: 1 !important;
+          transform: none !important;
+          filter: none !important;
         }
       }
     </style>
@@ -6098,6 +6251,10 @@
         currentCapacitySlope: 0,
         targetCapacitySlope: 0,
         showTippingPoint: false,
+        storyPlaying: false,
+        storyTone: 'build',
+        storyCaption: '',
+        storyTimers: [],
         currentState: {
           change: {
             intro: "",
@@ -6958,6 +7115,29 @@
         STATE.flowQueueIdx++;
       }
 
+      // Presenter shortcut (Space): pause/resume whichever demo is on screen.
+      // Mirrors the per-demo pause-* click handlers, which all share the
+      // STATE.flowTimers timeout pool.
+      function toggleDemoPause(){
+        const clearShared = () => { STATE.flowTimers.timeouts.forEach(id => clearTimeout(id)); STATE.flowTimers.timeouts = []; };
+        if ((STATE.solutionViewAdmin || STATE.solutionViewUser) && STATE.flowRunning) {
+          if (STATE.flowPaused) resumeFlow(); else pauseFlow();
+          return;
+        }
+        const queues = [
+          ['solutionViewSetupStore', 'ssRunning', 'ssPaused', () => runSsQueue()],
+          ['solutionViewOnboarding', 'obRunning', 'obPaused', () => runObQueue()],
+          ['solutionViewDashboard',  'drRunning', 'drPaused', () => runDrQueue()],
+          ['solutionViewMultiTenant','mtRunning', 'mtPaused', () => runMtQueue()],
+        ];
+        for (const [viewKey, runKey, pausedKey, resume] of queues) {
+          if (!STATE[viewKey] || !STATE[runKey]) continue;
+          if (STATE[pausedKey]) { STATE[pausedKey] = false; scrollPreserveRender(); resume(); }
+          else { STATE[pausedKey] = true; clearShared(); scrollPreserveRender(); }
+          return;
+        }
+      }
+
       function startAppCascade(){
         STATE.autopilotAppCount = 0;
         let count = 0;
@@ -7112,6 +7292,10 @@
               <div class="grid grid-cols-1 lg:grid-cols-[1fr_220px] gap-3 items-stretch">
                 <div class="chart-container relative">
                   <svg id="capacity-gap-chart" viewBox="0 0 860 420" preserveAspectRatio="xMidYMid meet"></svg>
+                  <button type="button" class="story-play-btn focus-ring ${STATE.storyPlaying ? 'is-playing' : ''}" data-action="play-chart-story" aria-label="${STATE.storyPlaying ? 'Stop the story' : 'Play the story'}" title="${STATE.storyPlaying ? 'Stop the story' : 'Watch the pressure build, beat by beat'}">
+                    <i data-lucide="${STATE.storyPlaying ? 'square' : 'play'}" class="w-3 h-3"></i><span>${STATE.storyPlaying ? 'Stop' : 'Play the story'}</span>
+                  </button>
+                  ${STATE.storyCaption ? `<div class="story-caption is-${STATE.storyTone || 'build'}" role="status">${STATE.storyCaption}</div>` : ''}
                 </div>
                 <div class="w-full bg-white/70 backdrop-blur-lg rounded-xl shadow-sm p-3 border border-slate-200 cs-challenges">
                   <h3 class="text-xs font-semibold uppercase tracking-wide text-[#0A1C60] mb-2">Modern IT Challenges</h3>
@@ -7404,17 +7588,32 @@
         // Gap label
         const gapLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         gapLabel.setAttribute('x', xScale(0.45)); gapLabel.setAttribute('y', yScale(0.48)); gapLabel.setAttribute('text-anchor', 'middle'); gapLabel.classList.add('chart-annotation','label-element','chart-element'); gapLabel.textContent = STATE.chartConfig.center; svg.appendChild(gapLabel);
-        // Driver markers with navy pill labels
+        // Driver markers with navy pill labels. A marker that just became
+        // visible (driver toggled on, or a story beat) is withheld while the
+        // curve is still bending, then pops onto the settled curve — tracked
+        // per driver id in _seenMarkers so per-frame rebuilds never replay it.
+        STATE._seenMarkers = STATE._seenMarkers || {};
         let markerIdx = 0;
         STATE.drivers.forEach(function(d) {
-          if (d.markerYear && (d.state === 'normal' || d.state === 'accelerating')) {
+          const markerVisible = d.markerYear && (d.state === 'normal' || d.state === 'accelerating');
+          if (!markerVisible) { if (d.id) delete STATE._seenMarkers[d.id]; }
+          if (markerVisible) {
+            // _seenMarkers stores the timestamp a marker first landed. The
+            // pop class stays applied for a short window after that, because
+            // converging RAF loops can rebuild the chart a frame after the
+            // settle render — which would otherwise strip the pop mid-flight.
+            const seenAt = d.id ? STATE._seenMarkers[d.id] : 1;
+            if (!freshDraw && !seenAt && tweening) return; // pops once the curve settles
             const t = (d.markerYear - 2025) / 3; const dem = Math.pow(t, exp); const x = xScale(t); const y = yScale(dem);
             const isHot = d.id && STATE.highlightDriverId === d.id;
             const r = isHot ? 6 : 5;
             const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
             g.classList.add('marker-group','marker-element','chart-element');
-            // Markers enter one after another along the curve on a fresh draw.
-            if (freshDraw) g.style.setProperty('--chart-d', (1.6 + markerIdx * 0.13).toFixed(2) + 's');
+            // Markers enter one after another along the curve on a fresh
+            // draw; a newly-activated marker pops immediately on settle.
+            if (freshDraw) { g.classList.add('marker-pop'); g.style.setProperty('--chart-d', (1.6 + markerIdx * 0.13).toFixed(2) + 's'); }
+            else if (!seenAt || (performance.now() - seenAt) < 600) { g.classList.add('marker-pop'); g.style.setProperty('--chart-d', '0s'); }
+            if (d.id && !seenAt) STATE._seenMarkers[d.id] = performance.now();
             markerIdx++;
             g.setAttribute('role','button'); g.setAttribute('tabindex','0'); g.setAttribute('aria-label','Learn more about '+d.label);
             const lblW = d.label.length * 6 + 18;
@@ -7473,9 +7672,84 @@
         if (Math.abs(STATE.currentDemandExponent - STATE.targetDemandExponent) > 0.001 || Math.abs(STATE.currentCapacitySlope - STATE.targetCapacitySlope) > 0.001) { requestAnimationFrame(animateCurves); }
       }
 
-      function setSlider(id, value){ const driver = STATE.drivers.find(d => d.id === id); if (driver) { driver.state = ['off', 'normal', 'accelerating'][value]; STATE.recastMode = false; updateCurves(); requestAnimationFrame(animateCurves); } }
+      function setSlider(id, value){ const driver = STATE.drivers.find(d => d.id === id); if (driver) { if (STATE.storyPlaying) { stopChartStory(); STATE.storyCaption = ''; } driver.state = ['off', 'normal', 'accelerating'][value]; STATE.recastMode = false; updateCurves(); requestAnimationFrame(animateCurves); } }
 
-      function resetSliders(){ STATE.recastMode = false; STATE.drivers.forEach(d => d.state = 'off'); STATE.currentDemandExponent = 1.6; STATE.targetDemandExponent = 1.6; STATE.currentCapacitySlope = 0; STATE.targetCapacitySlope = 0; STATE.showTippingPoint = false; STATE.highlightDriverId = null; render(); }
+      function resetSliders(){ stopChartStory(); STATE.storyCaption = ''; STATE.recastMode = false; STATE.drivers.forEach(d => d.state = 'off'); STATE.currentDemandExponent = 1.6; STATE.targetDemandExponent = 1.6; STATE.currentCapacitySlope = 0; STATE.targetCapacitySlope = 0; STATE.showTippingPoint = false; STATE.highlightDriverId = null; render(); }
+
+      // ── Chart story player ──────────────────────────────────────────
+      // Presenter-paced narrative for the capacity-gap chart: start from a
+      // calm baseline, accelerate the five pressures one beat at a time
+      // (curve bends, marker pops, caption narrates), hold the breaking
+      // point, then resolve with the Recast reveal. ~16s, built to be
+      // talked over on a live call.
+      function stopChartStory(){
+        (STATE.storyTimers || []).forEach(id => clearTimeout(id));
+        STATE.storyTimers = [];
+        STATE.storyPlaying = false;
+      }
+
+      function storyCaptionHTML(kicker, main, sub){
+        return '<span class="story-caption-kicker">' + kicker + '</span>'
+          + '<span class="story-caption-main">' + main + '</span>'
+          + (sub ? '<span class="story-caption-sub">' + sub + '</span>' : '');
+      }
+
+      function playChartStory(){
+        if (STATE.storyPlaying) {
+          stopChartStory();
+          STATE.storyCaption = '';
+          STATE.highlightDriverId = null;
+          scrollPreserveRender();
+          return;
+        }
+        stopChartStory();
+        STATE.storyPlaying = true;
+        STATE.storyTone = 'build';
+        STATE.recastMode = false;
+        STATE.drivers.forEach(d => d.state = 'off');
+        STATE.highlightDriverId = null;
+        STATE._seenMarkers = {};
+        STATE.storyCaption = storyCaptionHTML('The setup', 'A manageable estate', 'Demand and capacity track together &mdash; for now.');
+        updateCurves();
+        scrollPreserveRender();
+        requestAnimationFrame(animateCurves);
+
+        const beat = (at, fn) => {
+          const tid = setTimeout(() => { if (!STATE.storyPlaying) return; fn(); }, at);
+          STATE.storyTimers.push(tid);
+        };
+        STATE.drivers.forEach((d, i) => {
+          beat(1700 + i * 1900, () => {
+            d.state = 'accelerating';
+            STATE.highlightDriverId = d.id;
+            STATE.storyTone = 'build';
+            STATE.storyCaption = storyCaptionHTML('Pressure ' + (i + 1) + ' of 5', d.label, d.subtext);
+            updateCurves();
+            scrollPreserveRender();
+            requestAnimationFrame(animateCurves);
+          });
+        });
+        beat(11600, () => {
+          STATE.highlightDriverId = null;
+          STATE.storyTone = 'peak';
+          STATE.storyCaption = storyCaptionHTML('The breaking point', 'The model stops scaling', 'Five pressures compound faster than headcount ever can.');
+          scrollPreserveRender();
+        });
+        beat(13700, () => {
+          STATE.recastMode = true;
+          STATE.storyTone = 'resolve';
+          STATE.storyCaption = storyCaptionHTML('The shift', 'Change the model, not the headcount', 'One workspace layer: demand flattens, capacity scales, the gap closes.');
+          updateCurves();
+          scrollPreserveRender();
+          requestAnimationFrame(animateCurves);
+        });
+        beat(16500, () => {
+          // Leave the resolved curve + closing caption on screen for the
+          // hand-off into the Recast Approach tab.
+          stopChartStory();
+          scrollPreserveRender();
+        });
+      }
 
       function openInsight(content){ STATE.insightContent = content; STATE.highlightDriverId = content?.id || null; render(); }
 
@@ -7497,9 +7771,13 @@
       function renderIPTileGroup(group, options, selected, cols){
         return `<div class="grid ${cols} gap-2">` + options.map(o => {
           const sel = selected.includes(o.key);
+          // The check badge pops only on the tile that was just toggled —
+          // every tile re-renders per toggle, so an ungated pop would replay
+          // on all selected tiles every time.
+          const justToggled = STATE._ipLastToggle === o.key;
           return `<button type="button" data-action="ip-toggle-${group}" data-val="${o.key}" aria-pressed="${sel}" title="${o.label}"
-            class="relative flex flex-col items-center justify-center gap-1.5 px-1 py-3 rounded-xl border-2 transition focus-ring ${sel ? 'border-[#0070F3] bg-blue-50' : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50'}">
-            ${sel ? `<span class="absolute -top-2 -right-2 w-4 h-4 rounded-full bg-[#0A1C60] flex items-center justify-center ring-2 ring-white"><i data-lucide="check" class="w-2.5 h-2.5 text-white"></i></span>` : ''}
+            class="ip-tile relative flex flex-col items-center justify-center gap-1.5 px-1 py-3 rounded-xl border-2 focus-ring ${sel ? 'border-[#0070F3] bg-blue-50' : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50'}">
+            ${sel ? `<span class="absolute -top-2 -right-2 w-4 h-4 rounded-full bg-[#0A1C60] flex items-center justify-center ring-2 ring-white ${justToggled ? 'ip-tile-check' : ''}"><i data-lucide="check" class="w-2.5 h-2.5 text-white"></i></span>` : ''}
             <span class="${sel ? 'text-[#0070F3]' : 'text-slate-400'}"><i data-lucide="${o.icon}" class="w-5 h-5"></i></span>
             <span class="text-[10px] font-semibold leading-tight text-center ${sel ? 'text-[#0A1C60]' : 'text-slate-500'}">${o.label}</span>
           </button>`;
@@ -7709,20 +7987,20 @@
             @keyframes ipcRise{ from{ opacity:0; transform:translateY(8px);} to{ opacity:1; transform:translateY(0);} }
             @keyframes ipcPop{ 0%{opacity:0; transform:scale(.4);} 60%{opacity:1; transform:scale(1.1);} 100%{opacity:1; transform:scale(1);} }
           </style>
-          <div class="mt-2 rounded-xl overflow-hidden shadow-sm" style="background:${C.navy}">
+          <div class="rounded-xl overflow-hidden shadow-sm ipc-result-card ${animate ? 'ipc-animate' : ''}" style="background:${C.navy}">
             <div class="px-5 pt-4 pb-3 flex items-end justify-between gap-4">
               <div>
                 <div class="text-[10px] uppercase tracking-wider text-white/60 mb-0.5">${eyebrow}</div>
-                <div class="text-3xl font-bold text-white leading-none">${headline}</div>
+                <div class="text-3xl font-bold text-white leading-none ipc-headline">${headline}</div>
               </div>
               <div class="text-right flex-shrink-0">
                 <div class="text-[10px] uppercase tracking-wider text-white/60">Current load</div>
-                <div class="text-2xl font-bold text-white leading-tight">~${r.loadPct}%</div>
+                <div class="text-2xl font-bold text-white leading-tight">~<span data-cu="${r.loadPct}">${r.loadPct}</span>%</div>
                 <div class="text-[10px] text-white/50 leading-none">of sustainable capacity</div>
               </div>
             </div>
             <div class="px-3 pb-3">
-              <div class="rounded-lg bg-white px-3 pt-3 pb-2 ${animate ? 'ipc-animate' : ''}">
+              <div class="rounded-lg bg-white px-3 pt-3 pb-2">
                 ${svg}
                 ${storyStrip}
               </div>
@@ -7780,46 +8058,72 @@
                     <i data-lucide="calculator" class="w-4 h-4"></i>
                     ${STATE.ipCalc.open ? 'Hide the inflection point estimator' : 'Estimate your own inflection point'}
                   </button>
-                  ${STATE.ipCalc.open ? `
-                  <div class="mt-4 p-5 rounded-xl bg-white/70 backdrop-blur-lg shadow-sm space-y-4">
-                    <p class="text-xs text-[#64748b]">A few quick inputs — we project where your application workload outgrows your team, using the ~40%/yr growth pattern Gartner, Forrester &amp; IDC describe above.</p>
+                  ${STATE.ipCalc.open ? (() => {
+                    const ipc = STATE.ipCalc;
+                    const ipMissing = [];
+                    if (!(ipc.envs || []).length) ipMissing.push('pick your environments');
+                    if (!(ipc.devices || []).length) ipMissing.push('pick your device types');
+                    if (!(parseFloat(ipc.engineers) > 0)) ipMissing.push('add engineers on apps');
+                    if (!(parseFloat(ipc.employees) > 0)) ipMissing.push('add total employees');
+                    const ipValid = ipMissing.length === 0;
+                    const hasIpResult = ipc.result && !ipc.result.error;
+                    return `
+                  <div class="mt-4 p-5 rounded-xl bg-white/70 backdrop-blur-lg shadow-sm ${STATE._ipFresh ? 'ip-fresh-panel' : ''}">
+                    <div class="ip-grid">
+                      <div class="space-y-4">
+                        <p class="text-xs text-[#64748b]">A few quick inputs — we project where your application workload outgrows your team, using the ~40%/yr growth pattern Gartner, Forrester &amp; IDC describe above.</p>
 
-                    <div>
-                      <label class="flex items-center justify-between text-[11px] font-semibold text-[#0A1C60] uppercase tracking-wide mb-1.5">
-                        <span>Delivery environments <span class="text-slate-400 normal-case font-medium">— select all you manage</span></span>
-                        <span class="text-[10px] font-bold text-[#0070F3] tabular-nums">${STATE.ipCalc.envs.length || ''}</span>
-                      </label>
-                      ${renderIPTileGroup('env', IP_ENVS, STATE.ipCalc.envs, 'grid-cols-3')}
-                    </div>
+                        <div>
+                          <label class="flex items-center justify-between text-[11px] font-semibold text-[#0A1C60] uppercase tracking-wide mb-1.5">
+                            <span>Delivery environments <span class="text-slate-400 normal-case font-medium">— select all you manage</span></span>
+                            <span class="text-[10px] font-bold text-[#0070F3] tabular-nums">${ipc.envs.length || ''}</span>
+                          </label>
+                          ${renderIPTileGroup('env', IP_ENVS, ipc.envs, 'grid-cols-3')}
+                        </div>
 
-                    <div>
-                      <label class="flex items-center justify-between text-[11px] font-semibold text-[#0A1C60] uppercase tracking-wide mb-1.5">
-                        <span>Device estate <span class="text-slate-400 normal-case font-medium">— what you deliver to</span></span>
-                        <span class="text-[10px] font-bold text-[#0070F3] tabular-nums">${STATE.ipCalc.devices.length || ''}</span>
-                      </label>
-                      ${renderIPTileGroup('device', IP_DEVICES, STATE.ipCalc.devices, 'grid-cols-4')}
-                    </div>
+                        <div>
+                          <label class="flex items-center justify-between text-[11px] font-semibold text-[#0A1C60] uppercase tracking-wide mb-1.5">
+                            <span>Device estate <span class="text-slate-400 normal-case font-medium">— what you deliver to</span></span>
+                            <span class="text-[10px] font-bold text-[#0070F3] tabular-nums">${ipc.devices.length || ''}</span>
+                          </label>
+                          ${renderIPTileGroup('device', IP_DEVICES, ipc.devices, 'grid-cols-4')}
+                        </div>
 
-                    <div class="grid grid-cols-2 gap-x-3 gap-y-3">
-                      <div>
-                        <label class="block text-[11px] font-semibold text-[#0A1C60] uppercase tracking-wide mb-1">Engineers on apps</label>
-                        <input type="number" min="1" id="ip-engineers" value="${STATE.ipCalc.engineers}" placeholder="e.g. 4" class="focus-ring w-full px-3 py-2 rounded-lg border border-slate-200 text-sm">
+                        <div class="grid grid-cols-2 gap-x-3 gap-y-3">
+                          <div>
+                            <label class="block text-[11px] font-semibold text-[#0A1C60] uppercase tracking-wide mb-1">Engineers on apps</label>
+                            <input type="number" min="1" id="ip-engineers" value="${ipc.engineers}" placeholder="e.g. 4" class="focus-ring w-full px-3 py-2 rounded-lg border border-slate-200 text-sm">
+                          </div>
+                          <div>
+                            <label class="block text-[11px] font-semibold text-[#0A1C60] uppercase tracking-wide mb-1">Total employees</label>
+                            <input type="number" min="1" id="ip-employees" value="${ipc.employees}" placeholder="e.g. 5000" class="focus-ring w-full px-3 py-2 rounded-lg border border-slate-200 text-sm">
+                          </div>
+                        </div>
+
+                        <button type="button" data-action="calculate-ip" ${ipValid ? '' : 'disabled'}
+                          class="w-full bg-[#0A1C60] text-white px-4 py-2.5 rounded-xl text-sm font-semibold hover:bg-[#0070F3] transition disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-[#0A1C60]">
+                          ${hasIpResult ? 'Recalculate' : 'Show my inflection point'}
+                        </button>
+                        ${ipValid
+                          ? (hasIpResult ? `<p class="ip-cta-hint"><b>Live:</b> changes to your selections update the projection automatically.</p>` : '')
+                          : `<p class="ip-cta-hint">To project your inflection point: <b>${ipMissing.join('</b> &middot; <b>')}</b></p>`}
                       </div>
+
                       <div>
-                        <label class="block text-[11px] font-semibold text-[#0A1C60] uppercase tracking-wide mb-1">Total employees</label>
-                        <input type="number" min="1" id="ip-employees" value="${STATE.ipCalc.employees}" placeholder="e.g. 5000" class="focus-ring w-full px-3 py-2 rounded-lg border border-slate-200 text-sm">
+                        ${hasIpResult ? renderIPChart(ipc.result) : `
+                        <div class="ip-preview">
+                          <svg class="ip-preview-sketch" viewBox="0 0 150 72" aria-hidden="true">
+                            <line x1="8" y1="22" x2="142" y2="22" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5 4"/>
+                            <path d="M8 64 C 60 60, 104 44, 142 6" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/>
+                            <circle cx="116" cy="22" r="4.5" fill="#fff" stroke="#94a3b8" stroke-width="1.5"/>
+                          </svg>
+                          <div class="ip-preview-title">Your projection appears here</div>
+                          <div class="ip-preview-body">Select what you manage and add your team size &mdash; we chart the year your application workload crosses your team's bandwidth.</div>
+                        </div>`}
                       </div>
                     </div>
-
-                    <button type="button" data-action="calculate-ip" class="w-full bg-[#0A1C60] text-white px-4 py-2.5 rounded-xl text-sm font-semibold hover:bg-[#0070F3] transition">Estimate inflection</button>
-
-                    ${(() => {
-                      const r = STATE.ipCalc.result; if (!r) return '';
-                      if (r.error) return `<p class="text-sm text-[#D4213D] font-medium">${r.error}</p>`;
-                      return renderIPChart(r);
-                    })()}
-                  </div>
-                  ` : ''}
+                  </div>`;
+                  })() : ''}
                 </div>
                 ` : `
                 ${intro ? `<p class="text-base leading-relaxed text-[#4A5568] mb-4">${intro}</p>` : ''}
@@ -10961,6 +11265,7 @@
                     <span class="demo-modal-progress" aria-label="Step ${idx + 1} of ${LIFECYCLE_MODULES.length}">
                       ${LIFECYCLE_MODULES.map((m, i) => `<button type="button" class="demo-modal-progress-dot ${i === idx ? 'is-active' : ''}" data-action="next-demo-module" data-view="${m.view}" title="${m.name}" aria-label="Jump to ${m.name}"></button>`).join('')}
                     </span>
+                    <span class="demo-modal-kbd-hint" aria-hidden="true"><kbd>Space</kbd> pause &nbsp;<kbd>&larr;</kbd><kbd>&rarr;</kbd> modules &nbsp;<kbd>Esc</kbd> close</span>
                     <span class="demo-modal-controls">
                       ${nextMod ? `
                         <button type="button" class="demo-modal-btn demo-modal-btn-next" data-action="next-demo-module" data-view="${nextMod.view}" title="Next: ${nextMod.name}" aria-label="Next: ${nextMod.name}">
@@ -11690,7 +11995,7 @@
               </div>
 
               ${STATE.showAssumptions ? `
-                <div class="bi-assumptions">
+                <div class="bi-assumptions ${STATE._asnFresh ? 'is-fresh' : ''}">
                   <div class="bi-assumptions-title">Environment & effort inputs</div>
                   <div class="bi-assumptions-grid">
                     ${roiInput('roi-users','users','Managed users','End users in scope','5000',ci.users)}
@@ -11746,7 +12051,7 @@
                   <div class="bi-toosmall-body">Organizations under 200 typically don't face the multi-platform complexity Application Workspace addresses. The per-platform model usually works fine at that scale.</div>
                 </div>
               </div>
-            ` : hasResult ? `<div id="impact-results">${renderCalcResult()}</div>` : `
+            ` : hasResult ? `<div id="impact-results" class="${STATE._impactFresh || STATE._tabFresh ? 'impact-fresh' : ''}">${renderCalcResult()}</div>` : `
               <div class="bi-empty">
                 <div class="bi-empty-visual">
                   <div class="bi-empty-bar" style="height:22%"></div>
@@ -11760,7 +12065,7 @@
             `}
 
             ${hasResult ? `
-              <div class="bi-actionbar">
+              <div class="bi-actionbar ${STATE._impactFresh || STATE._tabFresh ? 'bi-actionbar-anim' : ''}">
                 ${STATE.pdfCompanyInput ? `
                   <div class="bi-pdf-input">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--r-blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -12000,7 +12305,7 @@
                     <h3 class="bi-pillar-title">Time to deliver</h3>
                   </header>
                   <div class="bi-pillar-hero">
-                    <div class="bi-pillar-hero-num">&minus;${pctFaster}<span class="bi-pillar-hero-unit">%</span></div>
+                    <div class="bi-pillar-hero-num">&minus;<span data-cu="${pctFaster}">${pctFaster}</span><span class="bi-pillar-hero-unit">%</span></div>
                     <div class="bi-pillar-hero-sub">
                       per-app build time &middot;
                       <span class="bi-pillar-from">${tradBlended.toFixed(1)} hrs</span>
@@ -12042,10 +12347,10 @@
                     <h3 class="bi-pillar-title">Capacity reclaimed</h3>
                   </header>
                   <div class="bi-pillar-hero">
-                    <div class="bi-pillar-hero-num">${num(fullReclaim)}<span class="bi-pillar-hero-unit"> hrs/mo</span></div>
+                    <div class="bi-pillar-hero-num"><span data-cu="${fullReclaim}" data-cu-loc="1">${num(fullReclaim)}</span><span class="bi-pillar-hero-unit"> hrs/mo</span></div>
                     <div class="bi-pillar-hero-sub">
-                      &asymp; <span class="bi-pillar-to">${fmtDollarsK(reclaimedDollarsAnnual)}/yr</span>
-                      &middot; <span class="bi-pillar-to">&minus;${fullPctReduction}%</span>
+                      &asymp; <span class="bi-pillar-to">$<span data-cu="${Math.round(reclaimedDollarsAnnual / 1000)}" data-cu-loc="1">${Math.round(reclaimedDollarsAnnual / 1000).toLocaleString()}</span>K/yr</span>
+                      &middot; <span class="bi-pillar-to">&minus;<span data-cu="${fullPctReduction}">${fullPctReduction}</span>%</span>
                       <span class="bi-pillar-hero-note">of operational hours</span>
                     </div>
                   </div>
@@ -12149,8 +12454,8 @@
                     <span class="bi-compare-summary-tag">with Application Workspace</span>
                   </div>
                   <div class="bi-compare-summary-right">
-                    <span class="bi-compare-summary-pct">${pctReduction}% of operational hours</span>
-                    <span class="bi-compare-summary-detail">&middot; <b>${num(totalReturned)} hrs/mo</b> returned to strategy</span>
+                    <span class="bi-compare-summary-pct"><span data-cu="${pctReduction}">${pctReduction}</span>% of operational hours</span>
+                    <span class="bi-compare-summary-detail">&middot; <b><span data-cu="${totalReturned}" data-cu-loc="1">${num(totalReturned)}</span> hrs/mo</b> returned to strategy</span>
                   </div>
                 </div>
               </div>
@@ -12159,7 +12464,34 @@
         `;
       }
 
-      function updateROIOutputs(){ }
+      // One-shot count-up pass over freshly revealed impact results. Elements
+      // carry their final value in data-cu (data-cu-loc="1" → toLocaleString);
+      // their static text is already the final value, so non-fresh re-renders
+      // (debounced live edits) read correctly without animating.
+      function animateCountUps(root){
+        if (!root) return;
+        if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        root.querySelectorAll('[data-cu]').forEach(el => {
+          const target = parseFloat(el.getAttribute('data-cu'));
+          if (!isFinite(target)) return;
+          const loc = el.getAttribute('data-cu-loc') === '1';
+          const dur = 950, t0 = performance.now();
+          const step = (now) => {
+            if (!el.isConnected) return; // re-render replaced the DOM; stop quietly
+            const p = Math.min(1, (now - t0) / dur);
+            const v = Math.round(target * (1 - Math.pow(1 - p, 3)));
+            el.textContent = loc ? v.toLocaleString() : String(v);
+            if (p < 1) requestAnimationFrame(step);
+          };
+          requestAnimationFrame(step);
+        });
+      }
+
+      function updateROIOutputs(){
+        if (!(STATE._impactFresh || STATE._tabFresh)) return;
+        const root = document.getElementById('impact-results');
+        if (root) requestAnimationFrame(() => animateCountUps(root));
+      }
 
       function setText(id, value){ const el=document.getElementById(id); if(el) el.textContent = String(value); }
 
@@ -12423,8 +12755,8 @@
           if (node) { const id = node.dataset.id; STATE.activePopover = STATE.activePopover === id ? null : id; render(); return; }
           if (!action) return;
 
-          if (action === 'switch-tab') { STATE.activeTab = act.getAttribute('data-tab'); STATE.visitedCards = []; STATE.activePopover = null; if (STATE.openWhyModal && STATE._savedDriverStates) { STATE.drivers.forEach((d, i) => { d.state = STATE._savedDriverStates[i]; }); STATE.showTippingPoint = STATE._savedTippingPoint; STATE.recastMode = STATE._savedRecastMode; STATE.targetDemandExponent = STATE._savedDemandExp; STATE.targetCapacitySlope = STATE._savedCapSlope; STATE._savedDriverStates = null; updateCurves(); } STATE.openWhyModal = null; STATE.insightContent = null; STATE.flowStep = -1; STATE.flowRunning = false; STATE.flowPaused = false; STATE.flowScenarioIdx = -1; STATE.flowPhase = 'idle'; STATE.flowAppOpened = false; STATE._firstOpenDone = false; STATE.showAdminView = false; STATE.showAutopilot = false; STATE.autopilotStep = -1; STATE.autopilotAppCount = 0; STATE.drPhase = 'idle'; STATE.drRunning = false; STATE.drPaused = false; STATE.drQueue = []; STATE.drQueueIdx = 0; STATE.obPhase = 'idle'; STATE.obRunning = false; STATE.obPaused = false; STATE.obQueue = []; STATE.obQueueIdx = 0; STATE.ssPhase = 'idle'; STATE.ssRunning = false; STATE.ssPaused = false; STATE.ssQueue = []; STATE.ssQueueIdx = 0; STATE.ssTimers.forEach(id => clearTimeout(id)); STATE.ssTimers = []; STATE.lcTimers.forEach(id => clearTimeout(id)); STATE.lcTimers = []; STATE.lifecyclePlaying = false; STATE.lcStep = -1; clearFlowTimers(); STATE._tabFresh = true; STATE._chartDrawn = false; render(); STATE._tabFresh = false; return; }
-          if (action === 'advance') { STATE.activeTab = act.getAttribute('data-next'); if (STATE.openWhyModal && STATE._savedDriverStates) { STATE.drivers.forEach((d, i) => { d.state = STATE._savedDriverStates[i]; }); STATE.showTippingPoint = STATE._savedTippingPoint; STATE.recastMode = STATE._savedRecastMode; STATE.targetDemandExponent = STATE._savedDemandExp; STATE.targetCapacitySlope = STATE._savedCapSlope; STATE._savedDriverStates = null; updateCurves(); } STATE.openWhyModal = null; if (STATE.activeTab === 'roi') { calculateImpact(); } STATE._tabFresh = true; STATE._chartDrawn = false; render(); STATE._tabFresh = false; return; }
+          if (action === 'switch-tab') { STATE.activeTab = act.getAttribute('data-tab'); STATE.visitedCards = []; STATE.activePopover = null; stopChartStory(); STATE.storyCaption = ''; if (STATE.openWhyModal && STATE._savedDriverStates) { STATE.drivers.forEach((d, i) => { d.state = STATE._savedDriverStates[i]; }); STATE.showTippingPoint = STATE._savedTippingPoint; STATE.recastMode = STATE._savedRecastMode; STATE.targetDemandExponent = STATE._savedDemandExp; STATE.targetCapacitySlope = STATE._savedCapSlope; STATE._savedDriverStates = null; updateCurves(); } STATE.openWhyModal = null; STATE.insightContent = null; STATE.flowStep = -1; STATE.flowRunning = false; STATE.flowPaused = false; STATE.flowScenarioIdx = -1; STATE.flowPhase = 'idle'; STATE.flowAppOpened = false; STATE._firstOpenDone = false; STATE.showAdminView = false; STATE.showAutopilot = false; STATE.autopilotStep = -1; STATE.autopilotAppCount = 0; STATE.drPhase = 'idle'; STATE.drRunning = false; STATE.drPaused = false; STATE.drQueue = []; STATE.drQueueIdx = 0; STATE.obPhase = 'idle'; STATE.obRunning = false; STATE.obPaused = false; STATE.obQueue = []; STATE.obQueueIdx = 0; STATE.ssPhase = 'idle'; STATE.ssRunning = false; STATE.ssPaused = false; STATE.ssQueue = []; STATE.ssQueueIdx = 0; STATE.ssTimers.forEach(id => clearTimeout(id)); STATE.ssTimers = []; STATE.lcTimers.forEach(id => clearTimeout(id)); STATE.lcTimers = []; STATE.lifecyclePlaying = false; STATE.lcStep = -1; clearFlowTimers(); STATE._tabFresh = true; STATE._chartDrawn = false; render(); STATE._tabFresh = false; return; }
+          if (action === 'advance') { STATE.activeTab = act.getAttribute('data-next'); stopChartStory(); STATE.storyCaption = ''; if (STATE.openWhyModal && STATE._savedDriverStates) { STATE.drivers.forEach((d, i) => { d.state = STATE._savedDriverStates[i]; }); STATE.showTippingPoint = STATE._savedTippingPoint; STATE.recastMode = STATE._savedRecastMode; STATE.targetDemandExponent = STATE._savedDemandExp; STATE.targetCapacitySlope = STATE._savedCapSlope; STATE._savedDriverStates = null; updateCurves(); } STATE.openWhyModal = null; if (STATE.activeTab === 'roi') { calculateImpact(); } STATE._tabFresh = true; STATE._chartDrawn = false; render(); STATE._tabFresh = false; return; }
           if (action === 'toggle-proof-details') { STATE.proofDetailsOpen = !STATE.proofDetailsOpen; render(); return; }
           if (action === 'toggle-solution-view' || action === 'next-demo-module') {
             const view = act.getAttribute('data-view');
@@ -12658,10 +12990,18 @@
           if (action === 'open-ai-agent') { STATE.showAIAgent = true; render(); return; }
           if (action === 'close-ai-agent') { STATE.showAIAgent = false; render(); return; }
           if (action === 'close-insight-modal') { STATE.insightContent = null; STATE.highlightDriverId = null; render(); return; }
-          if (action === 'toggle-ip-calc') { STATE.ipCalc.open = !STATE.ipCalc.open; render(); return; }
-          if (action === 'ip-toggle-env') { const k = act.getAttribute('data-val'); const a = STATE.ipCalc.envs; const i = a.indexOf(k); if (i >= 0) a.splice(i,1); else a.push(k); render(); return; }
-          if (action === 'ip-toggle-device') { const k = act.getAttribute('data-val'); const a = STATE.ipCalc.devices; const i = a.indexOf(k); if (i >= 0) a.splice(i,1); else a.push(k); render(); return; }
-          if (action === 'calculate-ip') { computeInflectionPoint(); STATE.ipCalc.justCalculated = true; render(); return; }
+          if (action === 'toggle-ip-calc') { STATE.ipCalc.open = !STATE.ipCalc.open; STATE._ipFresh = STATE.ipCalc.open; render(); STATE._ipFresh = false; return; }
+          if (action === 'ip-toggle-env') { const k = act.getAttribute('data-val'); const a = STATE.ipCalc.envs; const i = a.indexOf(k); if (i >= 0) a.splice(i,1); else a.push(k); STATE._ipLastToggle = i >= 0 ? null : k; if (STATE.ipCalc.result) computeInflectionPoint(); render(); STATE._ipLastToggle = null; return; }
+          if (action === 'ip-toggle-device') { const k = act.getAttribute('data-val'); const a = STATE.ipCalc.devices; const i = a.indexOf(k); if (i >= 0) a.splice(i,1); else a.push(k); STATE._ipLastToggle = i >= 0 ? null : k; if (STATE.ipCalc.result) computeInflectionPoint(); render(); STATE._ipLastToggle = null; return; }
+          if (action === 'calculate-ip') {
+            computeInflectionPoint();
+            STATE.ipCalc.justCalculated = true;
+            render();
+            requestAnimationFrame(() => animateCountUps(document.querySelector('.ipc-result-card')));
+            // On narrow screens the verdict renders below the inputs — bring it into view.
+            setTimeout(() => { document.querySelector('.ipc-result-card')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 150);
+            return;
+          }
           if (action === 'why-nav') { STATE.openWhyModal = act.getAttribute('data-to'); render(); return; }
           if (action === 'step-driver') {
             const dir = parseInt(act.getAttribute('data-dir'), 10) || 1;
@@ -12676,6 +13016,8 @@
 
           if (action === 'open-why-modal') {
             const id = act.getAttribute('data-why');
+            // The why-modal restages the chart, so an in-flight story must stop first
+            stopChartStory(); STATE.storyCaption = '';
             // Save current chart state before temporarily changing it for the modal
             STATE._savedDriverStates = STATE.drivers.map(d => d.state);
             STATE._savedTippingPoint = STATE.showTippingPoint;
@@ -12694,8 +13036,8 @@
           if (action === 'toggle-card') { const id = act.getAttribute('data-card'); const wasOpen = STATE.openCards[id]; Object.keys(STATE.openCards).forEach(k => STATE.openCards[k] = false); STATE.openCards[id] = !wasOpen; if (STATE.openCards[id] && !STATE.visitedCards.includes(id)) STATE.visitedCards.push(id); render(); if (STATE.openCards[id]) { setTimeout(() => act.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 200); } return; }
           if (action === 'select-card') { const id = act.getAttribute('data-card'); if (STATE.activeCard !== id) { STATE.activeCard = id; if (!STATE.visitedCards.includes(id)) STATE.visitedCards.push(id); } render(); return; }
           if (action === 'expand-all') { Object.keys(STATE.openCards).forEach(k => STATE.openCards[k] = true); STATE.visitedCards = ['core','onboarding','trust']; render(); return; }
-          if (action === 'calculate-impact') { calculateImpact(); render(); return; }
-          if (action === 'toggle-assumptions') { STATE.showAssumptions = !STATE.showAssumptions; render(); return; }
+          if (action === 'calculate-impact') { calculateImpact(); STATE._impactFresh = true; render(); STATE._impactFresh = false; return; }
+          if (action === 'toggle-assumptions') { STATE.showAssumptions = !STATE.showAssumptions; STATE._asnFresh = STATE.showAssumptions; render(); STATE._asnFresh = false; return; }
           if (action === 'save-assumptions') {
             const sc = STATE.calcScenario; const clamp = (v) => Math.max(0, Math.min(100, cleanNum(v))) / 100;
             const t = document.getElementById('asn-ticket'); const pCat = document.getElementById('asn-pkg-catalog'); const pCust = document.getElementById('asn-pkg-custom'); const pa = document.getElementById('asn-patch'); const s = document.getElementById('asn-strategic');
@@ -12715,7 +13057,7 @@
             if (awC)   PACKAGING_BENCHMARKS.awComplexHrs  = Math.max(0, cleanNum(awC.value));
             if (trS)   PACKAGING_BENCHMARKS.tradStdHrs    = Math.max(0, cleanNum(trS.value));
             if (trC)   PACKAGING_BENCHMARKS.tradComplexHrs= Math.max(0, cleanNum(trC.value));
-            calculateImpact(); STATE.showAssumptions = false; render(); return;
+            calculateImpact(); STATE.showAssumptions = false; STATE._impactFresh = true; render(); STATE._impactFresh = false; return;
           }
           if (action === 'toggle-regulated') { STATE.calcInputs.regulated = act.getAttribute('data-val') === 'true'; render(); return; }
           if (action === 'ai-pick-scenario') {
@@ -12876,14 +13218,25 @@
 
           if (action === 'reset-currentstate-defaults') { clearDraft(); const defaults = STATE.defaultsCurrentState(); STATE.currentState.change = defaults.change; STATE.currentState.now = defaults.now; STATE.editBuffers = { change: { intro: '', bullets: '', analyst: '' }, now: { intro: '', bullets: '', analyst: '' }, recast: { intro: '', bullets: '', analyst: '' } }; render(); return; }
           if (action === 'reset-sliders') { resetSliders(); return; }
+          if (action === 'play-chart-story') { playChartStory(); return; }
         });
 
         root.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { const flipTarget = e.target.closest('[data-action="flip-card"]'); if (flipTarget) { flipTarget.click(); e.preventDefault(); } } });
 
         let _roiDebounce = null;
+        let _ipDebounce = null;
+        // Once a projection exists, number edits re-project live (debounced);
+        // before that, the CTA hint walks the user through what's missing.
+        const ipLiveRecalc = () => {
+          clearTimeout(_ipDebounce);
+          _ipDebounce = setTimeout(() => {
+            if (STATE.ipCalc.result) computeInflectionPoint();
+            render();
+          }, 450);
+        };
         root.addEventListener('input', (e) => {
-          if (e.target?.id === 'ip-engineers')    { STATE.ipCalc.engineers = e.target.value; return; }
-          if (e.target?.id === 'ip-employees')    { STATE.ipCalc.employees = e.target.value; return; }
+          if (e.target?.id === 'ip-engineers')    { STATE.ipCalc.engineers = e.target.value; ipLiveRecalc(); return; }
+          if (e.target?.id === 'ip-employees')    { STATE.ipCalc.employees = e.target.value; ipLiveRecalc(); return; }
           if (e.target?.id === 'roi-employees') { const n = cleanNum(e.target.value); if (n > 0) { deriveFromEmployees(n); calculateImpact(); clearTimeout(_roiDebounce); _roiDebounce = setTimeout(() => render(), 600); } return; }
           if (e.target?.id === 'roi-users') { STATE.calcInputs.users = cleanNum(e.target.value); return; }
           if (e.target?.id === 'roi-endpoints') { STATE.calcInputs.endpoints = cleanNum(e.target.value); return; }
@@ -12939,6 +13292,39 @@
         STATE._tabFresh = false;
       });
       document.addEventListener('keydown',(e)=>{
+        // ── Presenter controls for the demo modal: Esc closes (the click
+        //    handler existed but was never wired to a key), ←/→ moves
+        //    between lifecycle modules, Space pauses/resumes the running
+        //    demo. Ignored while typing in a field.
+        const _kTag = (e.target && e.target.tagName) || '';
+        const _kTyping = _kTag === 'INPUT' || _kTag === 'TEXTAREA' || (e.target && e.target.isContentEditable);
+        const _demoOpen = STATE.solutionViewSetupStore || STATE.solutionViewAdmin || STATE.solutionViewOnboarding ||
+          STATE.solutionViewUser || STATE.solutionViewDashboard || STATE.solutionViewAi || STATE.solutionViewMultiTenant;
+        if (_demoOpen && !_kTyping) {
+          if (e.key === 'Escape') {
+            document.querySelector('.demo-modal-backdrop')?.click();
+            e.preventDefault(); return;
+          }
+          if (e.key === 'ArrowRight') {
+            document.querySelector('.demo-modal-btn-next')?.click();
+            e.preventDefault(); return;
+          }
+          if (e.key === 'ArrowLeft') {
+            const dots = Array.from(document.querySelectorAll('.demo-modal-progress-dot'));
+            const cur = dots.findIndex(d => d.classList.contains('is-active'));
+            if (cur > 0) dots[cur - 1].click();
+            e.preventDefault(); return;
+          }
+          if (e.key === ' ') {
+            toggleDemoPause();
+            e.preventDefault(); return;
+          }
+        }
+        // Esc also stops an in-flight chart story (when no modal is open to close)
+        if (e.key === 'Escape' && STATE.storyPlaying && !(STATE.modalOpen || STATE.openWhyModal || STATE.insightContent || STATE.showAnalystModal || STATE.showAIAgent)) {
+          stopChartStory(); STATE.storyCaption = ''; STATE.highlightDriverId = null; scrollPreserveRender();
+          return;
+        }
         if (STATE.insightContent && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
           const tag = (e.target && e.target.tagName) || '';
           if (tag === 'INPUT' || tag === 'TEXTAREA' || (e.target && e.target.isContentEditable)) return;
