@@ -1380,6 +1380,27 @@
       .ptd-card { border: 1px solid #c1d4ff; border-radius: 8px; background: #f7faff; padding: 7px 9px; }
       .ptd-card b { display: block; font-size: 10px; font-weight: 700; color: #171d2b; }
       .ptd-card i { font-style: normal; display: block; font-size: 8.5px; font-weight: 600; color: #1745bf; margin-top: 2px; line-height: 1.35; }
+      /* 90-day adoption roadmap */
+      .ptr-grid { border: 1px solid #dce1ec; border-radius: 10px; overflow: hidden; background: #fff; }
+      .ptr-head, .ptr-row { display: grid; grid-template-columns: 132px 190px 1fr 1fr; align-items: stretch; }
+      .ptr-head { background: #fbfcfe; border-bottom: 1px solid #dce1ec; }
+      .ptr-head > div { padding: 8px 13px; font-size: 9px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: #9aa3b7; }
+      .ptr-axis { position: relative; display: block; height: 11px; margin-top: 3px; }
+      .ptr-axis i { position: absolute; top: 0; transform: translateX(-50%); font-style: normal; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 8px; font-weight: 700; color: #b6bdcc; }
+      .ptr-row { border-top: 1px solid #eef1f8; }
+      .ptr-row > div { padding: 9px 13px; font-size: 10.5px; line-height: 1.5; }
+      .ptr-ph { display: flex; align-items: flex-start; gap: 7px; }
+      .ptr-ph b { display: block; font-size: 10.5px; font-weight: 700; color: #171d2b; }
+      .ptr-ph em { display: block; font-style: normal; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 8.5px; font-weight: 700; color: #9aa3b7; margin-top: 1px; }
+      .ptr-track { display: flex; align-items: center; }
+      .ptr-lane { position: relative; display: block; width: 100%; height: 9px; }
+      .ptr-lane::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: #eef1f8; }
+      .ptr-bar { position: absolute; top: 50%; transform: translateY(-50%); height: 9px; width: 0; border-radius: 5px; background: linear-gradient(90deg, #2f6bff, #12a58c); transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1); transition-delay: calc(var(--pta, 0ms) + var(--ptd, 0ms)); }
+      .ptr-bar.pt-visible { width: var(--w); }
+      .ptr-act { color: #6b6355; background: #f8f7f4; }
+      .ptr-exit { color: #171d2b; box-shadow: inset 2px 0 0 #dce1ec; }
+      @media (max-width: 1000px) { .ptr-head, .ptr-row { grid-template-columns: 118px 130px 1fr 1fr; } }
+      @media (max-width: 860px) { .ptr-head, .ptr-row { grid-template-columns: 1fr; } .ptr-exit { box-shadow: none; } }
       @media (max-width: 860px) {
         .pt-thead2, .pt-pair { grid-template-columns: 1fr; }
         .pt-row2 { background: #ffffff; }
@@ -7165,6 +7186,7 @@
         ['pt-visible', '.aw-ok'],
         ['pt-visible', '.pta-tick'],
         ['pt-visible', '.ptc-seg'],
+        ['pt-visible', '.ptr-bar'],
         ['pt-visible', '.ptv-gbar'],
         ['pt-visible', '.ptv-hbar'],
         ['pt-drawn',   '.ptv-hline'],
@@ -9830,16 +9852,16 @@
               <div class="text-center py-6 text-sm text-slate-400">
                 <i data-lucide="bar-chart-3" class="w-8 h-8 mx-auto mb-2 text-slate-300"></i>
                 <div>Press <strong>Auto</strong> or <strong>Step</strong> to see the reporting architecture</div>
-                <div class="text-[10px] text-slate-300 mt-1">See how OData feeds power dashboards across every zone</div>
+                <div class="text-[10px] text-slate-300 mt-1">See how analytics feeds power dashboards across every zone</div>
               </div>
             ` : `
 
-              <!-- OData API SOURCE -->
+              <!-- ANALYTICS SOURCE -->
               <div class="dr-zone dr-source ${past('source') ? 'dr-visible' : 'dr-hidden'} mb-2">
                 <div class="flex items-center gap-2 mb-2">
                   <i data-lucide="database" class="w-4 h-4 text-blue-300"></i>
-                  <span class="text-xs font-bold tracking-wide">Application Workspace — OData API</span>
-                  <span class="ml-auto text-[9px] text-blue-300 font-medium dr-callout ${past('done') ? 'dr-show' : ''}">JSON over OData · Any reporting tool</span>
+                  <span class="text-xs font-bold tracking-wide">Application Workspace — Analytics</span>
+                  <span class="ml-auto text-[9px] text-blue-300 font-medium dr-callout ${past('done') ? 'dr-show' : ''}">JSON feed · Any reporting tool</span>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
                   <!-- Auth info -->
@@ -9871,7 +9893,7 @@
                   ${[0,1,2].map(i => `
                     <div class="flex flex-col items-center">
                       <div class="dr-feed-line ${past('flowing') ? 'dr-drawn' : ''}" style="transition-delay:${i * 0.2}s"></div>
-                      <span class="text-[8px] text-slate-400 font-medium mt-0.5">OData Feed</span>
+                      <span class="text-[8px] text-slate-400 font-medium mt-0.5">Analytics Feed</span>
                     </div>
                   `).join('')}
                 </div>
@@ -9923,7 +9945,7 @@
               <!-- Callouts -->
               ${past('done') ? `
                 <div class="flex flex-wrap justify-center gap-4 mt-3">
-                  <div class="dr-callout dr-show text-[#2f6bff] flex items-center gap-1.5"><i data-lucide="plug" class="w-3.5 h-3.5"></i> OData feed connects to any reporting tool</div>
+                  <div class="dr-callout dr-show text-[#2f6bff] flex items-center gap-1.5"><i data-lucide="plug" class="w-3.5 h-3.5"></i> Analytics feed connects to any reporting tool</div>
                   <div class="dr-callout dr-show text-emerald-600 flex items-center gap-1.5"><i data-lucide="palette" class="w-3.5 h-3.5"></i> Adapt to custom reporting visualizations</div>
                 </div>
               ` : ''}
@@ -10234,7 +10256,7 @@
               <div class="ai-empty">
                 <div class="ai-empty-orb">${COPILOT_MARK_SVG}</div>
                 <div class="ai-empty-title">Ask Copilot what's hiding in your dashboards.</div>
-                <div class="ai-empty-sub">Copilot reads the same OData feed you saw in <strong>Dashboard &amp; Reporting</strong> and answers in plain English. Press <strong>Auto</strong> or <strong>Step</strong> to watch three high-impact scenarios.</div>
+                <div class="ai-empty-sub">Copilot reads the same analytics feed you saw in <strong>Dashboard &amp; Reporting</strong> and answers in plain English. Press <strong>Auto</strong> or <strong>Step</strong> to watch three high-impact scenarios.</div>
                 <div class="ai-empty-chips">
                   ${AI_SCENARIOS.map(sc => `<span class="ai-empty-chip"><i data-lucide="${sc.icon}" class="w-3 h-3"></i> ${sc.tag}</span>`).join('')}
                 </div>
@@ -10300,7 +10322,7 @@
                     <div class="ai-toolcall ai-reveal ai-reveal-sources">
                       <div class="ai-toolcall-head">
                         <i data-lucide="database" class="w-3 h-3"></i>
-                        <span>Grounded in OData</span>
+                        <span>Grounded in Analytics</span>
                         <span class="ai-toolcall-window">${s.window}</span>
                       </div>
                       <div class="ai-toolcall-chips">
@@ -10794,7 +10816,7 @@
         { key: "reporting", pill: "Dashboards", tag: "Reporting + analytics", icon: "bar-chart-3",
           event: "A customer asks what their application estate actually looks like this month",
           rows: [
-            { dim: "Data collection", today: "Each team exports its own numbers, in its own format.", aw: "One OData feed \u2014 deployments, devices, events, licenses, packages, users." },
+            { dim: "Data collection", today: "Each team exports its own numbers, in its own format.", aw: "One analytics feed \u2014 deployments, devices, events, licenses, packages, users." },
             { dim: "Reporting effort", today: "Reports assembled by hand, then aged out immediately.", aw: "Live snapshot on refresh into the BI tool you already use." },
             { dim: "Customer conversation", today: "Cost-to-serve and service value are hard to prove.", aw: "Install health, launch health, and cost per app, per customer.", keep: true },
           ],
@@ -10810,16 +10832,11 @@
           rows: [],
           stat: { hrs: "80% faster delivery \u00b7 70% fewer application tickets \u00b7 60% more margin on the same contract", sub: "the three numbers" },
           verdict: "Faster delivery, fewer tickets, and a materially better margin on the same contract." },
-        { key: "enablement", pill: "Enablement", tag: "Recast alongside you", icon: "handshake",
-          event: "A first customer opportunity arrives before deep product expertise exists",
-          viz: { unit: "Solo preparation", src: "Joint enablement", per: "supported demo" },
-          rows: [
-            { dim: "Onboarding", today: "Expertise built alone, up front.", aw: "Onboarding, shadowing, enablement." },
-            { dim: "Demonstrations", today: "Partners prepare demos solo.", aw: "Joint or Recast-supported demonstrations.", keep: true },
-            { dim: "First deals", today: "Depend on in-house confidence.", aw: "De-risked by supported engagements." },
-          ],
-          stat: { hrs: "Onboarding, shadowing, joint demonstrations", sub: "partner enablement" },
-          verdict: "Early opportunities are supported without requiring day-one product expertise." },
+        { key: "enablement", pill: "POV \u2013 GTM", tag: "90-day roadmap", icon: "flag", full: true,
+          event: "From first proof-of-value conversation to a launched service \u2014 in 90 days, with Recast alongside",
+          rows: [],
+          stat: { hrs: "Mobilize \u00b7 baseline \u00b7 design \u00b7 configure \u00b7 bake-off \u00b7 business case \u00b7 launch design", sub: "90-day adoption roadmap" },
+          verdict: "A measured path to a launched service \u2014 every phase ends in a decision, not an opinion." },
       ];
       /* Recognizable app marks for the partner catalog animation (clean reconstructions) */
       const AW = {
@@ -10885,11 +10902,11 @@
             <div class="pt-viz-lane" style="--pta:380ms">
               ${head(true, 'One API, already reporting on itself')}
               <div class="ptd-api ptv-el ${g(past('r1'))}">
-                <div class="ptd-api-t">Application Workspace \u2014 OData API</div>
+                <div class="ptd-api-t">Application Workspace \u2014 Analytics</div>
                 <div class="ptd-api-sub">Zone ID + client secret \u00b7 snapshot on refresh</div>
                 <div class="ptd-eps">${EPS.map((e, i) => `<span class="ptd-ep ptv-el ${g(past('r1'))}" style="--ptd:${i * 45}ms">${e}</span>`).join('')}</div>
               </div>
-              <div class="ptd-feed ptv-el ${g(past('r2'))}"><span class="ptv-hline ${dr(past('r2'))}" style="--w:22px"></span>OData feed \u2014 into the tools you already report from</div>
+              <div class="ptd-feed ptv-el ${g(past('r2'))}"><span class="ptv-hline ${dr(past('r2'))}" style="--w:22px"></span>Analytics feed \u2014 into the tools you already report from</div>
               <div class="ptd-cards">${CARDS.map((c, i) => `<div class="ptd-card ptv-el ${g(past(i < 4 ? 'r2' : 'r3'))}" style="--ptd:${(i % 4) * 80}ms"><b>${c[0]}</b><i>${c[1]}</i></div>`).join('')}</div>
               <div class="pt-viz-foot pt-viz-foot-aw">One source \u2014 per customer, per app, per release, without assembling anything</div>
             </div>
@@ -11095,19 +11112,36 @@
             </div>
           </div>`;
         }
-        /* enablement */
-        const jt = ['Build expertise alone', 'Prepare the demo solo', 'First pitch \u2014 months out'];
-        const ja = [['Onboard', 'shadowed by Recast'], ['Joint demo', 'Recast alongside'], ['First deal', 'supported behind the scenes']];
+        /* POV -> GTM: the 90-day adoption roadmap (playbook \u00a712) as a Gantt.
+           Phases overlap on purpose \u2014 that is what makes 90 days possible. */
+        const RM = [
+          ['Mobilize', 0, 10, 'Name sponsor, delivery owner, technical lead, finance owner, and GTM owner. Confirm commercial and licensing assumptions.', 'Approved charter, scope, roles, and data request.'],
+          ['Baseline', 5, 20, 'Measure package changes, hours, releases, tickets, customer / tenant structure, applications, users, endpoints, and contract economics.', 'Version-controlled current-state baseline.'],
+          ['Design', 15, 30, 'Architecture, identity, connectors, zones, agent deployment, content, security, roles, and test portfolio.', 'Approved technical and security design.'],
+          ['Configure', 25, 45, 'Build environment, connectors, test groups, packages, Catalog / Workspace, entitlements, reporting, and support process.', 'Pilot-ready environment.'],
+          ['Bake-off', 40, 65, 'Run controlled current and future workflows. Capture touch time, elapsed time, quality, failures, and support evidence.', 'Signed scorecard and issue log.'],
+          ['Business case', 60, 75, 'Build Year 1, steady-state, margin, service-line, and project scenarios. Run sensitivity.', 'Executive decision package.'],
+          ['Launch design', 70, 90, 'Define service SKU, target customers, enablement, pricing, operational governance, and scale plan.', 'Go / no-go and 90-day commercialization plan.'],
+        ];
+        const rmGate = (i) => 'r' + Math.min(3, Math.floor(i / 3) + 1);
         return `<div class="pt-viz">
-          <div class="pt-viz-lane">
-            ${head(false, 'The unsupported ramp')}
-            <div class="ptv-journey">${jt.map((n, i) => `<div class="ptv-jnode ptv-jnode-t ptv-el ${g(past('r' + (i + 1)))}">${n}</div>${i < 2 ? '<span class="ptv-jline ptv-jline-long"></span>' : ''}`).join('')}</div>
-            <div class="pt-viz-foot">Expertise built in-house before the first opportunity can be answered</div>
-          </div>
-          <div class="pt-viz-lane" style="--pta:380ms">
-            ${head(true, 'Recast alongside')}
-            <div class="ptv-journey">${ja.map((n, i) => `<div class="ptv-jnode ptv-jnode-a ptv-el ${g(past('r' + (i + 1)))}">${n[0]}<small>${n[1]}</small></div>${i < 2 ? '<span class="ptv-jline"></span>' : ''}`).join('')}</div>
-            <div class="pt-viz-foot pt-viz-foot-aw">Shorter distance to the first deal \u2014 joint demos, enablement, shadowing</div>
+          <div class="pt-viz-lane ptv-full">
+            <div class="ptf-band ptv-el ${g(past('boards'))}"><b>90-day adoption roadmap</b><span>Seven overlapping phases \u2014 each one ends in a decision you can defend, not an opinion</span></div>
+            <div class="ptr-grid">
+              <div class="ptr-head">
+                <div>Phase</div>
+                <div>Days 0 \u2013 90<span class="ptr-axis">${[0, 30, 60, 90].map((d) => `<i style="left:${d / 90 * 100}%">${d}</i>`).join('')}</span></div>
+                <div>Activities</div>
+                <div><span class="pt-lanetag pt-lanetag-aw">Exit criteria</span></div>
+              </div>
+              ${RM.map((p, i) => { const on = past(rmGate(i)); return `<div class="ptr-row ptv-el ${g(on)}" style="--ptd:${(i % 3) * 80}ms">
+                <div class="ptr-ph"><span class="pta-num">${i + 1}</span><span><b>${p[0]}</b><em>day ${p[1]}\u2013${p[2]}</em></span></div>
+                <div class="ptr-track"><span class="ptr-lane"><span class="ptr-bar ${g(on)}" style="left:${p[1] / 90 * 100}%;--w:${(p[2] - p[1]) / 90 * 100}%;--ptd:${(i % 3) * 80 + 160}ms"></span></span></div>
+                <div class="ptr-act">${p[3]}</div>
+                <div class="ptr-exit"><span class="pta-help"><span class="pta-tick ${g(past(i < 6 ? 'r3' : 'stat'))}" style="--ptd:${i * 60}ms">\u2713</span><span>${p[4]}</span></span></div>
+              </div>`; }).join('')}
+            </div>
+            <div class="pt-viz-foot">Recast works alongside you through all seven \u2014 onboarding, shadowing, joint demonstrations, and the bake-off itself \u2014 so the first customer conversation does not wait on day-one product expertise</div>
           </div>
         </div>`;
       }
@@ -12965,7 +12999,7 @@
           'Managed apps':     'Vendor apps come pre-built from the Recast Setup Store — Recast packages, tests, and keeps each one current, so new versions apply automatically instead of being repackaged by hand.',
           'Custom packaging': 'Your in-house apps are packaged once with reusable install, update, and detection logic, then delivered through the same automation engine — no manual scripting per environment.',
           'User experience':  'Users install what they need on demand from one self-service catalog with single sign-on — instant access and far fewer help-desk tickets for installs and logins.',
-          'Dashboarding':     'Every action is logged automatically and surfaced through built-in reporting and OData — audit evidence and usage dashboards generate themselves instead of being compiled by hand.',
+          'Dashboarding':     'Every action is logged automatically and surfaced through built-in reporting and analytics — audit evidence and usage dashboards generate themselves instead of being compiled by hand.',
           'Multi-tenant':     'One package promotes identically across every environment and tenant — build once, get the same result everywhere, with no drift between dev, test, and prod.'
         };
 
