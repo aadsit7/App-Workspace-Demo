@@ -1203,6 +1203,32 @@
       .pt-ctl:active { transform: scale(0.96); }
       .pt-ctl-primary { padding: 0 11px; background: #eef3ff; border-color: #c1d4ff; color: #1745bf; font-size: 10.5px; font-weight: 700; white-space: nowrap; }
       .pt-ctl-primary:hover { background: #e2ebff; border-color: #2f6bff; color: #1745bf; }
+      .aw-mk { display:inline-grid; place-items:center; border-radius:6px; overflow:hidden; flex:0 0 auto; background:#fff; box-shadow:0 1px 2px rgba(23,29,43,0.10); }
+      .aw-mk svg { display:block; width:100%; height:100%; }
+      .aw-mono { color:#fff; font-family:"Poppins","Figtree",sans-serif; font-weight:800; letter-spacing:-0.03em; line-height:1; box-shadow:0 1px 2px rgba(23,29,43,0.16); }
+      .awt { position:relative; display:flex; flex-direction:column; align-items:center; gap:4px; min-width:0; }
+      .awt-nm { font-size:8px; font-weight:700; color:#737d92; text-align:center; line-height:1.15; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+      .aw-qlab { font-size:8px; font-weight:800; letter-spacing:0.06em; text-transform:uppercase; color:#b6bdcc; white-space:nowrap; }
+      .aw-wall { display:grid; grid-template-columns:repeat(6,1fr); gap:12px 8px; padding:12px 2px 6px; }
+      @media (max-width:860px){ .aw-wall{ grid-template-columns:repeat(5,1fr); } }
+      .aw-storebar { display:flex; align-items:center; justify-content:space-between; gap:8px; border:1px solid #c1d4ff; background:linear-gradient(90deg,#eef3ff,#f7faff); border-radius:9px; padding:8px 11px; }
+      .aw-storebar b { font-family:"Poppins",sans-serif; font-size:11px; font-weight:800; color:#1745bf; letter-spacing:-0.02em; }
+      .aw-count { font-family:"JetBrains Mono",ui-monospace,monospace; font-size:9.5px; font-weight:700; color:#0a8f82; white-space:nowrap; }
+      .aw-ok { position:absolute; top:-4px; right:2px; width:14px; height:14px; border-radius:50%; background:#0a8f82; color:#fff; display:grid; place-items:center; font-size:8.5px; font-weight:900; box-shadow:0 1px 3px rgba(10,143,130,0.45); opacity:0; transform:scale(0.4); transition:opacity 0.35s cubic-bezier(0.22,1,0.36,1), transform 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+      .aw-ok.pt-visible { opacity:1; transform:scale(1); }
+      .awt.is-feat .aw-mk { box-shadow:0 0 0 2px #7fd4c8, 0 1px 3px rgba(10,143,130,0.25); }
+      .aw-bench { display:flex; align-items:center; gap:11px; padding:10px 11px; border:1px solid #eef1f8; border-radius:11px; background:#fbfaf8; }
+      .aw-benchapp { display:flex; flex-direction:column; align-items:center; gap:4px; flex:0 0 auto; }
+      .aw-stagerail { flex:1; display:flex; gap:3px; }
+      .aw-clock { font-size:8px; font-weight:800; letter-spacing:0.04em; text-transform:uppercase; color:#b6bdcc; flex:0 0 auto; white-space:nowrap; }
+      .aw-queue { display:flex; align-items:center; gap:7px; margin-top:11px; flex-wrap:wrap; }
+      .aw-qapp { display:inline-grid; }
+      .aw-mult { margin-left:auto; font-size:8.5px; font-weight:800; color:#8a5709; background:#ffe9c2; border:1px solid #ffdb9e; border-radius:6px; padding:3px 8px; white-space:nowrap; }
+      .aw-custom { display:flex; align-items:center; gap:7px; margin-top:10px; padding:8px 10px; border:1px dashed #bfe9e1; background:#f4fbf9; border-radius:8px; }
+      .aw-cap { display:flex; align-items:center; gap:6px; margin:-4px 0 10px; font-size:9px; font-weight:700; color:#737d92; }
+      .aw-cap span { line-height:1.1; }
+      .ptv-hubcard { display:flex; align-items:center; gap:8px; text-align:left; }
+      .ptv-hubtxt { display:flex; flex-direction:column; gap:1px; }
       .ptm-chart { display: flex; gap: 22px; align-items: flex-end; padding: 4px 6px 0; }
       .ptm-col { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 5px; }
       .ptm-bararea { width: 100%; max-width: 90px; height: 100px; display: flex; align-items: flex-end; }
@@ -10553,46 +10579,87 @@
           stat: { hrs: "Onboarding, shadowing, joint demonstrations", sub: "partner enablement" },
           verdict: "Early opportunities are supported without requiring day-one product expertise." },
       ];
+      /* Recognizable app marks for the partner catalog animation (clean reconstructions) */
+      const AW = {
+        chrome:{name:"Google Chrome",color:"#4285F4",svg:`<svg viewBox="0 0 24 24"><path d="M12 12 12 0 A12 12 0 0 1 22.39 18 Z" fill="#EA4335"/><path d="M12 12 22.39 18 A12 12 0 0 1 1.61 18 Z" fill="#34A853"/><path d="M12 12 1.61 18 A12 12 0 0 1 12 0 Z" fill="#FBBC05"/><circle cx="12" cy="12" r="5.6" fill="#fff"/><circle cx="12" cy="12" r="3.8" fill="#4285F4"/></svg>`},
+        zoom:{name:"Zoom",color:"#2D8CFF",svg:`<svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="4.5" fill="#2D8CFF"/><path d="M6 9 h6.2 a1.6 1.6 0 0 1 1.6 1.6 v2.8 a1.6 1.6 0 0 1 -1.6 1.6 h-6.2 a1.6 1.6 0 0 1 -1.6 -1.6 v-2.8 a1.6 1.6 0 0 1 1.6 -1.6 Z" fill="#fff"/><path d="M14.6 11 18.5 8.8 18.5 15.2 14.6 13 Z" fill="#fff"/></svg>`},
+        slack:{name:"Slack",color:"#611f69",svg:`<svg viewBox="0 0 24 24"><rect x="13" y="2" width="4" height="9" rx="2" fill="#36C5F0"/><rect x="13" y="13" width="9" height="4" rx="2" fill="#ECB22E"/><rect x="7" y="13" width="4" height="9" rx="2" fill="#E01E5A"/><rect x="2" y="7" width="9" height="4" rx="2" fill="#2EB67D"/></svg>`},
+        vlc:{name:"VLC",color:"#E85E00",svg:`<svg viewBox="0 0 24 24"><ellipse cx="12" cy="20.4" rx="9" ry="1.8" fill="#E85E00"/><path d="M9.2 4 h5.6 l3.6 15.4 a30 30 0 0 1 -12.8 0 Z" fill="#E85E00"/><path d="M10.4 7.4 h3.2 l0.7 3 h-4.6 Z" fill="#FDF6EF"/><path d="M9.2 4 h5.6 l0.35 1.5 h-6.3 Z" fill="#B34700"/></svg>`},
+        node:{name:"Node.js",color:"#5FA04E",svg:`<svg viewBox="0 0 24 24"><path d="M12 1 21.5 6.5 21.5 17.5 12 23 2.5 17.5 2.5 6.5Z" fill="#5FA04E"/><path d="M12 1 21.5 6.5 21.5 17.5 12 23Z" fill="#417E38"/></svg>`},
+        windows:{name:"Windows",color:"#00A4EF",svg:`<svg viewBox="0 0 24 24" fill="#00A4EF"><rect x="2" y="2" width="9" height="9"/><rect x="13" y="2" width="9" height="9"/><rect x="2" y="13" width="9" height="9"/><rect x="13" y="13" width="9" height="9"/></svg>`},
+        acrobat:{name:"Adobe Acrobat",color:"#EC1C24",mono:"A"},
+        teams:{name:"MS Teams",color:"#5059C9",mono:"T"},
+        edge:{name:"MS Edge",color:"#0C7DBE",mono:"e"},
+        firefox:{name:"Firefox",color:"#FF7139",mono:"Fx"},
+        word:{name:"Word",color:"#2B579A",mono:"W"},
+        excel:{name:"Excel",color:"#217346",mono:"X"},
+        outlook:{name:"Outlook",color:"#0F6CBD",mono:"O"},
+        powerpoint:{name:"PowerPoint",color:"#C43E1C",mono:"P"},
+        onenote:{name:"OneNote",color:"#7719AA",mono:"N"},
+        notepadpp:{name:"Notepad++",color:"#6C9F1F",mono:"N++"},
+        sevenzip:{name:"7-Zip",color:"#4B6B8A",mono:"7z"},
+        python:{name:"Python",color:"#3776AB",mono:"Py"},
+        citrix:{name:"Citrix",color:"#3A3A3A",mono:"Cx"},
+        java:{name:"Java",color:"#E76F00",mono:"J"},
+        postman:{name:"Postman",color:"#FF6C37",mono:"Pm"},
+        gimp:{name:"GIMP",color:"#5C5543",mono:"G"},
+        docker:{name:"Docker",color:"#2496ED",mono:"D"},
+        teamviewer:{name:"TeamViewer",color:"#0E8EE9",mono:"Tv"},
+        filezilla:{name:"FileZilla",color:"#BF0000",mono:"Fz"},
+        audacity:{name:"Audacity",color:"#12263A",mono:"Au"},
+        custom:{name:"In-house app",color:"#475569",mono:"{}"}
+      };
+      function appMark(a,px){var s=px+"px";if(a.svg)return `<span class="aw-mk" style="width:${s};height:${s}">${a.svg}</span>`;var t=a.mono||a.name[0];var fs=Math.round(px*(t.length>2?0.32:t.length>1?0.42:0.52));return `<span class="aw-mk aw-mono" style="width:${s};height:${s};background:${a.color};font-size:${fs}px">${t}</span>`;}
       function ptViz(S, past){
         const g = (c) => c ? 'pt-visible' : '';
         const dr = (c) => c ? 'pt-drawn' : '';
         const CB = ['A','B','C'];
-        if (S.key === 'packaging') {
-          const apps = ['Acrobat', 'Chrome', 'YourApp'];
-          const stages = PT_STAGES.packaging;
+        if (S.key === "packaging") {
+          const feat = ["chrome","acrobat","zoom"];
+          const WALL = ["chrome","acrobat","zoom","teams","edge","firefox","slack","word","excel","outlook","powerpoint","onenote","notepadpp","sevenzip","vlc","python","node","citrix","java","postman","gimp","docker","windows","teamviewer","filezilla","audacity"];
+          const bench = ["Source","Repackage","Test","Publish"];
+          const benchGate = ["r1","r1","r2","r3"];
           return `<div class="pt-viz">
             <div class="pt-viz-lane">
               <div class="pt-viz-lab">Today \u2014 every app is a manual build</div>
-              ${apps.map((ap, i) => `<div class="pt-track"><span class="pt-track-name">${ap}</span><div class="pt-track-bar">${stages.map((sg, j) => `<span class="pt-seg ${past('r' + (i + 1)) ? 'pt-lit' : ''}" style="--ptd:${j * 150}ms">${sg}</span>`).join('')}</div></div>`).join('')}
-              <div class="pt-viz-foot">Commercial titles and custom apps alike \u2014 sourced, built, tested by hand, per customer</div>
+              <div class="aw-bench">
+                <div class="aw-benchapp">${appMark(AW.chrome,30)}<span class="awt-nm">Google Chrome</span></div>
+                <div class="aw-stagerail">${bench.map((sg,j)=>`<span class="pt-seg ${past(benchGate[j])?"pt-lit":""}" style="--ptd:${j*110}ms">${sg}</span>`).join("")}</div>
+                <span class="aw-clock ptv-el ${g(past("r2"))}">hours each</span>
+              </div>
+              <div class="aw-queue">
+                <span class="aw-qlab">In the queue</span>
+                ${["acrobat","zoom","teams","firefox","notepadpp","sevenzip"].map((id,i)=>`<span class="aw-qapp ptv-el ${g(past("r2"))}" style="--ptd:${i*70}ms">${appMark(AW[id],22)}</span>`).join("")}
+                <span class="aw-qlab">+ 40 more</span>
+                <span class="aw-mult ptv-el ${g(past("r3"))}">\u00d7 every customer</span>
+              </div>
+              <div class="pt-viz-foot">One app at a time \u2014 repackaged, tested and published by hand, then repeated for every customer</div>
             </div>
             <div class="pt-viz-lane" style="--pta:380ms">
-              <div class="pt-viz-lab pt-viz-lab-aw">With Application Workspace \u2014 packaged before you ask</div>
-              <div class="ptv-band ptv-el ${g(past('r1'))}">Setup Store \u2014 8,000+ packages built and maintained by Recast</div>
-              <div style="height:8px"></div>
-              <div class="ptv-row"><span class="ptv-name">Acrobat</span><span class="ptv-hline ptv-hline-aw ${dr(past('r2'))}" style="--w:12px"></span><span class="ptv-gate ptv-gate-aw ptv-el ${g(past('r2'))}">already packaged</span><span class="ptv-endchip ptv-el ${g(past('r2'))}">deploy</span></div>
-              <div class="ptv-row"><span class="ptv-name">Chrome</span><span class="ptv-hline ptv-hline-aw ${dr(past('r2'))}" style="--w:12px;--ptd:140ms"></span><span class="ptv-gate ptv-gate-aw ptv-el ${g(past('r2'))}" style="--ptd:140ms">already packaged</span><span class="ptv-endchip ptv-el ${g(past('r2'))}" style="--ptd:140ms">deploy</span></div>
-              <div class="ptv-row"><span class="ptv-name">YourApp \u00b7 custom</span><span class="ptv-hline ptv-hline-aw ${dr(past('r3'))}" style="--w:12px"></span><span class="ptv-gate ptv-gate-aw ptv-el ${g(past('r3'))}">standardized workflow</span><span class="ptv-endchip ptv-el ${g(past('r3'))}">deploy</span></div>
-              <div class="ptv-console ptv-el ${g(past('r3'))}">One admin console \u2014 rollout and updates automated across customers</div>
-              <div class="pt-viz-foot pt-viz-foot-aw">8,000+ commercial apps arrive packaged; custom apps reuse the same automated pipeline</div>
+              <div class="pt-viz-lab pt-viz-lab-aw">With Application Workspace \u2014 the shelf is already stocked</div>
+              <div class="aw-storebar ptv-el ${g(past("r1"))}"><b>Setup Store</b><span class="aw-count">8,000+ packages \u00b7 maintained by Recast</span></div>
+              <div class="aw-wall">${WALL.map((id,i)=>{const a=AW[id]||AW.chrome;const isF=feat.includes(id);return `<div class="awt ${isF?"is-feat":""} ptv-el ${g(past("r1"))}" style="--ptd:${Math.min(560,i*20)}ms">${appMark(a,26)}<span class="awt-nm">${a.name}</span>${isF?`<span class="aw-ok ${g(past("r2"))}">\u2713</span>`:""}</div>`;}).join("")}</div>
+              <div class="aw-custom ptv-el ${g(past("r3"))}">${appMark(AW.custom,22)}<span class="aw-qlab" style="text-transform:none;letter-spacing:0">In-house app</span><span class="ptv-hline ptv-hline-aw ${dr(past("r3"))}" style="--w:18px"></span><span class="ptv-gate ptv-gate-aw">standardized workflow</span><span class="ptv-endchip">deploy</span></div>
+              <div class="ptv-console ptv-el ${g(past("r3"))}">One admin console \u2014 rollout and updates automated across every customer</div>
+              <div class="pt-viz-foot pt-viz-foot-aw">8,000+ commercial apps arrive already packaged \u2014 in-house apps reuse one automated workflow</div>
             </div>
           </div>`;
         }
         if (S.key === 'updates') {
-          const ticks = (on) => [6, 38, 70].map((x, i) => `<span class="ptv-tick pt-callout ${on ? 'pt-show' : ''}" style="left:${x}%;--ptd:${i * 120}ms"><b>v${i + 1} ships</b></span>`).join('');
+          const ticks = (on) => [6, 38, 70].map((x, i) => `<span class="ptv-tick pt-callout ${on ? 'pt-show' : ''}" style="left:${x}%;--ptd:${i * 120}ms"><b>v${120 + i} ships</b></span>`).join('');
           return `<div class="pt-viz">
             <div class="pt-viz-lane">
-              <div class="pt-viz-lab">Today \u2014 rollouts outrun by releases</div>
+              <div class="pt-viz-lab">Today \u2014 rollouts outrun by releases</div><div class="aw-cap">${appMark(AW.chrome,15)}<span>Google Chrome \u2014 new version roughly every 4 weeks</span></div>
               <div class="ptv-axis">${ticks(past('r1'))}</div>
-              <div class="ptv-grow"><span class="ptv-gbar ${g(past('r2'))}" style="left:6%;--w:44%">v1 rollout</span></div>
-              <div class="ptv-grow"><span class="ptv-gbar ${g(past('r2'))}" style="left:38%;--w:44%;--ptd:200ms">v2 rollout</span></div>
-              <div class="ptv-grow"><span class="ptv-gbar ptv-gbar-cut ${g(past('r2'))}" style="left:70%;--w:24%;--ptd:400ms">v3 \u2014 unfinished</span></div>
+              <div class="ptv-grow"><span class="ptv-gbar ${g(past('r2'))}" style="left:6%;--w:44%">v120 rollout</span></div>
+              <div class="ptv-grow"><span class="ptv-gbar ${g(past('r2'))}" style="left:38%;--w:44%;--ptd:200ms">v121 rollout</span></div>
+              <div class="ptv-grow"><span class="ptv-gbar ptv-gbar-cut ${g(past('r2'))}" style="left:70%;--w:24%;--ptd:400ms">v122 \u2014 unfinished</span></div>
               <div class="pt-viz-foot">Each version is still deploying when the next one ships</div>
             </div>
             <div class="pt-viz-lane" style="--pta:380ms">
-              <div class="pt-viz-lab pt-viz-lab-aw">With Application Workspace \u2014 rollouts finish first</div>
+              <div class="pt-viz-lab pt-viz-lab-aw">With Application Workspace \u2014 rollouts finish first</div><div class="aw-cap">${appMark(AW.chrome,15)}<span>Same cadence, each version fully deployed in time</span></div>
               <div class="ptv-axis">${ticks(past('r1'))}</div>
-              ${[6, 38, 70].map((x, i) => `<div class="ptv-grow"><span class="ptv-gbar ptv-gbar-aw ${g(past('r3'))}" style="left:${x}%;--w:17%;--ptd:${i * 150}ms">v${i + 1} deployed</span></div>`).join('')}
+              ${[6, 38, 70].map((x, i) => `<div class="ptv-grow"><span class="ptv-gbar ptv-gbar-aw ${g(past('r3'))}" style="left:${x}%;--w:17%;--ptd:${i * 150}ms">v${120 + i} deployed</span></div>`).join('')}
               <div class="pt-viz-foot pt-viz-foot-aw">Deployed well before the next release \u2014 same time axis</div>
             </div>
           </div>`;
@@ -10635,7 +10702,7 @@
             <div class="pt-viz-lane" style="--pta:380ms">
               <div class="pt-viz-lab pt-viz-lab-aw">With Application Workspace \u2014 one package, six tenants</div>
               <div class="ptv-hubwrap">
-                <div class="ptv-hubcard ptv-el ${g(past('r1'))}"><b>Proven package</b><i>maintained once</i></div>
+                <div class="ptv-hubcard ptv-el ${g(past('r1'))}">${appMark(AW.acrobat,22)}<span class="ptv-hubtxt"><b>Adobe Acrobat</b><i>proven package \u2014 maintained once</i></span></div>
                 <div class="ptv-fan">
                   ${tenants.map((t, i) => `<div class="ptv-fanrow"><span class="ptv-hline ptv-hline-aw ${dr(past('r2'))}" style="--w:12px;--ptd:${i * 90}ms"></span><span class="ptv-tenant ptv-el ${g(past(i < 3 ? 'r2' : 'r3'))}" style="--ptd:${i * 90}ms">${t[0]} <em>\u00b7 ${t[1]}</em></span></div>`).join('')}
                 </div>
