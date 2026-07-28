@@ -1228,6 +1228,29 @@
       .aw-cap { display:flex; align-items:center; gap:6px; margin:-4px 0 10px; font-size:9px; font-weight:700; color:#737d92; }
       .aw-cap span { line-height:1.1; }
       .ptv-hubcard { display:flex; align-items:center; gap:8px; text-align:left; }
+      /* ── Partner tab v3 · one left reading edge · fit-to-view · left-anchored motion ──
+         Labels, chips and summaries resolve on the same left rail so the eye runs
+         straight down each lane instead of hunting centred blocks; lane footers
+         land on one baseline; entrances slide in FROM the left, so nothing drifts
+         across the alignment while it animates. ── */
+      .pt-statband { justify-content: flex-start; }
+      .pt-footnote, .pt-closer { text-align: left; }
+      .ptv-name, .ptv-hname, .pt-track-name { text-align: left; }
+      .ptv-block, .ptv-plat, .ptv-band, .ptv-keep, .ptv-console { text-align: left; }
+      .ptv-endchip, .aw-mult { margin-left: 8px; }
+      .awt { align-items: flex-start; }
+      .awt-nm { text-align: left; }
+      .pt-viz-lane { display: flex; flex-direction: column; }
+      .pt-viz-lane > * { flex: 0 0 auto; }
+      .pt-viz-foot { margin-top: auto; padding-top: 9px; }
+      .ptv-el { transform: translateX(-7px) var(--tf, rotate(0deg)); }
+      .ptv-el.pt-visible { transform: var(--tf, none); }
+      .pt-callout { transform: translateX(-7px); }
+      .pt-callout.pt-show { transform: none; }
+      /* catalog wall: every packaged app carries its own check, swept left to right */
+      .aw-wall { gap: 11px 8px; padding: 11px 0 5px; }
+      .awt-ico { position: relative; display: inline-grid; }
+      .aw-ok { top: -5px; right: -6px; width: 13px; height: 13px; font-size: 8px; transition-delay: calc(var(--pta, 0ms) + var(--ptd, 0ms)); }
       .ptv-hubtxt { display:flex; flex-direction:column; gap:1px; }
       .ptm-chart { display: flex; gap: 22px; align-items: flex-end; padding: 4px 6px 0; }
       .ptm-col { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 5px; }
@@ -7005,6 +7028,7 @@
         ['pt-lit',     '.pt-viz-cell'],
         ['pt-lit',     '.pt-seg'],
         ['pt-visible', '.ptv-el'],
+        ['pt-visible', '.aw-ok'],
         ['pt-visible', '.ptv-gbar'],
         ['pt-visible', '.ptv-hbar'],
         ['pt-drawn',   '.ptv-hline'],
@@ -10615,8 +10639,7 @@
         const dr = (c) => c ? 'pt-drawn' : '';
         const CB = ['A','B','C'];
         if (S.key === "packaging") {
-          const feat = ["chrome","acrobat","zoom"];
-          const WALL = ["chrome","acrobat","zoom","teams","edge","firefox","slack","word","excel","outlook","powerpoint","onenote","notepadpp","sevenzip","vlc","python","node","citrix","java","postman","gimp","docker","windows","teamviewer","filezilla","audacity"];
+          const WALL = ["chrome","acrobat","zoom","teams","edge","firefox","slack","word","excel","outlook","powerpoint","onenote","notepadpp","sevenzip","vlc","python","node","citrix","java","postman","gimp","docker","teamviewer","filezilla"];
           const bench = ["Source","Repackage","Test","Publish"];
           const benchGate = ["r1","r1","r2","r3"];
           return `<div class="pt-viz">
@@ -10638,7 +10661,7 @@
             <div class="pt-viz-lane" style="--pta:380ms">
               <div class="pt-viz-lab pt-viz-lab-aw">With Application Workspace \u2014 the shelf is already stocked</div>
               <div class="aw-storebar ptv-el ${g(past("r1"))}"><b>Setup Store</b><span class="aw-count">8,000+ packages \u00b7 maintained by Recast</span></div>
-              <div class="aw-wall">${WALL.map((id,i)=>{const a=AW[id]||AW.chrome;const isF=feat.includes(id);return `<div class="awt ${isF?"is-feat":""} ptv-el ${g(past("r1"))}" style="--ptd:${Math.min(560,i*20)}ms">${appMark(a,26)}<span class="awt-nm">${a.name}</span>${isF?`<span class="aw-ok ${g(past("r2"))}">\u2713</span>`:""}</div>`;}).join("")}</div>
+              <div class="aw-wall">${WALL.map((id,i)=>{const a=AW[id]||AW.chrome;return `<div class="awt ptv-el ${g(past("r1"))}" style="--ptd:${Math.min(420,i*17)}ms"><span class="awt-ico">${appMark(a,26)}<span class="aw-ok ${g(past("r2"))}" style="--ptd:${Math.min(700,i*28)}ms">\u2713</span></span><span class="awt-nm">${a.name}</span></div>`;}).join("")}</div>
               <div class="aw-custom ptv-el ${g(past("r3"))}">${appMark(AW.custom,22)}<span class="aw-qlab" style="text-transform:none;letter-spacing:0">In-house app</span><span class="ptv-hline ptv-hline-aw ${dr(past("r3"))}" style="--w:18px"></span><span class="ptv-gate ptv-gate-aw">standardized workflow</span><span class="ptv-endchip">deploy</span></div>
               <div class="ptv-console ptv-el ${g(past("r3"))}">One admin console \u2014 rollout and updates automated across every customer</div>
               <div class="pt-viz-foot pt-viz-foot-aw">8,000+ commercial apps arrive already packaged \u2014 in-house apps reuse one automated workflow</div>
@@ -10780,6 +10803,25 @@
         business:   ['Package','Test','Deploy','Support'],
         enablement: ['Learn','Build demo','Present','Deliver'],
       };
+      /* Keep the playing exhibit inside the reading frame — a beat that lands
+         below the fold is a beat nobody sees. Pulls the section nav + exhibit
+         to the top of the scrollport whenever the pair isn't wholly in view. */
+      function ptFocusStage(){
+        const main = document.querySelector('body > #app > main');
+        const focus = document.querySelector('.pt-focus');
+        if (!main || !focus) return;
+        const nav = document.querySelector('.pt-pillbar');
+        const mr = main.getBoundingClientRect();
+        const fr = focus.getBoundingClientRect();
+        const nr = nav ? nav.getBoundingClientRect() : fr;
+        const view = main.clientHeight;
+        if (nr.top - mr.top >= 0 && fr.bottom - mr.top <= view) return;
+        const offset = (r) => r.top - mr.top + main.scrollTop - 8;
+        const pairFits = (fr.bottom - nr.top) <= view - 16;
+        let want = pairFits ? offset(nr) : offset(fr);
+        want = Math.max(0, Math.min(want, main.scrollHeight - view));
+        if (Math.abs(want - main.scrollTop) > 6) main.scrollTo({ top: want, behavior: 'smooth' });
+      }
       function buildPtQueue(){
         const beats = ['boards','r1','r2','r3','stat'];
         const delays = [400, 1100, 1700, 1700, 1900];
@@ -10793,6 +10835,7 @@
             STATE.ptSectionStart = Date.now();
             demoPhaseRender();
             const _sw = document.querySelector('.pt-stagewrap'); if (_sw) _sw.classList.add('pt-enter');
+            ptFocusStage();
           } else {
             STATE.ptTour = false; STATE.ptRunning = false; STATE.ptPaused = false;
             demoPhaseRender();
@@ -10822,6 +10865,7 @@
         STATE.ptQueueIdx = 0;
         STATE.ptSectionStart = Date.now();
         scrollPreserveRender();
+        ptFocusStage();
         runPtQueue();
       }
       function stepPt(){
@@ -12311,6 +12355,7 @@
               </div>
 
               <div class="pt-stagewrap">
+              <div class="pt-focus">
               <div class="pt-callout ${past('boards') ? 'pt-show' : ''} mb-3">
                 <div class="pt-event">
                   <span class="pt-event-title">${S.event}</span>
@@ -12342,6 +12387,7 @@
                     <div class="pt-stat-detail">${S.stat.hrs}</div>
                   </div>
                 </div>
+              </div>
               </div>
 
               ${S.key === 'business' ? (() => { const c = ptModelCalc(); const pctFut = c.curHrs > 0 ? Math.max(2, Math.round(c.futHrs / c.curHrs * 100)) : 0; return `
