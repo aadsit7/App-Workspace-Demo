@@ -1256,6 +1256,8 @@
       .aw-bench { padding: 9px 11px; }
       .aw-bench .aw-benchapp { flex-direction: row; align-items: center; gap: 8px; }
       .aw-benchnm { font-size: 9.5px; font-weight: 700; color: #3b4457; white-space: nowrap; }
+      .aw-bench .pt-seg { min-width: 0; text-overflow: ellipsis; }
+      @media (max-width: 1000px) { .aw-bench .aw-clock { display: none; } }
       /* ── Partner tab v4 · one unmistakable side-by-side frame, repeated in every section ──
          Left = CURRENT STATE on a warm neutral band, muted ink. Right = WITH
          APPLICATION WORKSPACE on white, blue pill, dark ink. Same two pills over
@@ -1284,6 +1286,100 @@
       .pt-cell-aw { color: #171d2b; font-weight: 500; box-shadow: inset 2px 0 0 #dce1ec; }
       .ptv-hname-now { color: #8a7b5f; }
       .ptv-hname-aw { color: #1745bf; }
+      /* current-state anatomy — eight activities, one aligned row each */
+      .pta-grid { border: 1px solid #dce1ec; border-radius: 10px; overflow: hidden; background: #fff; }
+      .pta-head, .pta-row { display: grid; grid-template-columns: 132px 1fr 1fr; align-items: stretch; }
+      .pta-head { background: #fbfcfe; border-bottom: 1px solid #dce1ec; }
+      .pta-head > div { padding: 8px 13px; font-size: 9px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: #9aa3b7; }
+      .pta-row { border-top: 1px solid #eef1f8; }
+      .pta-row:first-of-type { border-top: 0; }
+      .pta-c1 { padding: 9px 13px; font-size: 10.5px; font-weight: 700; color: #171d2b; display: flex; align-items: flex-start; gap: 7px; line-height: 1.35; }
+      .pta-num { flex: 0 0 auto; width: 15px; height: 15px; border-radius: 4px; background: #eef1f8; color: #737d92; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 8.5px; font-weight: 700; display: grid; place-items: center; }
+      .pta-c2 { padding: 9px 13px; font-size: 10.5px; line-height: 1.5; color: #6b6355; background: #f8f7f4; }
+      .pta-cost { display: block; margin-top: 3px; font-size: 9.5px; font-weight: 700; color: #8a5709; }
+      .pta-c3 { padding: 9px 13px; font-size: 10.5px; line-height: 1.5; color: #171d2b; box-shadow: inset 2px 0 0 #dce1ec; }
+      .pta-help { display: flex; align-items: flex-start; gap: 7px; }
+      .pta-tick { flex: 0 0 auto; width: 14px; height: 14px; margin-top: 1px; border-radius: 50%; background: #0a8f82; color: #fff; font-size: 8.5px; font-weight: 900; display: grid; place-items: center; opacity: 0; transform: scale(0.4); transition: opacity 0.3s cubic-bezier(0.22,1,0.36,1), transform 0.4s cubic-bezier(0.34,1.56,0.64,1); transition-delay: calc(var(--pta, 0ms) + var(--ptd, 0ms)); }
+      .pta-tick.pt-visible { opacity: 1; transform: scale(1); }
+      .pta-keep { display: block; margin-top: 2px; font-size: 8.5px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: #9aa3b7; }
+      @media (max-width: 860px) { .pta-head, .pta-row { grid-template-columns: 1fr; } .pta-c3 { box-shadow: none; } }
+      /* ── Partner tab v5 · the three numbers, what great looks like, the bake-off ── */
+      .ptc-claims { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid #dce1ec; border-radius: 10px; background: #fff; overflow: hidden; margin-bottom: 14px; }
+      .ptc-claim { padding: 10px 14px; }
+      .ptc-claim + .ptc-claim { box-shadow: inset 1px 0 0 #eef1f8; }
+      .ptc-big { font-family: Poppins, ui-sans-serif, sans-serif; font-size: 25px; font-weight: 800; letter-spacing: -0.03em; color: #1745bf; line-height: 1; display: flex; align-items: baseline; gap: 6px; }
+      .ptc-big em { font-style: normal; font-family: 'Figtree', sans-serif; font-size: 10.5px; font-weight: 800; letter-spacing: 0.02em; color: #171d2b; }
+      .ptc-lab { font-size: 11px; font-weight: 600; color: #3b4457; margin-top: 3px; line-height: 1.4; }
+      .ptc-math { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 9px; color: #9aa3b7; margin-top: 4px; }
+      @media (max-width: 860px) { .ptc-claims { grid-template-columns: 1fr; } .ptc-claim + .ptc-claim { box-shadow: inset 0 1px 0 #eef1f8; } }
+      .ptc-group + .ptc-group { margin-top: 13px; padding-top: 12px; border-top: 1px solid #eef1f8; }
+      .ptc-ghead { display: flex; align-items: baseline; gap: 9px; flex-wrap: wrap; }
+      .ptc-gnum { font-family: Poppins, ui-sans-serif, sans-serif; font-size: 14px; font-weight: 800; letter-spacing: -0.02em; color: #1745bf; }
+      .ptc-gtitle { font-size: 11.5px; font-weight: 700; color: #171d2b; }
+      .ptc-gsub { font-size: 9.5px; font-weight: 600; color: #9aa3b7; }
+      .ptc-unit { font-size: 9.5px; color: #737d92; margin: 2px 0 8px; }
+      .ptc-row { display: flex; align-items: center; gap: 9px; margin-bottom: 5px; }
+      .ptc-name { flex: 0 0 124px; font-size: 8.5px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; }
+      .ptc-name-now { color: #8a7b5f; }
+      .ptc-name-aw { color: #1745bf; }
+      .ptc-track { flex: 1; display: flex; gap: 2px; height: 21px; }
+      .ptc-seg { flex: 0 0 auto; width: 0; display: flex; align-items: center; padding: 0 6px; border-radius: 4px; border: 1px solid; font-size: 8.5px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1); transition-delay: calc(var(--pta, 0ms) + var(--ptd, 0ms)); }
+      .ptc-seg.pt-visible { width: var(--sw); }
+      .ptc-seg-now { background: #ffe9c2; border-color: #ffdb9e; color: #8a5709; }
+      .ptc-seg-aw { background: #d9e5ff; border-color: #c1d4ff; color: #123a99; }
+      .ptc-seg-lic { background: #eef1f8; border-color: #dce1ec; color: #545d70; }
+      .ptc-seg-mnow { background: #e8e4dc; border-color: #d8d2c6; color: #5c5545; }
+      .ptc-seg-maw { background: #2f6bff; border-color: #2f6bff; color: #ffffff; }
+      .ptc-tot { flex: 0 0 168px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10px; font-weight: 700; color: #171d2b; white-space: nowrap; }
+      .ptc-win { font-family: 'Figtree', sans-serif; font-style: normal; font-size: 8.5px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #0a8f82; margin-left: 5px; }
+      .pts { border: 1px solid #dce1ec; border-radius: 12px; background: #fff; overflow: hidden; }
+      .pts-head, .pts-row { display: grid; grid-template-columns: 128px 1fr 92px 92px 150px; align-items: stretch; }
+      .pts-head { background: #fbfcfe; border-bottom: 1px solid #dce1ec; }
+      .pts-head > div { padding: 8px 12px; font-size: 8.5px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: #9aa3b7; }
+      .pts-row { border-top: 1px solid #eef1f8; }
+      .pts-row:first-of-type { border-top: 0; }
+      .pts-row > div { padding: 7px 12px; font-size: 10.5px; line-height: 1.45; display: flex; align-items: center; }
+      .pts-m { font-weight: 700; color: #171d2b; }
+      .pts-d { color: #737d92; }
+      .pts-now { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10px; font-weight: 700; color: #6b6355; background: #f8f7f4; }
+      .pts-aw { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10px; font-weight: 700; color: #1745bf; box-shadow: inset 2px 0 0 #dce1ec; }
+      .pts-th { color: #9aa3b7; font-size: 9.5px; }
+      @media (max-width: 1000px) { .pts-head, .pts-row { grid-template-columns: 118px 1fr 84px 84px; } .pts-row > div.pts-th, .pts-head > div:last-child { display: none; } }
+      .ptf-band { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; border: 1px solid #c1d4ff; background: #eef3ff; border-radius: 10px; padding: 10px 13px; margin-bottom: 11px; }
+      .ptf-band b { font-family: Poppins, ui-sans-serif, sans-serif; font-size: 12px; font-weight: 800; letter-spacing: -0.02em; color: #1745bf; }
+      .ptf-band span { font-size: 10.5px; color: #3b4457; font-weight: 500; }
+      .ptf-grid .pta-c2 { background: #ffffff; color: #171d2b; }
+      .ptf-grid .pta-c3 { background: #f8f7f4; color: #6b6355; box-shadow: inset 2px 0 0 #dce1ec; }
+      .ptf-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 12px; }
+      @media (max-width: 860px) { .ptf-cards { grid-template-columns: 1fr; } }
+      .ptf-card { border: 1px solid #dce1ec; border-radius: 10px; padding: 11px 13px; }
+      .ptf-card-good { background: #f4fbf9; border-color: #bfe9e1; }
+      .ptf-card-keep { background: #fdfaf4; border-color: #f0e2c8; }
+      .ptf-card-t { font-size: 9px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
+      .ptf-card-good .ptf-card-t { color: #055c53; }
+      .ptf-card-keep .ptf-card-t { color: #8a5709; }
+      .ptf-li { display: flex; gap: 7px; font-size: 10.5px; line-height: 1.5; color: #3b4457; padding: 2.5px 0; }
+      .ptf-li::before { content: ''; flex: 0 0 auto; width: 4px; height: 4px; border-radius: 1px; margin-top: 6px; background: #9aa3b7; }
+      .ptf-card-good .ptf-li::before { background: #0a8f82; }
+      .ptf-card-keep .ptf-li::before { background: #d9a441; }
+      /* dashboards + reporting: manual assembly vs one API */
+      .ptd-src { display: flex; align-items: center; gap: 8px; padding: 5px 0; border-top: 1px solid #eef1f8; font-size: 10.5px; color: #171d2b; }
+      .ptd-src:first-of-type { border-top: 0; }
+      .ptd-src b { font-weight: 700; flex: 0 0 118px; }
+      .ptd-src span { color: #6b6355; flex: 1; }
+      .ptd-tag { flex: 0 0 auto; font-size: 8px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #8a5709; background: #ffe9c2; border: 1px solid #ffdb9e; border-radius: 5px; padding: 2px 6px; white-space: nowrap; }
+      .ptd-stitch { display: flex; align-items: center; gap: 8px; margin-top: 9px; padding: 8px 10px; border: 1px dashed #e6cfa4; background: #fdfaf4; border-radius: 8px; font-size: 10px; font-weight: 700; color: #8a5709; }
+      .ptd-api { border-radius: 10px; background: linear-gradient(135deg, #171d2b 0%, #1745bf 100%); padding: 11px 13px; color: #fff; }
+      .ptd-api-t { font-family: Poppins, ui-sans-serif, sans-serif; font-size: 11.5px; font-weight: 800; letter-spacing: -0.02em; }
+      .ptd-api-sub { font-size: 9px; color: rgba(255,255,255,0.72); margin-top: 2px; font-family: 'JetBrains Mono', ui-monospace, monospace; }
+      .ptd-eps { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+      .ptd-ep { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 8.5px; font-weight: 700; color: #cfe0ff; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.22); border-radius: 5px; padding: 2px 6px; }
+      .ptd-feed { display: flex; align-items: center; gap: 6px; margin: 8px 0 7px; font-size: 8px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: #9aa3b7; }
+      .ptd-feed .ptv-hline { background: linear-gradient(90deg, #2f6bff, #12a58c); }
+      .ptd-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+      .ptd-card { border: 1px solid #c1d4ff; border-radius: 8px; background: #f7faff; padding: 7px 9px; }
+      .ptd-card b { display: block; font-size: 10px; font-weight: 700; color: #171d2b; }
+      .ptd-card i { font-style: normal; display: block; font-size: 8.5px; font-weight: 600; color: #1745bf; margin-top: 2px; line-height: 1.35; }
       @media (max-width: 860px) {
         .pt-thead2, .pt-pair { grid-template-columns: 1fr; }
         .pt-row2 { background: #ffffff; }
@@ -7067,6 +7163,8 @@
         ['pt-lit',     '.pt-seg'],
         ['pt-visible', '.ptv-el'],
         ['pt-visible', '.aw-ok'],
+        ['pt-visible', '.pta-tick'],
+        ['pt-visible', '.ptc-seg'],
         ['pt-visible', '.ptv-gbar'],
         ['pt-visible', '.ptv-hbar'],
         ['pt-drawn',   '.ptv-hline'],
@@ -10547,7 +10645,7 @@
           STATE.ptModel = {
             changes: Math.max(1, Math.round(((ci.pkgHours || 80) + (ci.patchHours || 60)) / 8)),
             mix: (ci.complexMixPct == null ? 20 : ci.complexMixPct),
-            cur: 8, std: 1.5, cust: 4, real: 75,
+            cur: 8, std: 1.6, cust: 4, real: 75,
             rate: ci.loadedRate || 95,
             users: ci.users || 5000
           };
@@ -10569,7 +10667,80 @@
           futPerChange: annual > 0 ? (futHrs / annual) * m.rate : 0,
           breakeven: m.users > 0 ? value / m.users / 12 : 0 };
       }
+      /* Current-state anatomy — the playbook's eight activities (§1). Every one
+         is an area we help with; each carries its hidden cost and the residual
+         work that stays with the partner (the playbook's DO-NOT-PROMISE guard). */
+      const PT_ANATOMY = [
+        { act: "Application intake", today: "Ticket, spreadsheet, email, or project request — ownership and acceptance criteria vary by customer.", cost: "Rework starts before packaging begins.", aw: "One intake path with standard acceptance criteria per customer profile.", keep: "You still set the criteria" },
+        { act: "Installer sourcing", today: "An engineer hunts vendor media, versions, release notes, dependencies, and licensing.", cost: "Time is fragmented and difficult to report.", aw: "A maintained administrative source supplies packages and setup detail.", keep: "You confirm licensing + suitability" },
+        { act: "Packaging", today: "AdminStudio, PowerShell, vendor tools, IntuneWin, MSIX, scripts, or a packaging factory.", cost: "The same commercial app is rebuilt for several customers or platforms.", aw: "Create from the Setup Store where supported; one definition reused across customers.", keep: "You review config + customer standards" },
+        { act: "Testing", today: "Technical testing, security review, UAT, pilot groups, rings, and customer approvals.", cost: "Queue time is often larger than touch time.", aw: "Standing test and approval workflows per customer, not rebuilt per release.", keep: "You own acceptance + ring design" },
+        { act: "Publishing", today: "Intune, ConfigMgr, Citrix, AVD, RDS, Jamf, images, portals, or scripts.", cost: "Different consoles create handoffs and duplicated controls.", aw: "User, group, device, collection, or contextual entitlement from one place.", keep: "You approve the access model" },
+        { act: "Updates", today: "Monitor versions, rebuild, retest, re-approve, stage, deploy, monitor, roll back.", cost: "Recurring work lands inside fixed-price contracts.", aw: "Managed packages receive connector-supplied versions on your release policy.", keep: "You define sync + release policy" },
+        { act: "Requests + incidents", today: "Service desk handles access, install, version, launch, entitlement, and failure issues.", cost: "Application work consumes L1/L2/L3 margin.", aw: "Centralized package and event context to diagnose application delivery.", keep: "You keep support ownership" },
+        { act: "Reporting", today: "Data is assembled by hand from several customer and platform systems.", cost: "Cost-to-serve and service value remain hard to prove.", aw: "Package, release, request, version, failure, and adoption measures in one record.", keep: "You convert it into customer outcomes" },
+      ];
+      /* Future-state operating model (playbook \u00a73) — what great looks like: the
+         same eight workstreams run once, with the MSP's own role kept explicit. */
+      const PT_FUTURE = [
+        { ws: "Portfolio governance", design: "Classify standard, custom, web, remote, virtual, and retireable applications.", role: "Own taxonomy, customer standards, application owners, and scope." },
+        { ws: "Reusable packages", design: "Maintained sources for supported commercial apps; common workflows for custom apps.", role: "Curate reusable packages \u2014 without assuming identical customer configuration." },
+        { ws: "Customer zones", design: "A customer separation model appropriate to licensing and architecture.", role: "Own tenant governance, access, security, administration, and allocation." },
+        { ws: "Entitlement", design: "Assign by user, group, device, collection, or context.", role: "Translate customer policy, licensing, and role design into entitlements." },
+        { ws: "Publishing", design: "Hidden, Catalog, Workspace, or forced presentation as appropriate.", role: "Define what is mandatory, optional, approved, or hidden." },
+        { ws: "Release management", design: "Synchronize, test, approve, stage, deploy, monitor, and remediate.", role: "Retain release authority and customer accountability." },
+        { ws: "Support", design: "Centralized package and event context to diagnose application delivery.", role: "Integrate with service desk, monitoring, knowledge, and escalation." },
+        { ws: "Reporting", design: "Package, release, request, version, failure, adoption, and operational measures.", role: "Convert telemetry into customer outcomes and service reviews." },
+      ];
+      const PT_FUT_CHANGE = [
+        "Engineers stop recreating common application work and move to exceptions, custom apps, governance, and service improvement.",
+        "The service runs on one operating model while customer isolation and policy differences are retained.",
+        "Application access stays consistent while endpoint and workspace platforms change underneath.",
+        "You get a clearer basis for measuring package workload, release performance, and support outcomes.",
+      ];
+      const PT_FUT_KEEP = [
+        "Customer onboarding and application rationalization.",
+        "Complex custom packaging and remediation.",
+        "Security approval, software licensing, and legal review.",
+        "Testing, user acceptance, staged release, rollback, and business communication.",
+        "Underlying endpoint, identity, virtual desktop, and device-management responsibilities.",
+      ];
+      /* The three numbers. Every figure derives from the same two measurements —
+         package touch time 8.0 h -> 1.6 h on the catalog path, and application
+         tickets 50 -> 15 per 1,000 users — so speed, support and margin cannot
+         drift apart. Reference model: 1,000 users, $95/h loaded, delivery line
+         sold at $10/user/month, Application Workspace at $1.65/user/month. */
+      const PT_REF = { users: 1000, rate: 95, rev: 10000, licPU: 1.65,
+        delT: 45, delA: 11, supT: 15, supA: 4.5 };
+      const PT_LADDER = {
+        speed: { unit: "Elapsed working days \u2014 accepted request to deployed", suffix: "days",
+          rows: [["Intake + sourcing", 1.5, 0.25], ["Packaging + detection logic", 2.5, 0.25], ["Test + approval queue", 4, 1], ["Publish + verify", 2, 0.5]] },
+        tickets: { unit: "Application tickets per 1,000 users per month", suffix: "tickets",
+          rows: [["Install + access requests", 22, 3], ["Version + update issues", 14, 3], ["Launch + failure", 10, 6], ["Entitlement + licensing", 4, 3]] },
+      };
+      /* Bake-off scorecard (playbook \u00a78) — the metrics a partner should measure,
+         pre-filled with the reference model's expected results. */
+      const PT_SCORE = [
+        ["Active package hours", "Engineer touch time, intake through package-ready.", "8.0 h", "1.6 h", "Agreed reduction without quality loss."],
+        ["Elapsed readiness time", "Calendar time from accepted request to pilot-ready.", "10 days", "2 days", "Improvement explained by actual workflow."],
+        ["First-pass success", "Packages meeting acceptance without rebuild.", "72%", "94%", "Equal or better."],
+        ["Release labor", "Test, approval, publish, monitor, rollback, exceptions.", "45 h / mo", "11 h / mo", "Measured reduction."],
+        ["Deployment success", "Successful installs / attempted installs.", "91%", "98%", "Equal or better."],
+        ["Time to remediate", "Diagnose and restore failed application delivery.", "6.5 h", "1.5 h", "Equal or better."],
+        ["App-related tickets", "Incidents and requests attributable to tested apps.", "50 / mo", "15 / mo", "Measured over an adequate window."],
+        ["User time to access", "Request or assignment to usable application.", "2 days", "20 min", "Improvement for selected use cases."],
+        ["Reusable assets", "Packages / workflows reusable across more customers.", "15%", "82%", "Documented, not assumed."],
+        ["Customer exceptions", "Number and hours of deviations from standard.", "28 apps", "11 apps", "Known and commercially supportable."],
+        ["Cost per package change", "Loaded labor per new or updated package.", "$760", "$198", "Meets agreed economic hurdle."],
+        ["Annualized cost", "Measured run rate plus license and recurring cost.", "$68,400", "$37,470", "Meets agreed economic hurdle."],
+        ["Year 1 cost", "Ramp, implementation, training, migration, and license.", "$68,400", "$46,470", "Fits investment and payback requirement."],
+      ];
       const PT_SECTIONS = [
+        { key: "anatomy", pill: "Current state", tag: "All eight activities", icon: "list-checks", full: true,
+          event: "One application request runs through eight separate activities before a single package ships",
+          rows: [],
+          stat: { hrs: "Intake · sourcing · packaging · testing · publishing · updates · requests + incidents · reporting", sub: "current-state anatomy" },
+          verdict: "All eight are areas we help with — the problem was never packaging alone." },
         { key: "packaging", pill: "Packaging", tag: "Manual builds \u2192 workflows", icon: "box",
           event: "A customer requests an app Microsoft\u2019s catalog does not cover \u2014 in-house, business-specific",
           viz: { unit: "Manual build", src: "Standardized workflow", per: "config only" },
@@ -10620,16 +10791,25 @@
           ],
           stat: { hrs: "Complements Intune, Jamf + supported management platforms", sub: "platform support" },
           verdict: "The endpoint strategy stays; the manual work around it is reduced." },
-        { key: "business", pill: "Business model", tag: "Margins + growth", icon: "trending-up",
-          event: "Supporting more customers currently requires proportional packaging capacity",
-          viz: { unit: "Added headcount", src: "Same team", per: "more customers" },
+        { key: "reporting", pill: "Dashboards", tag: "Reporting + analytics", icon: "bar-chart-3",
+          event: "A customer asks what their application estate actually looks like this month",
           rows: [
-            { dim: "Resource model", today: "Skilled staff repeat similar work across customers.", aw: "Staff shift to exceptions and higher-value services.", keep: true },
-            { dim: "Scalability", today: "Growth requires proportional headcount.", aw: "More customers without matching hires." },
-            { dim: "Commercial model", today: "Priced by effort and resource count.", aw: "Per-user, per-month, through the partner." },
+            { dim: "Data collection", today: "Each team exports its own numbers, in its own format.", aw: "One OData feed \u2014 deployments, devices, events, licenses, packages, users." },
+            { dim: "Reporting effort", today: "Reports assembled by hand, then aged out immediately.", aw: "Live snapshot on refresh into the BI tool you already use." },
+            { dim: "Customer conversation", today: "Cost-to-serve and service value are hard to prove.", aw: "Install health, launch health, and cost per app, per customer.", keep: true },
           ],
-          stat: { hrs: "Licensed per user, per month \u2014 through the partner, not per endpoint", sub: "commercial model" },
-          verdict: "Growth no longer requires proportional packaging headcount." },
+          stat: { hrs: "User events \u00b7 app events \u00b7 licensing \u00b7 devices \u00b7 endpoint info \u00b7 agent info", sub: "dashboards + reporting" },
+          verdict: "The service reports on itself \u2014 you interpret it instead of assembling it." },
+        { key: "future", pill: "What great looks like", tag: "Future-state model", icon: "target", full: true,
+          event: "The same eight workstreams, run once as one operating model \u2014 not rebuilt per customer",
+          rows: [],
+          stat: { hrs: "Governance \u00b7 reusable packages \u00b7 customer zones \u00b7 entitlement \u00b7 publishing \u00b7 release \u00b7 support \u00b7 reporting", sub: "future-state operating model" },
+          verdict: "One operating model across every customer \u2014 with your release authority unchanged." },
+        { key: "business", pill: "The three numbers", tag: "80% \u00b7 70% \u00b7 60%", icon: "trending-up", full: true,
+          event: "The partner case in three numbers \u2014 each one traceable to the same two measurements",
+          rows: [],
+          stat: { hrs: "80% faster delivery \u00b7 70% fewer application tickets \u00b7 60% more margin on the same contract", sub: "the three numbers" },
+          verdict: "Faster delivery, fewer tickets, and a materially better margin on the same contract." },
         { key: "enablement", pill: "Enablement", tag: "Recast alongside you", icon: "handshake",
           event: "A first customer opportunity arrives before deep product expertise exists",
           viz: { unit: "Solo preparation", src: "Joint enablement", per: "supported demo" },
@@ -10678,9 +10858,135 @@
         const CB = ['A','B','C'];
         /* One frame for all seven sections — the label never changes, only the sub-line. */
         const head = (aw, sub) => `<div class="pt-lanehead ${aw ? 'pt-lanehead-aw' : 'pt-lanehead-now'}"><span class="pt-lanetag ${aw ? 'pt-lanetag-aw' : 'pt-lanetag-now'}">${aw ? 'With Application Workspace' : 'Current state'}</span><span class="pt-lanesub">${sub}</span></div>`;
+        if (S.key === 'reporting') {
+          const SRC = [
+            ['Endpoint console', 'Intune / ConfigMgr install status, per tenant', 'CSV export'],
+            ['Service desk', 'Ticket volumes, tagged by hand', 'manual tagging'],
+            ['Licensing', 'Vendor portals and seat spreadsheets', 'copy + paste'],
+            ['Packaging team', 'Hours and release log from timesheets', 'timesheets'],
+            ['Per-customer deck', 'Rebuilt from scratch every month', 'rebuilt'],
+          ];
+          const CARDS = [
+            ['User events', 'Successful \u00b7 denied \u00b7 failed logins \u00b7 logoff'],
+            ['App events', 'Install health % \u00b7 launch health % \u00b7 distribution'],
+            ['Licensing', 'Install counts \u00b7 launch counts \u00b7 total cost'],
+            ['Devices', 'Install health \u00b7 OS version \u00b7 manufacturer'],
+            ['Endpoint info', 'Device metadata \u00b7 event data \u00b7 app status'],
+            ['Agent info', 'Version distribution \u00b7 last seen \u00b7 package status'],
+          ];
+          const EPS = ['deployments', 'devices', 'events', 'identities', 'licenses', 'packages', 'servers', 'users', 'workspaces'];
+          return `<div class="pt-viz">
+            <div class="pt-viz-lane">
+              ${head(false, 'Every number collected by hand, from a different owner')}
+              ${SRC.map((s, i) => `<div class="ptd-src ptv-el ${g(past('r' + Math.min(3, Math.floor(i / 2) + 1)))}" style="--ptd:${(i % 2) * 90}ms"><b>${s[0]}</b><span>${s[1]}</span><span class="ptd-tag">${s[2]}</span></div>`).join('')}
+              <div class="ptd-stitch ptv-el ${g(past('r3'))}">Stitched together in one spreadsheet \u2014 and out of date the day it is sent</div>
+              <div class="pt-viz-foot">Five owners, five formats \u2014 cost-to-serve and service value stay hard to prove</div>
+            </div>
+            <div class="pt-viz-lane" style="--pta:380ms">
+              ${head(true, 'One API, already reporting on itself')}
+              <div class="ptd-api ptv-el ${g(past('r1'))}">
+                <div class="ptd-api-t">Application Workspace \u2014 OData API</div>
+                <div class="ptd-api-sub">Zone ID + client secret \u00b7 snapshot on refresh</div>
+                <div class="ptd-eps">${EPS.map((e, i) => `<span class="ptd-ep ptv-el ${g(past('r1'))}" style="--ptd:${i * 45}ms">${e}</span>`).join('')}</div>
+              </div>
+              <div class="ptd-feed ptv-el ${g(past('r2'))}"><span class="ptv-hline ${dr(past('r2'))}" style="--w:22px"></span>OData feed \u2014 into the tools you already report from</div>
+              <div class="ptd-cards">${CARDS.map((c, i) => `<div class="ptd-card ptv-el ${g(past(i < 4 ? 'r2' : 'r3'))}" style="--ptd:${(i % 4) * 80}ms"><b>${c[0]}</b><i>${c[1]}</i></div>`).join('')}</div>
+              <div class="pt-viz-foot pt-viz-foot-aw">One source \u2014 per customer, per app, per release, without assembling anything</div>
+            </div>
+          </div>`;
+        }
+        if (S.key === 'future') {
+          const wave = (i) => 'r' + Math.min(3, Math.floor(i / 3) + 1);
+          return `<div class="pt-viz">
+            <div class="pt-viz-lane ptv-full">
+              <div class="ptf-band ptv-el ${g(past('boards'))}"><b>One application-delivery operating model</b><span>Eight workstreams, run the same way for every customer \u2014 with your authority intact at every step</span></div>
+              <div class="pta-grid ptf-grid">
+                <div class="pta-head">
+                  <div class="pta-c1">Workstream</div>
+                  <div class="pta-c2"><span class="pt-lanetag pt-lanetag-aw">Future-state design</span></div>
+                  <div class="pta-c3">Your role \u2014 retained</div>
+                </div>
+                ${PT_FUTURE.map((f, i) => `<div class="pta-row ptv-el ${g(past(wave(i)))}" style="--ptd:${(i % 3) * 85}ms">
+                  <div class="pta-c1"><span class="pta-num">${i + 1}</span>${f.ws}</div>
+                  <div class="pta-c2"><span class="pta-help"><span class="pta-tick ${g(past(wave(i)))}" style="--ptd:${(i % 3) * 85 + 280}ms">\u2713</span><span>${f.design}</span></span></div>
+                  <div class="pta-c3">${f.role}</div>
+                </div>`).join('')}
+              </div>
+              <div class="ptf-cards">
+                <div class="ptf-card ptf-card-good pt-callout ${past('stat') ? 'pt-show' : ''}">
+                  <div class="ptf-card-t">What changes for you</div>
+                  ${PT_FUT_CHANGE.map((t) => `<div class="ptf-li">${t}</div>`).join('')}
+                </div>
+                <div class="ptf-card ptf-card-keep pt-callout ${past('stat') ? 'pt-show' : ''}">
+                  <div class="ptf-card-t">What does not disappear</div>
+                  ${PT_FUT_KEEP.map((t) => `<div class="ptf-li">${t}</div>`).join('')}
+                </div>
+              </div>
+            </div>
+          </div>`;
+        }
+        if (S.key === 'business') {
+          const R = PT_REF, money = (n) => '$' + Math.round(n).toLocaleString('en-US');
+          const costT = (R.delT + R.supT) * R.rate, lic = R.users * R.licPU;
+          const costA = (R.delA + R.supA) * R.rate + lic;
+          const marT = R.rev - costT, marA = R.rev - costA;
+          const pctT = Math.round(marT / R.rev * 100), pctA = Math.round(marA / R.rev * 100);
+          const bar = (nm, side, segs, den, gate, base, tot, win) => `<div class="ptc-row">
+            <span class="ptc-name ptc-name-${side}">${nm}</span>
+            <div class="ptc-track">${segs.map((s, i) => { const w = s[1] / den * 100; return `<span class="ptc-seg ptc-seg-${s[2] || side} ${g(past(gate))}" style="--sw:${w.toFixed(1)}%;--ptd:${base + i * 105}ms"><span style="overflow:hidden;text-overflow:ellipsis">${w >= 13 ? s[0] : ''}</span></span>`; }).join('')}</div>
+            <span class="ptc-tot">${tot}${win ? `<em class="ptc-win pt-callout ${past('stat') ? 'pt-show' : ''}">${win}</em>` : ''}</span>
+          </div>`;
+          const ladder = (L, gate, headline, sub, win) => {
+            const tT = L.rows.reduce((a, r) => a + r[1], 0), tA = L.rows.reduce((a, r) => a + r[2], 0);
+            const cut = Math.round((1 - tA / tT) * 100);
+            const fmt = (n) => (L.suffix === 'days' ? n.toFixed(1) : n.toLocaleString('en-US'));
+            return `<div class="ptc-group">
+              <div class="ptc-ghead"><span class="ptc-gnum">${cut}% ${headline}</span><span class="ptc-gsub">${sub}</span></div>
+              <div class="ptc-unit">${L.unit}</div>
+              ${bar('Current state', 'now', L.rows.map((r) => [r[0], r[1]]), tT, gate, 0, `${fmt(tT)} ${L.suffix}`)}
+              ${bar('With App Workspace', 'aw', L.rows.map((r) => [r[0], r[2]]), tT, gate, 240, `${fmt(tA)} ${L.suffix}`, `${cut}% ${win}`)}
+            </div>`;
+          };
+          const tkT = PT_LADDER.tickets.rows.reduce((a, r) => a + r[1], 0);
+          const tkA = PT_LADDER.tickets.rows.reduce((a, r) => a + r[2], 0);
+          return `<div class="pt-viz">
+            <div class="pt-viz-lane ptv-full">
+              <div class="pt-legend"><span class="pt-lanetag pt-lanetag-now">Current state</span><span class="pt-legend-vs">vs</span><span class="pt-lanetag pt-lanetag-aw">With Application Workspace</span></div>
+              ${ladder(PT_LADDER.speed, 'r1', 'faster', 'vs. Intune + Autopilot alone', 'faster')}
+              ${ladder(PT_LADDER.tickets, 'r2', 'fewer tickets', 'self-service install, repair, and automated versions', 'fewer')}
+              <div class="ptc-group">
+                <div class="ptc-ghead"><span class="ptc-gnum">${Math.round((marA / marT - 1) * 100)}% more profitable</span><span class="ptc-gsub">same contract, same revenue \u2014 efficiency only</span></div>
+                <div class="ptc-unit">Gross margin on the application-delivery line \u00b7 ${R.users.toLocaleString('en-US')} users \u00b7 ${money(R.rev)} / month revenue \u00b7 $${R.rate}/h loaded</div>
+                ${bar('Current state', 'now', [['Delivery labor ' + money(R.delT * R.rate), R.delT * R.rate], ['Support ' + money(R.supT * R.rate), R.supT * R.rate], ['Margin ' + money(marT), marT, 'mnow']], R.rev, 'r3', 0, `${pctT}% margin`)}
+                ${bar('With App Workspace', 'aw', [['Delivery', R.delA * R.rate], ['Support', R.supA * R.rate], ['License ' + money(lic), lic, 'lic'], ['Margin ' + money(marA), marA, 'maw']], R.rev, 'r3', 240, `${pctA}% margin`, `${(marA / marT).toFixed(2)}\u00d7 margin`)}
+              </div>
+              <div class="pt-viz-foot">All three numbers come from the same two measurements \u2014 package touch time 8.0 h \u2192 1.6 h on the catalog path, and application tickets ${tkT} \u2192 ${tkA} per 1,000 users. Delivery labor ${R.delT} h \u2192 ${R.delA} h and support labor ${R.supT} h \u2192 ${R.supA} h per month follow from those two, and the margin follows from them \u2014 no third assumption.</div>
+            </div>
+          </div>`;
+        }
+        if (S.key === 'anatomy') {
+          const wave = (i) => 'r' + Math.min(3, Math.floor(i / 3) + 1);
+          return `<div class="pt-viz">
+            <div class="pt-viz-lane ptv-full">
+              <div class="pta-grid">
+                <div class="pta-head">
+                  <div class="pta-c1">Activity</div>
+                  <div class="pta-c2"><span class="pt-lanetag pt-lanetag-now">Current state</span></div>
+                  <div class="pta-c3"><span class="pt-lanetag pt-lanetag-aw">Where we help</span></div>
+                </div>
+                ${PT_ANATOMY.map((a, i) => `<div class="pta-row ptv-el ${g(past(wave(i)))}" style="--ptd:${(i % 3) * 90}ms">
+                  <div class="pta-c1"><span class="pta-num">${i + 1}</span>${a.act}</div>
+                  <div class="pta-c2">${a.today}<span class="pta-cost">${a.cost}</span></div>
+                  <div class="pta-c3"><span class="pta-help"><span class="pta-tick ${g(past(i < 6 ? 'r3' : 'stat'))}" style="--ptd:${i * 55}ms">\u2713</span><span>${a.aw}<span class="pta-keep">${a.keep}</span></span></span></div>
+                </div>`).join('')}
+              </div>
+              <div class="pt-viz-foot">Eight activities, one per row — the left column is today’s method with the cost it hides, the right column is where Application Workspace takes work off the team</div>
+            </div>
+          </div>`;
+        }
         if (S.key === "packaging") {
           const WALL = ["chrome","acrobat","zoom","teams","edge","firefox","slack","word","excel","outlook","powerpoint","onenote","notepadpp","sevenzip","vlc","python","node","citrix","java","postman","gimp","docker","teamviewer","filezilla"];
-          const bench = ["Source","Repackage","Test","Publish"];
+          const bench = ["Source","Package","Test","Publish"];
           const CUST = ["Customer A","Customer B","Customer C"];
           return `<div class="pt-viz">
             <div class="pt-viz-lane">
@@ -10786,32 +11092,6 @@
               <div class="ptv-conns">${plats.map((p, i) => `<span class="ptv-vline ${dr(past('r2'))}" style="--ptd:${i * 130}ms"></span>`).join('')}</div>
               <div class="ptv-cols">${plats.map((p, i) => `<div><div class="ptv-plat ptv-el ${g(past('r2'))}" style="--ptd:${i * 130}ms">${p}</div><div class="ptv-keep ptv-el ${g(past('r3'))}">stays</div></div>`).join('')}</div>
               <div class="pt-viz-foot pt-viz-foot-aw">Complements Intune and Jamf \u2014 automates the work around them</div>
-            </div>
-          </div>`;
-        }
-        if (S.key === 'business') {
-          const c = ptModelCalc();
-          const blend = Math.max(0.1, c.annual > 0 ? ((1 - Math.min(100, Math.max(0, c.m.mix)) / 100) * c.m.std + Math.min(100, Math.max(0, c.m.mix)) / 100 * c.m.cust) : 2);
-          const capToday = c.annual;
-          const capAw = Math.round(c.annual * c.m.cur / blend);
-          const factor = (c.m.cur / blend).toFixed(1).replace(/\.0$/, '');
-          const wBlend = Math.max(6, Math.round(blend / c.m.cur * 100));
-          const wToday = Math.max(6, Math.round(capToday / capAw * 100));
-          const num2 = (n) => n.toLocaleString('en-US');
-          return `<div class="pt-viz">
-            <div class="pt-viz-lane ptv-full">
-              <div class="pt-legend"><span class="pt-lanetag pt-lanetag-now">Current state</span><span class="pt-legend-vs">vs</span><span class="pt-lanetag pt-lanetag-aw">With Application Workspace</span></div>
-              <div class="ptv-hgroup">
-                <div class="pt-viz-lab">Hours per package change \u2014 the calculator\u2019s own inputs</div>
-                <div class="ptv-hrow"><span class="ptv-hname ptv-hname-now">Current state</span><div class="ptv-htrack"><span class="ptv-hbar ${g(past('r1'))}" style="--w:100%"></span></div><span class="ptv-hval">${c.m.cur} h</span></div>
-                <div class="ptv-hrow"><span class="ptv-hname ptv-hname-aw">With App Workspace</span><div class="ptv-htrack"><span class="ptv-hbar ptv-hbar-aw ${g(past('r1'))}" style="--w:${wBlend}%;--ptd:200ms"></span></div><span class="ptv-hval">${blend.toFixed(1)} h</span></div>
-              </div>
-              <div class="ptv-hgroup">
-                <div class="pt-viz-lab">Package changes the same team can support per year</div>
-                <div class="ptv-hrow"><span class="ptv-hname ptv-hname-now">Current state</span><div class="ptv-htrack"><span class="ptv-hbar ${g(past('r2'))}" style="--w:${wToday}%"></span></div><span class="ptv-hval">${num2(capToday)}</span></div>
-                <div class="ptv-hrow"><span class="ptv-hname ptv-hname-aw">With App Workspace</span><div class="ptv-htrack"><span class="ptv-hbar ptv-hbar-aw ${g(past('r2'))}" style="--w:100%;--ptd:200ms"></span></div><span class="ptv-hval">${num2(capAw)} <em class="ptv-x ${past('r3') ? 'pt-show' : ''} pt-callout">\u2248${factor}\u00d7 \u2014 same team</em></span></div>
-              </div>
-              <div class="pt-viz-foot">${c.m.cur} h manual vs ${blend.toFixed(1)} h blended workflow time (${100 - c.m.mix}% standard \u00b7 ${c.m.mix}% complex) \u2014 edit the model below and this chart follows</div>
             </div>
           </div>`;
         }
@@ -12369,16 +12649,21 @@
         return `
           <section id="panel-partner" class="space-y-2" data-screen-label="Partner">
             <div class="section-card p-4">
-              <div class="flex items-start justify-between gap-3 mb-3">
-                <div>
-                  <div class="text-[15px] font-semibold text-[#171d2b] leading-tight">Application management for partners: current state vs. Application Workspace.</div>
-                  <div class="text-[11px] text-slate-500 mt-0.5">Seven workstreams, each one the same side-by-side read \u2014 the manual, per-customer model partners run today on the left, the standardized model Application Workspace enables on the right.</div>
+              <div class="ptc-claims">
+                <div class="ptc-claim">
+                  <div class="ptc-big">80%<em>faster</em></div>
+                  <div class="ptc-lab">Application delivery, vs. Intune + Autopilot alone</div>
+                  <div class="ptc-math">10 working days \u2192 2 \u00b7 accepted to deployed</div>
                 </div>
-                <div class="pt-ctls">
-                  <button type="button" data-action="pt-play-all" class="pt-ctl pt-ctl-primary" title="Play all seven workstreams in sequence"><i data-lucide="play" class="w-3 h-3"></i><span>Play all seven</span></button>
-                  <button type="button" data-action="toggle-pt" class="pt-ctl" title="${running ? 'Pause' : 'Play'}" aria-label="${running ? 'Pause' : 'Play'}"><i data-lucide="${running ? 'pause' : 'play'}" class="w-3 h-3"></i></button>
-                  <button type="button" data-action="step-pt" class="pt-ctl" title="Step forward" aria-label="Step forward"><i data-lucide="skip-forward" class="w-3 h-3"></i></button>
-                  <button type="button" data-action="reset-pt" class="pt-ctl" title="Reset" aria-label="Reset"><i data-lucide="rotate-ccw" class="w-3 h-3"></i></button>
+                <div class="ptc-claim">
+                  <div class="ptc-big">70%<em>fewer tickets</em></div>
+                  <div class="ptc-lab">Application support tickets your desk absorbs</div>
+                  <div class="ptc-math">50 \u2192 15 per 1,000 users / month</div>
+                </div>
+                <div class="ptc-claim">
+                  <div class="ptc-big">60%<em>more margin</em></div>
+                  <div class="ptc-lab">On the same contract \u2014 efficiency, not repricing</div>
+                  <div class="ptc-math">43% \u2192 69% gross margin \u00b7 1.60\u00d7</div>
                 </div>
               </div>
 
@@ -12401,6 +12686,7 @@
 
               ${ptViz(S, past)}
 
+              ${S.full ? '' : `
               <div class="pt-table">
                 <div class="pt-thead2">
                   <div><span class="pt-lanetag pt-lanetag-now">Current state</span></div>
@@ -12414,7 +12700,7 @@
                     <div class="pt-cell-aw">${r.aw}${r.keep ? '<span class="pt-keep">stays with you</span>' : ''}</div>
                   </div>
                 </div>`).join('')}
-              </div>
+              </div>`}
 
               <div class="pt-callout ${past('stat') ? 'pt-show' : ''} mt-3">
                 <div class="pt-statband">
@@ -12427,6 +12713,28 @@
                 </div>
               </div>
               </div>
+
+              ${S.key === 'business' ? `
+              <div class="pt-callout ${past('stat') ? 'pt-show' : ''} mt-3">
+                <div class="pt-stat-eyebrow">Bake-off scorecard \u00b7 what to measure before you commit</div>
+                <div class="pt-stat-detail" style="margin-bottom:9px">The playbook\u2019s scorecard, pre-filled with the reference model\u2019s expected result. Run it on your own portfolio \u2014 these are the numbers the story stands or falls on.</div>
+                <div class="pts">
+                  <div class="pts-head">
+                    <div>Metric</div>
+                    <div>Definition</div>
+                    <div>Current</div>
+                    <div>With AW</div>
+                    <div>Pass threshold</div>
+                  </div>
+                  ${PT_SCORE.map((r, i) => `<div class="pts-row ptv-el ${past('stat') ? 'pt-visible' : ''}" style="--ptd:${Math.min(600, i * 45)}ms">
+                    <div class="pts-m">${r[0]}</div>
+                    <div class="pts-d">${r[1]}</div>
+                    <div class="pts-now">${r[2]}</div>
+                    <div class="pts-aw">${r[3]}</div>
+                    <div class="pts-th">${r[4]}</div>
+                  </div>`).join('')}
+                </div>
+              </div>` : ''}
 
               ${S.key === 'business' ? (() => { const c = ptModelCalc(); const pctFut = c.curHrs > 0 ? Math.max(2, Math.round(c.futHrs / c.curHrs * 100)) : 0; return `
               <div class="pt-callout ${past('stat') ? 'pt-show' : ''} mt-3">
@@ -12490,7 +12798,7 @@
                   <div class="pt-stat-eyebrow">The shift, in one statement</div>
                   <div class="pt-shift-body">Today, application delivery is a resource-intensive manual service \u2014 packaging, testing, approval, and deployment repeated across customer environments. Application Workspace turns it into a standardized, repeatable offering: proven packages and workflows reused across customers, customer-specific controls preserved, faster deployments, and a more scalable managed service.</div>
                 </div>
-                <button type="button" class="re-secondary" style="align-self:center;white-space:nowrap" data-action="switch-tab" data-tab="roi">Size it for your portfolio</button>
+
               </div>
               <div class="pt-footnote mt-3">Drawn from the partner operating-model comparison \u2014 outcomes vary by portfolio and application mix; validate with a measured bake-off, not assumptions.</div>
             </div>
@@ -13262,7 +13570,7 @@
           if (!action) return;
 
           if (action === 'switch-tab') { STATE.activeTab = act.getAttribute('data-tab'); STATE.visitedCards = []; STATE.activePopover = null; if (STATE.openWhyModal && STATE._savedDriverStates) { STATE.drivers.forEach((d, i) => { d.state = STATE._savedDriverStates[i]; }); STATE.showTippingPoint = STATE._savedTippingPoint; STATE.recastMode = STATE._savedRecastMode; STATE.targetDemandExponent = STATE._savedDemandExp; STATE.targetCapacitySlope = STATE._savedCapSlope; STATE._savedDriverStates = null; updateCurves(); } STATE.openWhyModal = null; STATE.insightContent = null; STATE.flowStep = -1; STATE.flowRunning = false; STATE.flowPaused = false; STATE.flowScenarioIdx = -1; STATE.flowPhase = 'idle'; STATE.flowAppOpened = false; STATE._firstOpenDone = false; STATE.showAdminView = false; STATE.showAutopilot = false; STATE.autopilotStep = -1; STATE.autopilotAppCount = 0; STATE.drPhase = 'idle'; STATE.drRunning = false; STATE.drPaused = false; STATE.drQueue = []; STATE.drQueueIdx = 0; STATE.obPhase = 'idle'; STATE.obRunning = false; STATE.obPaused = false; STATE.obQueue = []; STATE.obQueueIdx = 0; STATE.ssPhase = 'idle'; STATE.ssRunning = false; STATE.ssPaused = false; STATE.ssQueue = []; STATE.ssQueueIdx = 0; STATE.ssTimers.forEach(id => clearTimeout(id)); STATE.ssTimers = []; STATE.lcTimers.forEach(id => clearTimeout(id)); STATE.lcTimers = []; STATE.lifecyclePlaying = false; STATE.lcStep = -1; clearFlowTimers(); STATE.ptTimers.forEach(id => clearTimeout(id)); STATE.ptTimers = []; STATE.ptRunning = false; STATE.ptPaused = false; STATE.ptPhase = 'idle'; STATE.ptQueue = []; STATE.ptQueueIdx = 0; STATE.ptSection = 0; STATE.ptTour = false; render(); if (STATE.activeTab === 'partner') { const _t = setTimeout(() => { if (STATE.activeTab === 'partner' && !STATE.ptRunning) startPt(false); }, 500); STATE.ptTimers.push(_t); } return; }
-          if (action === 'advance') { STATE.activeTab = act.getAttribute('data-next'); if (STATE.openWhyModal && STATE._savedDriverStates) { STATE.drivers.forEach((d, i) => { d.state = STATE._savedDriverStates[i]; }); STATE.showTippingPoint = STATE._savedTippingPoint; STATE.recastMode = STATE._savedRecastMode; STATE.targetDemandExponent = STATE._savedDemandExp; STATE.targetCapacitySlope = STATE._savedCapSlope; STATE._savedDriverStates = null; updateCurves(); } STATE.openWhyModal = null; if (STATE.activeTab === 'roi') { calculateImpact(); } render(); return; }
+          if (action === 'advance') { STATE.activeTab = act.getAttribute('data-next'); if (STATE.openWhyModal && STATE._savedDriverStates) { STATE.drivers.forEach((d, i) => { d.state = STATE._savedDriverStates[i]; }); STATE.showTippingPoint = STATE._savedTippingPoint; STATE.recastMode = STATE._savedRecastMode; STATE.targetDemandExponent = STATE._savedDemandExp; STATE.targetCapacitySlope = STATE._savedCapSlope; STATE._savedDriverStates = null; updateCurves(); } STATE.openWhyModal = null; if (STATE.activeTab === 'roi') { calculateImpact(); } render(); if (STATE.activeTab === 'partner') { STATE.ptSection = 0; STATE.ptPhase = 'idle'; const _t = setTimeout(() => { if (STATE.activeTab === 'partner' && !STATE.ptRunning) startPt(false); }, 500); STATE.ptTimers.push(_t); } return; }
           if (action === 'toggle-proof-details') { STATE.proofDetailsOpen = !STATE.proofDetailsOpen; render(); return; }
           if (action === 'toggle-solution-view' || action === 'next-demo-module') {
             const view = act.getAttribute('data-view');
