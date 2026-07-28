@@ -1108,30 +1108,105 @@
       @media (max-width: 860px) { .pt-tr { grid-template-columns: 1fr; } .pt-td, .pt-td-h { border-left: 0; } .pt-td-dim { padding-bottom: 0; } .pt-thead .pt-td-dim { display: none; } }
       .pt-viz { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid #dce1ec; border-radius: 12px; background: white; overflow: hidden; margin-bottom: 14px; }
       @media (max-width: 860px) { .pt-viz { grid-template-columns: 1fr; } .pt-viz-lane + .pt-viz-lane { border-left: 0; border-top: 1px solid #eef1f8; } }
-      .pt-viz-lane { padding: 12px 16px; }
+      .pt-viz-lane { padding: 15px 18px 12px; }
+      .pt-viz-lane:first-child:not(.ptv-full) { background: #faf9f8; }
       .pt-viz-lane + .pt-viz-lane { border-left: 1px solid #eef1f8; }
       .pt-viz-lab { font-size: 9px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: #737d92; margin-bottom: 10px; }
       .pt-viz-lab-aw { color: #1745bf; }
-      .pt-viz-boxes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-      .pt-viz-box { border: 1px solid #dce1ec; border-radius: 8px; padding: 7px 9px; background: #fbfcfe; opacity: 0.25; transform: translateY(4px); transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1), transform 0.45s cubic-bezier(0.22, 1, 0.36, 1); }
-      .pt-viz-box.pt-visible { opacity: 1; transform: none; }
-      .pt-viz-box-h { font-size: 9.5px; font-weight: 700; color: #171d2b; }
-      .pt-viz-cells { display: flex; gap: 3px; margin: 7px 0; }
-      .pt-viz-cell { width: 13px; height: 13px; border-radius: 2px; background: #eef1f8; transition: background 0.3s ease; }
-      .pt-viz-cell.pt-lit { background: #fbc46b; }
-      .pt-viz-cell-aw.pt-lit { background: #2f6bff; }
-      .pt-viz-box-f { font-size: 8.5px; color: #9aa3b7; font-weight: 600; }
-      .pt-viz-aw { display: flex; gap: 0; align-items: stretch; }
-      .pt-viz-src { flex: 0 0 44%; }
-      .pt-viz-fan { flex: 1; display: flex; flex-direction: column; justify-content: space-between; gap: 6px; padding-left: 0; }
-      .pt-viz-fanitem { display: flex; align-items: center; }
-      .pt-viz-line { height: 2px; width: 0; background: linear-gradient(90deg, #2f6bff, #12a58c); border-radius: 2px; transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1); flex: 0 0 auto; }
-      .pt-viz-line.pt-drawn { width: 20px; }
-      .pt-viz-chip { flex: 1; border: 1px solid #dce1ec; border-radius: 7px; padding: 5px 9px; font-size: 9px; font-weight: 600; color: #171d2b; background: #fbfcfe; opacity: 0.25; transform: translateX(-3px); transition: opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1), transform 0.4s cubic-bezier(0.22, 1, 0.36, 1); }
-      .pt-viz-chip.pt-visible { opacity: 1; transform: none; border-color: #c1d4ff; background: #eef3ff; }
-      .ptm-chart { display: flex; gap: 22px; align-items: flex-end; height: 170px; padding: 4px 6px 0; }
-      .ptm-col { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 5px; height: 100%; }
-      .ptm-colbar { width: 100%; max-width: 90px; background: #c4cbdb; border-radius: 4px 4px 0 0; }
+      .pt-track { display: flex; align-items: center; gap: 9px; margin-bottom: 6px; }
+      .pt-track-name { flex: 0 0 46px; font-size: 8.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #9aa3b7; text-align: right; }
+      .pt-track-bar { flex: 1; display: flex; gap: 2px; }
+      .pt-track-short { flex: 0 0 36%; }
+      .pt-seg { flex: 1; height: 24px; display: grid; place-items: center; padding: 0 4px; font-size: 8.5px; font-weight: 700; color: #b6bdcc; background: #f8fafd; border: 1px solid #eef1f8; border-radius: 4px; white-space: nowrap; overflow: hidden; transition: background 0.4s cubic-bezier(0.22, 1, 0.36, 1), color 0.4s, border-color 0.4s; }
+      .pt-seg.pt-lit { background: #ffe9c2; border-color: #ffdb9e; color: #8a5709; }
+      .pt-seg-aw.pt-lit { background: #d9e5ff; border-color: #c1d4ff; color: #123a99; }
+      .pt-seg-cfg.pt-lit { background: #eef3ff; border-color: #c1d4ff; color: #1745bf; }
+      .pt-viz-foot { margin-top: 8px; font-size: 9.5px; font-weight: 700; color: #737d92; }
+      .pt-viz-foot-aw { color: #1745bf; }
+      .ptv-full { grid-column: 1 / -1; }
+      .ptv-el { opacity: 0.16; transform: translateY(5px) var(--tf, rotate(0deg)); transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1), transform 0.45s cubic-bezier(0.22, 1, 0.36, 1); }
+      .ptv-el.pt-visible { opacity: 1; transform: var(--tf, none); }
+      .ptv-hline { display: inline-block; flex: 0 0 auto; height: 2px; width: 0; background: #c4cbdb; border-radius: 2px; transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
+      .ptv-hline.pt-drawn { width: var(--w, 14px); }
+      .ptv-hline-aw { background: linear-gradient(90deg, #2f6bff, #12a58c); }
+      .ptv-axis { position: relative; height: 22px; border-bottom: 1px solid #dce1ec; margin-bottom: 12px; }
+      .ptv-tick { position: absolute; bottom: 0; width: 2px; height: 8px; background: #9aa3b7; opacity: 0; transition: opacity 0.4s ease; }
+      .ptv-tick.pt-show { opacity: 1; }
+      .ptv-tick b { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); font-size: 8.5px; font-weight: 800; color: #737d92; white-space: nowrap; }
+      .ptv-grow { position: relative; height: 24px; margin-bottom: 4px; }
+      .ptv-gbar { position: absolute; top: 1px; height: 20px; width: 0; border-radius: 4px; background: #ffe9c2; border: 1px solid #ffdb9e; color: #8a5709; font-size: 8.5px; font-weight: 700; display: flex; align-items: center; padding: 0 6px; white-space: nowrap; overflow: hidden; transition: width 0.9s cubic-bezier(0.4, 0, 0.2, 1); }
+      .ptv-gbar.pt-visible { width: var(--w); }
+      .ptv-gbar-aw { background: #d9e5ff; border-color: #c1d4ff; color: #123a99; }
+      .ptv-gbar-cut { border-right-style: dashed; border-right-width: 2px; }
+      .ptv-row { display: flex; align-items: center; gap: 5px; margin-bottom: 8px; }
+      .ptv-name { flex: 0 0 82px; font-size: 8.5px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: #9aa3b7; text-align: right; }
+      .ptv-gate { font-size: 8.5px; font-weight: 700; padding: 3px 7px; border-radius: 5px; background: #ffe9c2; border: 1px solid #ffdb9e; color: #8a5709; white-space: nowrap; }
+      .ptv-gate-aw { background: white; border: 1px dashed #9db9f7; color: #1745bf; }
+      .ptv-endchip { font-size: 8.5px; font-weight: 700; padding: 3px 7px; border-radius: 5px; background: #e4f6ef; border: 1px solid #bfe9e1; color: #055c53; margin-left: auto; }
+      .ptv-copies { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 8px 0 4px; }
+      .ptv-card { border: 1px solid #ffdb9e; background: #fffaf2; border-radius: 8px; padding: 9px 10px; }
+      .ptv-card b { display: block; font-size: 9.5px; color: #171d2b; }
+      .ptv-card i, .ptv-hubcard i { font-style: normal; font-size: 8.5px; color: #8a5709; font-weight: 600; }
+      .ptv-hubwrap { display: flex; gap: 12px; align-items: center; padding: 4px 0; }
+      .ptv-hubcard { flex: 0 0 38%; border: 1px solid #c1d4ff; background: #eef3ff; border-radius: 8px; padding: 10px 11px; }
+      .ptv-hubcard b { display: block; font-size: 9.5px; color: #171d2b; }
+      .ptv-hubcard i { color: #1745bf; }
+      .ptv-fan { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 4px 8px; }
+      .ptv-fanrow { display: flex; align-items: center; gap: 4px; }
+      .ptv-tenant { flex: 1; font-size: 8.5px; font-weight: 600; color: #171d2b; border: 1px solid #dce1ec; background: #fbfcfe; border-radius: 5px; padding: 3px 6px; white-space: nowrap; overflow: hidden; }
+      .ptv-tenant em { font-style: normal; color: #737d92; }
+      .ptv-cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; align-items: end; }
+      .ptv-block { border: 1px solid #ffdb9e; background: #fffaf2; color: #8a5709; border-radius: 6px; font-size: 8.5px; font-weight: 700; padding: 4px 7px; margin-bottom: 4px; text-align: center; }
+      .ptv-plat { border: 1px solid #dce1ec; background: #f4f6fb; color: #3f475c; border-radius: 6px; font-size: 9px; font-weight: 800; padding: 6px 7px; text-align: center; }
+      .ptv-keep { font-size: 8px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #0a8f82; text-align: center; margin-top: 4px; }
+      .ptv-band { border: 1px solid #c1d4ff; background: #eef3ff; color: #1745bf; border-radius: 8px; font-size: 9.5px; font-weight: 800; padding: 7px 10px; text-align: center; }
+      .ptv-conns { display: grid; grid-template-columns: repeat(3, 1fr); }
+      .ptv-vline { width: 2px; height: 0; background: #2f6bff; margin: 2px auto; transition: height 0.4s cubic-bezier(0.22, 1, 0.36, 1); }
+      .ptv-vline.pt-drawn { height: 12px; }
+      .ptv-chart { width: 100%; max-width: 500px; display: block; margin: 0 auto; }
+      .ptv-path { fill: none; stroke-width: 3; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 0.9s cubic-bezier(0.4, 0, 0.2, 1); }
+      .ptv-path.pt-drawn { stroke-dashoffset: 0; }
+      .ptv-chart text { font-family: 'Figtree', sans-serif; font-size: 9px; font-weight: 700; fill: #737d92; }
+      .ptv-journey { display: flex; align-items: center; gap: 6px; padding: 10px 0 6px; }
+      .ptv-jnode { border-radius: 8px; padding: 7px 9px; font-size: 9px; font-weight: 700; line-height: 1.3; }
+      .ptv-jnode-t { border: 1px solid #ffdb9e; background: #fffaf2; color: #8a5709; }
+      .ptv-jnode-a { border: 1px solid #c1d4ff; background: #eef3ff; color: #123a99; }
+      .ptv-jnode small { display: block; font-size: 8px; font-weight: 700; color: #0a8f82; margin-top: 2px; }
+      .ptv-jline { flex: 0 0 16px; height: 2px; background: #e4e9f4; border-radius: 2px; }
+      .ptv-jline-long { flex: 1; }
+      .ptv-console { margin-top: 8px; border: 1px dashed #bfe9e1; background: #f4fbf9; color: #055c53; border-radius: 7px; font-size: 8.5px; font-weight: 700; padding: 5px 9px; text-align: center; }
+      .ptv-hgroup { margin-bottom: 14px; }
+      .ptv-hgroup .pt-viz-lab { margin-bottom: 7px; }
+      .ptv-hrow { display: flex; align-items: center; gap: 9px; margin-bottom: 6px; }
+      .ptv-hname { flex: 0 0 132px; font-size: 8.5px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: #9aa3b7; text-align: right; }
+      .ptv-htrack { flex: 1; height: 18px; background: #f4f6fb; border-radius: 4px; position: relative; overflow: hidden; }
+      .ptv-hbar { position: absolute; top: 0; bottom: 0; left: 0; width: 0; background: #ffe9c2; border-right: 2px solid #f5a623; transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+      .ptv-hbar.pt-visible { width: var(--w); }
+      .ptv-hbar-aw { background: #d9e5ff; border-right-color: #2f6bff; }
+      .ptv-hval { flex: 0 0 150px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10px; font-weight: 700; color: #171d2b; }
+      .ptv-hval em.ptv-x { font-style: normal; font-family: 'Figtree', sans-serif; font-size: 8.5px; font-weight: 800; color: #055c53; margin-left: 4px; }
+      /* call-and-response: AW lane (--pta) answers the Today lane; --ptd = per-element stagger */
+      .ptv-el, .pt-seg, .ptv-hline, .ptv-vline, .ptv-gbar, .ptv-hbar, .ptv-dot, .ptv-grow { transition-delay: calc(var(--pta, 0ms) + var(--ptd, 0ms)); }
+      .pt-stagewrap.pt-enter { animation: ptSectionIn 340ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+      @keyframes ptSectionIn { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: translateY(0); } }
+      .pt-pill { position: relative; overflow: hidden; }
+      .pt-pill.pt-auto { border-bottom-color: #d9e5ff; }
+      .pt-pill-fill { position: absolute; left: 0; bottom: -1px; height: 2px; width: 100%; background: #2f6bff; transform-origin: left; transform: scaleX(0); animation-name: ptPillFill; animation-timing-function: linear; animation-fill-mode: both; }
+      @keyframes ptPillFill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+      .pt-statband { display: flex; gap: 12px; align-items: flex-start; }
+      .ptc-check { width: 20px; height: 20px; flex: 0 0 auto; color: #0a8f82; margin-top: 1px; }
+      .ptc-check path { stroke-dasharray: 26; stroke-dashoffset: 26; transition: stroke-dashoffset 0.55s cubic-bezier(0.4, 0, 0.2, 1) 0.2s; }
+      .pt-callout.pt-show .ptc-check path { stroke-dashoffset: 0; }
+      .pt-ctls { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+      .pt-ctl { display: inline-flex; align-items: center; justify-content: center; gap: 5px; height: 27px; min-width: 27px; padding: 0 7px; border: 1px solid #dce1ec; border-radius: 8px; background: white; color: #737d92; cursor: pointer; transition: all 0.15s ease; }
+      .pt-ctl:hover { color: #171d2b; border-color: #9aa3b7; }
+      .pt-ctl:active { transform: scale(0.96); }
+      .pt-ctl-primary { padding: 0 11px; background: #eef3ff; border-color: #c1d4ff; color: #1745bf; font-size: 10.5px; font-weight: 700; white-space: nowrap; }
+      .pt-ctl-primary:hover { background: #e2ebff; border-color: #2f6bff; color: #1745bf; }
+      .ptm-chart { display: flex; gap: 22px; align-items: flex-end; padding: 4px 6px 0; }
+      .ptm-col { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 5px; }
+      .ptm-bararea { width: 100%; max-width: 90px; height: 100px; display: flex; align-items: flex-end; }
+      .ptm-colbar { width: 100%; background: #c4cbdb; border-radius: 4px 4px 0 0; transition: height 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
       .ptm-colbar-fut { background: #2f6bff; }
       .ptm-colbar-val { background: #12a58c; }
       .ptm-colval { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11.5px; font-weight: 700; color: #171d2b; }
@@ -6902,6 +6977,14 @@
         ['pt-visible', '.pt-viz-box'],
         ['pt-visible', '.pt-viz-chip'],
         ['pt-lit',     '.pt-viz-cell'],
+        ['pt-lit',     '.pt-seg'],
+        ['pt-visible', '.ptv-el'],
+        ['pt-visible', '.ptv-gbar'],
+        ['pt-visible', '.ptv-hbar'],
+        ['pt-drawn',   '.ptv-hline'],
+        ['pt-drawn',   '.ptv-vline'],
+        ['pt-drawn',   '.ptv-path'],
+        ['pt-show',    '.ptv-tick'],
         ['pt-drawn',   '.pt-viz-line'],
         ['ss-show',         '.ss-security-row'],
         ['ss-card-shifted', '.ss-package-card'],
@@ -10399,7 +10482,7 @@
           breakeven: m.users > 0 ? value / m.users / 12 : 0 };
       }
       const PT_SECTIONS = [
-        { key: "packaging", pill: "Application packaging", tag: "Manual builds \u2192 workflows", icon: "box",
+        { key: "packaging", pill: "Packaging", tag: "Manual builds \u2192 workflows", icon: "box",
           event: "A customer requests an app Microsoft\u2019s catalog does not cover \u2014 in-house, business-specific",
           viz: { unit: "Manual build", src: "Standardized workflow", per: "config only" },
           rows: [
@@ -10409,7 +10492,7 @@
           ],
           stat: { hrs: "Standardized, automated packaging \u2014 including in-house apps", sub: "application packaging" },
           verdict: "Manual packaging effort is reduced; the team keeps exceptions and judgment." },
-        { key: "updates", pill: "Updates + speed", tag: "Release-to-deploy time", icon: "refresh-cw",
+        { key: "updates", pill: "Updates", tag: "Release-to-deploy time", icon: "refresh-cw",
           event: "A new version is released before the previous one has finished deploying",
           viz: { unit: "Manual update cycle", src: "Central update", per: "approve + deploy" },
           rows: [
@@ -10429,8 +10512,8 @@
           ],
           stat: { hrs: "Testing + approvals incorporated into the lifecycle", sub: "security, compliance + QA" },
           verdict: "Compliance remains a control without becoming a bottleneck." },
-        { key: "reuse", pill: "Multi-customer reuse", tag: "Across tenants", icon: "building-2",
-          event: "The same proven package is needed across ten customer environments",
+        { key: "reuse", pill: "Reuse", tag: "Across tenants", icon: "building-2",
+          event: "The same proven package is needed across six customer environments",
           viz: { unit: "Rebuilt process", src: "Proven package", per: "reuse + rules" },
           rows: [
             { dim: "Across customers", today: "Processes recreated per environment.", aw: "Proven packages reused; rules per customer.", keep: true },
@@ -10439,7 +10522,7 @@
           ],
           stat: { hrs: "Proven packages + workflows across customer tenants", sub: "multi-customer delivery" },
           verdict: "Delivery is no longer rebuilt customer by customer." },
-        { key: "platforms", pill: "Intune, Jamf + platforms", tag: "Complement, not replace", icon: "layers",
+        { key: "platforms", pill: "Platforms", tag: "Complement, not replace", icon: "layers",
           event: "Windows, macOS, iOS, Android \u2014 managed through Intune, Jamf, and other platforms",
           viz: { unit: "Per-platform process", src: "One operating model", per: "Intune \u00b7 Jamf" },
           rows: [
@@ -10449,7 +10532,7 @@
           ],
           stat: { hrs: "Complements Intune, Jamf + supported management platforms", sub: "platform support" },
           verdict: "The endpoint strategy stays; the manual work around it is reduced." },
-        { key: "business", pill: "Business model + scale", tag: "Margins + growth", icon: "trending-up",
+        { key: "business", pill: "Business model", tag: "Margins + growth", icon: "trending-up",
           event: "Supporting more customers currently requires proportional packaging capacity",
           viz: { unit: "Added headcount", src: "Same team", per: "more customers" },
           rows: [
@@ -10459,7 +10542,7 @@
           ],
           stat: { hrs: "Licensed per user, per month \u2014 through the partner, not per endpoint", sub: "commercial model" },
           verdict: "Growth no longer requires proportional packaging headcount." },
-        { key: "enablement", pill: "Enablement + joint selling", tag: "Recast alongside you", icon: "handshake",
+        { key: "enablement", pill: "Enablement", tag: "Recast alongside you", icon: "handshake",
           event: "A first customer opportunity arrives before deep product expertise exists",
           viz: { unit: "Solo preparation", src: "Joint enablement", per: "supported demo" },
           rows: [
@@ -10470,9 +10553,169 @@
           stat: { hrs: "Onboarding, shadowing, joint demonstrations", sub: "partner enablement" },
           verdict: "Early opportunities are supported without requiring day-one product expertise." },
       ];
+      function ptViz(S, past){
+        const g = (c) => c ? 'pt-visible' : '';
+        const dr = (c) => c ? 'pt-drawn' : '';
+        const CB = ['A','B','C'];
+        if (S.key === 'packaging') {
+          const apps = ['Acrobat', 'Chrome', 'YourApp'];
+          const stages = PT_STAGES.packaging;
+          return `<div class="pt-viz">
+            <div class="pt-viz-lane">
+              <div class="pt-viz-lab">Today \u2014 every app is a manual build</div>
+              ${apps.map((ap, i) => `<div class="pt-track"><span class="pt-track-name">${ap}</span><div class="pt-track-bar">${stages.map((sg, j) => `<span class="pt-seg ${past('r' + (i + 1)) ? 'pt-lit' : ''}" style="--ptd:${j * 150}ms">${sg}</span>`).join('')}</div></div>`).join('')}
+              <div class="pt-viz-foot">Commercial titles and custom apps alike \u2014 sourced, built, tested by hand, per customer</div>
+            </div>
+            <div class="pt-viz-lane" style="--pta:380ms">
+              <div class="pt-viz-lab pt-viz-lab-aw">With Application Workspace \u2014 packaged before you ask</div>
+              <div class="ptv-band ptv-el ${g(past('r1'))}">Setup Store \u2014 8,000+ packages built and maintained by Recast</div>
+              <div style="height:8px"></div>
+              <div class="ptv-row"><span class="ptv-name">Acrobat</span><span class="ptv-hline ptv-hline-aw ${dr(past('r2'))}" style="--w:12px"></span><span class="ptv-gate ptv-gate-aw ptv-el ${g(past('r2'))}">already packaged</span><span class="ptv-endchip ptv-el ${g(past('r2'))}">deploy</span></div>
+              <div class="ptv-row"><span class="ptv-name">Chrome</span><span class="ptv-hline ptv-hline-aw ${dr(past('r2'))}" style="--w:12px;--ptd:140ms"></span><span class="ptv-gate ptv-gate-aw ptv-el ${g(past('r2'))}" style="--ptd:140ms">already packaged</span><span class="ptv-endchip ptv-el ${g(past('r2'))}" style="--ptd:140ms">deploy</span></div>
+              <div class="ptv-row"><span class="ptv-name">YourApp \u00b7 custom</span><span class="ptv-hline ptv-hline-aw ${dr(past('r3'))}" style="--w:12px"></span><span class="ptv-gate ptv-gate-aw ptv-el ${g(past('r3'))}">standardized workflow</span><span class="ptv-endchip ptv-el ${g(past('r3'))}">deploy</span></div>
+              <div class="ptv-console ptv-el ${g(past('r3'))}">One admin console \u2014 rollout and updates automated across customers</div>
+              <div class="pt-viz-foot pt-viz-foot-aw">8,000+ commercial apps arrive packaged; custom apps reuse the same automated pipeline</div>
+            </div>
+          </div>`;
+        }
+        if (S.key === 'updates') {
+          const ticks = (on) => [6, 38, 70].map((x, i) => `<span class="ptv-tick pt-callout ${on ? 'pt-show' : ''}" style="left:${x}%;--ptd:${i * 120}ms"><b>v${i + 1} ships</b></span>`).join('');
+          return `<div class="pt-viz">
+            <div class="pt-viz-lane">
+              <div class="pt-viz-lab">Today \u2014 rollouts outrun by releases</div>
+              <div class="ptv-axis">${ticks(past('r1'))}</div>
+              <div class="ptv-grow"><span class="ptv-gbar ${g(past('r2'))}" style="left:6%;--w:44%">v1 rollout</span></div>
+              <div class="ptv-grow"><span class="ptv-gbar ${g(past('r2'))}" style="left:38%;--w:44%;--ptd:200ms">v2 rollout</span></div>
+              <div class="ptv-grow"><span class="ptv-gbar ptv-gbar-cut ${g(past('r2'))}" style="left:70%;--w:24%;--ptd:400ms">v3 \u2014 unfinished</span></div>
+              <div class="pt-viz-foot">Each version is still deploying when the next one ships</div>
+            </div>
+            <div class="pt-viz-lane" style="--pta:380ms">
+              <div class="pt-viz-lab pt-viz-lab-aw">With Application Workspace \u2014 rollouts finish first</div>
+              <div class="ptv-axis">${ticks(past('r1'))}</div>
+              ${[6, 38, 70].map((x, i) => `<div class="ptv-grow"><span class="ptv-gbar ptv-gbar-aw ${g(past('r3'))}" style="left:${x}%;--w:17%;--ptd:${i * 150}ms">v${i + 1} deployed</span></div>`).join('')}
+              <div class="pt-viz-foot pt-viz-foot-aw">Deployed well before the next release \u2014 same time axis</div>
+            </div>
+          </div>`;
+        }
+        if (S.key === 'governance') {
+          const profiles = [
+            { n: 'Cust A \u00b7 auto', gates: ['Approval'] },
+            { n: 'Cust B \u00b7 standard', gates: ['Test', 'Approval'] },
+            { n: 'Cust C \u00b7 bank', gates: ['Test', 'Change req', 'Approval'] },
+          ];
+          const row = (p, i, aw) => {
+            const on = past('r' + (i + 1));
+            const gateOn = aw ? past('r1') : on;
+            const doneOn = aw ? past(i === 2 ? 'r3' : 'r2') : on;
+            return `<div class="ptv-row"><span class="ptv-name">${p.n}</span>${p.gates.map((gt, j) => `<span class="ptv-hline ${aw ? 'ptv-hline-aw' : ''} ${dr(gateOn)}" style="--w:12px;--ptd:${j * 140}ms"></span><span class="ptv-gate ${aw ? 'ptv-gate-aw' : ''} ptv-el ${g(gateOn)}" style="--ptd:${j * 140}ms">${gt}</span>`).join('')}<span class="ptv-endchip ptv-el ${g(doneOn)}">deployed</span></div>`;
+          };
+          return `<div class="pt-viz">
+            <div class="pt-viz-lane">
+              <div class="pt-viz-lab">Today \u2014 each approval chain assembled by hand</div>
+              ${profiles.map((p, i) => row(p, i, false)).join('')}
+              <div class="pt-viz-foot">Rebuilt per customer, per release</div>
+            </div>
+            <div class="pt-viz-lane" style="--pta:380ms">
+              <div class="pt-viz-lab pt-viz-lab-aw">With Application Workspace \u2014 chains configured once</div>
+              ${profiles.map((p, i) => row(p, i, true)).join('')}
+              <div class="pt-viz-foot pt-viz-foot-aw">Same gates, standing workflows \u2014 releases pass through</div>
+            </div>
+          </div>`;
+        }
+        if (S.key === 'reuse') {
+          const tenants = [['Tenant A', 'auto'], ['Tenant B', 'regulated'], ['Tenant C', 'pilot'], ['Tenant D', 'auto'], ['Tenant E', 'staged'], ['Tenant F', 'regulated']];
+          return `<div class="pt-viz">
+            <div class="pt-viz-lane">
+              <div class="pt-viz-lab">Today \u2014 separate copies per environment</div>
+              <div class="ptv-copies">
+                ${CB.map((L, i) => `<div class="ptv-card ptv-el ${g(past('r' + (i + 1)))}" style="--tf:rotate(${[-2, 1.5, -1][i]}deg)"><b>Package \u00b7 copy ${i + 1}</b><i>Customer ${L} \u2014 drifts on its own</i></div>`).join('')}
+              </div>
+              <div class="pt-viz-foot">Three versions of the truth \u2014 results vary by technician and tenant</div>
+            </div>
+            <div class="pt-viz-lane" style="--pta:380ms">
+              <div class="pt-viz-lab pt-viz-lab-aw">With Application Workspace \u2014 one package, six tenants</div>
+              <div class="ptv-hubwrap">
+                <div class="ptv-hubcard ptv-el ${g(past('r1'))}"><b>Proven package</b><i>maintained once</i></div>
+                <div class="ptv-fan">
+                  ${tenants.map((t, i) => `<div class="ptv-fanrow"><span class="ptv-hline ptv-hline-aw ${dr(past('r2'))}" style="--w:12px;--ptd:${i * 90}ms"></span><span class="ptv-tenant ptv-el ${g(past(i < 3 ? 'r2' : 'r3'))}" style="--ptd:${i * 90}ms">${t[0]} <em>\u00b7 ${t[1]}</em></span></div>`).join('')}
+                </div>
+              </div>
+              <div class="pt-viz-foot pt-viz-foot-aw">Six tenants, one source \u2014 customer rules applied where needed</div>
+            </div>
+          </div>`;
+        }
+        if (S.key === 'platforms') {
+          const plats = ['Intune', 'Jamf Pro', 'Other MDM'];
+          return `<div class="pt-viz">
+            <div class="pt-viz-lane">
+              <div class="pt-viz-lab">Today \u2014 a separate process per platform</div>
+              <div class="ptv-cols">
+                ${plats.map((p, i) => `<div><div class="ptv-block ptv-el ${g(past('r' + (i + 1)))}">own packaging</div><div class="ptv-block ptv-el ${g(past('r' + (i + 1)))}" style="--ptd:120ms">own updates</div><div class="ptv-plat">${p}</div></div>`).join('')}
+              </div>
+              <div class="pt-viz-foot">Windows carries the heaviest load \u2014 every platform, its own motion</div>
+            </div>
+            <div class="pt-viz-lane" style="--pta:380ms">
+              <div class="pt-viz-lab pt-viz-lab-aw">With Application Workspace \u2014 one model above your platforms</div>
+              <div class="ptv-band ptv-el ${g(past('r1'))}">Application Workspace \u2014 one operating model</div>
+              <div class="ptv-conns">${plats.map((p, i) => `<span class="ptv-vline ${dr(past('r2'))}" style="--ptd:${i * 130}ms"></span>`).join('')}</div>
+              <div class="ptv-cols">${plats.map((p, i) => `<div><div class="ptv-plat ptv-el ${g(past('r2'))}" style="--ptd:${i * 130}ms">${p}</div><div class="ptv-keep ptv-el ${g(past('r3'))}">stays</div></div>`).join('')}</div>
+              <div class="pt-viz-foot pt-viz-foot-aw">Complements Intune and Jamf \u2014 automates the work around them</div>
+            </div>
+          </div>`;
+        }
+        if (S.key === 'business') {
+          const c = ptModelCalc();
+          const blend = Math.max(0.1, c.annual > 0 ? ((1 - Math.min(100, Math.max(0, c.m.mix)) / 100) * c.m.std + Math.min(100, Math.max(0, c.m.mix)) / 100 * c.m.cust) : 2);
+          const capToday = c.annual;
+          const capAw = Math.round(c.annual * c.m.cur / blend);
+          const factor = (c.m.cur / blend).toFixed(1).replace(/\.0$/, '');
+          const wBlend = Math.max(6, Math.round(blend / c.m.cur * 100));
+          const wToday = Math.max(6, Math.round(capToday / capAw * 100));
+          const num2 = (n) => n.toLocaleString('en-US');
+          return `<div class="pt-viz">
+            <div class="pt-viz-lane ptv-full">
+              <div class="ptv-hgroup">
+                <div class="pt-viz-lab">Hours per package change \u2014 the calculator\u2019s own inputs</div>
+                <div class="ptv-hrow"><span class="ptv-hname">Today \u00b7 manual</span><div class="ptv-htrack"><span class="ptv-hbar ${g(past('r1'))}" style="--w:100%"></span></div><span class="ptv-hval">${c.m.cur} h</span></div>
+                <div class="ptv-hrow"><span class="ptv-hname">With AW \u00b7 workflows</span><div class="ptv-htrack"><span class="ptv-hbar ptv-hbar-aw ${g(past('r1'))}" style="--w:${wBlend}%;--ptd:200ms"></span></div><span class="ptv-hval">${blend.toFixed(1)} h</span></div>
+              </div>
+              <div class="ptv-hgroup">
+                <div class="pt-viz-lab">Package changes the same team can support per year</div>
+                <div class="ptv-hrow"><span class="ptv-hname">Today \u00b7 manual</span><div class="ptv-htrack"><span class="ptv-hbar ${g(past('r2'))}" style="--w:${wToday}%"></span></div><span class="ptv-hval">${num2(capToday)}</span></div>
+                <div class="ptv-hrow"><span class="ptv-hname">With AW \u00b7 workflows</span><div class="ptv-htrack"><span class="ptv-hbar ptv-hbar-aw ${g(past('r2'))}" style="--w:100%;--ptd:200ms"></span></div><span class="ptv-hval">${num2(capAw)} <em class="ptv-x ${past('r3') ? 'pt-show' : ''} pt-callout">\u2248${factor}\u00d7 \u2014 same team</em></span></div>
+              </div>
+              <div class="pt-viz-foot">${c.m.cur} h manual vs ${blend.toFixed(1)} h blended workflow time (${100 - c.m.mix}% standard \u00b7 ${c.m.mix}% complex) \u2014 edit the model below and this chart follows</div>
+            </div>
+          </div>`;
+        }
+        /* enablement */
+        const jt = ['Build expertise alone', 'Prepare the demo solo', 'First pitch \u2014 months out'];
+        const ja = [['Onboard', 'shadowed by Recast'], ['Joint demo', 'Recast alongside'], ['First deal', 'supported behind the scenes']];
+        return `<div class="pt-viz">
+          <div class="pt-viz-lane">
+            <div class="pt-viz-lab">Today \u2014 the unsupported ramp</div>
+            <div class="ptv-journey">${jt.map((n, i) => `<div class="ptv-jnode ptv-jnode-t ptv-el ${g(past('r' + (i + 1)))}">${n}</div>${i < 2 ? '<span class="ptv-jline ptv-jline-long"></span>' : ''}`).join('')}</div>
+            <div class="pt-viz-foot">Expertise built in-house before the first opportunity can be answered</div>
+          </div>
+          <div class="pt-viz-lane" style="--pta:380ms">
+            <div class="pt-viz-lab pt-viz-lab-aw">With Application Workspace \u2014 Recast alongside</div>
+            <div class="ptv-journey">${ja.map((n, i) => `<div class="ptv-jnode ptv-jnode-a ptv-el ${g(past('r' + (i + 1)))}">${n[0]}<small>${n[1]}</small></div>${i < 2 ? '<span class="ptv-jline"></span>' : ''}`).join('')}</div>
+            <div class="pt-viz-foot pt-viz-foot-aw">Shorter distance to the first deal \u2014 joint demos, enablement, shadowing</div>
+          </div>
+        </div>`;
+      }
+      const PT_STAGES = {
+        packaging:  ['Source','Build','Test','Deploy'],
+        updates:    ['Monitor','Package','Test','Deploy'],
+        governance: ['Package','QA','Approve','Deploy'],
+        reuse:      ['Rebuild','Configure','Test','Deploy'],
+        platforms:  ['Format','Integrate','Test','Deploy'],
+        business:   ['Package','Test','Deploy','Support'],
+        enablement: ['Learn','Build demo','Present','Deliver'],
+      };
       function buildPtQueue(){
         const beats = ['boards','r1','r2','r3','stat'];
-        const delays = [500, 1400, 2300, 2300, 2400];
+        const delays = [400, 1100, 1700, 1700, 1900];
         const queue = beats.map((bt, i) => ({ delay: delays[i], fn(){ STATE.ptPhase = bt; demoPhaseRender(); } }));
         queue.push({ delay: 2600, fn(){
           if (STATE.ptTour && STATE.ptSection < PT_SECTIONS.length - 1) {
@@ -10480,7 +10723,9 @@
             STATE.ptPhase = 'idle';
             STATE.ptQueue = buildPtQueue();
             STATE.ptQueueIdx = -1; // runner increments to 0 and schedules the new queue
+            STATE.ptSectionStart = Date.now();
             demoPhaseRender();
+            const _sw = document.querySelector('.pt-stagewrap'); if (_sw) _sw.classList.add('pt-enter');
           } else {
             STATE.ptTour = false; STATE.ptRunning = false; STATE.ptPaused = false;
             demoPhaseRender();
@@ -10508,6 +10753,7 @@
         STATE.ptPhase = 'idle';
         STATE.ptQueue = buildPtQueue();
         STATE.ptQueueIdx = 0;
+        STATE.ptSectionStart = Date.now();
         scrollPreserveRender();
         runPtQueue();
       }
@@ -11970,7 +12216,7 @@
           return order.indexOf(p) >= order.indexOf(target);
         };
         const S = PT_SECTIONS[Math.max(0, Math.min(PT_SECTIONS.length - 1, STATE.ptSection || 0))];
-        const stepCls = (k) => k === 'yours' ? 'pt-step-yours' : k === 'toil' ? 'pt-step-toil' : 'pt-step-done';
+        const stages = PT_STAGES[S.key] || ['Source','Build','Test','Deploy'];
         const running = STATE.ptRunning && !STATE.ptPaused;
         return `
           <section id="panel-partner" class="space-y-2" data-screen-label="Partner">
@@ -11980,52 +12226,31 @@
                   <div class="text-[15px] font-semibold text-[#171d2b] leading-tight">Application management for partners: today vs. Application Workspace.</div>
                   <div class="text-[11px] text-slate-500 mt-0.5">Seven workstreams, side by side \u2014 the manual, per-customer model partners run today vs. the standardized, automated model Application Workspace enables.</div>
                 </div>
+                <div class="pt-ctls">
+                  <button type="button" data-action="pt-play-all" class="pt-ctl pt-ctl-primary" title="Play all seven workstreams in sequence"><i data-lucide="play" class="w-3 h-3"></i><span>Play all seven</span></button>
+                  <button type="button" data-action="toggle-pt" class="pt-ctl" title="${running ? 'Pause' : 'Play'}" aria-label="${running ? 'Pause' : 'Play'}"><i data-lucide="${running ? 'pause' : 'play'}" class="w-3 h-3"></i></button>
+                  <button type="button" data-action="step-pt" class="pt-ctl" title="Step forward" aria-label="Step forward"><i data-lucide="skip-forward" class="w-3 h-3"></i></button>
+                  <button type="button" data-action="reset-pt" class="pt-ctl" title="Reset" aria-label="Reset"><i data-lucide="rotate-ccw" class="w-3 h-3"></i></button>
+                </div>
               </div>
 
               <div class="pt-pillbar">
                 ${PT_SECTIONS.map((s, i) => `
-                  <button type="button" data-action="pt-section" data-idx="${i}" class="pt-pill ${i === STATE.ptSection ? 'active' : ''}">
+                  <button type="button" data-action="pt-section" data-idx="${i}" class="pt-pill ${i === STATE.ptSection ? 'active' : ''} ${i === STATE.ptSection && STATE.ptTour && STATE.ptRunning ? 'pt-auto' : ''}">
                     <span class="pt-pill-name"><i data-lucide="${s.icon}"></i>${s.pill}</span>
                     <span class="pt-pill-tag">${s.tag}</span>
+                    ${i === STATE.ptSection && STATE.ptTour && STATE.ptRunning ? `<span class="pt-pill-fill" style="animation-duration:9400ms;animation-delay:-${Math.max(0, Date.now() - (STATE.ptSectionStart || Date.now()))}ms;animation-play-state:${STATE.ptPaused ? 'paused' : 'running'}"></span>` : ''}
                   </button>`).join('')}
               </div>
 
+              <div class="pt-stagewrap">
               <div class="pt-callout ${past('boards') ? 'pt-show' : ''} mb-3">
                 <div class="pt-event">
                   <span class="pt-event-title">${S.event}</span>
                 </div>
               </div>
 
-              <div class="pt-viz">
-                <div class="pt-viz-lane">
-                  <div class="pt-viz-lab">Today \u2014 repeated per customer</div>
-                  <div class="pt-viz-boxes">
-                    ${['A','B','C'].map((L, i) => `
-                    <div class="pt-viz-box ${past('r' + (i + 1)) ? 'pt-visible' : ''}">
-                      <div class="pt-viz-box-h">Customer ${L}</div>
-                      <div class="pt-viz-cells">${[0,1,2,3].map(j => `<span class="pt-viz-cell ${past('r' + (i + 1)) ? 'pt-lit' : ''}" style="transition-delay:${j * 90}ms"></span>`).join('')}</div>
-                      <div class="pt-viz-box-f">${S.viz.unit}</div>
-                    </div>`).join('')}
-                  </div>
-                </div>
-                <div class="pt-viz-lane">
-                  <div class="pt-viz-lab pt-viz-lab-aw">With Application Workspace \u2014 once, then reused</div>
-                  <div class="pt-viz-aw">
-                    <div class="pt-viz-box pt-viz-src ${past('r1') ? 'pt-visible' : ''}">
-                      <div class="pt-viz-box-h">${S.viz.src}</div>
-                      <div class="pt-viz-cells">${[0,1,2,3].map(j => `<span class="pt-viz-cell pt-viz-cell-aw ${past('r1') ? 'pt-lit' : ''}" style="transition-delay:${j * 90}ms"></span>`).join('')}</div>
-                      <div class="pt-viz-box-f">once</div>
-                    </div>
-                    <div class="pt-viz-fan">
-                      ${['A','B','C'].map((L, i) => `
-                      <div class="pt-viz-fanitem">
-                        <span class="pt-viz-line ${past('r2') ? 'pt-drawn' : ''}" style="transition-delay:${i * 110}ms"></span>
-                        <div class="pt-viz-chip ${past(i === 2 ? 'r3' : 'r2') ? 'pt-visible' : ''}" style="transition-delay:${i * 90}ms">Customer ${L} \u00b7 ${S.viz.per}</div>
-                      </div>`).join('')}
-                    </div>
-                  </div>
-                </div>
-              </div>
+              ${ptViz(S, past)}
 
               <div class="pt-table">
                 <div class="pt-tr pt-thead">
@@ -12043,9 +12268,12 @@
 
               <div class="pt-callout ${past('stat') ? 'pt-show' : ''} mt-3">
                 <div class="pt-statband">
-                  <div class="pt-stat-eyebrow">Net effect \u00b7 ${S.stat.sub}</div>
-                  <div class="pt-stat-lead">${S.verdict}</div>
-                  <div class="pt-stat-detail">${S.stat.hrs}</div>
+                  <svg class="ptc-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+                  <div>
+                    <div class="pt-stat-eyebrow">Net effect \u00b7 ${S.stat.sub}</div>
+                    <div class="pt-stat-lead">${S.verdict}</div>
+                    <div class="pt-stat-detail">${S.stat.hrs}</div>
+                  </div>
                 </div>
               </div>
 
@@ -12067,9 +12295,9 @@
                     </div>
                     <div>
                       <div class="ptm-chart">
-                        <div class="ptm-col"><div class="ptm-colval">${fmtDollars(c.curHrs * c.m.rate)}</div><div class="ptm-colbar" style="height:${Math.max(4, 100)}%"></div><div class="ptm-collab">Current labor / yr<br>${num(c.curHrs)} h</div></div>
-                        <div class="ptm-col"><div class="ptm-colval">${fmtDollars(c.futHrs * c.m.rate)}</div><div class="ptm-colbar ptm-colbar-fut" style="height:${Math.max(4, pctFut)}%"></div><div class="ptm-collab">Future labor / yr<br>${num(c.futHrs)} h</div></div>
-                        <div class="ptm-col"><div class="ptm-colval">${fmtDollars(c.value)}</div><div class="ptm-colbar ptm-colbar-val" style="height:${Math.max(4, 100 - pctFut)}%"></div><div class="ptm-collab">Value returned / yr<br>\u2248${c.fte.toFixed(1)} FTE</div></div>
+                        <div class="ptm-col"><div class="ptm-colval">${fmtDollars(c.curHrs * c.m.rate)}</div><div class="ptm-bararea"><div class="ptm-colbar" style="height:100%"></div></div><div class="ptm-collab">Current labor / yr<br>${num(c.curHrs)} h</div></div>
+                        <div class="ptm-col"><div class="ptm-colval">${fmtDollars(c.futHrs * c.m.rate)}</div><div class="ptm-bararea"><div class="ptm-colbar ptm-colbar-fut" style="height:${Math.max(4, pctFut)}%"></div></div><div class="ptm-collab">Future labor / yr<br>${num(c.futHrs)} h</div></div>
+                        <div class="ptm-col"><div class="ptm-colval">${fmtDollars(c.value)}</div><div class="ptm-bararea"><div class="ptm-colbar ptm-colbar-val" style="height:${Math.max(4, 100 - pctFut)}%"></div></div><div class="ptm-collab">Value returned / yr<br>\u2248${c.fte.toFixed(1)} FTE</div></div>
                       </div>
                       <div class="ptm-out" style="margin-top:8px"><span class="ptm-out-label">Capacity returned <em style="font-style:normal;color:#9aa3b7">\u2014 not cash until a staffing decision exists</em></span><span class="ptm-out-val">${num(c.returnedHrs)} h / yr \u00b7 \u2248${c.fte.toFixed(1)} FTE</span></div>
                       <div class="ptm-out"><span class="ptm-out-label">Cost per package change</span><span class="ptm-out-val">$${Math.round(c.curPerChange)} \u2192 $${Math.round(c.futPerChange)}</span></div>
@@ -12079,6 +12307,7 @@
                   <div class="ptm-notes">Formulas (playbook \u00a76): current cost = changes \u00d7 12 \u00d7 hours per change \u00d7 rate \u00b7 future = (standard share \u00d7 standard residual + complex share \u00d7 complex residual), with the reduction discounted by the realization factor \u00b7 break-even license = labor value \u00f7 users \u00f7 12. Excludes Application Workspace license, implementation, and recurring administration \u2014 those come from an actual proposal, never assumed here. 8 h / 1.5 h / 4 h / 75% are low-to-moderate-confidence planning benchmarks; the bake-off replaces them with measured values.</div>
                 </div>
               </div>`; })() : ''}
+              </div>
 
               <div class="pt-strips mt-3">
                 <div class="pt-strip">
@@ -13051,8 +13280,8 @@
             scrollPreserveRender(); return;
           }
           if (action === 'toggle-pt') { if (STATE.ptRunning && !STATE.ptPaused) { STATE.ptPaused = true; STATE.ptTimers.forEach(id => clearTimeout(id)); STATE.ptTimers = []; scrollPreserveRender(); } else if (STATE.ptRunning && STATE.ptPaused) { STATE.ptPaused = false; scrollPreserveRender(); runPtQueue(); } else { startPt(false); } return; }
-          if (action === 'pt-play-all') { startPt(true); return; }
-          if (action === 'pt-section') { const _i = parseInt(act.getAttribute('data-idx'), 10) || 0; STATE.ptTour = false; STATE.ptSection = _i; startPt(false); return; }
+          if (action === 'pt-play-all') { startPt(true); const _sw = document.querySelector('.pt-stagewrap'); if (_sw) _sw.classList.add('pt-enter'); return; }
+          if (action === 'pt-section') { const _i = parseInt(act.getAttribute('data-idx'), 10) || 0; STATE.ptTour = false; STATE.ptSection = _i; startPt(false); const _sw = document.querySelector('.pt-stagewrap'); if (_sw) _sw.classList.add('pt-enter'); return; }
           if (action === 'step-pt') { stepPt(); return; }
           if (action === 'reset-pt') { resetPt(); return; }
           if (action === 'start-mt') { startMt(); return; }
