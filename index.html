@@ -950,6 +950,193 @@
       .dr-arrow-line.dr-drawn { height: 20px; }      @keyframes drPulse { 0% { box-shadow: 0 0 0 0 rgba(47,107,255,0); } 50% { box-shadow: 0 0 12px 3px rgba(47,107,255,0.15); } 100% { box-shadow: 0 0 0 0 rgba(47,107,255,0); } }
       .dr-pulse { animation: drPulse 2s ease-in-out infinite; }
 
+      /* ===== Partner tab — side-by-side operating-model comparison ===== */
+      .pt-event { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 9px 14px; border-radius: 10px; background: linear-gradient(135deg, #171d2b 0%, #1745bf 100%); color: white; }
+      .pt-event i { width: 15px; height: 15px; color: #fbc46b; flex-shrink: 0; }
+      .pt-event-title { font-size: 12px; font-weight: 700; letter-spacing: -0.005em; }
+      .pt-event-meta { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 9.5px; color: rgba(255,255,255,0.72); }
+      .pt-duo { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: stretch; }
+      @media (max-width: 860px) { .pt-duo { grid-template-columns: 1fr; } }
+      .pt-side { border-radius: 12px; padding: 12px; background: white; display: flex; flex-direction: column; gap: 8px; }
+      .pt-side-left { border: 2px solid #ffaab2; border-top: 4px solid #ef4e5b; }
+      .pt-side-right { border: 2px solid #bfe9e1; border-top: 4px solid #12a58c; }
+      .pt-side-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+      .pt-side-label { font-size: 10px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
+      .pt-side-left .pt-side-label { color: #b02a37; }
+      .pt-side-right .pt-side-label { color: #055c53; }
+      .pt-side-sub { font-size: 10px; color: #737d92; font-weight: 600; }
+      .pt-hours { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 6px; border: 1px solid #dce1ec; background: #fbfcfe; color: #3b4457; white-space: nowrap; transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1); }
+      .pt-side-left .pt-hours.pt-hot { border-color: #ffaab2; background: #ffeef0; color: #b02a37; }
+      .pt-side-right .pt-hours.pt-hot { border-color: #bfe9e1; background: #e4f6ef; color: #055c53; }
+      .pt-zone { border-radius: 10px; padding: 9px 10px; border: 1px solid #dce1ec; background: #fbfcfe; opacity: 0; transform: translateY(10px); transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1), transform 0.45s cubic-bezier(0.22, 1, 0.36, 1); }
+      .pt-zone.pt-visible { opacity: 1; transform: translateY(0); }
+      .pt-zone-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 11px; font-weight: 700; color: #171d2b; }
+      .pt-zone-head i { width: 13px; height: 13px; color: #737d92; }
+      .pt-zone-tag { font-size: 9px; font-weight: 700; color: #9aa3b7; letter-spacing: 0.04em; text-transform: uppercase; }
+      .pt-master { border: 1px solid #bfe9e1; background: #f2fbf9; }
+      .pt-steps { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 7px; }
+      .pt-step { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: 600; border: 1px solid #dce1ec; background: white; color: #9aa3b7; transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1); }
+      .pt-step i { width: 11px; height: 11px; }
+      .pt-step-toil.pt-lit { border-color: #ffdb9e; background: #fff5e1; color: #8a5709; }
+      .pt-step-done.pt-lit { border-color: #bfe9e1; background: #e4f6ef; color: #055c53; }
+      .pt-step-yours.pt-lit { border-color: #c1d4ff; background: #eef3ff; color: #1745bf; }
+      .pt-fan { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+      .pt-line { width: 2px; height: 0; background: linear-gradient(180deg, #12a58c, #2f6bff); margin: 0 auto; transition: height 0.6s cubic-bezier(0.22, 1, 0.36, 1); border-radius: 2px; }
+      .pt-line.pt-drawn { height: 18px; }
+      .pt-callout { opacity: 0; transform: translateY(4px); transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1); }
+      .pt-callout.pt-show { opacity: 1; transform: translateY(0); }
+      .pt-toast { display: flex; align-items: flex-start; gap: 6px; border-radius: 8px; padding: 7px 10px; font-size: 10.5px; font-weight: 600; line-height: 1.4; }
+      .pt-toast i { width: 12px; height: 12px; flex-shrink: 0; margin-top: 1px; }
+      .pt-toast-warn { background: #fff5e1; border: 1px solid #ffdb9e; color: #8a5709; }
+      .pt-toast-good { background: #e4f6ef; border: 1px solid #bfe9e1; color: #055c53; }
+      .pt-meter { display: flex; align-items: flex-end; gap: 14px; border-top: 1px dashed #dce1ec; padding-top: 8px; margin-top: auto; }
+      .pt-meter-label { font-size: 10px; font-weight: 700; color: #3b4457; line-height: 1.35; flex: 1; }
+      .pt-meter-label .pt-meter-sub { display: block; font-weight: 500; color: #737d92; }
+      .pt-bars { display: flex; align-items: flex-end; gap: 10px; height: 74px; }
+      .pt-bar-col { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 3px; height: 100%; }
+      .pt-bar { display: inline-block; width: 16px; border-radius: 3px 3px 0 0; background: #ef4e5b; height: 0; transition: height 0.55s cubic-bezier(0.22, 1, 0.36, 1); }
+      .pt-bar.pt-grow { height: var(--h, 12px); }
+      .pt-side-right .pt-bar { background: #12a58c; }
+      .pt-bar-tick { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 8.5px; color: #737d92; white-space: nowrap; }
+      .pt-strips { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+      @media (max-width: 860px) { .pt-strips { grid-template-columns: 1fr; } }
+      .pt-strip { border-radius: 10px; border: 1px solid #dce1ec; background: #fbfcfe; padding: 10px 12px; }
+      .pt-strip-title { font-size: 10px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #3b4457; margin-bottom: 6px; }
+      .pt-chipset { display: flex; flex-wrap: wrap; gap: 4px; }
+      .pt-chip { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: 600; border: 1px solid #dce1ec; background: white; color: #3b4457; }
+      .pt-chip i { width: 11px; height: 11px; color: #737d92; }
+      .pt-strip-foot { font-size: 9.5px; color: #737d92; margin-top: 7px; line-height: 1.45; }
+      .pt-closer { text-align: center; font-size: 13px; font-weight: 700; color: #1745bf; background: #eef3ff; border-radius: 8px; padding: 10px 14px; }
+      .pt-donechip { display: inline-flex; align-items: center; gap: 5px; padding: 4px 9px; border-radius: 6px; font-size: 10px; font-weight: 700; margin-top: 7px; }
+      .pt-donechip i { width: 12px; height: 12px; }
+      .pt-donechip-left { background: #eef1f8; border: 1px solid #c4cbdb; color: #3b4457; }
+      .pt-donechip-right { background: #e4f6ef; border: 1px solid #bfe9e1; color: #055c53; }
+      .pt-master-note { font-size: 9.5px; color: #077a6e; font-weight: 600; margin-top: 7px; }
+      .pt-footnote { font-size: 9px; color: #9aa3b7; line-height: 1.5; text-align: center; }
+      .pt-pillbar { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 12px; }
+      .pt-pill { display: inline-flex; flex-direction: column; align-items: flex-start; gap: 1px; padding: 6px 12px; border-radius: 10px; border: 1px solid #dce1ec; background: white; cursor: pointer; transition: all 0.18s ease; text-align: left; }
+      .pt-pill:hover { border-color: #9aa3b7; background: #fbfcfe; }
+      .pt-pill.active { border-color: #2f6bff; background: #eef3ff; box-shadow: 0 0 0 1px rgba(47,107,255,0.15); }
+      .pt-pill-name { font-size: 11px; font-weight: 700; color: #171d2b; display: inline-flex; align-items: center; gap: 5px; }
+      .pt-pill-name i { width: 12px; height: 12px; color: #2f6bff; }
+      .pt-pill-tag { font-size: 8.5px; font-weight: 600; color: #737d92; text-transform: uppercase; letter-spacing: 0.06em; }
+      .pt-playall { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 9999px; border: 0; background: #2f6bff; color: white; font-size: 11px; font-weight: 700; cursor: pointer; transition: background 0.18s ease, transform 0.18s ease; box-shadow: 0 2px 6px rgba(47,107,255,0.28); }
+      .pt-playall:hover { background: #1f57e6; transform: scale(1.02); }
+      .pt-playall i { width: 12px; height: 12px; }
+      .pt-statband { display: flex; align-items: center; justify-content: center; gap: 18px; flex-wrap: wrap; border: 1px solid #bfe9e1; background: #f2fbf9; border-radius: 10px; padding: 12px 18px; }
+      .pt-stat-pct { font-family: Poppins, ui-sans-serif, sans-serif; font-size: 34px; font-weight: 800; letter-spacing: -0.02em; color: #0b8874; line-height: 1; }
+      .pt-stat-meta { text-align: left; }
+      .pt-stat-hrs { font-size: 13px; font-weight: 800; color: #171d2b; }
+      .pt-stat-sub { font-size: 9.5px; color: #737d92; font-weight: 600; }
+      .pt-stat-verdict { flex-basis: 100%; text-align: center; font-size: 11px; font-weight: 600; color: #055c53; }
+      /* ── Partner tab, executive restyle: quiet comparison exhibit.
+         No chips, no banners, no red/green morality play — hairlines,
+         two calm columns, sequential text-row reveals. ── */
+      .pt-pillbar { gap: 0 4px; border-bottom: 1px solid #dce1ec; padding-bottom: 0; margin-bottom: 16px; }
+      .pt-pill { border: 0; background: transparent; border-radius: 0; padding: 6px 10px 9px; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+      .pt-pill:hover { background: transparent; border-bottom-color: #c4cbdb; }
+      .pt-pill.active { background: transparent; box-shadow: none; border-bottom-color: #2f6bff; }
+      .pt-pill-name { font-size: 11.5px; }
+      .pt-pill-name i, .pt-pill-name svg { display: none; }
+      .pt-pill-tag { font-size: 8px; color: #9aa3b7; }
+      .pt-playall { background: transparent; color: #171d2b; border: 1px solid #c4cbdb; box-shadow: none; font-weight: 600; margin-bottom: 6px; }
+      .pt-playall:hover { background: #f4f6fb; border-color: #9aa3b7; transform: none; }
+      .pt-playall i { color: #2f6bff; }
+      .pt-event { background: transparent; border-radius: 0; border-left: 2px solid #2f6bff; padding: 2px 0 2px 12px; justify-content: flex-start; color: #171d2b; box-shadow: none; }
+      .pt-event::before { content: 'Scenario'; font-size: 9px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: #9aa3b7; margin-right: 12px; flex-shrink: 0; }
+      .pt-event i, .pt-event svg { display: none; }
+      .pt-event-title { font-size: 12.5px; font-weight: 600; color: #3b4457; letter-spacing: 0; }
+      .pt-duo { gap: 0; border: 1px solid #dce1ec; border-radius: 12px; overflow: hidden; background: white; }
+      .pt-side, .pt-side-left, .pt-side-right { border: 0; border-radius: 0; padding: 14px 18px; gap: 4px; }
+      .pt-side-left { border-right: 1px solid #dce1ec; }
+      @media (max-width: 860px) { .pt-side-left { border-right: 0; border-bottom: 1px solid #dce1ec; } }
+      .pt-side-left .pt-side-label { color: #737d92; }
+      .pt-side-right .pt-side-label { color: #1745bf; }
+      .pt-side-sub { color: #9aa3b7; font-weight: 500; }
+      .pt-zone, .pt-zone.pt-master { border: 0; background: transparent; padding: 0; }
+      .pt-steps { display: block; margin-top: 6px; }
+      .pt-step, .pt-step-toil.pt-lit, .pt-step-done.pt-lit, .pt-step-yours.pt-lit { display: flex; width: 100%; align-items: center; gap: 9px; border: 0; border-top: 1px solid #eef1f8; background: transparent; color: #171d2b; border-radius: 0; padding: 6px 0; font-size: 11.5px; font-weight: 500; }
+      .pt-step:first-child { border-top: 0; }
+      .pt-step { opacity: 0.22; transform: translateX(-3px); transition: opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1), transform 0.4s cubic-bezier(0.22, 1, 0.36, 1); }
+      .pt-step.pt-lit { opacity: 1; transform: none; }
+      .pt-step i, .pt-step svg { display: none; }
+      .pt-step::before { content: ''; width: 5px; height: 5px; border-radius: 1px; background: #c4cbdb; flex-shrink: 0; }
+      .pt-side-right .pt-step::before { background: #2f6bff; }
+      .pt-step-yours::after { content: 'stays with you'; margin-left: auto; padding-left: 10px; font-size: 8px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #9aa3b7; flex-shrink: 0; }
+      .pt-toast, .pt-toast-warn, .pt-toast-good { background: transparent; border: 0; border-top: 1px solid #dce1ec; border-radius: 0; padding: 9px 0 0; color: #545d70; font-weight: 500; font-size: 11px; line-height: 1.5; }
+      .pt-side-right .pt-toast { color: #171d2b; }
+      .pt-toast i, .pt-toast svg { display: none; }
+      .pt-statband { display: block; background: transparent; border: 0; border-top: 1px solid #dce1ec; border-radius: 0; text-align: left; padding: 12px 2px 0; }
+      .pt-stat-eyebrow { font-size: 9px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: #9aa3b7; margin-bottom: 4px; }
+      .pt-stat-lead { font-size: 13px; font-weight: 700; color: #171d2b; letter-spacing: -0.005em; }
+      .pt-stat-detail { font-size: 11px; font-weight: 500; color: #545d70; margin-top: 2px; }
+      .pt-strips { gap: 28px; border-top: 1px solid #dce1ec; padding-top: 14px; }
+      .pt-strip { border: 0; background: transparent; padding: 0; border-radius: 0; }
+      .pt-chipset { display: block; }
+      .pt-chip { display: flex; align-items: center; border: 0; background: transparent; border-radius: 0; padding: 3.5px 0; font-size: 11px; font-weight: 500; color: #3b4457; gap: 9px; }
+      .pt-chip i, .pt-chip svg { display: none; }
+      .pt-chip::before { content: ''; width: 4px; height: 4px; border-radius: 1px; background: #c4cbdb; flex-shrink: 0; }
+      .pt-strip-foot { color: #9aa3b7; }
+      .pt-shift { display: flex; gap: 24px; align-items: flex-start; flex-wrap: wrap; border-top: 1px solid #dce1ec; margin-top: 14px; padding-top: 14px; }
+      .pt-shift-body { font-size: 12px; color: #171d2b; line-height: 1.55; max-width: 78ch; font-weight: 500; }
+      .ptm { border: 1px solid #dce1ec; border-radius: 12px; padding: 14px 16px; background: white; }
+      .ptm-grid { display: grid; grid-template-columns: 320px 1fr; gap: 22px; margin-top: 12px; }
+      @media (max-width: 860px) { .ptm-grid { grid-template-columns: 1fr; } }
+      .ptm-field { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 5px 0; border-top: 1px solid #eef1f8; font-size: 11px; color: #3b4457; font-weight: 500; }
+      .ptm-field:first-child { border-top: 0; }
+      .ptm-field em { font-style: normal; color: #9aa3b7; font-size: 9.5px; display: block; }
+      .ptm-field input { width: 78px; border: 1px solid #dce1ec; border-radius: 8px; padding: 4px 8px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; color: #171d2b; text-align: right; background: #fbfcfe; flex-shrink: 0; }
+      .ptm-field input:focus { outline: none; border-color: #2f6bff; box-shadow: 0 0 0 3px rgba(47,107,255,0.15); }
+      .ptm-bar-row { display: grid; grid-template-columns: 120px 1fr 100px; align-items: center; gap: 10px; font-size: 11px; color: #545d70; font-weight: 500; padding: 4px 0; }
+      .ptm-bar-row .ptm-out-val { text-align: right; }
+      .ptm-bar { display: block; height: 10px; border-radius: 3px; background: #c4cbdb; transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1); justify-self: start; width: 100%; }
+      .ptm-bar-fut { background: #2f6bff; }
+      .ptm-out { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; border-top: 1px solid #eef1f8; padding: 6px 0; font-size: 11.5px; }
+      .ptm-out-label { color: #545d70; font-weight: 500; }
+      .ptm-out-val { font-weight: 700; color: #171d2b; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; white-space: nowrap; }
+      .ptm-notes { border-top: 1px solid #dce1ec; margin-top: 10px; padding-top: 8px; font-size: 9.5px; color: #9aa3b7; line-height: 1.55; }
+      .pt-table { border: 1px solid #dce1ec; border-radius: 12px; overflow: hidden; background: white; }
+      .pt-tr { display: grid; grid-template-columns: 150px 1fr 1fr; border-top: 1px solid #eef1f8; }
+      .pt-tr.pt-thead { border-top: 0; background: #fbfcfe; }
+      .pt-td-h { padding: 9px 16px; font-size: 9px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: #737d92; border-left: 1px solid #eef1f8; }
+      .pt-td-h-aw { color: #1745bf; }
+      .pt-td-dim { padding: 12px 16px; font-size: 9px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: #9aa3b7; line-height: 1.5; }
+      .pt-td { padding: 12px 16px; font-size: 11.5px; line-height: 1.55; color: #545d70; font-weight: 500; border-left: 1px solid #eef1f8; }
+      .pt-td-aw { color: #171d2b; }
+      .pt-keep { display: block; margin-top: 5px; font-size: 8px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #9aa3b7; }
+      .pt-tr.pt-callout { transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1), transform 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
+      @media (max-width: 860px) { .pt-tr { grid-template-columns: 1fr; } .pt-td, .pt-td-h { border-left: 0; } .pt-td-dim { padding-bottom: 0; } .pt-thead .pt-td-dim { display: none; } }
+      .pt-viz { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid #dce1ec; border-radius: 12px; background: white; overflow: hidden; margin-bottom: 14px; }
+      @media (max-width: 860px) { .pt-viz { grid-template-columns: 1fr; } .pt-viz-lane + .pt-viz-lane { border-left: 0; border-top: 1px solid #eef1f8; } }
+      .pt-viz-lane { padding: 12px 16px; }
+      .pt-viz-lane + .pt-viz-lane { border-left: 1px solid #eef1f8; }
+      .pt-viz-lab { font-size: 9px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: #737d92; margin-bottom: 10px; }
+      .pt-viz-lab-aw { color: #1745bf; }
+      .pt-viz-boxes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+      .pt-viz-box { border: 1px solid #dce1ec; border-radius: 8px; padding: 7px 9px; background: #fbfcfe; opacity: 0.25; transform: translateY(4px); transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1), transform 0.45s cubic-bezier(0.22, 1, 0.36, 1); }
+      .pt-viz-box.pt-visible { opacity: 1; transform: none; }
+      .pt-viz-box-h { font-size: 9.5px; font-weight: 700; color: #171d2b; }
+      .pt-viz-cells { display: flex; gap: 3px; margin: 7px 0; }
+      .pt-viz-cell { width: 13px; height: 13px; border-radius: 2px; background: #eef1f8; transition: background 0.3s ease; }
+      .pt-viz-cell.pt-lit { background: #fbc46b; }
+      .pt-viz-cell-aw.pt-lit { background: #2f6bff; }
+      .pt-viz-box-f { font-size: 8.5px; color: #9aa3b7; font-weight: 600; }
+      .pt-viz-aw { display: flex; gap: 0; align-items: stretch; }
+      .pt-viz-src { flex: 0 0 44%; }
+      .pt-viz-fan { flex: 1; display: flex; flex-direction: column; justify-content: space-between; gap: 6px; padding-left: 0; }
+      .pt-viz-fanitem { display: flex; align-items: center; }
+      .pt-viz-line { height: 2px; width: 0; background: linear-gradient(90deg, #2f6bff, #12a58c); border-radius: 2px; transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1); flex: 0 0 auto; }
+      .pt-viz-line.pt-drawn { width: 20px; }
+      .pt-viz-chip { flex: 1; border: 1px solid #dce1ec; border-radius: 7px; padding: 5px 9px; font-size: 9px; font-weight: 600; color: #171d2b; background: #fbfcfe; opacity: 0.25; transform: translateX(-3px); transition: opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1), transform 0.4s cubic-bezier(0.22, 1, 0.36, 1); }
+      .pt-viz-chip.pt-visible { opacity: 1; transform: none; border-color: #c1d4ff; background: #eef3ff; }
+      .ptm-chart { display: flex; gap: 22px; align-items: flex-end; height: 170px; padding: 4px 6px 0; }
+      .ptm-col { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 5px; height: 100%; }
+      .ptm-colbar { width: 100%; max-width: 90px; background: #c4cbdb; border-radius: 4px 4px 0 0; }
+      .ptm-colbar-fut { background: #2f6bff; }
+      .ptm-colbar-val { background: #12a58c; }
+      .ptm-colval { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11.5px; font-weight: 700; color: #171d2b; }
+      .ptm-collab { font-size: 9px; color: #737d92; text-align: center; line-height: 1.4; font-weight: 600; }
+
       /* ===== AI Copilot view ===== */
       .ai-shell {
         background: #ffffff;
@@ -5807,6 +5994,7 @@
     <script>
       const STATE = {
         activeTab: 'problems',
+        ptPhase: 'idle', ptRunning: false, ptPaused: false, ptQueue: [], ptQueueIdx: 0, ptTimers: [], ptSection: 0, ptTour: false,
         showAnalystModal: false,
         showAIAgent: false,
         impact: { minutes: 9, pkgHours: 6, riskHrs: 22.5 },
@@ -5933,7 +6121,7 @@
             intro: "Application Workspace doesn't replace your tools - it's the layer that makes them work together.",
             bullets: [
               "Define once, deliver everywhere = One definition deploys to Intune, SCCM, Citrix, AVD, and macOS automatically.",
-              "8,000+ apps ready to go = A curated catalog with verified sources, tested silent switches, CVE data, and virus scan scores — updated daily. Your team only packages what's genuinely unique to your business.",
+              "8,000+ apps ready to go = A curated catalog with verified sources, tested silent switches, vulnerability data, and virus scan scores — updated daily. Your team only packages what's genuinely unique to your business.",
               "Self-service replaces tickets = Users get approved apps in seconds. IT controls the catalog. Users control the timing.",
               "Patches land everywhere at once = Staged pipeline. Every environment. No per-platform rebuilds.",
               "Nothing gets ripped out = Works with what you already run. Additive, not replacement.",
@@ -5966,7 +6154,7 @@
               intro: "Application Workspace doesn't replace your tools - it's the layer that makes them work together.",
               bullets: [
                 "Define once, deliver everywhere = One definition deploys to Intune, SCCM, Citrix, AVD, and macOS automatically.",
-                "8,000+ apps ready to go = A curated catalog with verified sources, tested silent switches, CVE data, and virus scan scores — updated daily. Your team only packages what's genuinely unique to your business.",
+                "8,000+ apps ready to go = A curated catalog with verified sources, tested silent switches, vulnerability data, and virus scan scores — updated daily. Your team only packages what's genuinely unique to your business.",
                 "Self-service replaces tickets = Users get approved apps in seconds. IT controls the catalog. Users control the timing.",
                 "Patches land everywhere at once = Staged pipeline. Every environment. No per-platform rebuilds.",
                 "Nothing gets ripped out = Works with what you already run. Additive, not replacement.",
@@ -6035,6 +6223,7 @@
       const TABS = [
         { id: 'problems', label: 'Current State', icon: 'alert-triangle' },
         { id: 'solution', label: 'Recast Approach', icon: 'workflow' },
+        { id: 'partner', label: 'Partner', icon: 'handshake' },
         { id: 'roi', label: 'Business Impact', icon: 'bar-chart-3' }
       ];
 
@@ -6426,7 +6615,7 @@
                   </div>
                   <div class="platform-stats-row-divider"></div>
                   <div class="platform-stat-hero">
-                    <div class="platform-stat-hero-value">CVE</div>
+                    <div class="platform-stat-hero-value">Vuln.</div>
                     <div class="platform-stat-hero-label">+ Scan Data</div>
                   </div>
                 </div>
@@ -6705,6 +6894,15 @@
         ['mt-drawn',   '.mt-sync-line'],
         ['mt-lit',     '.mt-control'],
         ['mt-show',    '.mt-callout'],
+        ['pt-visible', '.pt-zone'],
+        ['pt-lit',     '.pt-step'],
+        ['pt-drawn',   '.pt-line'],
+        ['pt-show',    '.pt-callout'],
+        ['pt-grow',    '.pt-bar'],
+        ['pt-visible', '.pt-viz-box'],
+        ['pt-visible', '.pt-viz-chip'],
+        ['pt-lit',     '.pt-viz-cell'],
+        ['pt-drawn',   '.pt-viz-line'],
         ['ss-show',         '.ss-security-row'],
         ['ss-card-shifted', '.ss-package-card'],
         ['ss-card-your-in', '.ss-package-card'],
@@ -6957,7 +7155,9 @@
                     ? 'One package, every workspace &mdash; laptop, Cloud PC, or VDI.'
                     : STATE.activeTab==='solution'
                       ? 'One model that stops multiplying work per platform.'
-                      : 'Keep applications running smoothly as platforms change.'
+                      : STATE.activeTab==='partner'
+                        ? 'One operating model across every customer you manage.'
+                        : 'Keep applications running smoothly as platforms change.'
                 }</div>
               </div>
             </div>
@@ -7014,6 +7214,7 @@
       function renderActivePanel(){
         if (STATE.activeTab==='problems') return renderProblems();
         if (STATE.activeTab==='solution') return renderSolution();
+        if (STATE.activeTab==='partner') return renderPartner();
         if (STATE.activeTab==='roi') return renderROI();
         return '';
       }
@@ -8068,7 +8269,7 @@
                         </div>
                         <div class="hidden md:flex flex-col gap-1 flex-shrink-0 ml-3">
                           <div class="flex items-center gap-1 px-2 py-0.5 rounded-full border border-slate-200 bg-white text-[10px] text-[#545d70]"><div class="w-1.5 h-1.5 rounded-full bg-indigo-400"></div>Identity-Based Access</div>
-                          <div class="flex items-center gap-1 px-2 py-0.5 rounded-full border border-slate-200 bg-white text-[10px] text-[#545d70]"><div class="w-1.5 h-1.5 rounded-full bg-red-400"></div>CVE / Auto-Patching</div>
+                          <div class="flex items-center gap-1 px-2 py-0.5 rounded-full border border-slate-200 bg-white text-[10px] text-[#545d70]"><div class="w-1.5 h-1.5 rounded-full bg-red-400"></div>Vulnerability / Auto-Patching</div>
                         </div>
                       </div>
                     </div>
@@ -8991,7 +9192,7 @@
                   </div>
                   <div class="ss-security-row ${showAdobeBadges ? 'ss-show' : ''}">
                     <div class="ss-badge ss-badge-clean ss-badge-pop" style="--pop-delay:0ms"><i data-lucide="shield-check" class="w-3 h-3"></i> VirusTotal: 0/72 clean</div>
-                    <div class="ss-badge ss-badge-cve ss-badge-pop" style="--pop-delay:120ms"><i data-lucide="alert-triangle" class="w-3 h-3"></i> CVE-2024-41869 · CVSS 7.8</div>
+                    <div class="ss-badge ss-badge-cve ss-badge-pop" style="--pop-delay:120ms"><i data-lucide="alert-triangle" class="w-3 h-3"></i> Known vulnerability flagged · severity 7.8</div>
                     <div class="ss-badge ss-badge-supersede ss-badge-pop" style="--pop-delay:240ms">supersedes v23.x</div>
                   </div>
                 </div>
@@ -9016,7 +9217,7 @@
                   </div>
                   <div class="ss-security-row ${showYourBadges ? 'ss-show' : ''}">
                     <div class="ss-badge ss-badge-clean ss-badge-pop" style="--pop-delay:0ms"><i data-lucide="shield-check" class="w-3 h-3"></i> VirusTotal: 0/72 clean</div>
-                    <div class="ss-badge ss-badge-cve ss-badge-pop" style="--pop-delay:120ms"><i data-lucide="alert-triangle" class="w-3 h-3"></i> Internal CVE policy applied</div>
+                    <div class="ss-badge ss-badge-cve ss-badge-pop" style="--pop-delay:120ms"><i data-lucide="alert-triangle" class="w-3 h-3"></i> Internal security policy applied</div>
                     <div class="ss-badge ss-badge-supersede ss-badge-pop" style="--pop-delay:240ms">supersedes v2.2</div>
                   </div>
                 </div>
@@ -10153,6 +10354,184 @@
             `}
           </div>
         `;
+      }
+
+      /* ========== PARTNER (PT) ANIMATION ENGINE ==========
+         Five partner workstreams, each a side-by-side beat sequence:
+         boards -> left (today) -> right (with AW) -> stat. "Play all"
+         tours the sections in order, like the lifecycle tour on the
+         Recast Approach tab. Content below sticks to the MSP playbook:
+         AW reduces repeated base-lifecycle work; customer-specific
+         config, approvals, testing, and support stay with the MSP. */
+      let _ptmDebounce = null;
+      /* Partner financial operating model — activity-based, per the MSP
+         playbook: package changes drive workload; customers/users provide
+         allocation context. Seeded from the Business Impact tab defaults
+         plus the playbook's planning benchmarks; every input editable.
+         License/implementation costs are NEVER assumed — the model shows
+         the break-even license price instead (playbook formula). */
+      function ptModelEnsure(){
+        if (!STATE.ptModel) {
+          const ci = STATE.calcInputs || {};
+          STATE.ptModel = {
+            changes: Math.max(1, Math.round(((ci.pkgHours || 80) + (ci.patchHours || 60)) / 8)),
+            mix: (ci.complexMixPct == null ? 20 : ci.complexMixPct),
+            cur: 8, std: 1.5, cust: 4, real: 75,
+            rate: ci.loadedRate || 95,
+            users: ci.users || 5000
+          };
+        }
+        return STATE.ptModel;
+      }
+      function ptModelCalc(){
+        const m = ptModelEnsure();
+        const mix = Math.min(100, Math.max(0, m.mix)) / 100;
+        const real = Math.min(100, Math.max(0, m.real)) / 100;
+        const annual = m.changes * 12;
+        const curHrs = annual * m.cur;
+        const rawFutHrs = annual * ((1 - mix) * m.std + mix * m.cust);
+        const returnedHrs = Math.max(0, (curHrs - rawFutHrs) * real);
+        const futHrs = curHrs - returnedHrs;
+        const value = returnedHrs * m.rate;
+        return { m, annual, curHrs, futHrs, returnedHrs, fte: returnedHrs / 1920, value,
+          curPerChange: m.cur * m.rate,
+          futPerChange: annual > 0 ? (futHrs / annual) * m.rate : 0,
+          breakeven: m.users > 0 ? value / m.users / 12 : 0 };
+      }
+      const PT_SECTIONS = [
+        { key: "packaging", pill: "Application packaging", tag: "Manual builds \u2192 workflows", icon: "box",
+          event: "A customer requests an app Microsoft\u2019s catalog does not cover \u2014 in-house, business-specific",
+          viz: { unit: "Manual build", src: "Standardized workflow", per: "config only" },
+          rows: [
+            { dim: "Packaging work", today: "Teams manually obtain, convert, and prepare every package.", aw: "Standardized, automated packaging workflows." },
+            { dim: "Catalog coverage", today: "Microsoft\u2019s catalog misses in-house and third-party apps.", aw: "Extends beyond the catalog \u2014 custom apps included." },
+            { dim: "Exceptions", today: "Complex apps consume senior engineering time.", aw: "Routine work removed; exceptions stay with your team.", keep: true },
+          ],
+          stat: { hrs: "Standardized, automated packaging \u2014 including in-house apps", sub: "application packaging" },
+          verdict: "Manual packaging effort is reduced; the team keeps exceptions and judgment." },
+        { key: "updates", pill: "Updates + speed", tag: "Release-to-deploy time", icon: "refresh-cw",
+          event: "A new version is released before the previous one has finished deploying",
+          viz: { unit: "Manual update cycle", src: "Central update", per: "approve + deploy" },
+          rows: [
+            { dim: "Update cycle", today: "Monitored, packaged, tested, and deployed by hand.", aw: "Identified, packaged, and deployed through automation." },
+            { dim: "Speed", today: "New versions ship before rollouts finish.", aw: "Release-to-deployment time shortens." },
+            { dim: "End users", today: "Delayed updates; outdated software in use.", aw: "Less interruption; timing under your control.", keep: true },
+          ],
+          stat: { hrs: "From software release to customer deployment", sub: "updates + deployment speed" },
+          verdict: "Update delivery keeps pace with vendor release cycles." },
+        { key: "governance", pill: "Governance", tag: "Regulated customers", icon: "shield-check",
+          event: "One customer takes auto-upgrades; a regulated customer requires formal change control",
+          viz: { unit: "Manual approval chain", src: "Reusable workflow", per: "customer rules" },
+          rows: [
+            { dim: "Testing + QA", today: "Creation \u2192 QA \u2192 approval \u2192 staged deploy, per customer.", aw: "Testing and approvals built into reusable workflows." },
+            { dim: "Requirements", today: "Banks and insurers need formal change control.", aw: "Approval workflows configured per customer.", keep: true },
+            { dim: "Compliance", today: "Sources verified and documented manually.", aw: "Verified sourcing and controls in the lifecycle." },
+          ],
+          stat: { hrs: "Testing + approvals incorporated into the lifecycle", sub: "security, compliance + QA" },
+          verdict: "Compliance remains a control without becoming a bottleneck." },
+        { key: "reuse", pill: "Multi-customer reuse", tag: "Across tenants", icon: "building-2",
+          event: "The same proven package is needed across ten customer environments",
+          viz: { unit: "Rebuilt process", src: "Proven package", per: "reuse + rules" },
+          rows: [
+            { dim: "Across customers", today: "Processes recreated per environment.", aw: "Proven packages reused; rules per customer.", keep: true },
+            { dim: "Consistency", today: "Results vary by technician and tenant.", aw: "Standardized and repeatable." },
+            { dim: "Knowledge", today: "Lives in scripts and individuals.", aw: "Centralized in one operating model." },
+          ],
+          stat: { hrs: "Proven packages + workflows across customer tenants", sub: "multi-customer delivery" },
+          verdict: "Delivery is no longer rebuilt customer by customer." },
+        { key: "platforms", pill: "Intune, Jamf + platforms", tag: "Complement, not replace", icon: "layers",
+          event: "Windows, macOS, iOS, Android \u2014 managed through Intune, Jamf, and other platforms",
+          viz: { unit: "Per-platform process", src: "One operating model", per: "Intune \u00b7 Jamf" },
+          rows: [
+            { dim: "Intune", today: "Packages integrated manually, per customer.", aw: "Complements Intune; automates the work around it." },
+            { dim: "Jamf + tools", today: "Separate processes per platform.", aw: "One model across supported platforms." },
+            { dim: "Platform mix", today: "Windows carries the largest workload.", aw: "Consistent workspace; OS requirements honored.", keep: true },
+          ],
+          stat: { hrs: "Complements Intune, Jamf + supported management platforms", sub: "platform support" },
+          verdict: "The endpoint strategy stays; the manual work around it is reduced." },
+        { key: "business", pill: "Business model + scale", tag: "Margins + growth", icon: "trending-up",
+          event: "Supporting more customers currently requires proportional packaging capacity",
+          viz: { unit: "Added headcount", src: "Same team", per: "more customers" },
+          rows: [
+            { dim: "Resource model", today: "Skilled staff repeat similar work across customers.", aw: "Staff shift to exceptions and higher-value services.", keep: true },
+            { dim: "Scalability", today: "Growth requires proportional headcount.", aw: "More customers without matching hires." },
+            { dim: "Commercial model", today: "Priced by effort and resource count.", aw: "Per-user, per-month, through the partner." },
+          ],
+          stat: { hrs: "Licensed per user, per month \u2014 through the partner, not per endpoint", sub: "commercial model" },
+          verdict: "Growth no longer requires proportional packaging headcount." },
+        { key: "enablement", pill: "Enablement + joint selling", tag: "Recast alongside you", icon: "handshake",
+          event: "A first customer opportunity arrives before deep product expertise exists",
+          viz: { unit: "Solo preparation", src: "Joint enablement", per: "supported demo" },
+          rows: [
+            { dim: "Onboarding", today: "Expertise built alone, up front.", aw: "Onboarding, shadowing, enablement." },
+            { dim: "Demonstrations", today: "Partners prepare demos solo.", aw: "Joint or Recast-supported demonstrations.", keep: true },
+            { dim: "First deals", today: "Depend on in-house confidence.", aw: "De-risked by supported engagements." },
+          ],
+          stat: { hrs: "Onboarding, shadowing, joint demonstrations", sub: "partner enablement" },
+          verdict: "Early opportunities are supported without requiring day-one product expertise." },
+      ];
+      function buildPtQueue(){
+        const beats = ['boards','r1','r2','r3','stat'];
+        const delays = [500, 1400, 2300, 2300, 2400];
+        const queue = beats.map((bt, i) => ({ delay: delays[i], fn(){ STATE.ptPhase = bt; demoPhaseRender(); } }));
+        queue.push({ delay: 2600, fn(){
+          if (STATE.ptTour && STATE.ptSection < PT_SECTIONS.length - 1) {
+            STATE.ptSection++;
+            STATE.ptPhase = 'idle';
+            STATE.ptQueue = buildPtQueue();
+            STATE.ptQueueIdx = -1; // runner increments to 0 and schedules the new queue
+            demoPhaseRender();
+          } else {
+            STATE.ptTour = false; STATE.ptRunning = false; STATE.ptPaused = false;
+            demoPhaseRender();
+          }
+        } });
+        return queue;
+      }
+      function runPtQueue(){
+        if (STATE.ptPaused || STATE.ptQueueIdx >= STATE.ptQueue.length) return;
+        const step = STATE.ptQueue[STATE.ptQueueIdx];
+        const tid = setTimeout(() => {
+          if (STATE.ptPaused || STATE.activeTab !== 'partner') return;
+          step.fn();
+          STATE.ptQueueIdx++;
+          runPtQueue();
+        }, step.delay);
+        STATE.ptTimers.push(tid);
+      }
+      function startPt(tour){
+        STATE.ptTimers.forEach(id => clearTimeout(id));
+        STATE.ptTimers = [];
+        STATE.ptRunning = true;
+        STATE.ptPaused = false;
+        if (tour) { STATE.ptTour = true; STATE.ptSection = 0; }
+        STATE.ptPhase = 'idle';
+        STATE.ptQueue = buildPtQueue();
+        STATE.ptQueueIdx = 0;
+        scrollPreserveRender();
+        runPtQueue();
+      }
+      function stepPt(){
+        if (STATE.ptRunning && !STATE.ptPaused) return;
+        if (!STATE.ptQueue || STATE.ptQueue.length === 0 || STATE.ptQueueIdx >= STATE.ptQueue.length) {
+          STATE.ptQueue = buildPtQueue();
+          STATE.ptQueueIdx = 0;
+          STATE.ptPhase = 'idle';
+        }
+        const step = STATE.ptQueue[STATE.ptQueueIdx];
+        step.fn();
+        STATE.ptQueueIdx++;
+      }
+      function resetPt(){
+        STATE.ptTimers.forEach(id => clearTimeout(id));
+        STATE.ptTimers = [];
+        STATE.ptPhase = 'idle';
+        STATE.ptRunning = false;
+        STATE.ptPaused = false;
+        STATE.ptTour = false;
+        STATE.ptQueue = [];
+        STATE.ptQueueIdx = 0;
+        scrollPreserveRender();
       }
 
       /* ========== OB ANIMATION ENGINE ========== */
@@ -11583,6 +11962,162 @@
         } catch(err) { console.error('PDF generation error:', err); alert('PDF error: ' + err.message); }
       }
 
+      /* ========== PARTNER TAB ========== */
+      function renderPartner(){
+        const p = STATE.ptPhase;
+        const past = (target) => {
+          const order = ['idle','boards','r1','r2','r3','stat'];
+          return order.indexOf(p) >= order.indexOf(target);
+        };
+        const S = PT_SECTIONS[Math.max(0, Math.min(PT_SECTIONS.length - 1, STATE.ptSection || 0))];
+        const stepCls = (k) => k === 'yours' ? 'pt-step-yours' : k === 'toil' ? 'pt-step-toil' : 'pt-step-done';
+        const running = STATE.ptRunning && !STATE.ptPaused;
+        return `
+          <section id="panel-partner" class="space-y-2" data-screen-label="Partner">
+            <div class="section-card p-4">
+              <div class="flex items-start justify-between gap-3 mb-3">
+                <div>
+                  <div class="text-[15px] font-semibold text-[#171d2b] leading-tight">Application management for partners: today vs. Application Workspace.</div>
+                  <div class="text-[11px] text-slate-500 mt-0.5">Seven workstreams, side by side \u2014 the manual, per-customer model partners run today vs. the standardized, automated model Application Workspace enables.</div>
+                </div>
+              </div>
+
+              <div class="pt-pillbar">
+                ${PT_SECTIONS.map((s, i) => `
+                  <button type="button" data-action="pt-section" data-idx="${i}" class="pt-pill ${i === STATE.ptSection ? 'active' : ''}">
+                    <span class="pt-pill-name"><i data-lucide="${s.icon}"></i>${s.pill}</span>
+                    <span class="pt-pill-tag">${s.tag}</span>
+                  </button>`).join('')}
+              </div>
+
+              <div class="pt-callout ${past('boards') ? 'pt-show' : ''} mb-3">
+                <div class="pt-event">
+                  <span class="pt-event-title">${S.event}</span>
+                </div>
+              </div>
+
+              <div class="pt-viz">
+                <div class="pt-viz-lane">
+                  <div class="pt-viz-lab">Today \u2014 repeated per customer</div>
+                  <div class="pt-viz-boxes">
+                    ${['A','B','C'].map((L, i) => `
+                    <div class="pt-viz-box ${past('r' + (i + 1)) ? 'pt-visible' : ''}">
+                      <div class="pt-viz-box-h">Customer ${L}</div>
+                      <div class="pt-viz-cells">${[0,1,2,3].map(j => `<span class="pt-viz-cell ${past('r' + (i + 1)) ? 'pt-lit' : ''}" style="transition-delay:${j * 90}ms"></span>`).join('')}</div>
+                      <div class="pt-viz-box-f">${S.viz.unit}</div>
+                    </div>`).join('')}
+                  </div>
+                </div>
+                <div class="pt-viz-lane">
+                  <div class="pt-viz-lab pt-viz-lab-aw">With Application Workspace \u2014 once, then reused</div>
+                  <div class="pt-viz-aw">
+                    <div class="pt-viz-box pt-viz-src ${past('r1') ? 'pt-visible' : ''}">
+                      <div class="pt-viz-box-h">${S.viz.src}</div>
+                      <div class="pt-viz-cells">${[0,1,2,3].map(j => `<span class="pt-viz-cell pt-viz-cell-aw ${past('r1') ? 'pt-lit' : ''}" style="transition-delay:${j * 90}ms"></span>`).join('')}</div>
+                      <div class="pt-viz-box-f">once</div>
+                    </div>
+                    <div class="pt-viz-fan">
+                      ${['A','B','C'].map((L, i) => `
+                      <div class="pt-viz-fanitem">
+                        <span class="pt-viz-line ${past('r2') ? 'pt-drawn' : ''}" style="transition-delay:${i * 110}ms"></span>
+                        <div class="pt-viz-chip ${past(i === 2 ? 'r3' : 'r2') ? 'pt-visible' : ''}" style="transition-delay:${i * 90}ms">Customer ${L} \u00b7 ${S.viz.per}</div>
+                      </div>`).join('')}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="pt-table">
+                <div class="pt-tr pt-thead">
+                  <div class="pt-td-dim"></div>
+                  <div class="pt-td-h">How partners operate today</div>
+                  <div class="pt-td-h pt-td-h-aw">With Application Workspace</div>
+                </div>
+                ${S.rows.map((r, i) => `
+                <div class="pt-tr pt-callout ${past('r' + (i + 1)) ? 'pt-show' : ''}">
+                  <div class="pt-td-dim">${r.dim}</div>
+                  <div class="pt-td">${r.today}</div>
+                  <div class="pt-td pt-td-aw">${r.aw}${r.keep ? '<span class="pt-keep">stays with you</span>' : ''}</div>
+                </div>`).join('')}
+              </div>
+
+              <div class="pt-callout ${past('stat') ? 'pt-show' : ''} mt-3">
+                <div class="pt-statband">
+                  <div class="pt-stat-eyebrow">Net effect \u00b7 ${S.stat.sub}</div>
+                  <div class="pt-stat-lead">${S.verdict}</div>
+                  <div class="pt-stat-detail">${S.stat.hrs}</div>
+                </div>
+              </div>
+
+              ${S.key === 'business' ? (() => { const c = ptModelCalc(); const pctFut = c.curHrs > 0 ? Math.max(2, Math.round(c.futHrs / c.curHrs * 100)) : 0; return `
+              <div class="pt-callout ${past('stat') ? 'pt-show' : ''} mt-3">
+                <div class="ptm">
+                  <div class="pt-stat-eyebrow">Partner financial operating model \u00b7 activity-based</div>
+                  <div class="pt-stat-detail">Seeded from the Business Impact defaults (${num(c.m.users)} users \u00b7 $${c.m.rate}/h loaded rate \u00b7 ${c.m.mix}% complex mix) and the operating-model playbook\u2019s planning benchmarks. Every figure is editable \u2014 replace with measured values from your bake-off.</div>
+                  <div class="ptm-grid">
+                    <div>
+                      <label class="ptm-field"><span>Package changes / month <em>new + updates</em></span><input id="ptm-changes" type="number" min="0" value="${c.m.changes}"></label>
+                      <label class="ptm-field"><span>Complex / custom share <em>% of changes</em></span><input id="ptm-mix" type="number" min="0" max="100" value="${c.m.mix}"></label>
+                      <label class="ptm-field"><span>Hours per change today</span><input id="ptm-cur" type="number" min="0" step="0.5" value="${c.m.cur}"></label>
+                      <label class="ptm-field"><span>Residual hours \u2014 standard <em>catalog-covered</em></span><input id="ptm-std" type="number" min="0" step="0.5" value="${c.m.std}"></label>
+                      <label class="ptm-field"><span>Residual hours \u2014 complex / custom</span><input id="ptm-cust" type="number" min="0" step="0.5" value="${c.m.cust}"></label>
+                      <label class="ptm-field"><span>Realization factor <em>% of reduction achieved</em></span><input id="ptm-real" type="number" min="0" max="100" value="${c.m.real}"></label>
+                      <label class="ptm-field"><span>Loaded labor rate <em>$ / hour</em></span><input id="ptm-rate" type="number" min="0" value="${c.m.rate}"></label>
+                      <label class="ptm-field"><span>Users under management</span><input id="ptm-users" type="number" min="0" value="${c.m.users}"></label>
+                    </div>
+                    <div>
+                      <div class="ptm-chart">
+                        <div class="ptm-col"><div class="ptm-colval">${fmtDollars(c.curHrs * c.m.rate)}</div><div class="ptm-colbar" style="height:${Math.max(4, 100)}%"></div><div class="ptm-collab">Current labor / yr<br>${num(c.curHrs)} h</div></div>
+                        <div class="ptm-col"><div class="ptm-colval">${fmtDollars(c.futHrs * c.m.rate)}</div><div class="ptm-colbar ptm-colbar-fut" style="height:${Math.max(4, pctFut)}%"></div><div class="ptm-collab">Future labor / yr<br>${num(c.futHrs)} h</div></div>
+                        <div class="ptm-col"><div class="ptm-colval">${fmtDollars(c.value)}</div><div class="ptm-colbar ptm-colbar-val" style="height:${Math.max(4, 100 - pctFut)}%"></div><div class="ptm-collab">Value returned / yr<br>\u2248${c.fte.toFixed(1)} FTE</div></div>
+                      </div>
+                      <div class="ptm-out" style="margin-top:8px"><span class="ptm-out-label">Capacity returned <em style="font-style:normal;color:#9aa3b7">\u2014 not cash until a staffing decision exists</em></span><span class="ptm-out-val">${num(c.returnedHrs)} h / yr \u00b7 \u2248${c.fte.toFixed(1)} FTE</span></div>
+                      <div class="ptm-out"><span class="ptm-out-label">Cost per package change</span><span class="ptm-out-val">$${Math.round(c.curPerChange)} \u2192 $${Math.round(c.futPerChange)}</span></div>
+                      <div class="ptm-out"><span class="ptm-out-label">Break-even license <em style="font-style:normal;color:#9aa3b7">\u2014 pays back below this price</em></span><span class="ptm-out-val">$${c.breakeven.toFixed(2)} / user / mo</span></div>
+                    </div>
+                  </div>
+                  <div class="ptm-notes">Formulas (playbook \u00a76): current cost = changes \u00d7 12 \u00d7 hours per change \u00d7 rate \u00b7 future = (standard share \u00d7 standard residual + complex share \u00d7 complex residual), with the reduction discounted by the realization factor \u00b7 break-even license = labor value \u00f7 users \u00f7 12. Excludes Application Workspace license, implementation, and recurring administration \u2014 those come from an actual proposal, never assumed here. 8 h / 1.5 h / 4 h / 75% are low-to-moderate-confidence planning benchmarks; the bake-off replaces them with measured values.</div>
+                </div>
+              </div>`; })() : ''}
+
+              <div class="pt-strips mt-3">
+                <div class="pt-strip">
+                  <div class="pt-strip-title">What stays with you either way</div>
+                  <div class="pt-chipset">
+                    <span class="pt-chip"><i data-lucide="clipboard-check"></i>Customer requirements + approvals</span>
+                    <span class="pt-chip"><i data-lucide="sliders-horizontal"></i>Config choices \u2014 language, features, timing</span>
+                    <span class="pt-chip"><i data-lucide="flask-conical"></i>Acceptance testing + ring design</span>
+                    <span class="pt-chip"><i data-lucide="undo-2"></i>Release + rollback authority</span>
+                    <span class="pt-chip"><i data-lucide="box"></i>Custom + exception apps</span>
+                    <span class="pt-chip"><i data-lucide="headphones"></i>Support ownership</span>
+                  </div>
+                  <div class="pt-strip-foot">Not zero-touch, and not every app is covered \u2014 saying that early is what makes the rest credible.</div>
+                </div>
+                <div class="pt-strip">
+                  <div class="pt-strip-title">What the returned capacity can fund \u2014 keep these separate</div>
+                  <div class="pt-chipset">
+                    <span class="pt-chip"><i data-lucide="piggy-bank"></i>Margin recovery on contracts already priced</span>
+                    <span class="pt-chip"><i data-lucide="shopping-bag"></i>A sellable Managed Application Delivery service</span>
+                    <span class="pt-chip"><i data-lucide="rocket"></i>Project acceleration \u2014 Intune, AVD / W365, Citrix exit</span>
+                    <span class="pt-chip"><i data-lucide="users"></i>Growth without proportional packaging headcount</span>
+                  </div>
+                  <div class="pt-strip-foot">Capacity returned is not cash savings until a staffing or spend decision exists.</div>
+                </div>
+              </div>
+
+              <div class="pt-shift">
+                <div style="flex:1;min-width:260px">
+                  <div class="pt-stat-eyebrow">The shift, in one statement</div>
+                  <div class="pt-shift-body">Today, application delivery is a resource-intensive manual service \u2014 packaging, testing, approval, and deployment repeated across customer environments. Application Workspace turns it into a standardized, repeatable offering: proven packages and workflows reused across customers, customer-specific controls preserved, faster deployments, and a more scalable managed service.</div>
+                </div>
+                <button type="button" class="re-secondary" style="align-self:center;white-space:nowrap" data-action="switch-tab" data-tab="roi">Size it for your portfolio</button>
+              </div>
+              <div class="pt-footnote mt-3">Drawn from the partner operating-model comparison \u2014 outcomes vary by portfolio and application mix; validate with a measured bake-off, not assumptions.</div>
+            </div>
+          </section>
+        `;
+      }
+
       function renderROI(){
         const r = STATE.calcResult;
         const ci = STATE.calcInputs;
@@ -12346,7 +12881,7 @@
           if (node) { const id = node.dataset.id; STATE.activePopover = STATE.activePopover === id ? null : id; render(); return; }
           if (!action) return;
 
-          if (action === 'switch-tab') { STATE.activeTab = act.getAttribute('data-tab'); STATE.visitedCards = []; STATE.activePopover = null; if (STATE.openWhyModal && STATE._savedDriverStates) { STATE.drivers.forEach((d, i) => { d.state = STATE._savedDriverStates[i]; }); STATE.showTippingPoint = STATE._savedTippingPoint; STATE.recastMode = STATE._savedRecastMode; STATE.targetDemandExponent = STATE._savedDemandExp; STATE.targetCapacitySlope = STATE._savedCapSlope; STATE._savedDriverStates = null; updateCurves(); } STATE.openWhyModal = null; STATE.insightContent = null; STATE.flowStep = -1; STATE.flowRunning = false; STATE.flowPaused = false; STATE.flowScenarioIdx = -1; STATE.flowPhase = 'idle'; STATE.flowAppOpened = false; STATE._firstOpenDone = false; STATE.showAdminView = false; STATE.showAutopilot = false; STATE.autopilotStep = -1; STATE.autopilotAppCount = 0; STATE.drPhase = 'idle'; STATE.drRunning = false; STATE.drPaused = false; STATE.drQueue = []; STATE.drQueueIdx = 0; STATE.obPhase = 'idle'; STATE.obRunning = false; STATE.obPaused = false; STATE.obQueue = []; STATE.obQueueIdx = 0; STATE.ssPhase = 'idle'; STATE.ssRunning = false; STATE.ssPaused = false; STATE.ssQueue = []; STATE.ssQueueIdx = 0; STATE.ssTimers.forEach(id => clearTimeout(id)); STATE.ssTimers = []; STATE.lcTimers.forEach(id => clearTimeout(id)); STATE.lcTimers = []; STATE.lifecyclePlaying = false; STATE.lcStep = -1; clearFlowTimers(); render(); return; }
+          if (action === 'switch-tab') { STATE.activeTab = act.getAttribute('data-tab'); STATE.visitedCards = []; STATE.activePopover = null; if (STATE.openWhyModal && STATE._savedDriverStates) { STATE.drivers.forEach((d, i) => { d.state = STATE._savedDriverStates[i]; }); STATE.showTippingPoint = STATE._savedTippingPoint; STATE.recastMode = STATE._savedRecastMode; STATE.targetDemandExponent = STATE._savedDemandExp; STATE.targetCapacitySlope = STATE._savedCapSlope; STATE._savedDriverStates = null; updateCurves(); } STATE.openWhyModal = null; STATE.insightContent = null; STATE.flowStep = -1; STATE.flowRunning = false; STATE.flowPaused = false; STATE.flowScenarioIdx = -1; STATE.flowPhase = 'idle'; STATE.flowAppOpened = false; STATE._firstOpenDone = false; STATE.showAdminView = false; STATE.showAutopilot = false; STATE.autopilotStep = -1; STATE.autopilotAppCount = 0; STATE.drPhase = 'idle'; STATE.drRunning = false; STATE.drPaused = false; STATE.drQueue = []; STATE.drQueueIdx = 0; STATE.obPhase = 'idle'; STATE.obRunning = false; STATE.obPaused = false; STATE.obQueue = []; STATE.obQueueIdx = 0; STATE.ssPhase = 'idle'; STATE.ssRunning = false; STATE.ssPaused = false; STATE.ssQueue = []; STATE.ssQueueIdx = 0; STATE.ssTimers.forEach(id => clearTimeout(id)); STATE.ssTimers = []; STATE.lcTimers.forEach(id => clearTimeout(id)); STATE.lcTimers = []; STATE.lifecyclePlaying = false; STATE.lcStep = -1; clearFlowTimers(); STATE.ptTimers.forEach(id => clearTimeout(id)); STATE.ptTimers = []; STATE.ptRunning = false; STATE.ptPaused = false; STATE.ptPhase = 'idle'; STATE.ptQueue = []; STATE.ptQueueIdx = 0; STATE.ptSection = 0; STATE.ptTour = false; render(); if (STATE.activeTab === 'partner') { const _t = setTimeout(() => { if (STATE.activeTab === 'partner' && !STATE.ptRunning) startPt(false); }, 500); STATE.ptTimers.push(_t); } return; }
           if (action === 'advance') { STATE.activeTab = act.getAttribute('data-next'); if (STATE.openWhyModal && STATE._savedDriverStates) { STATE.drivers.forEach((d, i) => { d.state = STATE._savedDriverStates[i]; }); STATE.showTippingPoint = STATE._savedTippingPoint; STATE.recastMode = STATE._savedRecastMode; STATE.targetDemandExponent = STATE._savedDemandExp; STATE.targetCapacitySlope = STATE._savedCapSlope; STATE._savedDriverStates = null; updateCurves(); } STATE.openWhyModal = null; if (STATE.activeTab === 'roi') { calculateImpact(); } render(); return; }
           if (action === 'toggle-proof-details') { STATE.proofDetailsOpen = !STATE.proofDetailsOpen; render(); return; }
           if (action === 'toggle-solution-view' || action === 'next-demo-module') {
@@ -12515,6 +13050,11 @@
 
             scrollPreserveRender(); return;
           }
+          if (action === 'toggle-pt') { if (STATE.ptRunning && !STATE.ptPaused) { STATE.ptPaused = true; STATE.ptTimers.forEach(id => clearTimeout(id)); STATE.ptTimers = []; scrollPreserveRender(); } else if (STATE.ptRunning && STATE.ptPaused) { STATE.ptPaused = false; scrollPreserveRender(); runPtQueue(); } else { startPt(false); } return; }
+          if (action === 'pt-play-all') { startPt(true); return; }
+          if (action === 'pt-section') { const _i = parseInt(act.getAttribute('data-idx'), 10) || 0; STATE.ptTour = false; STATE.ptSection = _i; startPt(false); return; }
+          if (action === 'step-pt') { stepPt(); return; }
+          if (action === 'reset-pt') { resetPt(); return; }
           if (action === 'start-mt') { startMt(); return; }
           if (action === 'step-mt') { stepMt(); return; }
           if (action === 'reset-mt') { resetMt(); return; }
@@ -12803,6 +13343,17 @@
           if (e.target?.id === 'roi-initiatives') { STATE.calcInputs.delayedInitiatives = cleanNum(e.target.value); return; }
           if (e.target?.id === 'asn-complex-mix') { STATE.calcInputs.complexMixPct = Math.max(0, Math.min(100, cleanNum(e.target.value))); return; }
           if (e.target?.id === 'asn-loaded-rate') { STATE.calcInputs.loadedRate = Math.max(0, cleanNum(e.target.value)); return; }
+          // Partner financial model inputs — live update, debounced re-render (focus is preserved by render()).
+          if (e.target?.id && e.target.id.indexOf('ptm-') === 0) {
+            const k = e.target.id.slice(4);
+            const m = ptModelEnsure();
+            if (k in m) {
+              m[k] = Math.max(0, cleanNum(e.target.value));
+              clearTimeout(_ptmDebounce);
+              _ptmDebounce = setTimeout(() => scrollPreserveRender(), 600);
+            }
+            return;
+          }
           // Inline packaging-cycle levers — live update + debounced re-render so the bars and KPIs follow keystrokes.
           if (e.target?.id === 'pkg-apps') { STATE.calcInputs.apps = Math.max(0, cleanNum(e.target.value)); calculateImpact(); clearTimeout(_roiDebounce); _roiDebounce = setTimeout(() => render(), 500); return; }
           if (e.target?.id === 'pkg-mix')  { STATE.calcInputs.complexMixPct = Math.max(0, Math.min(100, cleanNum(e.target.value))); calculateImpact(); clearTimeout(_roiDebounce); _roiDebounce = setTimeout(() => render(), 500); return; }
