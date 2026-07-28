@@ -1251,6 +1251,44 @@
       .aw-wall { gap: 11px 8px; padding: 11px 0 5px; }
       .awt-ico { position: relative; display: inline-grid; }
       .aw-ok { top: -5px; right: -6px; width: 13px; height: 13px; font-size: 8px; transition-delay: calc(var(--pta, 0ms) + var(--ptd, 0ms)); }
+      /* the manual lane earns its height: the same app rebuilt per customer, one bench per beat */
+      .aw-benchstack { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: space-between; gap: 9px; min-height: 0; }
+      .aw-bench { padding: 9px 11px; }
+      .aw-bench .aw-benchapp { flex-direction: row; align-items: center; gap: 8px; }
+      .aw-benchnm { font-size: 9.5px; font-weight: 700; color: #3b4457; white-space: nowrap; }
+      /* ── Partner tab v4 · one unmistakable side-by-side frame, repeated in every section ──
+         Left = CURRENT STATE on a warm neutral band, muted ink. Right = WITH
+         APPLICATION WORKSPACE on white, blue pill, dark ink. Same two pills over
+         the diagram AND over the comparison rows, same 2px spine down the middle,
+         so the reader never has to work out which side they are looking at. ── */
+      .pt-viz-lane:first-child:not(.ptv-full) { background: #f8f7f4; }
+      .pt-viz-lane + .pt-viz-lane { border-left: 2px solid #dce1ec; }
+      .pt-lanehead { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; margin-bottom: 12px; }
+      .pt-lanetag { display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 6px; font-size: 8.5px; font-weight: 800; letter-spacing: 0.11em; text-transform: uppercase; white-space: nowrap; }
+      .pt-lanetag-now { background: #e8e4dc; color: #5c5545; }
+      .pt-lanetag-aw { background: #2f6bff; color: #ffffff; }
+      .pt-lanesub { font-size: 12px; font-weight: 700; color: #3b4457; letter-spacing: -0.005em; }
+      .pt-lanehead-aw .pt-lanesub { color: #1745bf; }
+      .pt-legend { display: flex; align-items: center; gap: 9px; margin-bottom: 12px; }
+      .pt-legend-vs { font-size: 9px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: #b6bdcc; }
+      /* comparison rows: same two columns, same spine, continuous left band */
+      .pt-thead2 { display: grid; grid-template-columns: 1fr 1fr; background: #fbfcfe; border-bottom: 1px solid #dce1ec; }
+      .pt-thead2 > div { padding: 9px 16px; }
+      .pt-thead2 > div + div { box-shadow: inset 2px 0 0 #dce1ec; }
+      .pt-row2 { border-top: 1px solid #dce1ec; background: #ffffff; }
+      .pt-row2:first-of-type { border-top: 0; }
+      .pt-rowlab { padding: 10px 16px 3px; font-size: 9px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: #9aa3b7; }
+      .pt-pair { display: grid; grid-template-columns: 1fr 1fr; }
+      .pt-pair > div { padding: 6px 16px 12px; font-size: 11.5px; line-height: 1.55; }
+      .pt-cell-now { color: #6b6355; background: #f8f7f4; }
+      .pt-cell-aw { color: #171d2b; font-weight: 500; box-shadow: inset 2px 0 0 #dce1ec; }
+      .ptv-hname-now { color: #8a7b5f; }
+      .ptv-hname-aw { color: #1745bf; }
+      @media (max-width: 860px) {
+        .pt-thead2, .pt-pair { grid-template-columns: 1fr; }
+        .pt-row2 { background: #ffffff; }
+        .pt-cell-now { background: #f8f7f4; }        .pt-cell-aw, .pt-thead2 > div + div { box-shadow: none; }
+      }
       .ptv-hubtxt { display:flex; flex-direction:column; gap:1px; }
       .ptm-chart { display: flex; gap: 22px; align-items: flex-end; padding: 4px 6px 0; }
       .ptm-col { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 5px; }
@@ -10638,18 +10676,16 @@
         const g = (c) => c ? 'pt-visible' : '';
         const dr = (c) => c ? 'pt-drawn' : '';
         const CB = ['A','B','C'];
+        /* One frame for all seven sections — the label never changes, only the sub-line. */
+        const head = (aw, sub) => `<div class="pt-lanehead ${aw ? 'pt-lanehead-aw' : 'pt-lanehead-now'}"><span class="pt-lanetag ${aw ? 'pt-lanetag-aw' : 'pt-lanetag-now'}">${aw ? 'With Application Workspace' : 'Current state'}</span><span class="pt-lanesub">${sub}</span></div>`;
         if (S.key === "packaging") {
           const WALL = ["chrome","acrobat","zoom","teams","edge","firefox","slack","word","excel","outlook","powerpoint","onenote","notepadpp","sevenzip","vlc","python","node","citrix","java","postman","gimp","docker","teamviewer","filezilla"];
           const bench = ["Source","Repackage","Test","Publish"];
-          const benchGate = ["r1","r1","r2","r3"];
+          const CUST = ["Customer A","Customer B","Customer C"];
           return `<div class="pt-viz">
             <div class="pt-viz-lane">
-              <div class="pt-viz-lab">Today \u2014 every app is a manual build</div>
-              <div class="aw-bench">
-                <div class="aw-benchapp">${appMark(AW.chrome,30)}<span class="awt-nm">Google Chrome</span></div>
-                <div class="aw-stagerail">${bench.map((sg,j)=>`<span class="pt-seg ${past(benchGate[j])?"pt-lit":""}" style="--ptd:${j*110}ms">${sg}</span>`).join("")}</div>
-                <span class="aw-clock ptv-el ${g(past("r2"))}">hours each</span>
-              </div>
+              ${head(false, 'Every app is a manual build')}
+              <div class="aw-benchstack">${CUST.map((cn,ci)=>{const on=past("r"+(ci+1));return `<div class="aw-bench ptv-el ${g(on)}" style="--ptd:${ci*70}ms"><div class="aw-benchapp">${appMark(AW.chrome,24)}<span class="aw-benchnm">${cn}</span></div><div class="aw-stagerail">${bench.map((sg,j)=>`<span class="pt-seg ${on?"pt-lit":""}" style="--ptd:${ci*70+180+j*130}ms">${sg}</span>`).join("")}</div><span class="aw-clock ptv-el ${g(on)}" style="--ptd:${ci*70+700}ms">hours each</span></div>`;}).join("")}</div>
               <div class="aw-queue">
                 <span class="aw-qlab">In the queue</span>
                 ${["acrobat","zoom","teams","firefox","notepadpp","sevenzip"].map((id,i)=>`<span class="aw-qapp ptv-el ${g(past("r2"))}" style="--ptd:${i*70}ms">${appMark(AW[id],22)}</span>`).join("")}
@@ -10659,7 +10695,7 @@
               <div class="pt-viz-foot">One app at a time \u2014 repackaged, tested and published by hand, then repeated for every customer</div>
             </div>
             <div class="pt-viz-lane" style="--pta:380ms">
-              <div class="pt-viz-lab pt-viz-lab-aw">With Application Workspace \u2014 the shelf is already stocked</div>
+              ${head(true, 'The shelf is already stocked')}
               <div class="aw-storebar ptv-el ${g(past("r1"))}"><b>Setup Store</b><span class="aw-count">8,000+ packages \u00b7 maintained by Recast</span></div>
               <div class="aw-wall">${WALL.map((id,i)=>{const a=AW[id]||AW.chrome;return `<div class="awt ptv-el ${g(past("r1"))}" style="--ptd:${Math.min(420,i*17)}ms"><span class="awt-ico">${appMark(a,26)}<span class="aw-ok ${g(past("r2"))}" style="--ptd:${Math.min(700,i*28)}ms">\u2713</span></span><span class="awt-nm">${a.name}</span></div>`;}).join("")}</div>
               <div class="aw-custom ptv-el ${g(past("r3"))}">${appMark(AW.custom,22)}<span class="aw-qlab" style="text-transform:none;letter-spacing:0">In-house app</span><span class="ptv-hline ptv-hline-aw ${dr(past("r3"))}" style="--w:18px"></span><span class="ptv-gate ptv-gate-aw">standardized workflow</span><span class="ptv-endchip">deploy</span></div>
@@ -10672,7 +10708,7 @@
           const ticks = (on) => [6, 38, 70].map((x, i) => `<span class="ptv-tick pt-callout ${on ? 'pt-show' : ''}" style="left:${x}%;--ptd:${i * 120}ms"><b>v${120 + i} ships</b></span>`).join('');
           return `<div class="pt-viz">
             <div class="pt-viz-lane">
-              <div class="pt-viz-lab">Today \u2014 rollouts outrun by releases</div><div class="aw-cap">${appMark(AW.chrome,15)}<span>Google Chrome \u2014 new version roughly every 4 weeks</span></div>
+              ${head(false, 'Rollouts outrun by releases')}<div class="aw-cap">${appMark(AW.chrome,15)}<span>Google Chrome \u2014 new version roughly every 4 weeks</span></div>
               <div class="ptv-axis">${ticks(past('r1'))}</div>
               <div class="ptv-grow"><span class="ptv-gbar ${g(past('r2'))}" style="left:6%;--w:44%">v120 rollout</span></div>
               <div class="ptv-grow"><span class="ptv-gbar ${g(past('r2'))}" style="left:38%;--w:44%;--ptd:200ms">v121 rollout</span></div>
@@ -10680,7 +10716,7 @@
               <div class="pt-viz-foot">Each version is still deploying when the next one ships</div>
             </div>
             <div class="pt-viz-lane" style="--pta:380ms">
-              <div class="pt-viz-lab pt-viz-lab-aw">With Application Workspace \u2014 rollouts finish first</div><div class="aw-cap">${appMark(AW.chrome,15)}<span>Same cadence, each version fully deployed in time</span></div>
+              ${head(true, 'Rollouts finish first')}<div class="aw-cap">${appMark(AW.chrome,15)}<span>Same cadence, each version fully deployed in time</span></div>
               <div class="ptv-axis">${ticks(past('r1'))}</div>
               ${[6, 38, 70].map((x, i) => `<div class="ptv-grow"><span class="ptv-gbar ptv-gbar-aw ${g(past('r3'))}" style="left:${x}%;--w:17%;--ptd:${i * 150}ms">v${120 + i} deployed</span></div>`).join('')}
               <div class="pt-viz-foot pt-viz-foot-aw">Deployed well before the next release \u2014 same time axis</div>
@@ -10701,12 +10737,12 @@
           };
           return `<div class="pt-viz">
             <div class="pt-viz-lane">
-              <div class="pt-viz-lab">Today \u2014 each approval chain assembled by hand</div>
+              ${head(false, 'Each approval chain assembled by hand')}
               ${profiles.map((p, i) => row(p, i, false)).join('')}
               <div class="pt-viz-foot">Rebuilt per customer, per release</div>
             </div>
             <div class="pt-viz-lane" style="--pta:380ms">
-              <div class="pt-viz-lab pt-viz-lab-aw">With Application Workspace \u2014 chains configured once</div>
+              ${head(true, 'Chains configured once')}
               ${profiles.map((p, i) => row(p, i, true)).join('')}
               <div class="pt-viz-foot pt-viz-foot-aw">Same gates, standing workflows \u2014 releases pass through</div>
             </div>
@@ -10716,14 +10752,14 @@
           const tenants = [['Tenant A', 'auto'], ['Tenant B', 'regulated'], ['Tenant C', 'pilot'], ['Tenant D', 'auto'], ['Tenant E', 'staged'], ['Tenant F', 'regulated']];
           return `<div class="pt-viz">
             <div class="pt-viz-lane">
-              <div class="pt-viz-lab">Today \u2014 separate copies per environment</div>
+              ${head(false, 'Separate copies per environment')}
               <div class="ptv-copies">
                 ${CB.map((L, i) => `<div class="ptv-card ptv-el ${g(past('r' + (i + 1)))}" style="--tf:rotate(${[-2, 1.5, -1][i]}deg)"><b>Package \u00b7 copy ${i + 1}</b><i>Customer ${L} \u2014 drifts on its own</i></div>`).join('')}
               </div>
               <div class="pt-viz-foot">Three versions of the truth \u2014 results vary by technician and tenant</div>
             </div>
             <div class="pt-viz-lane" style="--pta:380ms">
-              <div class="pt-viz-lab pt-viz-lab-aw">With Application Workspace \u2014 one package, six tenants</div>
+              ${head(true, 'One package, six tenants')}
               <div class="ptv-hubwrap">
                 <div class="ptv-hubcard ptv-el ${g(past('r1'))}">${appMark(AW.acrobat,22)}<span class="ptv-hubtxt"><b>Adobe Acrobat</b><i>proven package \u2014 maintained once</i></span></div>
                 <div class="ptv-fan">
@@ -10738,14 +10774,14 @@
           const plats = ['Intune', 'Jamf Pro', 'Other MDM'];
           return `<div class="pt-viz">
             <div class="pt-viz-lane">
-              <div class="pt-viz-lab">Today \u2014 a separate process per platform</div>
+              ${head(false, 'A separate process per platform')}
               <div class="ptv-cols">
                 ${plats.map((p, i) => `<div><div class="ptv-block ptv-el ${g(past('r' + (i + 1)))}">own packaging</div><div class="ptv-block ptv-el ${g(past('r' + (i + 1)))}" style="--ptd:120ms">own updates</div><div class="ptv-plat">${p}</div></div>`).join('')}
               </div>
               <div class="pt-viz-foot">Windows carries the heaviest load \u2014 every platform, its own motion</div>
             </div>
             <div class="pt-viz-lane" style="--pta:380ms">
-              <div class="pt-viz-lab pt-viz-lab-aw">With Application Workspace \u2014 one model above your platforms</div>
+              ${head(true, 'One model above your platforms')}
               <div class="ptv-band ptv-el ${g(past('r1'))}">Application Workspace \u2014 one operating model</div>
               <div class="ptv-conns">${plats.map((p, i) => `<span class="ptv-vline ${dr(past('r2'))}" style="--ptd:${i * 130}ms"></span>`).join('')}</div>
               <div class="ptv-cols">${plats.map((p, i) => `<div><div class="ptv-plat ptv-el ${g(past('r2'))}" style="--ptd:${i * 130}ms">${p}</div><div class="ptv-keep ptv-el ${g(past('r3'))}">stays</div></div>`).join('')}</div>
@@ -10764,15 +10800,16 @@
           const num2 = (n) => n.toLocaleString('en-US');
           return `<div class="pt-viz">
             <div class="pt-viz-lane ptv-full">
+              <div class="pt-legend"><span class="pt-lanetag pt-lanetag-now">Current state</span><span class="pt-legend-vs">vs</span><span class="pt-lanetag pt-lanetag-aw">With Application Workspace</span></div>
               <div class="ptv-hgroup">
                 <div class="pt-viz-lab">Hours per package change \u2014 the calculator\u2019s own inputs</div>
-                <div class="ptv-hrow"><span class="ptv-hname">Today \u00b7 manual</span><div class="ptv-htrack"><span class="ptv-hbar ${g(past('r1'))}" style="--w:100%"></span></div><span class="ptv-hval">${c.m.cur} h</span></div>
-                <div class="ptv-hrow"><span class="ptv-hname">With AW \u00b7 workflows</span><div class="ptv-htrack"><span class="ptv-hbar ptv-hbar-aw ${g(past('r1'))}" style="--w:${wBlend}%;--ptd:200ms"></span></div><span class="ptv-hval">${blend.toFixed(1)} h</span></div>
+                <div class="ptv-hrow"><span class="ptv-hname ptv-hname-now">Current state</span><div class="ptv-htrack"><span class="ptv-hbar ${g(past('r1'))}" style="--w:100%"></span></div><span class="ptv-hval">${c.m.cur} h</span></div>
+                <div class="ptv-hrow"><span class="ptv-hname ptv-hname-aw">With App Workspace</span><div class="ptv-htrack"><span class="ptv-hbar ptv-hbar-aw ${g(past('r1'))}" style="--w:${wBlend}%;--ptd:200ms"></span></div><span class="ptv-hval">${blend.toFixed(1)} h</span></div>
               </div>
               <div class="ptv-hgroup">
                 <div class="pt-viz-lab">Package changes the same team can support per year</div>
-                <div class="ptv-hrow"><span class="ptv-hname">Today \u00b7 manual</span><div class="ptv-htrack"><span class="ptv-hbar ${g(past('r2'))}" style="--w:${wToday}%"></span></div><span class="ptv-hval">${num2(capToday)}</span></div>
-                <div class="ptv-hrow"><span class="ptv-hname">With AW \u00b7 workflows</span><div class="ptv-htrack"><span class="ptv-hbar ptv-hbar-aw ${g(past('r2'))}" style="--w:100%;--ptd:200ms"></span></div><span class="ptv-hval">${num2(capAw)} <em class="ptv-x ${past('r3') ? 'pt-show' : ''} pt-callout">\u2248${factor}\u00d7 \u2014 same team</em></span></div>
+                <div class="ptv-hrow"><span class="ptv-hname ptv-hname-now">Current state</span><div class="ptv-htrack"><span class="ptv-hbar ${g(past('r2'))}" style="--w:${wToday}%"></span></div><span class="ptv-hval">${num2(capToday)}</span></div>
+                <div class="ptv-hrow"><span class="ptv-hname ptv-hname-aw">With App Workspace</span><div class="ptv-htrack"><span class="ptv-hbar ptv-hbar-aw ${g(past('r2'))}" style="--w:100%;--ptd:200ms"></span></div><span class="ptv-hval">${num2(capAw)} <em class="ptv-x ${past('r3') ? 'pt-show' : ''} pt-callout">\u2248${factor}\u00d7 \u2014 same team</em></span></div>
               </div>
               <div class="pt-viz-foot">${c.m.cur} h manual vs ${blend.toFixed(1)} h blended workflow time (${100 - c.m.mix}% standard \u00b7 ${c.m.mix}% complex) \u2014 edit the model below and this chart follows</div>
             </div>
@@ -10783,12 +10820,12 @@
         const ja = [['Onboard', 'shadowed by Recast'], ['Joint demo', 'Recast alongside'], ['First deal', 'supported behind the scenes']];
         return `<div class="pt-viz">
           <div class="pt-viz-lane">
-            <div class="pt-viz-lab">Today \u2014 the unsupported ramp</div>
+            ${head(false, 'The unsupported ramp')}
             <div class="ptv-journey">${jt.map((n, i) => `<div class="ptv-jnode ptv-jnode-t ptv-el ${g(past('r' + (i + 1)))}">${n}</div>${i < 2 ? '<span class="ptv-jline ptv-jline-long"></span>' : ''}`).join('')}</div>
             <div class="pt-viz-foot">Expertise built in-house before the first opportunity can be answered</div>
           </div>
           <div class="pt-viz-lane" style="--pta:380ms">
-            <div class="pt-viz-lab pt-viz-lab-aw">With Application Workspace \u2014 Recast alongside</div>
+            ${head(true, 'Recast alongside')}
             <div class="ptv-journey">${ja.map((n, i) => `<div class="ptv-jnode ptv-jnode-a ptv-el ${g(past('r' + (i + 1)))}">${n[0]}<small>${n[1]}</small></div>${i < 2 ? '<span class="ptv-jline"></span>' : ''}`).join('')}</div>
             <div class="pt-viz-foot pt-viz-foot-aw">Shorter distance to the first deal \u2014 joint demos, enablement, shadowing</div>
           </div>
@@ -12334,8 +12371,8 @@
             <div class="section-card p-4">
               <div class="flex items-start justify-between gap-3 mb-3">
                 <div>
-                  <div class="text-[15px] font-semibold text-[#171d2b] leading-tight">Application management for partners: today vs. Application Workspace.</div>
-                  <div class="text-[11px] text-slate-500 mt-0.5">Seven workstreams, side by side \u2014 the manual, per-customer model partners run today vs. the standardized, automated model Application Workspace enables.</div>
+                  <div class="text-[15px] font-semibold text-[#171d2b] leading-tight">Application management for partners: current state vs. Application Workspace.</div>
+                  <div class="text-[11px] text-slate-500 mt-0.5">Seven workstreams, each one the same side-by-side read \u2014 the manual, per-customer model partners run today on the left, the standardized model Application Workspace enables on the right.</div>
                 </div>
                 <div class="pt-ctls">
                   <button type="button" data-action="pt-play-all" class="pt-ctl pt-ctl-primary" title="Play all seven workstreams in sequence"><i data-lucide="play" class="w-3 h-3"></i><span>Play all seven</span></button>
@@ -12365,16 +12402,17 @@
               ${ptViz(S, past)}
 
               <div class="pt-table">
-                <div class="pt-tr pt-thead">
-                  <div class="pt-td-dim"></div>
-                  <div class="pt-td-h">How partners operate today</div>
-                  <div class="pt-td-h pt-td-h-aw">With Application Workspace</div>
+                <div class="pt-thead2">
+                  <div><span class="pt-lanetag pt-lanetag-now">Current state</span></div>
+                  <div><span class="pt-lanetag pt-lanetag-aw">With Application Workspace</span></div>
                 </div>
                 ${S.rows.map((r, i) => `
-                <div class="pt-tr pt-callout ${past('r' + (i + 1)) ? 'pt-show' : ''}">
-                  <div class="pt-td-dim">${r.dim}</div>
-                  <div class="pt-td">${r.today}</div>
-                  <div class="pt-td pt-td-aw">${r.aw}${r.keep ? '<span class="pt-keep">stays with you</span>' : ''}</div>
+                <div class="pt-row2 pt-callout ${past('r' + (i + 1)) ? 'pt-show' : ''}">
+                  <div class="pt-rowlab">${r.dim}</div>
+                  <div class="pt-pair">
+                    <div class="pt-cell-now">${r.today}</div>
+                    <div class="pt-cell-aw">${r.aw}${r.keep ? '<span class="pt-keep">stays with you</span>' : ''}</div>
+                  </div>
                 </div>`).join('')}
               </div>
 
