@@ -11937,11 +11937,581 @@
         });
         return pages.length;
       }
+      /* ═══════════════════════════════════════════════════════════════════
+         BENEFITS TAB — "CREATE PDF"
+         A four-page leave-behind that tells one story: what is breaking in
+         application delivery today (01), what Application Workspace changes
+         (02, with the product diagram redrawn as vector so it stays crisp at
+         any zoom and cannot rasterize), and the value that follows (03).
+         Every page is drawn with jsPDF primitives and reads its copy from the
+         same constants the screen renders from — STAT_CARDS, the editable
+         current-state bullets, PT_SCORE — so the document cannot drift from
+         the demo. One click, one file, no print dialog.
+         ═══════════════════════════════════════════════════════════════════ */
+      function ptBuildStoryPdf(){
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ unit: 'pt', format: 'letter', orientation: 'landscape' });
+        const W = 792, H = 612, M = 42, CW = W - M * 2, PAGES = 4;
+        const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+        /* Palette lifted straight from the app's Tailwind theme. */
+        const C = {
+          blue: [47,107,255], blueD: [31,87,230], blueDeep: [23,69,191],
+          navy: [15,47,122], navyD: [10,32,86], band: [30,72,168], bandE: [86,128,220],
+          teal: [94,198,186], tealD: [10,143,130], green: [11,136,116],
+          ink: [23,29,43], slate: [84,93,112], mute: [154,163,183],
+          line: [220,225,236], wash: [238,241,248], paper: [244,246,251], tint: [246,249,255],
+          white: [255,255,255], amber: [245,166,35], red: [217,59,72], sky: [180,203,255]
+        };
+
+        /* ── primitives ─────────────────────────────────────────────────── */
+        const fill = (c) => doc.setFillColor(c[0], c[1], c[2]);
+        const draw = (c) => doc.setDrawColor(c[0], c[1], c[2]);
+        const ink  = (c) => doc.setTextColor(c[0], c[1], c[2]);
+        const font = (weight, size) => { doc.setFont('helvetica', weight); doc.setFontSize(size); };
+        const wrap = (t, w) => doc.splitTextToSize(String(t), w);
+        /* getTextWidth ignores charSpace, so measure letter-spaced runs by hand. */
+        function tw(t, cs){ return doc.getTextWidth(String(t)) + (cs || 0) * Math.max(0, String(t).length - 1); }
+        function para(t, x, y, w, lh, max){
+          let ls = wrap(t, w);
+          if (max) ls = ls.slice(0, max);
+          ls.forEach((l, i) => doc.text(l, x, y + i * lh));
+          return y + ls.length * lh;
+        }
+        function paraC(t, cx, y, w, lh, max){
+          let ls = wrap(t, w);
+          if (max) ls = ls.slice(0, max);
+          ls.forEach((l, i) => doc.text(l, cx, y + i * lh, { align: 'center' }));
+          return y + ls.length * lh;
+        }
+        /* Vertical gradient as stacked strips — jsPDF has no gradient fill. */
+        function gradV(x, y, w, h, c1, c2){
+          const n = 110, sh = h / n;
+          for (let i = 0; i < n; i++) {
+            const k = i / (n - 1);
+            doc.setFillColor(Math.round(c1[0] + (c2[0] - c1[0]) * k),
+                             Math.round(c1[1] + (c2[1] - c1[1]) * k),
+                             Math.round(c1[2] + (c2[2] - c1[2]) * k));
+            doc.rect(x, y + i * sh, w, sh + 0.8, 'F');
+          }
+        }
+        function lsText(t, x, y, cs){ doc.text(String(t), x, y, { charSpace: cs }); }
+        function lsRight(t, xr, y, cs){ doc.text(String(t), xr - tw(t, cs), y, { charSpace: cs }); }
+        function lsCenter(t, cx, y, cs){ doc.text(String(t), cx - tw(t, cs) / 2, y, { charSpace: cs }); }
+        function eyebrow(t, x, y, c, size, cs){ font('bold', size || 7); ink(c || C.mute); lsText(t, x, y, cs == null ? 1.4 : cs); }
+        /* A single line built from differently coloured runs. */
+        function richLine(segs, x, y, size){
+          let cx = x;
+          segs.forEach(s => { font(s.w || 'normal', size); ink(s.c || C.ink); doc.text(s.t, cx, y); cx += doc.getTextWidth(s.t); });
+          return cx;
+        }
+
+        /* ── icon marks ─────────────────────────────────────────────────────
+           Small geometric glyphs drawn from rects, lines and circles. At 9pt
+           they read as marks, and they cost nothing in file size. ── */
+        function drawIcon(name, x, cy, s, c){
+          const y = cy - s / 2;
+          draw(c); fill(c); doc.setLineWidth(Math.max(0.7, s * 0.11));
+          doc.setLineCap('round'); doc.setLineJoin('round');
+          const P = (fx, fy) => [x + s * fx, y + s * fy];
+          const ln = (a, b, cc, d) => doc.line(x + s * a, y + s * b, x + s * cc, y + s * d);
+          switch (name) {
+            case 'package':
+              doc.roundedRect(x + s*0.08, y + s*0.2, s*0.84, s*0.66, s*0.1, s*0.1, 'S');
+              ln(0.08, 0.44, 0.92, 0.44); ln(0.5, 0.2, 0.5, 0.44); break;
+            case 'wrench':
+              ln(0.2, 0.8, 0.62, 0.38); doc.circle(x + s*0.72, y + s*0.28, s*0.19, 'S'); break;
+            case 'inbox':
+              doc.roundedRect(x + s*0.08, y + s*0.2, s*0.84, s*0.62, s*0.1, s*0.1, 'S');
+              ln(0.08, 0.58, 0.3, 0.58); ln(0.3, 0.58, 0.38, 0.7);
+              ln(0.38, 0.7, 0.62, 0.7); ln(0.62, 0.7, 0.7, 0.58); ln(0.7, 0.58, 0.92, 0.58); break;
+            case 'grid':
+              [[0.08,0.16],[0.54,0.16],[0.08,0.58],[0.54,0.58]].forEach(p =>
+                doc.roundedRect(x + s*p[0], y + s*p[1], s*0.38, s*0.3, s*0.06, s*0.06, 'S')); break;
+            case 'monitor':
+              doc.roundedRect(x + s*0.06, y + s*0.16, s*0.88, s*0.54, s*0.08, s*0.08, 'S');
+              ln(0.5, 0.7, 0.5, 0.86); ln(0.28, 0.86, 0.72, 0.86); break;
+            case 'chart':
+              ln(0.2, 0.86, 0.2, 0.52); ln(0.5, 0.86, 0.5, 0.22); ln(0.8, 0.86, 0.8, 0.62); break;
+            case 'sliders':
+              ln(0.08, 0.32, 0.92, 0.32); ln(0.08, 0.7, 0.92, 0.7);
+              doc.circle(x + s*0.66, y + s*0.32, s*0.14, 'F'); doc.circle(x + s*0.34, y + s*0.7, s*0.14, 'F'); break;
+            case 'user':
+              doc.circle(x + s*0.5, y + s*0.3, s*0.2, 'S');
+              ln(0.16, 0.86, 0.32, 0.64); ln(0.32, 0.64, 0.68, 0.64); ln(0.68, 0.64, 0.84, 0.86); break;
+            case 'send':
+              doc.triangle.apply(doc, P(0.1, 0.14).concat(P(0.92, 0.5), P(0.1, 0.86), ['F']));
+              break;
+            case 'shield':
+              doc.rect(x + s*0.16, y + s*0.12, s*0.68, s*0.4, 'F');
+              doc.triangle.apply(doc, P(0.16, 0.5).concat(P(0.84, 0.5), P(0.5, 0.92), ['F']));
+              draw(C.white); doc.setLineWidth(Math.max(0.7, s * 0.12));
+              ln(0.34, 0.42, 0.46, 0.54); ln(0.46, 0.54, 0.68, 0.28); break;
+            case 'layers':
+              doc.roundedRect(x + s*0.1, y + s*0.14, s*0.8, s*0.2, s*0.05, s*0.05, 'S');
+              doc.roundedRect(x + s*0.1, y + s*0.42, s*0.8, s*0.2, s*0.05, s*0.05, 'S');
+              doc.roundedRect(x + s*0.1, y + s*0.7, s*0.8, s*0.2, s*0.05, s*0.05, 'S'); break;
+            case 'branch':
+              doc.circle(x + s*0.24, y + s*0.2, s*0.14, 'S'); doc.circle(x + s*0.24, y + s*0.82, s*0.14, 'S');
+              doc.circle(x + s*0.8, y + s*0.34, s*0.14, 'S');
+              ln(0.24, 0.34, 0.24, 0.68); ln(0.24, 0.5, 0.66, 0.36); break;
+            case 'click':
+              doc.triangle.apply(doc, P(0.24, 0.14).concat(P(0.78, 0.56), P(0.44, 0.58), ['F']));
+              doc.setLineWidth(Math.max(0.7, s * 0.12)); ln(0.5, 0.62, 0.66, 0.9); break;
+            case 'clock':
+              doc.circle(x + s*0.5, y + s*0.5, s*0.4, 'S'); ln(0.5, 0.26, 0.5, 0.52); ln(0.5, 0.52, 0.7, 0.62); break;
+            case 'alert':
+              doc.triangle.apply(doc, P(0.5, 0.1).concat(P(0.94, 0.88), P(0.06, 0.88), ['S']));
+              ln(0.5, 0.38, 0.5, 0.62); doc.circle(x + s*0.5, y + s*0.76, s*0.05, 'F'); break;
+          }
+          doc.setLineCap('butt'); doc.setLineJoin('miter'); doc.setLineWidth(0.6);
+        }
+        const ic = (name, c, s) => (x, cy) => drawIcon(name, x, cy, s || 9, c || C.blue);
+
+        /* Recognisable vendor marks for the platform rails. */
+        function msMark(x, cy){
+          const s = 4.1, g = 1.1;
+          fill([242,80,34]);  doc.rect(x, cy - s - g / 2, s, s, 'F');
+          fill([127,186,0]);  doc.rect(x + s + g, cy - s - g / 2, s, s, 'F');
+          fill([0,164,239]);  doc.rect(x, cy + g / 2, s, s, 'F');
+          fill([255,185,0]);  doc.rect(x + s + g, cy + g / 2, s, s, 'F');
+        }
+        function intuneMark(x, cy){
+          fill([0,120,212]); doc.circle(x + 5.2, cy + 0.6, 4.2, 'F');
+          fill(C.teal); doc.circle(x + 3.2, cy - 1.8, 2.7, 'F');
+        }
+        function citrixMark(x, cy){
+          fill(C.ink); doc.circle(x + 4.8, cy, 4.7, 'F');
+          font('bold', 6.4); ink(C.white); doc.text('C', x + 4.8, cy + 2.2, { align: 'center' });
+        }
+        function jamfMark(x, cy){
+          fill([17,104,237]); doc.roundedRect(x + 0.3, cy - 4.7, 9.4, 9.4, 2.4, 2.4, 'F');
+          font('bold', 6.4); ink(C.white); doc.text('J', x + 5, cy + 2.2, { align: 'center' });
+        }
+
+        /* ── chips ──────────────────────────────────────────────────────── */
+        function chipW(t, fs, padX, hasIcon){ font('bold', fs); return doc.getTextWidth(t) + padX * 2 + (hasIcon ? 14 : 0); }
+        function chip(x, y, t, o){
+          const fs = o.fs || 7.5, h = o.h || 21, padX = o.padX || 10;
+          const w = o.w || chipW(t, fs, padX, !!o.icon);
+          fill(o.bg || C.white); draw(o.border || C.line); doc.setLineWidth(0.7);
+          doc.roundedRect(x, y, w, h, h / 2, h / 2, 'FD');
+          let tx = x + padX;
+          if (o.icon) { o.icon(x + padX, y + h / 2); tx += 14; }
+          font('bold', fs); ink(o.fg || C.ink);
+          doc.text(t, tx, y + h / 2 + fs * 0.35);
+          return w;
+        }
+        function chipRow(items, cy, o){
+          o = o || {};
+          const fs = o.fs || 7.5, padX = o.padX || 10, gap = o.gap || 7, h = o.h || 21;
+          const ws = items.map(it => chipW(it.t, fs, padX, !!it.icon));
+          const total = ws.reduce((a, b) => a + b, 0) + gap * (items.length - 1);
+          let x = (W - total) / 2;
+          items.forEach((it, i) => { chip(x, cy - h / 2, it.t, { fs, padX, h, w: ws[i], icon: it.icon, bg: o.bg, border: o.border, fg: o.fg }); x += ws[i] + gap; });
+        }
+        /* Dotted stem that ties the rails to the platform slab. */
+        function stem(cx, y1, y2){
+          draw(C.line); doc.setLineWidth(1); doc.setLineDashPattern([1.6, 2.4], 0);
+          doc.line(cx, y1, cx, y2);
+          doc.setLineDashPattern([], 0);
+          fill(C.blue); doc.circle(cx, y2, 2.2, 'F');
+        }
+
+        /* ── page furniture ─────────────────────────────────────────────── */
+        function logo(x, y, s, onDark){
+          fill(onDark ? C.white : C.blue);
+          doc.roundedRect(x, y, s, s, s * 0.26, s * 0.26, 'F');
+          font('bold', s * 0.46); ink(onDark ? C.blue : C.white);
+          doc.text('Re', x + s / 2, y + s * 0.69, { align: 'center' });
+          font('bold', s * 0.66); ink(onDark ? C.white : C.ink);
+          doc.text('Recast', x + s + 7, y + s * 0.73);
+          const rw = doc.getTextWidth('Recast');
+          font('normal', s * 0.66); ink(onDark ? C.sky : C.mute);
+          doc.text(' Software', x + s + 7 + rw, y + s * 0.73);
+        }
+        function frame(pg, no, label){
+          logo(M, 30, 17);
+          font('bold', 7.2); ink(C.mute); lsRight(no + '   ·   ' + label, W - M, 44, 1.5);
+          draw(C.line); doc.setLineWidth(0.8); doc.line(M, 58, W - M, 58);
+          draw(C.blue); doc.setLineWidth(2.4); doc.line(M, 58, M + 54, 58);
+          draw(C.line); doc.setLineWidth(0.6); doc.line(M, 566, W - M, 566);
+          font('normal', 6.8); ink(C.mute);
+          doc.text('Recast Software  ·  Application Workspace  ·  ' + today, M, 579);
+          const p = 'Page ' + pg + ' of ' + PAGES;
+          doc.text(p, W - M - doc.getTextWidth(p), 579);
+        }
+
+        /* ══════════════ PAGE 1 · COVER ══════════════ */
+        gradV(0, 0, W, H, C.blue, C.navy);
+        fill(C.navyD); doc.rect(0, 462, W, H - 462, 'F');
+        /* the app's quiet "+" motif */
+        draw([92,133,226]); doc.setLineWidth(0.9);
+        [[168,116,8],[652,92,6],[726,250,8],[588,168,6],[430,70,5]].forEach(p => {
+          doc.line(p[0] - p[2], p[1], p[0] + p[2], p[1]);
+          doc.line(p[0], p[1] - p[2], p[0], p[1] + p[2]);
+        });
+        logo(M, 44, 22, true);
+        eyebrow('APPLICATION WORKSPACE   ·   THE BUSINESS CASE', M, 170, C.teal, 8.2, 2.1);
+        font('bold', 34); ink(C.white);
+        doc.text('Package once.', M, 210);
+        doc.text('Deliver everywhere.', M, 250);
+        doc.text('Update everything.', M, 290);
+        draw(C.teal); doc.setLineWidth(2.6); doc.line(M, 316, M + 58, 316);
+        font('normal', 11); ink(C.sky);
+        para('Why application delivery has become the constraint on modern IT, what changes when one layer sits above the tools you already run, and the value that follows.', M, 342, 470, 15.5);
+        const toc = [['01', 'Current state'], ['02', 'The Recast approach'], ['03', 'The benefits']];
+        toc.forEach((t, i) => {
+          const x = M + i * 196;
+          font('bold', 8.5); ink(C.teal); doc.text(t[0], x, 420);
+          font('bold', 9.5); ink(C.white); doc.text(t[1], x + 20, 420);
+          draw([64,98,180]); doc.setLineWidth(0.7); doc.line(x, 428, x + 168, 428);
+        });
+        /* the three numbers, in a full-bleed band */
+        const NUMS = [
+          { n: '88%', u: 'faster', d: 'Per-application build time, against building the same app once per platform.' },
+          { n: '70%', u: 'fewer tickets', d: 'Application support tickets the service desk absorbs each month.' },
+          { n: '60%', u: 'more margin', d: 'On the same contract — efficiency on work already delivered, not repricing.' }
+        ];
+        NUMS.forEach((k, i) => {
+          const x = M + i * 236;
+          if (i) { draw([46,84,164]); doc.setLineWidth(0.8); doc.line(x - 18, 492, x - 18, 566); }
+          font('bold', 31); ink(C.white); doc.text(k.n, x, 522);
+          const nw = doc.getTextWidth(k.n);
+          font('bold', 9.5); ink(C.teal); doc.text(k.u, x + nw + 7, 522);
+          font('normal', 7.4); ink(C.sky); para(k.d, x, 538, 206, 9.6, 2);
+        });
+        font('normal', 6.8); ink([120,155,225]);
+        doc.text(today, M, 592);
+        const cf = 'Reference model · 1,000 users · $95 per loaded hour';
+        doc.text(cf, W - M - doc.getTextWidth(cf), 592);
+
+        /* ══════════════ PAGE 2 · CURRENT STATE ══════════════ */
+        doc.addPage('letter', 'landscape');
+        frame(2, '01', 'CURRENT STATE');
+        richLine([
+          { t: 'The application layer is now the ', c: C.ink, w: 'bold' },
+          { t: '#1 primary constraint', c: C.blue, w: 'bold' },
+          { t: ' in modern IT.', c: C.ink, w: 'bold' }
+        ], M, 88, 18);
+        font('normal', 9.5); ink(C.slate);
+        doc.text('Hardware is stable and networks are solid. The layer above them is what now sets both the pace and the ceiling.', M, 106);
+
+        const stW = (CW - 30) / 4;
+        STAT_CARDS.slice(0, 4).forEach((s, i) => {
+          const x = M + (stW + 10) * i, y = 122, h = 104;
+          fill(C.white); draw(C.line); doc.setLineWidth(0.8);
+          doc.roundedRect(x, y, stW, h, 7, 7, 'FD');
+          fill(C.blue); doc.roundedRect(x + 12, y + 14, 2.6, 18, 1.3, 1.3, 'F');
+          font('bold', 21); ink(C.blue); doc.text(s.stat, x + 21, y + 30);
+          font('bold', 7.6); ink(C.ink);
+          const ly = para(s.label, x + 12, y + 48, stW - 24, 9.4, 2);
+          font('normal', 6.8); ink(C.slate);
+          para(s.body, x + 12, ly + 5, stW - 24, 8.2, 3);
+          font('italic', 6); ink(C.mute);
+          doc.text(wrap(s.source, stW - 24)[0], x + 12, y + h - 9);
+        });
+
+        /* ── the capacity gap, drawn ── */
+        const chX = M, chY = 240, chW = 408, chH = 286;
+        fill(C.white); draw(C.line); doc.setLineWidth(0.8);
+        doc.roundedRect(chX, chY, chW, chH, 8, 8, 'FD');
+        eyebrow('THE CAPACITY GAP', chX + 16, chY + 22, C.blue, 7.4, 1.5);
+        font('normal', 7.2); ink(C.mute);
+        doc.text('Demand on IT against the capacity available to meet it', chX + 16, chY + 34);
+        const px0 = chX + 44, px1 = chX + chW - 20, py0 = chY + 50, py1 = chY + 208;
+        const pw = px1 - px0, ph = py1 - py0;
+        const yCap = py1 - ph * 0.24;
+        const curve = (t) => py1 - Math.pow(t, 2.3) * (ph - 6);
+        /* capacity band, then the gap that opens above it */
+        fill([236,241,253]); doc.rect(px0, yCap, pw, py1 - yCap, 'F');
+        const steps = 72, sw = pw / steps;
+        for (let i = 0; i < steps; i++) {
+          const t = (i + 0.5) / steps, cy = curve(t);
+          if (cy < yCap) { fill([253,235,237]); doc.rect(px0 + i * sw, cy, sw + 0.6, yCap - cy, 'F'); }
+        }
+        draw(C.wash); doc.setLineWidth(0.6);
+        for (let i = 1; i <= 3; i++) { const gy = py0 + (ph / 4) * i; doc.line(px0, gy, px1, gy); }
+        draw(C.line); doc.setLineWidth(0.8); doc.line(px0, py1, px1, py1); doc.line(px0, py0, px0, py1);
+        /* flat capacity line */
+        draw(C.slate); doc.setLineWidth(1.1); doc.setLineDashPattern([3, 2.6], 0);
+        doc.line(px0, yCap, px1, yCap); doc.setLineDashPattern([], 0);
+        /* the demand curve */
+        draw(C.red); doc.setLineWidth(1.8); doc.setLineCap('round');
+        for (let i = 0; i < steps; i++) {
+          const t1 = i / steps, t2 = (i + 1) / steps;
+          doc.line(px0 + t1 * pw, curve(t1), px0 + t2 * pw, curve(t2));
+        }
+        doc.setLineCap('butt'); doc.setLineWidth(0.6);
+        font('bold', 9); ink([196,74,84]);
+        doc.text('THE CAPACITY GAP', px0 + pw * 0.30, yCap - ph * 0.30, { align: 'center', charSpace: 0.6 });
+        font('bold', 6.4); ink(C.slate);
+        doc.text('IT CAPACITY', px0 + 6, yCap - 4, { charSpace: 0.5 });
+        const marks = [[0.34, 'App portfolio growth'], [0.62, 'Platform multiplication'], [0.86, 'Security + compliance load']];
+        marks.forEach(mk => {
+          const mx = px0 + mk[0] * pw, my = curve(mk[0]);
+          fill(C.white); draw(C.red); doc.setLineWidth(1.4); doc.circle(mx, my, 2.7, 'FD');
+          font('bold', 6.2); ink(C.ink);
+          const lw2 = doc.getTextWidth(mk[1]);
+          /* flip the label to the left of the dot when it would run off the plot */
+          doc.text(mk[1], mx + 6 + lw2 > px1 ? mx - 6 - lw2 : mx + 6, my - 6);
+        });
+        font('normal', 6.4); ink(C.mute);
+        ['2025', '2026', '2027', '2028'].forEach((yr, i) =>
+          doc.text(yr, px0 + (pw / 3) * i, py1 + 12, { align: i === 0 ? 'left' : i === 3 ? 'right' : 'center' }));
+        doc.text('DEMAND ON IT', px0 - 12, py1, { angle: 90, charSpace: 0.6 });
+        const leg = [[C.red, 'Work arriving'], [C.slate, 'Team capacity']];
+        let lx = px0;
+        leg.forEach(l => {
+          fill(l[0]); doc.rect(lx, py1 + 22, 7, 3.4, 'F');
+          font('normal', 6.4); ink(C.mute); doc.text(l[1], lx + 11, py1 + 26);
+          lx += doc.getTextWidth(l[1]) + 28;
+        });
+        font('normal', 7.2); ink(C.slate);
+        para('Every new platform multiplies the work against every application. The load scales with platforms, not with the size of the team.',
+          chX + 16, py1 + 46, chW - 32, 9.6, 2);
+
+        /* ── why the model breaks (reads the editable current-state copy) ── */
+        const rx = M + 420, rw2 = 288;
+        eyebrow('WHY THE MODEL BREAKS', rx, 252, C.mute, 7.2, 1.5);
+        draw(C.line); doc.setLineWidth(0.7); doc.line(rx, 258, rx + rw2, 258);
+        /* The pull-quote is measured first and pinned to the card's baseline, so
+           however the current-state copy is edited the bullets have a hard floor
+           and can never collide with it. */
+        const analyst = (STATE.currentState && STATE.currentState.change && STATE.currentState.change.analyst) || '';
+        font('italic', 8);
+        const aLines = analyst ? wrap(analyst, rw2 - 26).slice(0, 5) : [];
+        const qH = aLines.length ? aLines.length * 10.6 + 24 : 0;
+        const qTop = 526 - qH, floorY = qTop - 10;
+        let ry2 = 276;
+        const changeBullets = ((STATE.currentState && STATE.currentState.change && STATE.currentState.change.bullets) || []).slice(0, 3);
+        changeBullets.forEach(b => {
+          if (ry2 > floorY - 30) return;               /* no room left for another point */
+          const parts = String(b).split(/\s*=\s*/);
+          const head = (parts[0] || '').trim(), body = (parts.slice(1).join(' = ') || '').trim();
+          fill(C.blue); doc.circle(rx + 2.6, ry2 - 3, 2.2, 'F');
+          font('bold', 8.6); ink(C.ink);
+          const hy = para(head, rx + 11, ry2, rw2 - 11, 10.4, 2);
+          font('normal', 7.2); ink(C.slate);
+          const room = Math.max(1, Math.min(4, Math.floor((floorY - hy - 3) / 8.8)));
+          ry2 = para(body, rx + 11, hy + 3, rw2 - 11, 8.8, room) + 11;
+        });
+        const qY = Math.min(ry2 + 6, qTop);
+        if (aLines.length) {
+          fill(C.tint); doc.roundedRect(rx, qY, rw2, qH, 6, 6, 'F');
+          fill(C.blue); doc.rect(rx, qY + 4, 2.6, qH - 8, 'F');
+          ink(C.blueDeep); font('italic', 8);
+          aLines.forEach((l, i) => doc.text(l, rx + 14, qY + 18 + i * 10.6));
+        }
+
+        /* ══════════════ PAGE 3 · THE RECAST APPROACH ══════════════ */
+        doc.addPage('letter', 'landscape');
+        frame(3, '02', 'THE RECAST APPROACH');
+        font('bold', 18); ink(C.ink);
+        doc.text('One layer above the tools you already run.', M, 88);
+        font('normal', 9.5); ink(C.slate);
+        doc.text('Application Workspace does not replace your endpoint tools — it is the layer that makes them work together.', M, 106);
+
+        eyebrow('WHAT YOU ALREADY RUN', W / 2 - tw('WHAT YOU ALREADY RUN', 1.6) / 2, 134, C.mute, 6.8, 1.6);
+        chipRow([
+          { t: 'Intune', icon: intuneMark }, { t: 'ConfigMgr', icon: msMark }, { t: 'Citrix', icon: citrixMark },
+          { t: 'AVD / W365', icon: msMark }, { t: 'Jamf', icon: jamfMark }
+        ], 154, { h: 22, fs: 8 });
+        stem(W / 2, 168, 180);
+
+        /* the platform slab — the product diagram, redrawn */
+        const sbY = 186, sbH = 262;
+        fill(C.tint); draw([206,220,252]); doc.setLineWidth(0.9);
+        doc.roundedRect(M, sbY, CW, sbH, 10, 10, 'FD');
+        const inX = 60, inW = 148, stX = 224, stW2 = 344, ouX = 584, ouW = 148;
+        font('bold', 12); ink(C.ink); doc.text('Recast Application Workspace', inX, sbY + 22);
+        font('normal', 7.2); ink(C.mute);
+        lsRight('ONE DEFINITION  ·  EVERY PLATFORM', W - M - 18, sbY + 21, 1.2);
+        eyebrow('WHAT GOES IN', inX, sbY + 42, C.mute, 6.6, 1.4);
+        eyebrow('WHAT COMES OUT', ouX, sbY + 42, C.mute, 6.6, 1.4);
+        const pillIn = [
+          { t: '8,000+ ready made apps', i: ic('package', C.blue, 9) },
+          { t: 'Your own apps', i: ic('wrench', C.blue, 9) },
+          { t: 'Requests from your people', i: ic('inbox', C.blue, 9) }
+        ];
+        const pillOut = [
+          { t: 'Apps people install themselves', i: ic('grid', C.tealD, 9) },
+          { t: 'Apps that stay current', i: ic('monitor', C.tealD, 9) },
+          { t: 'Visibility across your whole app estate', i: ic('chart', C.tealD, 9) }
+        ];
+        function pillStack(items, x, w, y){
+          let py = y;
+          items.forEach(p => {
+            font('normal', 7); const ls = wrap(p.t, w - 34);
+            const h = Math.max(26, ls.length * 8.6 + 15);
+            fill(C.white); draw(C.line); doc.setLineWidth(0.7);
+            doc.roundedRect(x, py, w, h, 5, 5, 'FD');
+            p.i(x + 10, py + h / 2);
+            font('bold', 7); ink(C.ink);
+            const ty = py + h / 2 - (ls.length - 1) * 4.3 + 2.4;
+            ls.forEach((l, k) => doc.text(l, x + 24, ty + k * 8.6));
+            py += h + 7;
+          });
+          return py;
+        }
+        pillStack(pillIn, inX, inW, sbY + 52);
+        pillStack(pillOut, ouX, ouW, sbY + 52);
+        const STAGES = [
+          { n: 'Package',   d: 'Ready made, or built from your installer', i: 'package' },
+          { n: 'Configure', d: 'Language, features, your standards',       i: 'sliders' },
+          { n: 'Assign',    d: 'Who gets it: person, team, or device',     i: 'user' },
+          { n: 'Deliver',   d: 'Required for some, optional for others',   i: 'send' },
+          { n: 'Update',    d: 'New versions ship on their own',           i: 'shield' }
+        ];
+        const scW = (stW2 - 4 * 7) / 5, scY = sbY + 52, scH = 88;
+        STAGES.forEach((s, i) => {
+          const x = stX + (scW + 7) * i;
+          fill(C.white); draw([206,220,252]); doc.setLineWidth(0.8);
+          doc.roundedRect(x, scY, scW, scH, 6, 6, 'FD');
+          fill([234,241,255]); doc.circle(x + scW / 2, scY + 17, 9, 'F');
+          drawIcon(s.i, x + scW / 2 - 5, scY + 17, 10, C.blue);
+          font('bold', 7.4); ink(C.ink); doc.text(s.n, x + scW / 2, scY + 40, { align: 'center' });
+          font('normal', 5.9); ink(C.slate);
+          paraC(s.d, x + scW / 2, scY + 51, scW - 10, 6.9, 3);
+          if (i < STAGES.length - 1) {
+            fill([160,186,240]);
+            const ax = x + scW + 3.5, ay = scY + scH / 2;
+            doc.triangle(ax - 1.9, ay - 2.6, ax + 2.1, ay, ax - 1.9, ay + 2.6, 'F');
+          }
+        });
+        draw([214,226,250]); doc.setLineWidth(0.8); doc.line(inX, sbY + 168, W - M - 18, sbY + 168);
+        eyebrow('WHY IT WORKS', inX, sbY + 184, C.mute, 6.6, 1.4);
+        const WHY = [
+          { t: 'The apps are already built', d: '8,000+ packaged and kept current by Recast. You maintain none of them.', i: 'layers' },
+          { t: 'Set up once, runs everywhere', d: 'Windows, Mac, virtual, physical — through the tools you already own.', i: 'branch' },
+          { t: 'People help themselves', d: 'They install what they need. No ticket, no admin rights.', i: 'click' }
+        ];
+        const whyW = (672 - 24) / 3;
+        WHY.forEach((w, i) => {
+          const x = inX + (whyW + 12) * i, y = sbY + 192;
+          fill(C.white); draw(C.line); doc.setLineWidth(0.7);
+          doc.roundedRect(x, y, whyW, 54, 6, 6, 'FD');
+          fill([226,245,241]); doc.circle(x + 18, y + 20, 9.5, 'F');
+          drawIcon(w.i, x + 13, y + 20, 10, C.tealD);
+          font('bold', 8); ink(C.ink); doc.text(w.t, x + 34, y + 17);
+          font('normal', 6.6); ink(C.slate); para(w.d, x + 34, y + 29, whyW - 44, 8.2, 3);
+        });
+
+        stem(W / 2, 452, 464);
+        eyebrow('EVERYONE YOU SUPPORT', W / 2 - tw('EVERYONE YOU SUPPORT', 1.6) / 2, 480, C.mute, 6.8, 1.6);
+        chipRow([
+          { t: 'Windows' }, { t: 'Windows on ARM' }, { t: 'macOS' }, { t: 'Virtual Desktop' },
+          { t: 'Cloud PC / W365' }, { t: 'BYOD / Remote' }, { t: 'Browser-Based' }
+        ], 502, { h: 20, fs: 7.4, padX: 9, gap: 6 });
+        font('normal', 7.4); ink(C.mute);
+        doc.text('Same catalog, same policies, same experience — whichever way the application is delivered.', W / 2, 528, { align: 'center' });
+
+        /* ══════════════ PAGE 4 · THE BENEFITS ══════════════ */
+        doc.addPage('letter', 'landscape');
+        frame(4, '03', 'THE BENEFITS');
+        font('bold', 18); ink(C.ink);
+        doc.text('Faster delivery, fewer tickets, better margin — on the same contract.', M, 88);
+        font('normal', 9.5); ink(C.slate);
+        doc.text('Every figure traces back to the same two measurements: package touch time, and application tickets per 1,000 users.', M, 106);
+
+        const CLAIMS = [
+          { pct: '88%', unit: 'faster', head: 'Per-application build time', accent: C.blue,
+            desc: 'Against building the same application once per platform.',
+            now: { l: 'Today', v: '6.3 hrs', w: 1 }, aw: { l: 'Recast', v: '0.8 hrs', w: 0.13 },
+            note: 'Engineer touch time, intake through package-ready.' },
+          { pct: '70%', unit: 'fewer tickets', head: 'Application support tickets', accent: C.green,
+            desc: 'The application tickets your service desk absorbs each month.',
+            now: { l: 'Today', v: '50 / mo', w: 1 }, aw: { l: 'Recast', v: '15 / mo', w: 0.30 },
+            note: 'Per 1,000 users — installs, versions, launch failures, entitlement.' },
+          { pct: '60%', unit: 'more margin', head: 'Margin on the same contract', accent: C.tealD,
+            desc: 'Efficiency on work you already deliver — not repricing.',
+            now: { l: 'Today', v: '43% margin', w: 0.62 }, aw: { l: 'Recast', v: '69% margin', w: 1 },
+            note: 'Reference model: 1,000 users at $95 per loaded hour.' }
+        ];
+        const clW = (CW - 24) / 3, clY = 122, clH = 158;
+        CLAIMS.forEach((k, i) => {
+          const x = M + (clW + 12) * i;
+          fill(C.white); draw(C.line); doc.setLineWidth(0.8);
+          doc.roundedRect(x, clY, clW, clH, 8, 8, 'FD');
+          fill(k.accent); doc.roundedRect(x, clY, clW, 3.4, 1.7, 1.7, 'F');
+          fill(C.white); doc.rect(x, clY + 2.2, clW, 2.4, 'F');
+          font('bold', 30); ink(k.accent); doc.text(k.pct, x + 16, clY + 46);
+          const pw2 = doc.getTextWidth(k.pct);
+          font('bold', 9.5); ink(C.slate); doc.text(k.unit, x + 20 + pw2, clY + 46);
+          font('bold', 8.6); ink(C.ink); doc.text(k.head, x + 16, clY + 64);
+          font('normal', 7); ink(C.slate); para(k.desc, x + 16, clY + 76, clW - 32, 8.6, 2);
+          /* Measure both label and value columns so the track can never collide. */
+          font('bold', 6.4);
+          const labW = Math.max(tw(k.now.l.toUpperCase(), 0.4), tw(k.aw.l.toUpperCase(), 0.4));
+          font('bold', 7);
+          const valW = Math.max(doc.getTextWidth(k.now.v), doc.getTextWidth(k.aw.v));
+          const trX = x + 16 + labW + 8, trW = clW - 16 - labW - 8 - valW - 8 - 16, bY = clY + 100;
+          [k.now, k.aw].forEach((row, r) => {
+            const yy = bY + r * 17;
+            font('bold', 6.4); ink(C.mute); doc.text(row.l.toUpperCase(), x + 16, yy + 5.6, { charSpace: 0.4 });
+            fill(C.wash); doc.roundedRect(trX, yy, trW, 7, 3.5, 3.5, 'F');
+            fill(r === 0 ? C.amber : k.accent);
+            doc.roundedRect(trX, yy, Math.max(6, trW * row.w), 7, 3.5, 3.5, 'F');
+            font('bold', 7); ink(r === 0 ? C.slate : k.accent);
+            doc.text(row.v, x + clW - 16, yy + 5.8, { align: 'right' });
+          });
+          font('italic', 6.2); ink(C.mute);
+          para(k.note, x + 16, clY + clH - 22, clW - 32, 7.6, 2);
+        });
+
+        /* proof — the measures a bake-off should confirm */
+        eyebrow('WHAT A MEASURED BAKE-OFF SHOULD CONFIRM', M, 302, C.mute, 7.2, 1.5);
+        const cA = M, cB = 206, cC = 540, cD = 640, tblY = 310;
+        fill(C.wash); doc.rect(M, tblY, CW, 15, 'F');
+        font('bold', 6.4); ink(C.slate);
+        lsText('MEASURE', cA + 8, tblY + 10, 1.1);
+        lsText('WHAT IT COVERS', cB, tblY + 10, 1.1);
+        lsText('TODAY', cC, tblY + 10, 1.1);
+        lsText('WITH RECAST', cD, tblY + 10, 1.1);
+        const PROOF = [0, 1, 2, 6, 7, 8].map(i => PT_SCORE[i]).filter(Boolean);
+        let tY = tblY + 15;
+        PROOF.forEach((row, i) => {
+          const h = 21;
+          if (i % 2) { fill([250,251,254]); doc.rect(M, tY, CW, h, 'F'); }
+          draw(C.line); doc.setLineWidth(0.5); doc.line(M, tY + h, W - M, tY + h);
+          font('bold', 7.4); ink(C.ink); doc.text(wrap(row[0], cB - cA - 16)[0], cA + 8, tY + 13.6);
+          font('normal', 6.8); ink(C.slate); doc.text(wrap(row[1], cC - cB - 14)[0], cB, tY + 13.6);
+          font('bold', 8); ink(C.slate); doc.text(row[2], cC, tY + 13.6);
+          font('bold', 8); ink(C.green); doc.text(row[3], cD, tY + 13.6);
+          tY += h;
+        });
+
+        /* closing band */
+        const cbY = 456, cbH = 62;
+        fill(C.blue); doc.roundedRect(M, cbY, CW, cbH, 8, 8, 'F');
+        fill(C.teal); doc.roundedRect(M, cbY, 3.2, cbH, 1.6, 1.6, 'F');
+        eyebrow('WHAT STAYS WITH YOU', M + 18, cbY + 20, [198,216,255], 7, 1.5);
+        font('normal', 8.4); ink(C.white);
+        para(PT_KEEP_CHIPS.join('   ·   ') + '.', M + 18, cbY + 36, 430, 11, 2);
+        draw([120,158,250]); doc.setLineWidth(0.8); doc.line(M + 476, cbY + 12, M + 476, cbY + cbH - 12);
+        eyebrow('NEXT STEP', M + 494, cbY + 20, [198,216,255], 7, 1.5);
+        font('bold', 9); ink(C.white);
+        para('Run the bake-off on your own portfolio and measure the two numbers above.', M + 494, cbY + 36, 196, 11, 2);
+
+        font('italic', 6.8); ink(C.mute);
+        doc.text('Drawn from the partner operating-model comparison — outcomes vary by portfolio and application mix; validate with a measured bake-off, not assumptions.', M, 536);
+        return doc;
+      }
+
       function ptExportPdf(){
-        let n = 0;
-        try { n = ptBuildPrint(); } catch (e) { console.warn('PDF build failed', e); }
-        if (!n) return;
-        setTimeout(function () { window.print(); }, 160);
+        if (!window.jspdf || !window.jspdf.jsPDF) {
+          alert('The PDF library has not finished loading yet. Give it a moment and try again.');
+          return;
+        }
+        const btn = document.querySelector('[data-action="pt-pdf"]');
+        if (btn) btn.disabled = true;
+        try {
+          ptBuildStoryPdf().save('Recast-Application-Workspace-Business-Case.pdf');
+        } catch (err) {
+          console.error('Create PDF failed:', err);
+          alert('Sorry — the PDF could not be created.\n\n' + ((err && err.message) || err));
+        } finally {
+          if (btn) btn.disabled = false;
+        }
       }
       window.addEventListener('beforeprint', function () {
         if (!document.querySelector('#pt-print .ptp-page')) { try { ptBuildPrint(); } catch (e) {} }
@@ -13593,8 +14163,8 @@
               </div>
 
               <div class="pt-pdfbar">
-                <span>Drawn from the partner operating-model comparison \u2014 outcomes vary by portfolio and application mix; validate with a measured bake-off, not assumptions.</span>
-                <button type="button" class="pt-pdfbtn" data-action="pt-pdf" title="Build a branded PDF of every partner section"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 12 5 5 5-5"/><path d="M5 21h14"/></svg>Download the partner PDF</button>
+                <span>A four-page branded leave-behind \u2014 the current-state challenge, the Application Workspace approach, and the benefits with the measures behind them. Outcomes vary by portfolio and application mix; validate with a measured bake-off, not assumptions.</span>
+                <button type="button" class="pt-pdfbtn" data-action="pt-pdf" title="Create a branded four-page Recast PDF"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 12 5 5 5-5"/><path d="M5 21h14"/></svg>Create PDF</button>
               </div>
             </div>
           </section>
