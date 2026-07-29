@@ -1402,65 +1402,18 @@
       @media (max-width: 1000px) { .ptr-head, .ptr-row { grid-template-columns: 118px 130px 1fr 1fr; } }
       @media (max-width: 860px) { .ptr-head, .ptr-row { grid-template-columns: 1fr; } .ptr-exit { box-shadow: none; } }
       /* ── Partner PDF export ─────────────────────────────────────────────
-         The document is assembled by CLONING the live sections at their final
-         phase, so the PDF cannot drift from what the screen shows. Screen: the
-         container sits off-canvas. Print: the app hides and this prints, one
-         landscape sheet per page, each scaled to fit. ── */
+         The button hands off to jsPDF, which draws the playbook as a real
+         vector document and downloads it directly — no print dialog, so the
+         file is identical on every machine. Only the trigger needs styling
+         here; the document's own look lives in ptBuildPlaybook. ── */
       .pt-pdfbar { display: flex; align-items: center; justify-content: flex-end; gap: 10px; margin-top: 14px; }
       .pt-pdfbar span { font-size: 9.5px; color: #9aa3b7; }
       .pt-pdfbtn { display: inline-flex; align-items: center; gap: 7px; padding: 9px 16px; border-radius: 9999px; border: 0; background: #2f6bff; color: #fff; font-size: 11.5px; font-weight: 700; cursor: pointer; box-shadow: 0 2px 6px rgba(47,107,255,0.28); transition: background 0.18s ease, transform 0.18s ease; }
       .pt-pdfbtn:hover { background: #1f57e6; transform: translateY(-1px); }
       .pt-pdfbtn:active { transform: scale(0.98); }
+      .pt-pdfbtn[disabled] { background: #86a4fb; cursor: progress; transform: none; box-shadow: none; }
       .pt-pdfbtn svg { width: 14px; height: 14px; }
-      #pt-print { position: absolute; left: -99999px; top: 0; width: 1180px; pointer-events: none; }
-      .ptp-page { width: 1180px; background: #fff; padding-bottom: 4px; }
-      .ptp-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; border-bottom: 2px solid #2f6bff; padding-bottom: 7px; margin-bottom: 13px; }
-      .ptp-h-t { font-family: Poppins, ui-sans-serif, sans-serif; font-size: 15px; font-weight: 800; letter-spacing: -0.02em; color: #171d2b; }
-      .ptp-h-s { font-size: 8.5px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: #9aa3b7; margin-top: 3px; }
-      .ptp-foot { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; border-top: 1px solid #dce1ec; margin-top: 14px; padding-top: 7px; font-size: 8.5px; color: #9aa3b7; letter-spacing: 0.04em; }
-      .ptp-cover-eyebrow { font-size: 9px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: #2f6bff; margin-top: 30px; }
-      .ptp-cover-t { font-family: Poppins, ui-sans-serif, sans-serif; font-size: 33px; font-weight: 800; letter-spacing: -0.03em; color: #171d2b; line-height: 1.12; margin: 9px 0 10px; max-width: 30ch; }
-      .ptp-cover-s { font-size: 12.5px; color: #545d70; max-width: 86ch; line-height: 1.6; }
-      .ptp-toc { display: grid; grid-template-columns: 1fr 1fr; gap: 0 30px; margin-top: 20px; }
-      .ptp-toc-i { display: flex; align-items: baseline; gap: 10px; font-size: 11px; color: #171d2b; padding: 5px 0; border-top: 1px solid #eef1f8; }
-      .ptp-toc-i b { flex: 0 0 22px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 9px; color: #9aa3b7; }
-      .ptp-toc-i i { font-style: normal; font-weight: 700; flex: 0 0 156px; }
-      .ptp-toc-i span { color: #9aa3b7; font-size: 9px; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; }
-      .ptp-note { margin-top: 18px; border-top: 1px solid #dce1ec; padding-top: 9px; font-size: 9.5px; color: #9aa3b7; line-height: 1.6; max-width: 100ch; }
-      @page { size: letter landscape; margin: 0.42in; }
-      @media print {
-        html, body { background: #ffffff !important; }
-        body > #app { display: none !important; }
-        #pt-print { position: static !important; left: auto !important; width: auto !important; }
-        .ptp-page { break-after: page; page-break-after: always; break-inside: avoid; overflow: hidden; }
-        .ptp-page:last-child { break-after: auto; page-break-after: auto; }
-        * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-        .pt-pdfbar { display: none !important; }
-        /* the print viewport is ~980px wide: keep the desktop grids, not the narrow fallbacks */
-        .pt-viz, .pt-duo, .pt-strips, .pt-thead2, .pt-pair, .ptf-cards { grid-template-columns: 1fr 1fr !important; }
-        .pta-head, .pta-row { grid-template-columns: 132px 1fr 1fr !important; }
-        .pts-head, .pts-row { grid-template-columns: 128px 1fr 92px 92px 150px !important; }
-        .ptr-head, .ptr-row { grid-template-columns: 132px 190px 1fr 1fr !important; }
-        .ptc-claims { grid-template-columns: repeat(3, 1fr) !important; }
-        .aw-wall { grid-template-columns: repeat(6, 1fr) !important; }
-        .ptm-grid { grid-template-columns: 320px 1fr !important; }
-        .pt-tr { grid-template-columns: 150px 1fr 1fr !important; }
-        .pta-c3, .pts-aw, .ptr-exit, .pt-cell-aw, .pt-thead2 > div + div { box-shadow: inset 2px 0 0 #dce1ec !important; }
-        .ptc-claim + .ptc-claim { box-shadow: inset 1px 0 0 #eef1f8 !important; }
-        .pts-row > div.pts-th { display: flex !important; }
-        .pts-head > div:last-child { display: block !important; }
-        .aw-bench .aw-clock { display: inline !important; }
-        .pt-viz-lane + .pt-viz-lane { border-left: 2px solid #dce1ec !important; border-top: 0 !important; }
-        .pt-side-left { border-right: 1px solid #dce1ec !important; border-bottom: 0 !important; }
-        /* every reveal resolved */
-        .ptv-el, .pt-callout, .pts-row, .pt-step, .ptv-tick, .pt-zone { opacity: 1 !important; transform: none !important; }
-        .ptc-seg { width: var(--sw) !important; }
-        .ptr-bar, .ptv-hbar, .ptv-gbar { width: var(--w) !important; }
-        .ptv-hline { width: var(--w, 14px) !important; }
-        .ptv-vline { height: 12px !important; }
-        .aw-ok, .pta-tick { opacity: 1 !important; transform: scale(1) !important; }
-        .ptc-check path { stroke-dashoffset: 0 !important; }
-      }
+      @media print { .pt-pdfbar { display: none !important; } }
       @media (max-width: 860px) {
         .pt-thead2, .pt-pair { grid-template-columns: 1fr; }
         .pt-row2 { background: #ffffff; }
@@ -11303,93 +11256,1298 @@
       }
 
       /* ═══════════════════════════════════════════════════════════════════
-         PARTNER PDF EXPORT
-         Every page is built by rendering a section at its final phase and
-         cloning the real DOM, so the document is exactly what the screen
-         shows. Pages are measured after insertion and scaled to one
-         landscape sheet each; a section whose comparison rows do not fit
-         moves them to a following page rather than overflowing.
+         PARTNER PDF EXPORT — the Application Workspace Partner Playbook
+         A real vector PDF, drawn with jsPDF. Nothing routes through the
+         browser's print dialog, so the file is identical on every machine:
+         selectable text, deterministic pagination, one download.
+         Every figure is read from the same constants the tabs render from
+         — the Current State stats, the Recast Approach architecture, the
+         customer wall, onboarding, all ten partner sections, and the
+         Business Impact model — so the document can never drift from the
+         demo. Landscape Letter throughout, one exhibit per page.
          ═══════════════════════════════════════════════════════════════════ */
-      const PTP_W = 1180, PTP_FIT_W = 972, PTP_FIT_H = 726, PTP_MAX = 872;
-      const PTP_BRAND = '<span style="display:inline-flex;align-items:center;gap:7px"><span style="display:inline-grid;place-items:center;width:22px;height:22px;border-radius:5px;background:#2f6bff;color:#fff;font-family:Poppins,sans-serif;font-size:10.5px;font-weight:800;letter-spacing:-0.02em">Re</span><span style="font-family:Poppins,sans-serif;font-size:12px;font-weight:800;letter-spacing:-0.02em;color:#171d2b">Recast<span style="color:#9aa3b7"> Software</span></span></span>';
-      function ptpHost(){
-        let el = document.getElementById('pt-print');
-        if (!el) { el = document.createElement('div'); el.id = 'pt-print'; document.body.appendChild(el); }
-        return el;
+      const PPD = {
+        W: 792, H: 612, M: 42, TOP: 96, BOT: 566,
+        BLUE: [47, 107, 255], DEEP: [26, 74, 196], NAVY: [17, 26, 58],
+        INK: [23, 29, 43], MID: [84, 93, 112], SOFT: [115, 125, 146], MUTE: [154, 163, 183],
+        LINE: [220, 225, 236], HAIR: [237, 240, 247], WASH: [248, 250, 253],
+        NOWBG: [250, 249, 246], NOWTAG: [138, 126, 104], AWBG: [240, 245, 255],
+        TEAL: [10, 143, 130], MINT: [94, 198, 186], GREEN: [18, 165, 140],
+        WARN: [176, 84, 20], WHITE: [255, 255, 255],
+      };
+
+      /* jsPDF's built-in faces are WinAnsi. A single out-of-range glyph
+         (an arrow, a check mark) silently flips the WHOLE string to a
+         broken two-byte encoding, so every word on that line turns to
+         garbage. Everything printed goes through here: markup is stripped,
+         known symbols are transliterated, and anything still outside the
+         encoding is dropped rather than allowed to corrupt a line. */
+      const PP_KEEP = '–—‘’“”•…†‡‰‹›€™ŒœŠšŽžŸƒˆ˜';
+      const PP_DROP = new RegExp('[^\\u0000-\\u00ff' + PP_KEEP + ']', 'g');
+      function S(v) {
+        return String(v == null ? '' : v)
+          .replace(/<br\s*\/?>/gi, ' ')
+          .replace(/<[^>]*>/g, '')
+          .replace(/&nbsp;/gi, ' ').replace(/&amp;/gi, '&').replace(/&lt;/gi, '<')
+          .replace(/&gt;/gi, '>').replace(/&quot;/gi, '"').replace(/&#0?39;|&rsquo;/gi, '’')
+          .replace(/\s*[→⇒➡➔➙⟶]\s*/g, ' to ')
+          .replace(/[✓✔✅☑▸►]\s*/g, '')
+          .replace(/≈/g, '~').replace(/≥/g, '>=').replace(/≤/g, '<=')
+          .replace(/[‘‚‛]/g, '’').replace(/[„‟]/g, '"')
+          .replace(/[‐‑−]/g, '-').replace(/⁄/g, '/').replace(/ /g, ' ')
+          .replace(PP_DROP, '')
+          .replace(/ +- +- +/g, ' – ')
+          .replace(/[ \t]{2,}/g, ' ')
+          .trim();
       }
-      function ptpPageHtml(title, sub, body){
-        return '<section class="ptp-page"><div class="ptp-head">' + PTP_BRAND +
-          '<div style="text-align:right"><div class="ptp-h-t">' + title + '</div>' +
-          (sub ? '<div class="ptp-h-s">' + sub + '</div>' : '') + '</div></div>' +
-          '<div class="ptp-body">' + body + '</div>' +
-          '<div class="ptp-foot"><span>Application Workspace \u2014 MSP partner operating model</span><span class="ptp-pageno"></span></div></section>';
+
+      /* Pulls "<strong>Lead.</strong> rest" — or a "Lead = rest" bullet —
+         apart so the lead-in can be set in bold with no markup left over. */
+      function ppLead(html) {
+        const m = String(html || '').match(/^\s*<strong>(.*?)<\/strong>\s*(.*)$/is);
+        if (m) return { lead: S(m[1]).replace(/[\s.—-]+$/, ''), body: S(m[2]).replace(/^[\s—-]+/, '') };
+        const t = S(html);
+        const p = t.match(/^([^.=|]{3,46})\s*[=|]\s*(.+)$/);
+        if (p) return { lead: p[1].replace(/[\s.]+$/, ''), body: p[2] };
+        return { lead: '', body: t };
       }
-      function ptpCoverHtml(){
-        const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-        const toc = PT_SECTIONS.map(function (S, i) {
-          return '<div class="ptp-toc-i"><b>' + String(i + 1).padStart(2, '0') + '</b><i>' + S.pill + '</i><span>' + S.tag + '</span></div>';
-        }).join('');
-        return '<section class="ptp-page"><div class="ptp-head">' + PTP_BRAND +
-          '<div style="text-align:right"><div class="ptp-h-s">Partner briefing \u00b7 ' + today + '</div></div></div>' +
-          '<div class="ptp-body">' +
-          '<div class="ptp-cover-eyebrow">Application Workspace for partners</div>' +
-          '<div class="ptp-cover-t">Application delivery as a standardized service.</div>' +
-          '<div class="ptp-cover-s">The current state of application delivery inside a managed service, what changes with Application Workspace, and the three numbers that follow. Every section is read the same way \u2014 today\u2019s model on the left, Application Workspace on the right \u2014 with the work that stays with the partner named explicitly.</div>' +
-          ptClaimsHtml() +
-          '<div class="ptp-toc">' + toc + '</div>' +
-          '<div class="ptp-note">Figures come from a reference model \u2014 1,000 users, $95 per loaded hour, an application-delivery line sold at $10 per user per month, and Application Workspace at $1.65 per user per month \u2014 not from a measurement of your portfolio. Validate them with the bake-off scorecard included here before they are used commercially. Not every application is covered, and customer-specific packaging, testing, approval, release authority, and support remain with the partner.</div>' +
-          '</div>' +
-          '<div class="ptp-foot"><span>Recast Software \u00b7 confidential partner material</span><span class="ptp-pageno"></span></div></section>';
-      }
-      function ptBuildPrint(){
-        const host = ptpHost();
-        const all = function () { return true; };
-        let html = ptpCoverHtml();
-        PT_SECTIONS.forEach(function (S) {
-          html += ptpPageHtml(S.pill, S.tag, '<div class="pt-focus">' + ptFocusHtml(S, all) + '</div>');
-          if (S.key === 'business') {
-            html += ptpPageHtml(S.pill, 'Bake-off scorecard \u00b7 what to measure before you commit', ptScoreHtml(all));
-            html += ptpPageHtml(S.pill, 'Partner financial operating model \u00b7 activity-based', ptModelHtml(all));
+
+      function ptExportPdf() {
+        const btn = document.querySelector('[data-action="pt-pdf"]');
+        const restore = btn ? btn.innerHTML : null;
+        if (!window.jspdf || !window.jspdf.jsPDF) {
+          if (btn) { btn.innerHTML = 'PDF library unavailable — reload the page'; setTimeout(function () { btn.innerHTML = restore; }, 3200); }
+          return;
+        }
+        if (btn) { btn.disabled = true; btn.innerHTML = 'Building the playbook…'; }
+        /* Yield a frame so the button repaints before the synchronous build. */
+        setTimeout(function () {
+          let ok = true;
+          try { ptBuildPlaybook(); } catch (e) { ok = false; console.error('Partner playbook PDF failed', e); }
+          if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = ok ? 'Playbook downloaded' : 'PDF failed — see console';
+            setTimeout(function () { if (btn) btn.innerHTML = restore; }, 2600);
           }
-        });
-        html += ptpPageHtml('What stays with you', 'Scope \u00b7 and what the returned capacity can fund', ptClosingHtml());
-        host.innerHTML = html;
-        host.querySelectorAll('input, button, [data-action]').forEach(function (el) {
-          el.removeAttribute('id'); el.removeAttribute('data-action');
-          if (el.tagName === 'INPUT') { el.setAttribute('readonly', ''); el.setAttribute('tabindex', '-1'); }
-        });
-        /* one batched read, then a split pass so nothing overflows its sheet */
-        let pages = Array.prototype.slice.call(host.querySelectorAll('.ptp-page'));
-        const first = pages.map(function (p) { return p.scrollHeight; });
-        pages.forEach(function (p, i) {
-          if (first[i] <= PTP_MAX) return;
-          const table = p.querySelector('.pt-table');
-          if (!table) return;
-          const title = p.querySelector('.ptp-h-t') ? p.querySelector('.ptp-h-t').textContent : '';
-          const wrap = document.createElement('div');
-          wrap.innerHTML = ptpPageHtml(title, 'Current state vs. Application Workspace', '');
-          const np = wrap.firstElementChild;
-          np.querySelector('.ptp-body').appendChild(table);
-          p.parentNode.insertBefore(np, p.nextSibling);
-        });
-        pages = Array.prototype.slice.call(host.querySelectorAll('.ptp-page'));
-        const hs = pages.map(function (p) { return p.scrollHeight; });
-        pages.forEach(function (p, i) {
-          const no = p.querySelector('.ptp-pageno');
-          if (no) no.textContent = (i + 1) + ' / ' + pages.length;
-          p.style.zoom = Math.min(PTP_FIT_W / PTP_W, PTP_FIT_H / (hs[i] || 1), 1).toFixed(3);
-        });
-        return pages.length;
+        }, 60);
       }
-      function ptExportPdf(){
-        let n = 0;
-        try { n = ptBuildPrint(); } catch (e) { console.warn('PDF build failed', e); }
-        if (!n) return;
-        setTimeout(function () { window.print(); }, 160);
+
+      function ptBuildPlaybook() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ unit: 'pt', format: 'letter', orientation: 'landscape', compress: true });
+        doc.setProperties({
+          title: 'Recast Application Workspace — The Partner Playbook',
+          subject: 'Application delivery as a standardized service: current state, the Recast approach, the partner operating model, and the business case.',
+          author: 'Recast Software',
+          creator: 'Recast Software · Application Workspace',
+          keywords: 'Recast Software, Application Workspace, partner, MSP, application delivery, playbook',
+        });
+        const P = PPD, W = P.W, H = P.H, M = P.M, CW = W - M * 2;
+        const toc = [];
+        let part = '';
+
+        /* Business Impact figures are needed whether or not that tab was
+           opened this session, and the operating model needs its seed. */
+        if (!STATE.calcResult) { try { calculateImpact(); } catch (e) {} }
+        try { ptModelEnsure(); } catch (e) {}
+
+        /* ── primitives ─────────────────────────────────────────────── */
+        const fill = (c) => doc.setFillColor(c[0], c[1], c[2]);
+        const stroke = (c) => doc.setDrawColor(c[0], c[1], c[2]);
+        const ink = (c) => doc.setTextColor(c[0], c[1], c[2]);
+        function f(style, size, color) {
+          doc.setFont('Helvetica', style); doc.setFontSize(size);
+          if (color) ink(color);
+        }
+        function tw(str, style, size) { f(style, size); return doc.getTextWidth(S(str)); }
+        function split(str, w, style, size) { f(style, size); return doc.splitTextToSize(S(str), w); }
+        /* Largest size in [min,max] at which the string fits one line. */
+        function fitSize(str, w, style, max, min) {
+          for (let s = max; s > min; s -= 0.2) { if (tw(str, style, s) <= w) return s; }
+          return min;
+        }
+
+        /* y is always the TOP of a block; baselines are derived from it. */
+        function para(str, x, y, w, o) {
+          o = o || {};
+          const size = o.size || 8.6, lh = o.lh || size * 1.36;
+          const ls = split(str, w, o.style || 'normal', size);
+          const use = o.maxLines ? ls.slice(0, o.maxLines) : ls;
+          if (o.maxLines && ls.length > use.length && use.length) {
+            use[use.length - 1] = use[use.length - 1].replace(/[\s,;:.—-]+$/, '') + '…';
+          }
+          ink(o.color || P.MID);
+          for (let i = 0; i < use.length; i++) {
+            doc.text(use[i], o.align === 'center' ? x + w / 2 : (o.align === 'right' ? x + w : x),
+              y + size * 0.86 + i * lh, o.align ? { align: o.align } : undefined);
+          }
+          return y + Math.max(1, use.length) * lh;
+        }
+        function paraH(str, w, o) {
+          o = o || {};
+          const size = o.size || 8.6, lh = o.lh || size * 1.36;
+          const n = split(str, w, o.style || 'normal', size).length;
+          return Math.max(1, o.maxLines ? Math.min(n, o.maxLines) : n) * lh;
+        }
+        /* Bold lead-in flowing into regular body copy on the same line. The
+           gap is added explicitly — S() trims, so it cannot be measured. */
+        function leadGap(size) { return size * 0.36; }
+        function leadPara(lead, body, x, y, w, o) {
+          o = o || {};
+          const size = o.size || 8.6, lh = o.lh || size * 1.36;
+          if (!lead) return para(body, x, y, w, o);
+          const lw = tw(lead, 'bold', size) + leadGap(size);
+          const first = split(body, Math.max(24, w - lw), 'normal', size);
+          f('bold', size, o.leadColor || P.INK);
+          doc.text(S(lead), x, y + size * 0.86);
+          f('normal', size, o.color || P.MID);
+          if (first.length) doc.text(first[0], x + lw, y + size * 0.86);
+          const rest = S(body).slice(first[0] ? first[0].length : 0).trim();
+          let yy = y + lh;
+          if (rest) {
+            const ls = split(rest, w, 'normal', size);
+            for (let i = 0; i < ls.length; i++) doc.text(ls[i], x, yy + size * 0.86 + i * lh);
+            yy += ls.length * lh;
+          }
+          return yy;
+        }
+        function leadParaH(lead, body, w, o) {
+          o = o || {};
+          const size = o.size || 8.6, lh = o.lh || size * 1.36;
+          if (!lead) return paraH(body, w, o);
+          const lw = tw(lead, 'bold', size) + leadGap(size);
+          const first = split(body, Math.max(24, w - lw), 'normal', size);
+          const rest = S(body).slice(first[0] ? first[0].length : 0).trim();
+          return lh + (rest ? split(rest, w, 'normal', size).length * lh : 0);
+        }
+        /* Tracked small caps. `align` positions within [x, x+w]. */
+        function eyebrow(str, x, y, color, size, align, w) {
+          const sz = size || 6.8, label = S(str).toUpperCase();
+          f('bold', sz, color || P.MUTE);
+          doc.setCharSpace(0.9);
+          const anchor = align === 'center' ? x + (w || 0) / 2 : (align === 'right' ? x + (w || 0) : x);
+          doc.text(label, anchor, y + sz * 0.86, align ? { align: align } : undefined);
+          doc.setCharSpace(0);
+          return y + sz * 1.7;
+        }
+        function eyebrowW(str, size, track) {
+          const sz = size || 6.8, label = S(str).toUpperCase();
+          f('bold', sz);
+          return doc.getTextWidth(label) + (track == null ? 0.9 : track) * label.length;
+        }
+        function rule(x, y, w, color, lw) {
+          stroke(color || P.LINE); doc.setLineWidth(lw || 0.6); doc.line(x, y, x + w, y);
+        }
+        function panel(x, y, w, h, bg, border, r) {
+          const rr = r == null ? 4 : r;
+          if (bg) { fill(bg); doc.roundedRect(x, y, w, h, rr, rr, 'F'); }
+          if (border) { stroke(border); doc.setLineWidth(0.6); doc.roundedRect(x, y, w, h, rr, rr, 'S'); }
+        }
+        function tickDot(cx, cy, r, color) {
+          fill(color || P.GREEN); doc.circle(cx, cy, r, 'F');
+          stroke(P.WHITE); doc.setLineWidth(Math.max(0.7, r * 0.30));
+          doc.setLineCap('round'); doc.setLineJoin('round');
+          doc.lines([[r * 0.34, r * 0.38], [r * 0.68, -r * 0.80]], cx - r * 0.38, cy - r * 0.02);
+          doc.setLineCap('butt'); doc.setLineJoin('miter'); doc.setLineWidth(0.6);
+        }
+        function arrow(x, y, len, color, lw) {
+          stroke(color || P.MUTE); doc.setLineWidth(lw || 0.9);
+          doc.line(x, y, x + len - 3, y);
+          fill(color || P.MUTE);
+          doc.triangle(x + len, y, x + len - 3.6, y - 2.1, x + len - 3.6, y + 2.1, 'F');
+        }
+        /* Rounded label. Width accounts for letter-spacing, which jsPDF's
+           getTextWidth ignores — without it every tracked chip clips. */
+        function chipW(str, o) {
+          o = o || {};
+          const size = o.size || 7, padX = o.padX == null ? 6 : o.padX;
+          const label = o.upper ? S(str).toUpperCase() : S(str);
+          f(o.style || 'bold', size);
+          return doc.getTextWidth(label) + (o.track || 0) * label.length + padX * 2 + (o.iconW || 0);
+        }
+        function chip(str, x, y, o) {
+          o = o || {};
+          const size = o.size || 7, padX = o.padX == null ? 6 : o.padX, h = o.h || size * 2.05;
+          const label = o.upper ? S(str).toUpperCase() : S(str);
+          const w = chipW(str, o);
+          const rr = o.r == null ? h / 2 : o.r;
+          if (o.bg) { fill(o.bg); doc.roundedRect(x, y, w, h, rr, rr, 'F'); }
+          if (o.border) { stroke(o.border); doc.setLineWidth(0.6); doc.roundedRect(x, y, w, h, rr, rr, 'S'); }
+          f(o.style || 'bold', size, o.color || P.INK);
+          if (o.track) doc.setCharSpace(o.track);
+          doc.text(label, x + padX + (o.iconW || 0), y + h / 2 + size * 0.35);
+          if (o.track) doc.setCharSpace(0);
+          return w;
+        }
+        const LANE_NOW = { bg: [242, 240, 235], color: [122, 112, 94], size: 6.8, track: 0.7, upper: true, h: 15 };
+        const LANE_AW = { bg: PPD.BLUE, color: PPD.WHITE, size: 6.8, track: 0.7, upper: true, h: 15 };
+        const laneNow = (x, y) => chip('Current state', x, y, LANE_NOW);
+        const laneAw = (x, y) => chip('With Application Workspace', x, y, LANE_AW);
+
+        /* Even extra leading so a stack of rows reaches the bottom margin
+           instead of stranding a third of the page. */
+        function spread(natural, avail, count, cap) {
+          if (!count) return 0;
+          return Math.max(0, Math.min(cap == null ? 16 : cap, (avail - natural) / count));
+        }
+
+        /* ── page frame ─────────────────────────────────────────────── */
+        function brand(x, y, onDark) {
+          fill(onDark ? P.WHITE : P.BLUE);
+          doc.roundedRect(x, y, 15, 15, 3.4, 3.4, 'F');
+          f('bold', 7.4, onDark ? P.BLUE : P.WHITE);
+          doc.text('Re', x + 7.5, y + 10.4, { align: 'center' });
+          f('bold', 10.4, onDark ? P.WHITE : P.INK);
+          doc.text('Recast', x + 20, y + 11.4);
+          const rw = doc.getTextWidth('Recast');
+          f('normal', 10.4, onDark ? [150, 178, 255] : P.MUTE);
+          doc.text(' Software', x + 20 + rw, y + 11.4);
+        }
+        function page(title, sub, opts) {
+          opts = opts || {};
+          doc.addPage('letter', 'landscape');
+          if (!opts.continued && title) toc.push({ part: part, title: title, page: doc.getNumberOfPages() });
+          brand(M, 24);
+          if (part) eyebrow(part, M, 24, P.MUTE, 6.8, 'right', CW);
+          rule(M, 50, CW, P.BLUE, 1.6);
+          const full = S(title) + (opts.continued ? ' (continued)' : '');
+          f('bold', 16.5, P.INK);
+          doc.text(full, M, 70);
+          if (sub) {
+            const room = CW - doc.getTextWidth(full) - 20;
+            f('normal', 9.2, P.SOFT);
+            doc.text(split(sub, room, 'normal', 9.2)[0] || '', M + CW, 69, { align: 'right' });
+          }
+          return P.TOP;
+        }
+
+        /* ── COVER ──────────────────────────────────────────────────── */
+        const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+        const COVER_TOC = { y: 0, h: 0 };
+        (function cover() {
+          const bandH = 250;
+          fill(P.NAVY); doc.rect(0, 0, W, bandH, 'F');
+          /* quiet geometry, so the band is not a flat slab */
+          fill([32, 46, 96]); doc.circle(W - 96, 40, 126, 'F');
+          fill([26, 38, 80]); doc.circle(W - 40, 206, 92, 'F');
+          fill(P.BLUE); doc.rect(0, bandH - 4, W, 4, 'F');
+          brand(M, 34, true);
+          f('bold', 7, [150, 178, 255]);
+          doc.setCharSpace(1.1);
+          doc.text('PARTNER BRIEFING · ' + S(today).toUpperCase(), M + CW, 45, { align: 'right' });
+          doc.setCharSpace(0);
+
+          let y = 88;
+          y = eyebrow('Recast Application Workspace', M, y, P.MINT, 7.6);
+          f('bold', 34, P.WHITE);
+          doc.text('The Partner Playbook', M, y + 30);
+          f('normal', 34, [150, 178, 255]);
+          doc.text('for application delivery.', M, y + 69);
+          y += 92;
+          para('Where application delivery stands inside a managed service today, what changes with Application Workspace, and the three numbers that follow. Every comparison is read the same way — the current state on the left, Application Workspace on the right — with the work that stays with the partner named explicitly.',
+            M, y, 476, { size: 9.8, lh: 13.8, color: [186, 202, 240] });
+
+          /* the three numbers */
+          const cy = bandH + 24, ch = 88, gap = 12, cwid = (CW - gap * 2) / 3;
+          [['80%', 'faster', 'Application delivery, vs. Intune + Autopilot alone', '10 working days', '2 · accepted to deployed'],
+           ['70%', 'fewer tickets', 'Application support tickets your desk absorbs', '50', '15 per 1,000 users / month'],
+           ['60%', 'more margin', 'On the same contract — efficiency, not repricing', '43%', '69% gross margin · 1.60×']
+          ].forEach(function (c, i) {
+            const x = M + (cwid + gap) * i;
+            panel(x, cy, cwid, ch, P.WASH, P.LINE, 5);
+            fill(P.BLUE); doc.rect(x, cy + 5, 2.6, ch - 10, 'F');
+            f('bold', 29, P.BLUE);
+            doc.text(c[0], x + 16, cy + 36);
+            const nw = doc.getTextWidth(c[0]);
+            f('bold', 9.6, P.INK);
+            doc.text(S(c[1]), x + 16 + nw + 7, cy + 35);
+            para(c[2], x + 16, cy + 45, cwid - 32, { size: 8.2, lh: 10.6, color: P.MID, maxLines: 2 });
+            f('normal', 7.4, P.MUTE);
+            doc.text(S(c[3]), x + 16, cy + 76);
+            const aw = doc.getTextWidth(S(c[3]));
+            arrow(x + 16 + aw + 5, cy + 73.4, 12, P.MUTE, 0.7);
+            doc.text(S(c[4]), x + 16 + aw + 22, cy + 76);
+          });
+
+          /* contents frame — filled in once the page count is known */
+          const ty = cy + ch + 24;
+          eyebrow('What this playbook covers', M, ty, P.INK, 7.4);
+          rule(M, ty + 14, CW, P.LINE);
+          COVER_TOC.y = ty + 21;
+          COVER_TOC.h = (H - 54) - COVER_TOC.y;
+
+          para('Figures come from a reference model — 1,000 users, $95 per loaded hour, an application-delivery line sold at $10 per user per month, and Application Workspace at $1.65 per user per month — not from a measurement of your portfolio. Validate them with the bake-off scorecard in this document before they are used commercially. Not every application is covered: customer-specific packaging, testing, approval, release authority, and support remain with the partner.',
+            M, H - 44, CW, { size: 6.9, lh: 9, color: P.MUTE });
+        })();
+
+        /* ═══ PART 1 — CURRENT STATE ═══════════════════════════════════ */
+        part = 'Part 1 · Current state';
+
+        /* 1.1 — the market pressure */
+        (function () {
+          let y = page('Why this is on the table now', 'Four numbers that changed the job');
+          const gap = 11, cwid = (CW - gap * 3) / 4, cardH = 152;
+          STAT_CARDS.forEach(function (c, i) {
+            const x = M + (cwid + gap) * i;
+            panel(x, y, cwid, cardH, P.WASH, P.LINE, 5);
+            fill(P.BLUE); doc.rect(x, y, cwid, 2.6, 'F');
+            f('bold', 30, P.BLUE);
+            doc.text(S(c.stat), x + 14, y + 44);
+            let yy = para(c.title, x + 14, y + 54, cwid - 28, { size: 9.4, lh: 12, style: 'bold', color: P.INK });
+            para(c.body, x + 14, yy + 5, cwid - 28, { size: 8, lh: 10.4, color: P.MID });
+            para(c.source, x + 14, y + cardH - 16, cwid - 28, { size: 6.6, lh: 8.4, color: P.MUTE, style: 'italic' });
+          });
+          y += cardH + 22;
+
+          const colW = (CW - 22) / 2;
+          const blocks = [
+            ['Why change', 'The constraint moved up the stack', P.BLUE, [
+              ['The challenge has changed.', 'Hardware is stable and networks are solid — but applications keep IT teams running in circles. The constraint is no longer infrastructure. It is the layer above it.'],
+              ['The model multiplies, it does not add.', 'One app delivered to five environments is five packaging jobs, five testing cycles, five patch streams. The work scales with platforms, not with team size.'],
+              ['Strategic moves keep stalling.', 'Citrix to AVD, SCCM to Intune, Windows on ARM, AI tooling — application readiness blocks each one. The roadmap exists; the capacity to execute it does not.'],
+            ], 'The organizations getting ahead of this are not adding people — they are changing the model that decides how much work each person has to do.'],
+            ['Why now', 'The runway for the old model has run out', P.MINT, [
+              ['The math does not add up.', 'Most IT teams have not doubled in size, but the workload has. The same hands are asked to manage twice as much.'],
+              ['New platforms no longer arrive one at a time.', 'AVD, Windows 365, ARM devices, and AI tooling all landed together. The slow-adoption model has nothing left to absorb them with.'],
+              ['Falling behind compounds.', 'Every delayed update is an open door and a blocked user. The cost of waiting shows up in exposure, in productivity, and in ground lost each quarter the backlog grows.'],
+            ], 'The teams that solve this in 2026 will spend the next three years building. The teams that do not will spend them catching up.'],
+          ];
+          /* quote band is pinned to the bottom; bullets get the space above */
+          const quoteH = 44, quoteY = P.BOT - quoteH;
+          const natural = blocks[0][3].reduce(function (a, r) { return a + leadParaH(r[0], r[1], colW - 12, { size: 9, lh: 12 }); }, 0);
+          const extra = spread(natural, quoteY - (y + 26) - 10, blocks[0][3].length, 30);
+          blocks.forEach(function (b, i) {
+            const x = M + (colW + 22) * i;
+            let yy = y;
+            fill(b[2]); doc.rect(x, yy + 1, 2.6, 14, 'F');
+            f('bold', 11, P.INK);
+            doc.text(S(b[0]), x + 10, yy + 12);
+            const hw = doc.getTextWidth(S(b[0]));
+            f('normal', 8.4, P.SOFT);
+            doc.text(S('— ' + b[1]), x + 10 + hw + 7, yy + 11.8);
+            yy += 26;
+            b[3].forEach(function (r) {
+              fill(P.MUTE); doc.circle(x + 3, yy + 4.6, 1.6, 'F');
+              yy = leadPara(r[0], r[1], x + 12, yy, colW - 12, { size: 9, lh: 12 }) + extra;
+            });
+            panel(x, quoteY, colW, quoteH, i ? [244, 251, 249] : P.AWBG, null, 5);
+            fill(b[2]); doc.rect(x, quoteY, 2.6, quoteH, 'F');
+            para(b[4], x + 14, quoteY + 10, colW - 28, { size: 8.6, lh: 11.4, color: P.INK, style: 'italic' });
+          });
+        })();
+
+        /* 1.2 — the anatomy of one request */
+        (function () {
+          let y = page('One request, eight activities', 'The anatomy of application delivery inside a managed service');
+          y = para('A single application request runs through eight separate activities before one package ships. Every one is an area Application Workspace helps with — the problem was never packaging alone.',
+            M, y, CW, { size: 9.4, lh: 12.6, color: P.MID });
+          y += 14;
+          const c1 = 122, gapc = 14, c2 = 292, c3 = CW - c1 - c2 - gapc * 2;
+          const x1 = M, x2 = M + c1 + gapc, x3 = x2 + c2 + gapc;
+          eyebrow('Activity', x1, y + 2, P.MUTE, 6.8);
+          laneNow(x2, y - 2);
+          laneAw(x3, y - 2);
+          y += 19;
+          rule(M, y, CW, P.LINE, 0.9);
+          y += 8;
+          const foot = 22;
+          const nat = PT_ANATOMY.map(function (a) {
+            return Math.max(
+              paraH(a.today, c2, { size: 8.4, lh: 10.8 }) + paraH(a.cost, c2, { size: 7.8, lh: 10, style: 'italic' }) + 3,
+              paraH(a.aw, c3 - 16, { size: 8.4, lh: 10.8 }) + 14, 32) + 9;
+          });
+          const extra = spread(nat.reduce(function (a, b) { return a + b; }, 0), P.BOT - foot - y, PT_ANATOMY.length, 12);
+          PT_ANATOMY.forEach(function (a, i) {
+            const rowH = nat[i] + extra;
+            if (i % 2 === 0) { fill(P.WASH); doc.rect(M, y - 4, CW, rowH, 'F'); }
+            fill(P.HAIR); doc.roundedRect(x1, y - 1, 14, 14, 3.2, 3.2, 'F');
+            f('bold', 7.4, P.SOFT);
+            doc.text(String(i + 1), x1 + 7, y + 8.8, { align: 'center' });
+            para(a.act, x1 + 19, y, c1 - 19, { size: 8.8, lh: 11, style: 'bold', color: P.INK });
+            const ty = para(a.today, x2, y, c2, { size: 8.4, lh: 10.8, color: P.MID });
+            para(a.cost, x2, ty + 2, c2, { size: 7.8, lh: 10, color: P.WARN, style: 'italic' });
+            tickDot(x3 + 5.4, y + 5.8, 4.8, P.GREEN);
+            const ay = para(a.aw, x3 + 16, y, c3 - 16, { size: 8.4, lh: 10.8, color: P.MID });
+            chip(a.keep, x3 + 16, ay + 2, { bg: P.AWBG, color: P.DEEP, size: 6.6, h: 12.4, padX: 6 });
+            y += rowH;
+            if (i < PT_ANATOMY.length - 1) rule(M, y - 5, CW, P.HAIR);
+          });
+          para('Eight activities, one per row — the left column is today’s method with the cost it hides, the right column is where Application Workspace takes work off the team. What stays with the partner is named on every row.',
+            M, P.BOT - 12, CW, { size: 7.6, lh: 9.8, color: P.MUTE, style: 'italic' });
+        })();
+
+        /* ═══ PART 2 — THE RECAST APPROACH ════════════════════════════ */
+        part = 'Part 2 · The Recast approach';
+
+        /* 2.1 — architecture */
+        (function () {
+          let y = page('Where Application Workspace fits', 'One lifecycle layer above the platforms you already run');
+          const railH = 82, footH = 22;
+          const boxY = y, boxH = P.BOT - footH - railH - 14 - boxY;
+          panel(M, boxY, CW, boxH, [250, 251, 254], P.LINE, 6);
+          const inner = CW - 48, ix = M + 24;
+
+          function msMark(x, y2, s) {
+            const h = s / 2 - 0.7;
+            fill([242, 80, 34]); doc.rect(x, y2, h, h, 'F');
+            fill([127, 186, 0]); doc.rect(x + h + 1.4, y2, h, h, 'F');
+            fill([0, 164, 239]); doc.rect(x, y2 + h + 1.4, h, h, 'F');
+            fill([255, 185, 0]); doc.rect(x + h + 1.4, y2 + h + 1.4, h, h, 'F');
+          }
+          const tools = [
+            ['Intune', function (x, cy2) { fill([0, 120, 212]); doc.circle(x + 5.2, cy2 - 1.2, 5, 'F'); fill([94, 198, 186]); doc.circle(x + 8.4, cy2 + 2.6, 3.4, 'F'); }],
+            ['ConfigMgr', function (x, cy2) { msMark(x, cy2 - 5.4, 10.8); }],
+            ['Citrix', function (x, cy2) { fill([0, 0, 0]); doc.circle(x + 5.4, cy2, 5.4, 'F'); f('bold', 7.2, P.WHITE); doc.text('C', x + 5.4, cy2 + 2.5, { align: 'center' }); }],
+            ['AVD / W365', function (x, cy2) { msMark(x, cy2 - 5.4, 10.8); }],
+            ['Jamf', function (x, cy2) { fill([17, 104, 237]); doc.roundedRect(x, cy2 - 5.4, 10.8, 10.8, 2.4, 2.4, 'F'); f('bold', 7.4, P.WHITE); doc.text('J', x + 5.4, cy2 + 2.6, { align: 'center' }); }],
+          ];
+          const toolH = 27, toolPad = 11, toolIcon = 17, bandH = 98;
+          /* Slack left over after the fixed rows is shared between the top
+             pad, the two brackets, and the bottom pad, so the diagram sits
+             centred in its frame instead of hugging the top edge. */
+          const g = Math.max(0, (boxH - (36 + 15 + toolH + 21 + bandH + 22 + 15 + 23)) / 4);
+          let yy = boxY + 18 + g;
+          eyebrow('Your existing environments', ix, yy, P.MUTE, 6.9, 'center', inner);
+          yy += 15;
+          let totalW = 0; const gapT = 10;
+          tools.forEach(function (t) { totalW += tw(t[0], 'bold', 9) + toolPad * 2 + toolIcon + gapT; });
+          totalW -= gapT;
+          let tx = ix + (inner - totalW) / 2;
+          tools.forEach(function (t) {
+            const w = tw(t[0], 'bold', 9) + toolPad * 2 + toolIcon;
+            panel(tx, yy, w, toolH, P.WHITE, P.LINE, toolH / 2);
+            t[1](tx + toolPad, yy + toolH / 2);
+            f('bold', 9, P.INK);
+            doc.text(S(t[0]), tx + toolPad + toolIcon, yy + toolH / 2 + 3.2);
+            tx += w + gapT;
+          });
+          yy += toolH;
+
+          const bx1 = ix + inner * 0.15, bx2 = ix + inner * 0.85, mid = ix + inner / 2;
+          const b1 = 21 + g, cross1 = yy + b1 * 0.52;
+          stroke([198, 207, 226]); doc.setLineWidth(0.9); doc.setLineDashPattern([2.6, 2.6], 0);
+          doc.line(bx1, cross1, bx2, cross1);
+          doc.line(bx1, yy + 4, bx1, cross1);
+          doc.line(bx2, yy + 4, bx2, cross1);
+          doc.line(mid, cross1, mid, yy + b1 - 2);
+          doc.setLineDashPattern([], 0);
+          yy += b1;
+
+          fill(P.BLUE); doc.roundedRect(ix, yy, inner, bandH, 7, 7, 'F');
+          f('bold', 15, P.WHITE);
+          doc.text('Recast End-to-End Application Lifecycle Management', ix + 20, yy + 30);
+          const capY = yy + 44, capH = 36, capGap = 6;
+          const capW = (inner - 40 - capGap * 4) / 5;
+          [['8,000+ Managed & Tested Apps', true], ['Custom App Packaging', false], ['Identity-Based Access', false],
+           ['Auto-Patching', false], ['Self-Service Catalog', false]].forEach(function (c, i) {
+            const x = ix + 20 + (capW + capGap) * i;
+            fill(c[1] ? P.WHITE : [79, 130, 255]);
+            doc.roundedRect(x, capY, capW, capH, 6, 6, 'F');
+            const ls = split(c[0], capW - 14, 'bold', 8.2);
+            ink(c[1] ? P.INK : P.WHITE);
+            doc.setFontSize(8.2);
+            if (ls.length > 1) {
+              doc.text(ls[0], x + capW / 2, capY + 15, { align: 'center' });
+              doc.text(ls[1], x + capW / 2, capY + 25.6, { align: 'center' });
+            } else {
+              doc.text(ls[0] || '', x + capW / 2, capY + 21, { align: 'center' });
+            }
+          });
+          yy += bandH;
+
+          const b2 = 22 + g, cross2 = yy + b2 * 0.42;
+          stroke([198, 207, 226]); doc.setLineWidth(0.9); doc.setLineDashPattern([2.6, 2.6], 0);
+          doc.line(mid, yy, mid, cross2);
+          doc.line(bx1, cross2, bx2, cross2);
+          doc.line(bx1, cross2, bx1, yy + b2 - 3);
+          doc.line(bx2, cross2, bx2, yy + b2 - 3);
+          doc.setLineDashPattern([], 0);
+          yy += b2;
+
+          eyebrow('End users & devices', ix, yy, P.MUTE, 6.9, 'center', inner);
+          yy += 15;
+          const devices = ['Windows', 'Windows on ARM', 'macOS', 'Virtual Desktop', 'Cloud PC / W365', 'BYOD / Remote', 'Browser-Based'];
+          const devH = 23, devPad = 10, devIcon = 14, dGap = 8;
+          let dTotal = 0;
+          devices.forEach(function (d) { dTotal += tw(d, 'normal', 8.4) + devPad * 2 + devIcon + dGap; });
+          dTotal -= dGap;
+          let dx = ix + (inner - dTotal) / 2;
+          devices.forEach(function (d) {
+            const w = tw(d, 'normal', 8.4) + devPad * 2 + devIcon;
+            panel(dx, yy, w, devH, P.WHITE, P.LINE, devH / 2);
+            stroke(P.SOFT); doc.setLineWidth(0.75);
+            doc.roundedRect(dx + devPad, yy + 6.6, 9.4, 7, 1.2, 1.2, 'S');
+            doc.line(dx + devPad + 2.6, yy + 15.6, dx + devPad + 6.8, yy + 15.6);
+            f('normal', 8.4, P.MID);
+            doc.text(S(d), dx + devPad + devIcon, yy + devH / 2 + 3);
+            dx += w + dGap;
+          });
+
+          /* the lifecycle rail, attached below the diagram */
+          let ly = boxY + boxH + 14;
+          eyebrow('Inside Application Workspace', M, ly, P.BLUE, 7.2, 'center', CW);
+          ly += 17;
+          const sGap = 8, sW = (CW - sGap * 6) / 7;
+          LIFECYCLE_MODULES.forEach(function (m, i) {
+            const x = M + (sW + sGap) * i;
+            eyebrow(m.stage, x, ly, P.MUTE, 6.4, 'center', sW);
+            if (i < 6) rule(x + sW / 2 + 6, ly + 17, sW + sGap - 12, P.LINE, 0.8);
+            fill(P.BLUE); doc.circle(x + sW / 2, ly + 17, 3, 'F');
+            panel(x, ly + 25, sW, 24, P.WHITE, P.LINE, 5);
+            const nm = split(m.name, sW - 12, 'bold', 8);
+            ink(P.INK); doc.setFontSize(8);
+            if (nm.length > 1) {
+              doc.text(nm[0], x + sW / 2, ly + 35, { align: 'center' });
+              doc.text(nm[1], x + sW / 2, ly + 44, { align: 'center' });
+            } else {
+              doc.text(nm[0] || '', x + sW / 2, ly + 40, { align: 'center' });
+            }
+          });
+          para('Application Workspace does not replace Intune, ConfigMgr, Citrix, AVD, or Jamf — it sits above them as one application lifecycle layer, so a single definition reaches every platform and every device without being rebuilt.',
+            M, P.BOT - 12, CW, { size: 7.8, lh: 10, color: P.MUTE, style: 'italic', align: 'center' });
+        })();
+
+        /* 2.2 — how Recast does it */
+        (function () {
+          const card = NEW_CARDS.find(function (c) { return c.id === 'core'; });
+          let y = page('How Recast does it', S(card.closer));
+          const bandH = 44, bandY = P.BOT - bandH;
+          const colW = (CW - 18) / 2;
+          const items = card.bullets.map(ppLead);
+          const half = Math.ceil(items.length / 2);
+          const cols = [items.slice(0, half), items.slice(half)];
+          /* each column is padded on its own so both reach the closing band */
+          cols.forEach(function (col, ci) {
+            const x = M + (colW + 18) * ci;
+            const nat = col.reduce(function (a, it) {
+              return a + Math.max(leadParaH(it.lead, it.body, colW - 50, { size: 9.4, lh: 12.8 }) + 22, 50);
+            }, 0);
+            /* leftover goes between the cards, not inside them, so no card
+               ends up as a short sentence floating in a tall empty box */
+            const gap = 9 + spread(nat + (col.length - 1) * 9, bandY - 14 - y, col.length - 1, 46);
+            let yy = y;
+            col.forEach(function (it, i) {
+              const h = Math.max(leadParaH(it.lead, it.body, colW - 50, { size: 9.4, lh: 12.8 }) + 22, 50);
+              panel(x, yy, colW, h, P.WASH, P.LINE, 5);
+              fill(P.BLUE); doc.roundedRect(x + 12, yy + 12, 16, 16, 3.6, 3.6, 'F');
+              f('bold', 8, P.WHITE);
+              doc.text(String(ci * half + i + 1), x + 20, yy + 23, { align: 'center' });
+              leadPara(it.lead, it.body, x + 36, yy + 11, colW - 50, { size: 9.4, lh: 12.8 });
+              yy += h + gap;
+            });
+          });
+          panel(M, bandY, CW, bandH, P.NAVY, null, 5);
+          f('bold', 13.6, P.WHITE);
+          doc.text('Package once. Deliver everywhere. Update everything.', M + CW / 2, bandY + 20, { align: 'center' });
+          f('normal', 8.2, [160, 182, 240]);
+          doc.text(S('The catalog is the head start — custom and internal apps get the same packaging structure, promotion pipeline, delivery logic, and self-service catalog.'), M + CW / 2, bandY + 33, { align: 'center' });
+        })();
+
+        /* 2.3 — trusted by customers */
+        (function () {
+          const card = NEW_CARDS.find(function (c) { return c.id === 'trust'; });
+          let y = page('Trusted by customers', S(card.closer));
+          const stats = [['60M+', 'endpoints managed'], ['130+', 'countries'], ['70k+', 'customers'], ['87', 'CSAT score'], ['SOC 2 · ISO 27001', 'certified']];
+          const sGap = 11, sW = (CW - sGap * 4) / 5, sH = 62;
+          stats.forEach(function (s, i) {
+            const x = M + (sW + sGap) * i;
+            const last = i === stats.length - 1;
+            panel(x, y, sW, sH, P.WASH, P.LINE, 5);
+            fill(last ? P.TEAL : P.BLUE); doc.rect(x, y, sW, 2.6, 'F');
+            f('bold', last ? 12.5 : 25, last ? P.TEAL : P.BLUE);
+            doc.text(S(s[0]), x + sW / 2, y + (last ? 34 : 40), { align: 'center' });
+            f('normal', 8.2, P.MID);
+            doc.text(S(s[1]), x + sW / 2, y + 52, { align: 'center' });
+          });
+          y += sH + 20;
+
+          const bulletsW = 244;
+          let by = eyebrow('Why they stay', M, y, P.INK, 7.2);
+          by += 4;
+          const bNat = card.bullets.reduce(function (a, b) {
+            return a + paraH(S(b).replace(/\s*\|\s*/g, ' — '), bulletsW - 16, { size: 8.8, lh: 11.6 });
+          }, 0);
+          const bExtra = spread(bNat, P.BOT - by - 6, card.bullets.length, 34);
+          card.bullets.forEach(function (b) {
+            const t = S(b).replace(/\s*\|\s*/g, ' — ');
+            tickDot(M + 4.8, by + 4.8, 4.8, P.TEAL);
+            by = para(t, M + 16, by, bulletsW - 16, { size: 8.8, lh: 11.6, color: P.MID }) + bExtra;
+          });
+
+          /* sector blocks flow at their natural height so the wall reads as
+             one list, not a grid with holes in it */
+          const wx = M + bulletsW + 24, wW = CW - bulletsW - 24;
+          let wy = eyebrow('A selection of organizations running Recast', wx, y, P.INK, 7.2);
+          wy += 4;
+          const secCols = 3, secGap = 12, secW = (wW - secGap * (secCols - 1)) / secCols;
+          const heights = TRUST_LOGOS.map(function (s) { return paraH(s.names.join(' · '), secW, { size: 7.8, lh: 10 }) + 15; });
+          const colY = [wy, wy, wy];
+          const perCol = Math.ceil(TRUST_LOGOS.length / secCols);
+          const colNat = [0, 0, 0], colCount = [0, 0, 0];
+          TRUST_LOGOS.forEach(function (s, i) {
+            const c = Math.floor(i / perCol);
+            colNat[c] += heights[i]; colCount[c]++;
+          });
+          /* each wall column is padded on its own so all three end level */
+          const sExtra = colNat.map(function (n, c) { return spread(n, P.BOT - wy - 4, colCount[c] - 1, 46); });
+          TRUST_LOGOS.forEach(function (s, i) {
+            const col = Math.floor(i / perCol);
+            const cx = wx + (secW + secGap) * col;
+            const cyy = colY[col];
+            fill(P.BLUE); doc.rect(cx, cyy + 1.5, 2, 9, 'F');
+            f('bold', 7, P.DEEP);
+            doc.setCharSpace(0.6);
+            doc.text(S(s.sector).toUpperCase(), cx + 7, cyy + 8.4);
+            doc.setCharSpace(0);
+            para(s.names.join(' · '), cx, cyy + 13, secW, { size: 7.8, lh: 10, color: P.MID });
+            colY[col] = cyy + heights[i] + sExtra[col];
+          });
+        })();
+
+        /* 2.4 — onboarding */
+        (function () {
+          const card = NEW_CARDS.find(function (c) { return c.id === 'onboarding'; });
+          let y = page('Onboard and up to speed fast', S(card.closer));
+          y = para('A standard proof-of-concept rollout runs four to six weeks, on top of the environments you already have. No new infrastructure, no rip-and-replace, and no large project team.',
+            M, y, CW, { size: 9.4, lh: 12.6, color: P.MID });
+          y += 18;
+
+          const phases = [
+            ['Kickoff', 'Week 1', 'Sponsor, scope, success criteria, and the technical contacts named.'],
+            ['Implementation', 'Weeks 1–3', 'Environment, connectors, identity, and the first packages configured.'],
+            ['UAT', 'Weeks 3–4', 'Acceptance testing against your own applications and rings.'],
+            ['Launch', 'Weeks 4–5', 'Production rollout on your release policy, with rollback in place.'],
+            ['Enablement', 'Weeks 5–6', 'Training, certification, and a success plan with your CSM.'],
+          ];
+          const pGap = 12, pW = (CW - pGap * 4) / 5, pCardH = 104;
+          rule(M + pW / 2, y + 14, CW - pW, P.LINE, 1.2);
+          phases.forEach(function (p, i) {
+            const x = M + (pW + pGap) * i;
+            const last = i === phases.length - 1;
+            fill(P.WHITE); doc.circle(x + pW / 2, y + 14, 10, 'F');
+            fill(last ? P.GREEN : P.BLUE); doc.circle(x + pW / 2, y + 14, 8, 'F');
+            f('bold', 8, P.WHITE);
+            doc.text(String(i + 1), x + pW / 2, y + 16.8, { align: 'center' });
+            panel(x, y + 30, pW, pCardH, P.WASH, P.LINE, 5);
+            f('bold', 10.4, P.INK);
+            doc.text(S(p[0]), x + pW / 2, y + 51, { align: 'center' });
+            chip(p[1], x + pW / 2 - chipW(p[1], { size: 6.8, padX: 7 }) / 2, y + 58, { bg: P.AWBG, color: P.DEEP, size: 6.8, h: 13, padX: 7 });
+            para(p[2], x + 11, y + 78, pW - 22, { size: 8, lh: 10.4, color: P.MID, align: 'center' });
+          });
+          y += pCardH + 48;
+
+          const colW = (CW - 22) / 2;
+          const rightItems = [
+            'No new infrastructure — Application Workspace integrates with the environments you already run.',
+            'No rip-and-replace of Intune, ConfigMgr, Citrix, AVD, or Jamf.',
+            'No dedicated project team — one to two IT engineers, part-time.',
+            'No waiting on day-one product expertise: Recast runs alongside you through onboarding, shadowing, and joint demonstrations.',
+          ];
+          const natL = card.bullets.reduce(function (a, b) { return a + paraH(b, colW - 16, { size: 9, lh: 11.8 }); }, 0);
+          const natR = rightItems.reduce(function (a, b) { return a + paraH(b, colW - 16, { size: 9, lh: 11.8 }); }, 0);
+          const oExtra = spread(Math.max(natL, natR), P.BOT - y - 14, Math.max(card.bullets.length, rightItems.length), 34);
+          let ly = eyebrow('What the rollout involves', M, y, P.INK, 7.2) + 4;
+          card.bullets.forEach(function (b) {
+            tickDot(M + 4.8, ly + 4.8, 4.8, P.TEAL);
+            ly = para(b, M + 16, ly, colW - 16, { size: 9, lh: 11.8, color: P.MID }) + oExtra;
+          });
+          const rx = M + colW + 22;
+          let ry = eyebrow('What it does not involve', rx, y, P.INK, 7.2) + 4;
+          rightItems.forEach(function (t) {
+            stroke(P.MUTE); doc.setLineWidth(1.2);
+            doc.line(rx + 1.6, ry + 4.8, rx + 8.4, ry + 4.8);
+            ry = para(t, rx + 16, ry, colW - 16, { size: 9, lh: 11.8, color: P.MID }) + oExtra;
+          });
+        })();
+
+        /* ═══ PART 3 — THE PARTNER OPERATING MODEL ════════════════════ */
+        part = 'Part 3 · The partner operating model';
+
+        /* The four-stage rail each section's exhibit is built around, so the
+           page carries the demo's metaphor and not just its prose. */
+        const PT_FLOW_FALLBACK = {
+          reporting: { stages: ['Collect', 'Assemble', 'Reconcile', 'Report'], now: 'Five owners, five formats', src: 'One analytics feed', per: 'live on refresh' },
+        };
+
+        PT_SECTIONS.filter(function (s) { return !s.full; }).forEach(function (Sec) {
+          let y = page(S(Sec.pill), S(Sec.tag));
+          const fb = PT_FLOW_FALLBACK[Sec.key] || {};
+          const stages = PT_STAGES[Sec.key] || fb.stages || ['Source', 'Build', 'Test', 'Deploy'];
+          const vizNow = (Sec.viz && Sec.viz.unit) || fb.now || 'Current state';
+          const vizAw = ((Sec.viz && Sec.viz.src) || fb.src || 'Application Workspace') +
+            ' · ' + ((Sec.viz && Sec.viz.per) || fb.per || 'configured once');
+
+          /* scenario band */
+          const evH = paraH(Sec.event, CW - 108, { size: 11, lh: 14, style: 'bold' }) + 20;
+          panel(M, y, CW, evH, P.AWBG, null, 4);
+          fill(P.BLUE); doc.rect(M, y, 2.6, evH, 'F');
+          eyebrow('Scenario', M + 16, y + 10, P.DEEP, 6.6);
+          para(Sec.event, M + 82, y + 10, CW - 108, { size: 11, lh: 14, style: 'bold', color: P.INK });
+          y += evH + 16;
+
+          /* the four-stage rail, current state above, App Workspace below.
+             The label column is sized from the widest lane chip so a tracked
+             chip can never run under the first stage. */
+          const laneH = 40, railH = laneH * 2 + 16;
+          panel(M, y, CW, railH, P.WHITE, P.LINE, 5);
+          const labW = Math.max(chipW('Current state', LANE_NOW), chipW('With Application Workspace', LANE_AW)) + 6;
+          const railX = M + 14 + labW + 16, railW = M + CW - 14 - railX;
+          const stepGap = 16, stepW = (railW - stepGap * 3) / 4;
+          [[vizNow, false], [vizAw, true]].forEach(function (lane, li) {
+            const ry = y + 12 + li * laneH;
+            if (li) laneAw(M + 14, ry); else laneNow(M + 14, ry);
+            para(lane[0], M + 14, ry + 18, labW, { size: 7, lh: 8.8, maxLines: 2,
+              color: li ? P.DEEP : P.SOFT, style: li ? 'bold' : 'italic' });
+            stages.forEach(function (st, si) {
+              const sx = railX + (stepW + stepGap) * si;
+              fill(li ? [79, 130, 255] : [232, 230, 224]);
+              doc.roundedRect(sx, ry, stepW, 17, 3.5, 3.5, 'F');
+              f('bold', 7.8, li ? P.WHITE : [110, 101, 84]);
+              doc.text(S(st), sx + stepW / 2, ry + 11.6, { align: 'center' });
+              if (si < 3) arrow(sx + stepW + 3, ry + 8.5, stepGap - 6, li ? P.BLUE : P.MUTE, 0.8);
+            });
+          });
+          y += railH + 16;
+
+          /* the comparison rows */
+          const colGap = 16, lab = 118;
+          const colW = (CW - lab - colGap * 2) / 2;
+          const xLab = M, xNow = M + lab + colGap, xAw = xNow + colW + colGap;
+          const netH = 54;
+          const nat = Sec.rows.map(function (r) {
+            return Math.max(paraH(r.today, colW - 24, { size: 9.6, lh: 12.6 }),
+              paraH(r.aw, colW - 24, { size: 9.6, lh: 12.6 }), 24) + (r.keep ? 16 : 0) + 24;
+          });
+          const gapRow = 10;
+          const extra = spread(nat.reduce(function (a, b) { return a + b; }, 0) + gapRow * (Sec.rows.length - 1),
+            P.BOT - netH - 14 - y, Sec.rows.length, 30);
+          Sec.rows.forEach(function (r, i) {
+            const rowH = nat[i] + extra;
+            panel(xNow, y, colW, rowH, P.NOWBG, null, 4);
+            panel(xAw, y, colW, rowH, P.AWBG, null, 4);
+            fill(P.BLUE); doc.rect(xAw, y + 4, 2.4, rowH - 8, 'F');
+            f('bold', 9.6, P.INK);
+            split(r.dim, lab, 'bold', 9.6).forEach(function (ln, k) { doc.text(ln, xLab, y + 20 + k * 12); });
+            para(r.today, xNow + 13, y + 12, colW - 24, { size: 9.6, lh: 12.6, color: P.MID });
+            const ay = para(r.aw, xAw + 13, y + 12, colW - 24, { size: 9.6, lh: 12.6, color: P.MID });
+            if (r.keep) chip('Stays with you', xAw + 13, ay + 4, { bg: P.WHITE, border: [186, 205, 250], color: P.DEEP, size: 6.6, h: 13, padX: 7, upper: true, track: 0.5 });
+            y += rowH + gapRow;
+          });
+
+          /* net effect */
+          const ny = P.BOT - netH;
+          panel(M, ny, CW, netH, P.WASH, P.LINE, 5);
+          fill(P.GREEN); doc.rect(M, ny, 2.6, netH, 'F');
+          tickDot(M + 24, ny + netH / 2 - 3, 8, P.GREEN);
+          eyebrow('Net effect · ' + S(Sec.stat.sub), M + 42, ny + 10, P.SOFT, 6.6);
+          f('bold', fitSize(Sec.verdict, CW - 66, 'bold', 11.4, 8.6), P.INK);
+          doc.text(S(Sec.verdict), M + 42, ny + 33);
+          para(Sec.stat.hrs, M + 42, ny + 37, CW - 66, { size: 7.8, lh: 9.8, color: P.SOFT, maxLines: 1 });
+        });
+
+        /* 3.7 — the future-state operating model */
+        (function () {
+          let y = page('What great looks like', 'The future-state application-delivery operating model');
+          panel(M, y, CW, 36, P.AWBG, null, 4);
+          fill(P.BLUE); doc.rect(M, y, 2.6, 36, 'F');
+          f('bold', 11.4, P.INK);
+          doc.text('One application-delivery operating model', M + 16, y + 16);
+          f('normal', 8.6, P.MID);
+          doc.text(S('Eight workstreams, run the same way for every customer — with your authority intact at every step'), M + 16, y + 28);
+          y += 46;
+
+          const cardsH = 118;
+          const c1 = 132, gapc = 14, c2 = 300, c3 = CW - c1 - c2 - gapc * 2;
+          const x1 = M, x2 = M + c1 + gapc, x3 = x2 + c2 + gapc;
+          eyebrow('Workstream', x1, y + 2, P.MUTE, 6.8);
+          laneAw(x2, y - 2);
+          eyebrow('Your role — retained', x3, y + 2, P.MUTE, 6.8);
+          y += 19;
+          rule(M, y, CW, P.LINE, 0.9);
+          y += 7;
+          const nat = PT_FUTURE.map(function (fu) {
+            return Math.max(paraH(fu.design, c2 - 16, { size: 8.4, lh: 10.8 }), paraH(fu.role, c3, { size: 8.4, lh: 10.8 }), 22) + 8;
+          });
+          const extra = spread(nat.reduce(function (a, b) { return a + b; }, 0), P.BOT - cardsH - 18 - y, PT_FUTURE.length, 10);
+          PT_FUTURE.forEach(function (fu, i) {
+            const rowH = nat[i] + extra;
+            if (i % 2 === 0) { fill(P.WASH); doc.rect(M, y - 3, CW, rowH, 'F'); }
+            fill(P.HAIR); doc.roundedRect(x1, y, 14, 14, 3.2, 3.2, 'F');
+            f('bold', 7.4, P.SOFT);
+            doc.text(String(i + 1), x1 + 7, y + 9.8, { align: 'center' });
+            para(fu.ws, x1 + 19, y + 1, c1 - 19, { size: 8.8, lh: 11, style: 'bold', color: P.INK });
+            tickDot(x2 + 5.4, y + 7, 4.8, P.GREEN);
+            para(fu.design, x2 + 16, y + 1, c2 - 16, { size: 8.4, lh: 10.8, color: P.MID });
+            para(fu.role, x3, y + 1, c3, { size: 8.4, lh: 10.8, color: P.MID });
+            y += rowH;
+            if (i < PT_FUTURE.length - 1) rule(M, y - 4, CW, P.HAIR);
+          });
+
+          const colW = (CW - 18) / 2, cardY = P.BOT - cardsH;
+          [['What changes for you', PT_FUT_CHANGE, P.GREEN, [244, 251, 249]],
+           ['What does not disappear', PT_FUT_KEEP, P.NOWTAG, P.NOWBG]].forEach(function (b, i) {
+            const x = M + (colW + 18) * i;
+            panel(x, cardY, colW, cardsH, b[3], null, 5);
+            fill(b[2]); doc.rect(x, cardY, 2.6, cardsH, 'F');
+            f('bold', 9.6, P.INK);
+            doc.text(S(b[0]), x + 14, cardY + 16);
+            let yy = cardY + 24;
+            const nat2 = b[1].reduce(function (a, t) { return a + paraH(t, colW - 38, { size: 8, lh: 10.2 }); }, 0);
+            const ex2 = spread(nat2, cardsH - 32, b[1].length, 12);
+            b[1].forEach(function (t) {
+              fill(b[2]); doc.circle(x + 17, yy + 4.4, 1.6, 'F');
+              yy = para(t, x + 25, yy, colW - 38, { size: 8, lh: 10.2, color: P.MID }) + ex2;
+            });
+          });
+        })();
+
+        /* ═══ PART 4 — THE BUSINESS CASE ══════════════════════════════ */
+        part = 'Part 4 · The business case';
+
+        /* 4.1 — the three numbers */
+        (function () {
+          let y = page('The three numbers', 'Speed, support load, and margin — from the same two measurements');
+          const R = PT_REF, money = function (n) { return '$' + Math.round(n).toLocaleString('en-US'); };
+          const costT = (R.delT + R.supT) * R.rate, lic = R.users * R.licPU;
+          const costA = (R.delA + R.supA) * R.rate + lic;
+          const marT = R.rev - costT, marA = R.rev - costA;
+          const pctT = Math.round(marT / R.rev * 100), pctA = Math.round(marA / R.rev * 100);
+          const footH = 40, groups = 3;
+          /* a dedicated gutter for the win chip, so it can never sit on the
+             bar it is describing or under the total beside it */
+          const nameW = 112, totW = 92, winW = 66;
+          const trackX = M + nameW + 10, trackW = CW - nameW - totW - winW - 24;
+          const groupH = (P.BOT - footH - 14 - y) / groups;
+          const barH = 25;
+
+          function group(title, sub, unit, rowsNow, rowsAw, den, totNow, totAw, win, y0) {
+            let yy = y0;
+            f('bold', 14, P.BLUE);
+            doc.text(S(title), M, yy + 12);
+            const hw = doc.getTextWidth(S(title));
+            f('normal', 9, P.MID);
+            doc.text(S(sub), M + hw + 9, yy + 11.4);
+            f('normal', 7.6, P.MUTE);
+            doc.text(S(unit), M + CW, yy + 11, { align: 'right' });
+            yy += 24;
+            [[rowsNow, false, totNow, ''], [rowsAw, true, totAw, win]].forEach(function (set) {
+              const isAw = set[1];
+              f('bold', 8.4, isAw ? P.DEEP : P.NOWTAG);
+              doc.text(isAw ? 'With App Workspace' : 'Current state', M, yy + barH / 2 + 3);
+              fill(P.HAIR); doc.roundedRect(trackX, yy, trackW, barH, 3, 3, 'F');
+              let sx = trackX;
+              set[0].forEach(function (seg) {
+                const segW = seg[1] / den * trackW;
+                if (segW <= 0.4) return;
+                fill(seg[2] || (isAw ? [79, 130, 255] : [190, 195, 208]));
+                doc.rect(sx, yy, Math.max(1, segW - 1.2), barH, 'F');
+                /* only label a segment when the whole label fits inside it */
+                const lbl = S(seg[0]);
+                if (tw(lbl, 'bold', 6.9) + 8 <= segW) {
+                  f('bold', 6.9, seg[3] || P.WHITE);
+                  doc.text(lbl, sx + 4.5, yy + barH / 2 + 2.5);
+                }
+                sx += segW;
+              });
+              /* measure the total before chipW changes the active font size,
+                 or the win chip lands on top of it */
+              const totalW2 = tw(set[2], 'bold', 9);
+              f('bold', 9, isAw ? P.INK : P.SOFT);
+              doc.text(S(set[2]), M + CW, yy + barH / 2 + 3.2, { align: 'right' });
+              if (set[3]) {
+                const cwid = chipW(set[3], { size: 6.8, padX: 7 });
+                chip(set[3], M + CW - totW - Math.max(cwid, winW - 8) + (Math.max(cwid, winW - 8) - cwid) / 2,
+                  yy + barH / 2 - 6.5, { bg: [230, 246, 242], color: P.TEAL, size: 6.8, h: 13, padX: 7 });
+              }
+              yy += barH + 6;
+            });
+            return yy;
+          }
+
+          const L1 = PT_LADDER.speed, L2 = PT_LADDER.tickets;
+          const sum = function (L, k) { return L.rows.reduce(function (a, r) { return a + r[k]; }, 0); };
+          const t1T = sum(L1, 1), t1A = sum(L1, 2), t2T = sum(L2, 1), t2A = sum(L2, 2);
+          group(Math.round((1 - t1A / t1T) * 100) + '% faster', 'vs. Intune + Autopilot alone', L1.unit,
+            L1.rows.map(function (r) { return [r[0], r[1]]; }), L1.rows.map(function (r) { return [r[0], r[2]]; }),
+            t1T, t1T.toFixed(1) + ' days', t1A.toFixed(1) + ' days', Math.round((1 - t1A / t1T) * 100) + '% faster', y);
+          group(Math.round((1 - t2A / t2T) * 100) + '% fewer tickets', 'self-service install, repair, and automated versions', L2.unit,
+            L2.rows.map(function (r) { return [r[0], r[1]]; }), L2.rows.map(function (r) { return [r[0], r[2]]; }),
+            t2T, t2T + ' tickets', t2A + ' tickets', Math.round((1 - t2A / t2T) * 100) + '% fewer', y + groupH);
+          group(Math.round((marA / marT - 1) * 100) + '% more profitable', 'same contract, same revenue — efficiency only',
+            R.users.toLocaleString('en-US') + ' users · ' + money(R.rev) + ' / month revenue · $' + R.rate + '/h loaded',
+            [['Delivery labor ' + money(R.delT * R.rate), R.delT * R.rate], ['Support ' + money(R.supT * R.rate), R.supT * R.rate], ['Margin ' + money(marT), marT, [214, 218, 227], P.INK]],
+            [['Delivery', R.delA * R.rate], ['Support', R.supA * R.rate], ['License ' + money(lic), lic, [143, 176, 255]], ['Margin ' + money(marA), marA, P.GREEN]],
+            R.rev, pctT + '% margin', pctA + '% margin', (marA / marT).toFixed(2) + '× margin', y + groupH * 2);
+
+          const fy = P.BOT - footH;
+          panel(M, fy, CW, footH, P.WASH, P.LINE, 4);
+          para('All three numbers come from the same two measurements — package touch time 8.0 h to 1.6 h on the catalog path, and application tickets ' + t2T + ' to ' + t2A + ' per 1,000 users. Delivery labor ' + R.delT + ' h to ' + R.delA + ' h and support labor ' + R.supT + ' h to ' + R.supA + ' h per month follow from those two, and the margin follows from them — there is no third assumption.',
+            M + 14, fy + 9, CW - 28, { size: 7.8, lh: 10, color: P.MID });
+        })();
+
+        /* 4.2 — bake-off scorecard */
+        (function () {
+          let y = page('Bake-off scorecard', 'What to measure before you commit');
+          y = para('The scorecard, pre-filled with the reference model’s expected result. Run it on your own portfolio — these are the numbers the whole story stands or falls on.',
+            M, y, CW, { size: 9.4, lh: 12.6, color: P.MID });
+          y += 14;
+          const gapc = 10, cw1 = 132, cw3 = 76, cw4 = 76, cw5 = 190;
+          const cw2 = CW - cw1 - cw3 - cw4 - cw5 - gapc * 4;
+          const xs = [M, M + cw1 + gapc, M + cw1 + cw2 + gapc * 2, M + cw1 + cw2 + cw3 + gapc * 3, M + cw1 + cw2 + cw3 + cw4 + gapc * 4];
+          fill(P.INK); doc.roundedRect(M, y, CW, 19, 3, 3, 'F');
+          f('bold', 6.9, P.WHITE);
+          doc.setCharSpace(0.6);
+          ['Metric', 'Definition', 'Current', 'With AW', 'Pass threshold'].forEach(function (h2, i) {
+            doc.text(S(h2).toUpperCase(), xs[i] + 8, y + 12.6);
+          });
+          doc.setCharSpace(0);
+          y += 23;
+          const foot = 20;
+          const nat = PT_SCORE.map(function (r) {
+            return Math.max(paraH(r[1], cw2 - 8, { size: 7.9, lh: 10 }), paraH(r[4], cw5 - 8, { size: 7.9, lh: 10 }), 12) + 8;
+          });
+          const extra = spread(nat.reduce(function (a, b) { return a + b; }, 0), P.BOT - foot - y, PT_SCORE.length, 8);
+          PT_SCORE.forEach(function (r, i) {
+            const rowH = nat[i] + extra;
+            if (i % 2 === 0) { fill(P.WASH); doc.rect(M, y - 3, CW, rowH, 'F'); }
+            fill(P.AWBG); doc.rect(xs[3], y - 3, cw4, rowH, 'F');
+            para(r[0], xs[0] + 8, y, cw1 - 10, { size: 8.1, lh: 10, style: 'bold', color: P.INK });
+            para(r[1], xs[1], y, cw2 - 8, { size: 7.9, lh: 10, color: P.MID });
+            f('bold', 8.6, P.SOFT);
+            doc.text(S(r[2]), xs[2] + 8, y + 8.4);
+            f('bold', 9, P.DEEP);
+            doc.text(S(r[3]), xs[3] + 8, y + 8.4);
+            para(r[4], xs[4], y, cw5 - 8, { size: 7.9, lh: 10, color: P.MID });
+            y += rowH;
+            rule(M, y - 4, CW, P.HAIR);
+          });
+          para('Thirteen measures, one window, both workflows run side by side. Anything that cannot be measured is not claimed — that is what makes the rest of this document defensible in front of a customer.',
+            M, P.BOT - 10, CW, { size: 7.6, lh: 9.8, color: P.MUTE, style: 'italic' });
+        })();
+
+        /* 4.3 — partner financial operating model */
+        (function () {
+          const c = ptModelCalc();
+          let y = page('Partner financial operating model', 'Activity-based · every input replaceable with measured values');
+          y = para('Seeded from the Business Impact defaults (' + num(c.m.users) + ' users · $' + c.m.rate + '/h loaded rate · ' + c.m.mix + '% complex mix) and the operating-model playbook’s planning benchmarks. Replace each one with the measured values from your bake-off before the model is used commercially.',
+            M, y, CW, { size: 9.4, lh: 12.6, color: P.MID });
+          y += 18;
+          const footH = 34, avail = P.BOT - footH - 10 - y;
+
+          const inW = 306, outX = M + inW + 26, outW = CW - inW - 26;
+          let iy = eyebrow('Model inputs', M, y, P.INK, 7.2) + 4;
+          const inputs = [
+            ['Package changes / month', 'new + updates', num(c.m.changes)],
+            ['Complex / custom share', '% of changes', c.m.mix + '%'],
+            ['Hours per change today', '', c.m.cur + ' h'],
+            ['Residual hours — standard', 'catalog-covered', c.m.std + ' h'],
+            ['Residual hours — complex / custom', '', c.m.cust + ' h'],
+            ['Realization factor', '% of reduction achieved', c.m.real + '%'],
+            ['Loaded labor rate', '$ / hour', '$' + c.m.rate],
+            ['Users under management', '', num(c.m.users)],
+          ];
+          const rowH = Math.min(30, (avail - (iy - y)) / inputs.length);
+          inputs.forEach(function (r, i) {
+            if (i % 2 === 0) { fill(P.WASH); doc.rect(M, iy, inW, rowH, 'F'); }
+            f('normal', 8.8, P.INK);
+            doc.text(S(r[0]), M + 9, iy + rowH / 2 + 3.2);
+            if (r[1]) {
+              const lw = doc.getTextWidth(S(r[0]));
+              f('italic', 7.4, P.MUTE);
+              doc.text(S(r[1]), M + 9 + lw + 7, iy + rowH / 2 + 3.2);
+            }
+            f('bold', 9.2, P.DEEP);
+            doc.text(S(r[2]), M + inW - 9, iy + rowH / 2 + 3.4, { align: 'right' });
+            iy += rowH;
+            rule(M, iy, inW, P.HAIR);
+          });
+
+          let oy = eyebrow('Annual labor · current, future, and the value returned', outX, y, P.INK, 7.2) + 4;
+          const outsH = 3 * 34, chartH = Math.max(120, avail - (oy - y) - outsH - 10);
+          const colGap = 26, colW = (outW - colGap * 2) / 3;
+          const maxV = Math.max(c.curHrs * c.m.rate, 1);
+          [[fmtDollars(c.curHrs * c.m.rate), 'Current labor / yr', num(c.curHrs) + ' h', c.curHrs * c.m.rate, [196, 203, 219]],
+           [fmtDollars(c.futHrs * c.m.rate), 'Future labor / yr', num(c.futHrs) + ' h', c.futHrs * c.m.rate, P.BLUE],
+           [fmtDollars(c.value), 'Value returned / yr', '~' + c.fte.toFixed(1) + ' FTE', c.value, P.GREEN]
+          ].forEach(function (col, i) {
+            const x = outX + (colW + colGap) * i;
+            const base = oy + chartH - 26;
+            const h = Math.max(8, col[3] / maxV * (chartH - 46));
+            f('bold', 13.4, P.INK);
+            doc.text(S(col[0]), x + colW / 2, base - h - 6, { align: 'center' });
+            fill(col[4]);
+            doc.roundedRect(x + colW * 0.15, base - h, colW * 0.70, h, 3, 3, 'F');
+            rule(x, base, colW, P.LINE);
+            f('normal', 8.2, P.MID);
+            doc.text(S(col[1]), x + colW / 2, base + 12, { align: 'center' });
+            f('bold', 8.2, P.SOFT);
+            doc.text(S(col[2]), x + colW / 2, base + 23, { align: 'center' });
+          });
+          oy += chartH;
+          [['Capacity returned', 'not cash until a staffing decision exists', num(c.returnedHrs) + ' h / yr · ~' + c.fte.toFixed(1) + ' FTE'],
+           ['Cost per package change', '', '$' + Math.round(c.curPerChange) + ' to $' + Math.round(c.futPerChange)],
+           ['Break-even license', 'pays back below this price', '$' + c.breakeven.toFixed(2) + ' / user / mo']
+          ].forEach(function (r) {
+            panel(outX, oy, outW, 28, P.WASH, P.LINE, 4);
+            f('bold', 8.8, P.INK);
+            doc.text(S(r[0]), outX + 11, oy + 17.6);
+            if (r[1]) {
+              const lw = doc.getTextWidth(S(r[0]));
+              f('italic', 7.2, P.MUTE);
+              doc.text(S('— ' + r[1]), outX + 11 + lw + 7, oy + 17.4);
+            }
+            f('bold', 10.4, P.DEEP);
+            doc.text(S(r[2]), outX + outW - 11, oy + 18.2, { align: 'right' });
+            oy += 34;
+          });
+
+          para('Formulas — current cost = changes × 12 × hours per change × rate · future = (standard share × standard residual + complex share × complex residual), with the reduction discounted by the realization factor · break-even license = labor value / users / 12. Excludes the Application Workspace license, implementation, and recurring administration — those come from an actual proposal and are never assumed here. The 8 h / 1.6 h / 4 h / 75% seeds are low-to-moderate-confidence planning benchmarks; the bake-off replaces them with measured values.',
+            M, P.BOT - footH + 6, CW, { size: 7.2, lh: 9.2, color: P.MUTE });
+        })();
+
+        /* 4.4 — customer-side business impact */
+        (function () {
+          const r = STATE.calcResult, ci = STATE.calcInputs, a = ROI_ASSUMPTIONS[STATE.calcScenario];
+          if (!r) return;
+          let y = page('Business impact', 'What the same model returns for an end customer');
+          y = para('The customer-facing case, run on the Business Impact defaults — ' + num(ci.users) + ' users · ' + ci.envs + ' environments · ' + ci.apps + ' applications · ' + a.label.toLowerCase() + ' scenario · $' + (ci.loadedRate || 95) + '/h loaded. This is the conversation the partner is equipped to lead.',
+            M, y, CW, { size: 9.4, lh: 12.6, color: P.MID });
+          y += 18;
+
+          const hGap = 12, hW = (CW - hGap * 2) / 3, hH = 92;
+          [[num(r.totalHoursYear), 'hours / year recovered', P.BLUE],
+           [String(r.fteCapacity), 'FTE-equivalents recoverable', P.BLUE],
+           [num(r.strategicHours), 'strategic hours returned / year', P.GREEN]].forEach(function (h2, i) {
+            const x = M + (hW + hGap) * i;
+            panel(x, y, hW, hH, P.WASH, P.LINE, 5);
+            fill(h2[2]); doc.rect(x, y, hW, 2.6, 'F');
+            f('bold', 36, h2[2]);
+            doc.text(S(h2[0]), x + hW / 2, y + 56, { align: 'center' });
+            f('normal', 9.2, P.MID);
+            doc.text(S(h2[1]), x + hW / 2, y + 76, { align: 'center' });
+          });
+          y += hH + 22;
+
+          const footH = 18, colW = (CW - 24) / 2;
+          let ly = eyebrow('Where it comes from · hours returned per month', M, y, P.INK, 7.2) + 6;
+          const pkgPct = ci.pkgHours > 0 ? Math.round((r.pkgHoursReturned / ci.pkgHours) * 100) : 0;
+          const bars = [
+            ['Support & tickets', r.ticketHoursReturned, Math.round(a.ticketReduction * 100), num(r.ticketsAvoided) + ' tickets avoided per month', P.GREEN],
+            ['Packaging', r.pkgHoursReturned, pkgPct, pkgPct + '% blended across catalog + custom apps', P.BLUE],
+            ['Patching', r.patchHoursReturned, Math.round(a.patchReduction * 100), 'Staged pipeline replaces per-platform rebuilds', P.MINT],
+          ];
+          const barPitch = Math.min(60, (P.BOT - footH - ly) / bars.length);
+          bars.forEach(function (b) {
+            f('bold', 9.4, P.INK);
+            doc.text(S(b[0]), M, ly + 9);
+            f('bold', 9.4, b[4]);
+            doc.text(num(b[1]) + ' h / mo', M + colW, ly + 9, { align: 'right' });
+            fill(P.HAIR); doc.roundedRect(M, ly + 14, colW, 11, 2.5, 2.5, 'F');
+            fill(b[4]); doc.roundedRect(M, ly + 14, Math.max(4, colW * (b[2] / 100)), 11, 2.5, 2.5, 'F');
+            f('normal', 7.6, P.MUTE);
+            doc.text(S(b[3]), M, ly + 35);
+            f('bold', 7.6, b[4]);
+            doc.text(b[2] + '%', M + colW, ly + 35, { align: 'right' });
+            ly += barPitch;
+          });
+
+          const rx = M + colW + 24;
+          let ry = eyebrow('Investment vs. return', rx, y, P.INK, 7.2) + 6;
+          const kGap = 8, kW = (colW - kGap * 2) / 3, kH = 68;
+          const paybackM = r.paybackMonths || 0;
+          const paybackText = paybackM <= 0 ? 'Immediate' : (paybackM < 1 ? '< 1 month' : paybackM.toFixed(1) + ' months');
+          [['Annual investment', fmtDollars(r.awAnnualInvestment || 0), num(ci.users) + ' users · list pricing', [241, 245, 249], [51, 65, 85]],
+           ['Year 1 net benefit', ((r.year1Net || 0) >= 0 ? '+' : '–') + fmtDollars(Math.abs(r.year1Net || 0)), (r.year1ROIMultiple || 0).toFixed(1) + '× return', [236, 253, 245], [4, 120, 87]],
+           ['Payback period', paybackText, 'then it keeps returning', [219, 234, 254], [29, 78, 216]]
+          ].forEach(function (k, i) {
+            const x = rx + (kW + kGap) * i;
+            panel(x, ry, kW, kH, k[3], null, 5);
+            f('bold', 6.6, k[4]);
+            doc.setCharSpace(0.5);
+            doc.text(S(k[0]).toUpperCase(), x + 10, ry + 16);
+            doc.setCharSpace(0);
+            f('bold', fitSize(k[1], kW - 20, 'bold', 17, 10), k[4]);
+            doc.text(S(k[1]), x + 10, ry + 42);
+            f('normal', 7.2, k[4]);
+            doc.text(S(k[2]), x + 10, ry + 57);
+          });
+          ry += kH + 18;
+          ry = eyebrow('Packaging cycle · one-time catalog value', rx, ry, P.INK, 7.2) + 6;
+          const scale = Math.max(r.tradCycleHours || 0, r.awCycleHours || 0, 1);
+          [['Traditional', r.tradCycleHours || 0, [214, 90, 80]], ['Application Workspace', r.awCycleHours || 0, P.BLUE]].forEach(function (b) {
+            f('bold', 8.4, P.INK);
+            doc.text(S(b[0]), rx, ry + 10);
+            const bx = rx + 126, bw = colW - 126 - 64;
+            fill(P.HAIR); doc.roundedRect(bx, ry + 2, bw, 12, 2.5, 2.5, 'F');
+            fill(b[2]); doc.roundedRect(bx, ry + 2, Math.max(4, bw * (b[1] / scale)), 12, 2.5, 2.5, 'F');
+            f('bold', 8.4, b[2]);
+            doc.text(num(Math.round(b[1])) + ' h', rx + colW, ry + 10.6, { align: 'right' });
+            ry += 20;
+          });
+          ry += 4;
+          para(num(ci.apps) + ' applications at ' + Math.round(100 - (ci.complexMixPct == null ? 20 : ci.complexMixPct)) + '/' + Math.round(ci.complexMixPct == null ? 20 : ci.complexMixPct) + ' standard/complex, loaded at $' + (ci.loadedRate || 95) + '/h · ' + (r.cycleTimeMultiple || 0).toFixed(1) + '× faster · ' + num(Math.round(r.cycleHoursSaved || 0)) + ' hours saved · ' + fmtDollars(r.cycleDollarsSaved || 0) + ' of one-time value.',
+            rx, ry, colW, { size: 7.6, lh: 9.6, color: P.MUTE });
+
+          para('Capacity returned is not cash savings until a staffing or spend decision exists. Year 1 value ' + fmtDollars(r.year1Value || 0) + ' (' + fmtDollars(r.recurringAnnualValue || 0) + ' recurring + ' + fmtDollars(r.oneTimePackagingValue || 0) + ' one-time packaging) against ' + fmtDollars(r.awAnnualInvestment || 0) + ' subscription · 3-year net ' + ((r.threeYearNet || 0) >= 0 ? '+' : '–') + fmtDollars(Math.abs(r.threeYearNet || 0)) + '.',
+            M, P.BOT - 10, CW, { size: 7.2, lh: 9.2, color: P.MUTE, style: 'italic' });
+        })();
+
+        /* ═══ PART 5 — ADOPTION ═══════════════════════════════════════ */
+        part = 'Part 5 · Adoption';
+
+        /* 5.1 — the 90-day roadmap */
+        (function () {
+          let y = page('From proof of value to a launched service', '90-day adoption roadmap · POV to GTM');
+          panel(M, y, CW, 36, P.AWBG, null, 4);
+          fill(P.BLUE); doc.rect(M, y, 2.6, 36, 'F');
+          f('bold', 11.4, P.INK);
+          doc.text('90-day adoption roadmap', M + 16, y + 16);
+          f('normal', 8.6, P.MID);
+          doc.text(S('Seven overlapping phases — each one ends in a decision you can defend, not an opinion'), M + 16, y + 28);
+          y += 48;
+
+          const RM = [
+            ['Mobilize', 0, 10, 'Name sponsor, delivery owner, technical lead, finance owner, and GTM owner. Confirm commercial and licensing assumptions.', 'Approved charter, scope, roles, and data request.'],
+            ['Baseline', 5, 20, 'Measure package changes, hours, releases, tickets, customer / tenant structure, applications, users, endpoints, and contract economics.', 'Version-controlled current-state baseline.'],
+            ['Design', 15, 30, 'Architecture, identity, connectors, zones, agent deployment, content, security, roles, and test portfolio.', 'Approved technical and security design.'],
+            ['Configure', 25, 45, 'Build environment, connectors, test groups, packages, Catalog / Workspace, entitlements, reporting, and support process.', 'Pilot-ready environment.'],
+            ['Bake-off', 40, 65, 'Run controlled current and future workflows. Capture touch time, elapsed time, quality, failures, and support evidence.', 'Signed scorecard and issue log.'],
+            ['Business case', 60, 75, 'Build Year 1, steady-state, margin, service-line, and project scenarios. Run sensitivity.', 'Executive decision package.'],
+            ['Launch design', 70, 90, 'Define service SKU, target customers, enablement, pricing, operational governance, and scale plan.', 'Go / no-go and 90-day commercialization plan.'],
+          ];
+          const c1 = 110, gapc = 14, c2 = 186, c4 = 196;
+          const c3 = CW - c1 - c2 - c4 - gapc * 3;
+          const x1 = M, x2 = M + c1 + gapc, x3 = x2 + c2 + gapc, x4 = x3 + c3 + gapc;
+          eyebrow('Phase', x1, y + 2, P.MUTE, 6.8);
+          eyebrow('Days 0 – 90', x2, y + 2, P.MUTE, 6.8);
+          eyebrow('Activities', x3, y + 2, P.MUTE, 6.8);
+          eyebrow('Exit criteria — what each phase must produce', x4, y + 2, P.DEEP, 6.8);
+          y += 19;
+
+          const foot = 22;
+          const nat = RM.map(function (p) {
+            return Math.max(paraH(p[3], c3, { size: 8.3, lh: 10.6 }), paraH(p[4], c4 - 16, { size: 8.3, lh: 10.6 }), 26) + 9;
+          });
+          const extra = spread(nat.reduce(function (a, b) { return a + b; }, 0), P.BOT - foot - y - 6, RM.length, 12);
+          const tableH = nat.reduce(function (a, b) { return a + b; }, 0) + extra * RM.length;
+          /* axis gridlines are drawn to the measured table height, never past it */
+          [0, 30, 60, 90].forEach(function (d) {
+            const dx = x2 + (d / 90) * c2;
+            f('normal', 6.4, P.MUTE);
+            doc.text(String(d), dx, y - 3, { align: d === 90 ? 'right' : (d === 0 ? 'left' : 'center') });
+            stroke(P.HAIR); doc.setLineWidth(0.5);
+            doc.line(dx, y + 4, dx, y + 4 + tableH);
+          });
+          rule(M, y + 3, CW, P.LINE, 0.9);
+          y += 10;
+          RM.forEach(function (p, i) {
+            const rowH = nat[i] + extra;
+            fill(P.HAIR); doc.roundedRect(x1, y, 14, 14, 3.2, 3.2, 'F');
+            f('bold', 7.4, P.SOFT);
+            doc.text(String(i + 1), x1 + 7, y + 9.8, { align: 'center' });
+            f('bold', 8.8, P.INK);
+            doc.text(S(p[0]), x1 + 19, y + 9);
+            f('italic', 7.2, P.MUTE);
+            doc.text('day ' + p[1] + '–' + p[2], x1 + 19, y + 19);
+            fill(P.HAIR); doc.roundedRect(x2, y + 2, c2, 12, 2.5, 2.5, 'F');
+            fill(i >= 5 ? P.GREEN : P.BLUE);
+            doc.roundedRect(x2 + (p[1] / 90) * c2, y + 2, Math.max(5, ((p[2] - p[1]) / 90) * c2), 12, 2.5, 2.5, 'F');
+            para(p[3], x3, y, c3, { size: 8.3, lh: 10.6, color: P.MID });
+            tickDot(x4 + 5.4, y + 5.8, 4.8, P.GREEN);
+            para(p[4], x4 + 16, y, c4 - 16, { size: 8.3, lh: 10.6, color: P.MID, style: 'bold' });
+            y += rowH;
+            rule(M, y - 4, CW, P.HAIR);
+          });
+          para('Recast works alongside you through all seven phases — onboarding, shadowing, joint demonstrations, and the bake-off itself — so the first customer conversation never waits on day-one product expertise.',
+            M, P.BOT - 12, CW, { size: 7.8, lh: 10, color: P.MUTE, style: 'italic' });
+        })();
+
+        /* 5.2 — scope and closing */
+        (function () {
+          let y = page('What stays with you', 'Scope — and what the returned capacity can fund');
+          const colW = (CW - 22) / 2;
+          const strips = [
+            ['What stays with you either way', P.NOWTAG, P.NOWBG, [
+              'Customer requirements and approvals',
+              'Configuration choices — language, features, timing',
+              'Acceptance testing and ring design',
+              'Release and rollback authority',
+              'Custom and exception applications',
+              'Support ownership',
+            ], 'Not zero-touch, and not every application is covered — saying that early is what makes the rest credible.'],
+            ['What the returned capacity can fund', P.GREEN, [244, 251, 249], [
+              'Margin recovery on contracts already priced',
+              'A sellable Managed Application Delivery service',
+              'Project acceleration — Intune, AVD / W365, Citrix exit',
+              'Growth without proportional packaging headcount',
+            ], 'Capacity returned is not cash savings until a staffing or spend decision exists.'],
+          ];
+          const shiftH = 118, shiftY = P.BOT - 14 - shiftH;
+          const stripH = shiftY - 18 - y;
+          strips.forEach(function (s, i) {
+            const x = M + (colW + 22) * i;
+            panel(x, y, colW, stripH, s[2], null, 5);
+            fill(s[1]); doc.rect(x, y, 2.6, stripH, 'F');
+            f('bold', 11, P.INK);
+            doc.text(S(s[0]), x + 16, y + 22);
+            let yy = y + 36;
+            const nat = s[3].reduce(function (a, t) { return a + paraH(t, colW - 46, { size: 9.2, lh: 12 }); }, 0);
+            const ex = spread(nat, stripH - 36 - 30, s[3].length, 30);
+            s[3].forEach(function (t) {
+              if (i) tickDot(x + 21, yy + 4.8, 4.8, P.GREEN);
+              else { fill(s[1]); doc.circle(x + 21, yy + 4.8, 2, 'F'); }
+              yy = para(t, x + 31, yy, colW - 46, { size: 9.2, lh: 12, color: P.MID }) + ex;
+            });
+            para(s[4], x + 16, y + stripH - 26, colW - 32, { size: 7.6, lh: 9.8, color: P.MUTE, style: 'italic' });
+          });
+
+          fill(P.NAVY); doc.roundedRect(M, shiftY, CW, shiftH, 6, 6, 'F');
+          eyebrow('The shift, in one statement', M + 24, shiftY + 18, P.MINT, 7.2);
+          para('Today, application delivery is a resource-intensive manual service — packaging, testing, approval, and deployment repeated across customer environments. Application Workspace turns it into a standardized, repeatable offering: proven packages and workflows reused across customers, customer-specific controls preserved, faster deployments, and a materially more scalable managed service.',
+            M + 24, shiftY + 36, CW - 48, { size: 12.4, lh: 17, color: P.WHITE });
+
+          para('Drawn from the partner operating-model comparison — outcomes vary by portfolio and application mix. Validate with a measured bake-off, not assumptions.',
+            M, P.BOT - 8, CW, { size: 7.4, lh: 9.4, color: P.MUTE, style: 'italic', align: 'center' });
+        })();
+
+        /* ── contents on the cover, now that page numbers exist ─────── */
+        (function () {
+          doc.setPage(1);
+          const colW = (CW - 28) / 2;
+          const perCol = Math.ceil(toc.length / 2);
+          const pitch = Math.min(16.4, COVER_TOC.h / perCol);
+          toc.forEach(function (t, i) {
+            const x = M + (colW + 28) * (i < perCol ? 0 : 1);
+            const yy = COVER_TOC.y + (i % perCol) * pitch;
+            f('normal', 6.8, P.MUTE);
+            doc.text(String(t.page).padStart(2, '0'), x, yy + 8);
+            f('bold', 8.6, P.INK);
+            doc.text(S(t.title), x + 21, yy + 8);
+            const w = doc.getTextWidth(S(t.title));
+            f('normal', 7.2, P.MUTE);
+            doc.text(S(t.part.replace(/^Part \d+ · /, '')), x + 28 + w, yy + 7.8);
+            rule(x, yy + pitch - 3.4, colW, P.HAIR);
+          });
+        })();
+
+        /* ── footers, stamped once the total is known ───────────────── */
+        (function () {
+          const total = doc.getNumberOfPages();
+          for (let i = 2; i <= total; i++) {
+            doc.setPage(i);
+            rule(M, H - 30, CW, P.LINE, 0.6);
+            f('normal', 6.8, P.MUTE);
+            doc.text('Recast Software · Application Workspace Partner Playbook', M, H - 20);
+            doc.text('Confidential partner material · ' + S(today), M + CW / 2, H - 20, { align: 'center' });
+            f('bold', 6.8, P.SOFT);
+            doc.text(i + ' / ' + total, M + CW, H - 20, { align: 'right' });
+          }
+        })();
+
+        doc.save('Recast-Application-Workspace-Partner-Playbook.pdf');
+        return doc.getNumberOfPages();
       }
-      window.addEventListener('beforeprint', function () {
-        if (!document.querySelector('#pt-print .ptp-page')) { try { ptBuildPrint(); } catch (e) {} }
-      });
+
 
       /* ========== OB ANIMATION ENGINE ========== */
       function buildObQueue(){
@@ -13002,8 +14160,8 @@
 
               ${ptClosingHtml()}
               <div class="pt-pdfbar">
-                <span>All ${PT_SECTIONS.length} sections \u00b7 branded \u00b7 landscape</span>
-                <button type="button" class="pt-pdfbtn" data-action="pt-pdf" title="Build a branded PDF of every partner section"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 12 5 5 5-5"/><path d="M5 21h14"/></svg>Download the partner PDF</button>
+                <span>Current state \u00b7 the Recast approach \u00b7 all ${PT_SECTIONS.length} partner sections \u00b7 business impact</span>
+                <button type="button" class="pt-pdfbtn" data-action="pt-pdf" title="Build the branded Partner Playbook PDF \u2014 current state, the Recast approach, every partner section, and the business case"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 12 5 5 5-5"/><path d="M5 21h14"/></svg>Create the partner playbook PDF</button>
               </div>
             </div>
           </section>
