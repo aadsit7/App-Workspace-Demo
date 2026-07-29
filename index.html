@@ -1401,6 +1401,66 @@
       .ptr-exit { color: #171d2b; box-shadow: inset 2px 0 0 #dce1ec; }
       @media (max-width: 1000px) { .ptr-head, .ptr-row { grid-template-columns: 118px 130px 1fr 1fr; } }
       @media (max-width: 860px) { .ptr-head, .ptr-row { grid-template-columns: 1fr; } .ptr-exit { box-shadow: none; } }
+      /* ── Partner PDF export ─────────────────────────────────────────────
+         The document is assembled by CLONING the live sections at their final
+         phase, so the PDF cannot drift from what the screen shows. Screen: the
+         container sits off-canvas. Print: the app hides and this prints, one
+         landscape sheet per page, each scaled to fit. ── */
+      .pt-pdfbar { display: flex; align-items: center; justify-content: flex-end; gap: 10px; margin-top: 14px; }
+      .pt-pdfbar span { font-size: 9.5px; color: #9aa3b7; }
+      .pt-pdfbtn { display: inline-flex; align-items: center; gap: 7px; padding: 9px 16px; border-radius: 9999px; border: 0; background: #2f6bff; color: #fff; font-size: 11.5px; font-weight: 700; cursor: pointer; box-shadow: 0 2px 6px rgba(47,107,255,0.28); transition: background 0.18s ease, transform 0.18s ease; }
+      .pt-pdfbtn:hover { background: #1f57e6; transform: translateY(-1px); }
+      .pt-pdfbtn:active { transform: scale(0.98); }
+      .pt-pdfbtn svg { width: 14px; height: 14px; }
+      #pt-print { position: absolute; left: -99999px; top: 0; width: 1180px; pointer-events: none; }
+      .ptp-page { width: 1180px; background: #fff; padding-bottom: 4px; }
+      .ptp-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; border-bottom: 2px solid #2f6bff; padding-bottom: 7px; margin-bottom: 13px; }
+      .ptp-h-t { font-family: Poppins, ui-sans-serif, sans-serif; font-size: 15px; font-weight: 800; letter-spacing: -0.02em; color: #171d2b; }
+      .ptp-h-s { font-size: 8.5px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: #9aa3b7; margin-top: 3px; }
+      .ptp-foot { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; border-top: 1px solid #dce1ec; margin-top: 14px; padding-top: 7px; font-size: 8.5px; color: #9aa3b7; letter-spacing: 0.04em; }
+      .ptp-cover-eyebrow { font-size: 9px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: #2f6bff; margin-top: 30px; }
+      .ptp-cover-t { font-family: Poppins, ui-sans-serif, sans-serif; font-size: 33px; font-weight: 800; letter-spacing: -0.03em; color: #171d2b; line-height: 1.12; margin: 9px 0 10px; max-width: 30ch; }
+      .ptp-cover-s { font-size: 12.5px; color: #545d70; max-width: 86ch; line-height: 1.6; }
+      .ptp-toc { display: grid; grid-template-columns: 1fr 1fr; gap: 0 30px; margin-top: 20px; }
+      .ptp-toc-i { display: flex; align-items: baseline; gap: 10px; font-size: 11px; color: #171d2b; padding: 5px 0; border-top: 1px solid #eef1f8; }
+      .ptp-toc-i b { flex: 0 0 22px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 9px; color: #9aa3b7; }
+      .ptp-toc-i i { font-style: normal; font-weight: 700; flex: 0 0 156px; }
+      .ptp-toc-i span { color: #9aa3b7; font-size: 9px; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; }
+      .ptp-note { margin-top: 18px; border-top: 1px solid #dce1ec; padding-top: 9px; font-size: 9.5px; color: #9aa3b7; line-height: 1.6; max-width: 100ch; }
+      @page { size: letter landscape; margin: 0.42in; }
+      @media print {
+        html, body { background: #ffffff !important; }
+        body > #app { display: none !important; }
+        #pt-print { position: static !important; left: auto !important; width: auto !important; }
+        .ptp-page { break-after: page; page-break-after: always; break-inside: avoid; overflow: hidden; }
+        .ptp-page:last-child { break-after: auto; page-break-after: auto; }
+        * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        .pt-pdfbar { display: none !important; }
+        /* the print viewport is ~980px wide: keep the desktop grids, not the narrow fallbacks */
+        .pt-viz, .pt-duo, .pt-strips, .pt-thead2, .pt-pair, .ptf-cards { grid-template-columns: 1fr 1fr !important; }
+        .pta-head, .pta-row { grid-template-columns: 132px 1fr 1fr !important; }
+        .pts-head, .pts-row { grid-template-columns: 128px 1fr 92px 92px 150px !important; }
+        .ptr-head, .ptr-row { grid-template-columns: 132px 190px 1fr 1fr !important; }
+        .ptc-claims { grid-template-columns: repeat(3, 1fr) !important; }
+        .aw-wall { grid-template-columns: repeat(6, 1fr) !important; }
+        .ptm-grid { grid-template-columns: 320px 1fr !important; }
+        .pt-tr { grid-template-columns: 150px 1fr 1fr !important; }
+        .pta-c3, .pts-aw, .ptr-exit, .pt-cell-aw, .pt-thead2 > div + div { box-shadow: inset 2px 0 0 #dce1ec !important; }
+        .ptc-claim + .ptc-claim { box-shadow: inset 1px 0 0 #eef1f8 !important; }
+        .pts-row > div.pts-th { display: flex !important; }
+        .pts-head > div:last-child { display: block !important; }
+        .aw-bench .aw-clock { display: inline !important; }
+        .pt-viz-lane + .pt-viz-lane { border-left: 2px solid #dce1ec !important; border-top: 0 !important; }
+        .pt-side-left { border-right: 1px solid #dce1ec !important; border-bottom: 0 !important; }
+        /* every reveal resolved */
+        .ptv-el, .pt-callout, .pts-row, .pt-step, .ptv-tick, .pt-zone { opacity: 1 !important; transform: none !important; }
+        .ptc-seg { width: var(--sw) !important; }
+        .ptr-bar, .ptv-hbar, .ptv-gbar { width: var(--w) !important; }
+        .ptv-hline { width: var(--w, 14px) !important; }
+        .ptv-vline { height: 12px !important; }
+        .aw-ok, .pta-tick { opacity: 1 !important; transform: scale(1) !important; }
+        .ptc-check path { stroke-dashoffset: 0 !important; }
+      }
       @media (max-width: 860px) {
         .pt-thead2, .pt-pair { grid-template-columns: 1fr; }
         .pt-row2 { background: #ffffff; }
@@ -11242,6 +11302,95 @@
         scrollPreserveRender();
       }
 
+      /* ═══════════════════════════════════════════════════════════════════
+         PARTNER PDF EXPORT
+         Every page is built by rendering a section at its final phase and
+         cloning the real DOM, so the document is exactly what the screen
+         shows. Pages are measured after insertion and scaled to one
+         landscape sheet each; a section whose comparison rows do not fit
+         moves them to a following page rather than overflowing.
+         ═══════════════════════════════════════════════════════════════════ */
+      const PTP_W = 1180, PTP_FIT_W = 972, PTP_FIT_H = 726, PTP_MAX = 872;
+      const PTP_BRAND = '<span style="display:inline-flex;align-items:center;gap:7px"><span style="display:inline-grid;place-items:center;width:22px;height:22px;border-radius:5px;background:#2f6bff;color:#fff;font-family:Poppins,sans-serif;font-size:10.5px;font-weight:800;letter-spacing:-0.02em">Re</span><span style="font-family:Poppins,sans-serif;font-size:12px;font-weight:800;letter-spacing:-0.02em;color:#171d2b">Recast<span style="color:#9aa3b7"> Software</span></span></span>';
+      function ptpHost(){
+        let el = document.getElementById('pt-print');
+        if (!el) { el = document.createElement('div'); el.id = 'pt-print'; document.body.appendChild(el); }
+        return el;
+      }
+      function ptpPageHtml(title, sub, body){
+        return '<section class="ptp-page"><div class="ptp-head">' + PTP_BRAND +
+          '<div style="text-align:right"><div class="ptp-h-t">' + title + '</div>' +
+          (sub ? '<div class="ptp-h-s">' + sub + '</div>' : '') + '</div></div>' +
+          '<div class="ptp-body">' + body + '</div>' +
+          '<div class="ptp-foot"><span>Application Workspace \u2014 MSP partner operating model</span><span class="ptp-pageno"></span></div></section>';
+      }
+      function ptpCoverHtml(){
+        const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+        const toc = PT_SECTIONS.map(function (S, i) {
+          return '<div class="ptp-toc-i"><b>' + String(i + 1).padStart(2, '0') + '</b><i>' + S.pill + '</i><span>' + S.tag + '</span></div>';
+        }).join('');
+        return '<section class="ptp-page"><div class="ptp-head">' + PTP_BRAND +
+          '<div style="text-align:right"><div class="ptp-h-s">Partner briefing \u00b7 ' + today + '</div></div></div>' +
+          '<div class="ptp-body">' +
+          '<div class="ptp-cover-eyebrow">Application Workspace for partners</div>' +
+          '<div class="ptp-cover-t">Application delivery as a standardized service.</div>' +
+          '<div class="ptp-cover-s">The current state of application delivery inside a managed service, what changes with Application Workspace, and the three numbers that follow. Every section is read the same way \u2014 today\u2019s model on the left, Application Workspace on the right \u2014 with the work that stays with the partner named explicitly.</div>' +
+          ptClaimsHtml() +
+          '<div class="ptp-toc">' + toc + '</div>' +
+          '<div class="ptp-note">Figures come from a reference model \u2014 1,000 users, $95 per loaded hour, an application-delivery line sold at $10 per user per month, and Application Workspace at $1.65 per user per month \u2014 not from a measurement of your portfolio. Validate them with the bake-off scorecard included here before they are used commercially. Not every application is covered, and customer-specific packaging, testing, approval, release authority, and support remain with the partner.</div>' +
+          '</div>' +
+          '<div class="ptp-foot"><span>Recast Software \u00b7 confidential partner material</span><span class="ptp-pageno"></span></div></section>';
+      }
+      function ptBuildPrint(){
+        const host = ptpHost();
+        const all = function () { return true; };
+        let html = ptpCoverHtml();
+        PT_SECTIONS.forEach(function (S) {
+          html += ptpPageHtml(S.pill, S.tag, '<div class="pt-focus">' + ptFocusHtml(S, all) + '</div>');
+          if (S.key === 'business') {
+            html += ptpPageHtml(S.pill, 'Bake-off scorecard \u00b7 what to measure before you commit', ptScoreHtml(all));
+            html += ptpPageHtml(S.pill, 'Partner financial operating model \u00b7 activity-based', ptModelHtml(all));
+          }
+        });
+        html += ptpPageHtml('What stays with you', 'Scope \u00b7 and what the returned capacity can fund', ptClosingHtml());
+        host.innerHTML = html;
+        host.querySelectorAll('input, button, [data-action]').forEach(function (el) {
+          el.removeAttribute('id'); el.removeAttribute('data-action');
+          if (el.tagName === 'INPUT') { el.setAttribute('readonly', ''); el.setAttribute('tabindex', '-1'); }
+        });
+        /* one batched read, then a split pass so nothing overflows its sheet */
+        let pages = Array.prototype.slice.call(host.querySelectorAll('.ptp-page'));
+        const first = pages.map(function (p) { return p.scrollHeight; });
+        pages.forEach(function (p, i) {
+          if (first[i] <= PTP_MAX) return;
+          const table = p.querySelector('.pt-table');
+          if (!table) return;
+          const title = p.querySelector('.ptp-h-t') ? p.querySelector('.ptp-h-t').textContent : '';
+          const wrap = document.createElement('div');
+          wrap.innerHTML = ptpPageHtml(title, 'Current state vs. Application Workspace', '');
+          const np = wrap.firstElementChild;
+          np.querySelector('.ptp-body').appendChild(table);
+          p.parentNode.insertBefore(np, p.nextSibling);
+        });
+        pages = Array.prototype.slice.call(host.querySelectorAll('.ptp-page'));
+        const hs = pages.map(function (p) { return p.scrollHeight; });
+        pages.forEach(function (p, i) {
+          const no = p.querySelector('.ptp-pageno');
+          if (no) no.textContent = (i + 1) + ' / ' + pages.length;
+          p.style.zoom = Math.min(PTP_FIT_W / PTP_W, PTP_FIT_H / (hs[i] || 1), 1).toFixed(3);
+        });
+        return pages.length;
+      }
+      function ptExportPdf(){
+        let n = 0;
+        try { n = ptBuildPrint(); } catch (e) { console.warn('PDF build failed', e); }
+        if (!n) return;
+        setTimeout(function () { window.print(); }, 160);
+      }
+      window.addEventListener('beforeprint', function () {
+        if (!document.querySelector('#pt-print .ptp-page')) { try { ptBuildPrint(); } catch (e) {} }
+      });
+
       /* ========== OB ANIMATION ENGINE ========== */
       function buildObQueue(){
         const queue = [];
@@ -12671,18 +12820,12 @@
       }
 
       /* ========== PARTNER TAB ========== */
-      function renderPartner(){
-        const p = STATE.ptPhase;
-        const past = (target) => {
-          const order = ['idle','boards','r1','r2','r3','stat'];
-          return order.indexOf(p) >= order.indexOf(target);
-        };
-        const S = PT_SECTIONS[Math.max(0, Math.min(PT_SECTIONS.length - 1, STATE.ptSection || 0))];
-        const stages = PT_STAGES[S.key] || ['Source','Build','Test','Deploy'];
-        const running = STATE.ptRunning && !STATE.ptPaused;
+      /* ── Section builders shared by the live panel and the PDF export ──
+         `past` gates the reveals; the export passes a resolver that returns
+         true for every beat, so the document is the same markup the screen
+         shows with every animation already landed. ── */
+      function ptClaimsHtml(){
         return `
-          <section id="panel-partner" class="space-y-2" data-screen-label="Partner">
-            <div class="section-card p-4">
               <div class="ptc-claims">
                 <div class="ptc-claim">
                   <div class="ptc-big">80%<em>faster</em></div>
@@ -12699,19 +12842,10 @@
                   <div class="ptc-lab">On the same contract \u2014 efficiency, not repricing</div>
                   <div class="ptc-math">43% \u2192 69% gross margin \u00b7 1.60\u00d7</div>
                 </div>
-              </div>
-
-              <div class="pt-pillbar">
-                ${PT_SECTIONS.map((s, i) => `
-                  <button type="button" data-action="pt-section" data-idx="${i}" class="pt-pill ${i === STATE.ptSection ? 'active' : ''} ${i === STATE.ptSection && STATE.ptTour && STATE.ptRunning ? 'pt-auto' : ''}">
-                    <span class="pt-pill-name"><i data-lucide="${s.icon}"></i>${s.pill}</span>
-                    <span class="pt-pill-tag">${s.tag}</span>
-                    ${i === STATE.ptSection && STATE.ptTour && STATE.ptRunning ? `<span class="pt-pill-fill" style="animation-duration:9400ms;animation-delay:-${Math.max(0, Date.now() - (STATE.ptSectionStart || Date.now()))}ms;animation-play-state:${STATE.ptPaused ? 'paused' : 'running'}"></span>` : ''}
-                  </button>`).join('')}
-              </div>
-
-              <div class="pt-stagewrap">
-              <div class="pt-focus">
+              </div>`;
+      }
+      function ptFocusHtml(S, past){
+        return `
               <div class="pt-callout ${past('boards') ? 'pt-show' : ''} mb-3">
                 <div class="pt-event">
                   <span class="pt-event-title">${S.event}</span>
@@ -12745,10 +12879,10 @@
                     <div class="pt-stat-detail">${S.stat.hrs}</div>
                   </div>
                 </div>
-              </div>
-              </div>
-
-              ${S.key === 'business' ? `
+              </div>`;
+      }
+      function ptScoreHtml(past){
+        return `
               <div class="pt-callout ${past('stat') ? 'pt-show' : ''} mt-3">
                 <div class="pt-stat-eyebrow">Bake-off scorecard \u00b7 what to measure before you commit</div>
                 <div class="pt-stat-detail" style="margin-bottom:9px">The playbook\u2019s scorecard, pre-filled with the reference model\u2019s expected result. Run it on your own portfolio \u2014 these are the numbers the story stands or falls on.</div>
@@ -12768,9 +12902,10 @@
                     <div class="pts-th">${r[4]}</div>
                   </div>`).join('')}
                 </div>
-              </div>` : ''}
-
-              ${S.key === 'business' ? (() => { const c = ptModelCalc(); const pctFut = c.curHrs > 0 ? Math.max(2, Math.round(c.futHrs / c.curHrs * 100)) : 0; return `
+              </div>`;
+      }
+      function ptModelHtml(past){
+        const c = ptModelCalc(); const pctFut = c.curHrs > 0 ? Math.max(2, Math.round(c.futHrs / c.curHrs * 100)) : 0; return `
               <div class="pt-callout ${past('stat') ? 'pt-show' : ''} mt-3">
                 <div class="ptm">
                   <div class="pt-stat-eyebrow">Partner financial operating model \u00b7 activity-based</div>
@@ -12799,9 +12934,10 @@
                   </div>
                   <div class="ptm-notes">Formulas (playbook \u00a76): current cost = changes \u00d7 12 \u00d7 hours per change \u00d7 rate \u00b7 future = (standard share \u00d7 standard residual + complex share \u00d7 complex residual), with the reduction discounted by the realization factor \u00b7 break-even license = labor value \u00f7 users \u00f7 12. Excludes Application Workspace license, implementation, and recurring administration \u2014 those come from an actual proposal, never assumed here. 8 h / 1.5 h / 4 h / 75% are low-to-moderate-confidence planning benchmarks; the bake-off replaces them with measured values.</div>
                 </div>
-              </div>`; })() : ''}
-              </div>
-
+              </div>`;
+      }
+      function ptClosingHtml(){
+        return `
               <div class="pt-strips mt-3">
                 <div class="pt-strip">
                   <div class="pt-strip-title">What stays with you either way</div>
@@ -12834,7 +12970,41 @@
                 </div>
 
               </div>
-              <div class="pt-footnote mt-3">Drawn from the partner operating-model comparison \u2014 outcomes vary by portfolio and application mix; validate with a measured bake-off, not assumptions.</div>
+              <div class="pt-footnote mt-3">Drawn from the partner operating-model comparison \u2014 outcomes vary by portfolio and application mix; validate with a measured bake-off, not assumptions.</div>`;
+      }
+      function renderPartner(){
+        const p = STATE.ptPhase;
+        const past = (target) => {
+          const order = ['idle','boards','r1','r2','r3','stat'];
+          return order.indexOf(p) >= order.indexOf(target);
+        };
+        const S = PT_SECTIONS[Math.max(0, Math.min(PT_SECTIONS.length - 1, STATE.ptSection || 0))];
+        return `
+          <section id="panel-partner" class="space-y-2" data-screen-label="Partner">
+            <div class="section-card p-4">
+              ${ptClaimsHtml()}
+
+              <div class="pt-pillbar">
+                ${PT_SECTIONS.map((s, i) => `
+                  <button type="button" data-action="pt-section" data-idx="${i}" class="pt-pill ${i === STATE.ptSection ? 'active' : ''} ${i === STATE.ptSection && STATE.ptTour && STATE.ptRunning ? 'pt-auto' : ''}">
+                    <span class="pt-pill-name"><i data-lucide="${s.icon}"></i>${s.pill}</span>
+                    <span class="pt-pill-tag">${s.tag}</span>
+                    ${i === STATE.ptSection && STATE.ptTour && STATE.ptRunning ? `<span class="pt-pill-fill" style="animation-duration:9400ms;animation-delay:-${Math.max(0, Date.now() - (STATE.ptSectionStart || Date.now()))}ms;animation-play-state:${STATE.ptPaused ? 'paused' : 'running'}"></span>` : ''}
+                  </button>`).join('')}
+              </div>
+
+              <div class="pt-stagewrap">
+              <div class="pt-focus">
+              ${ptFocusHtml(S, past)}
+              </div>
+              ${S.key === 'business' ? ptScoreHtml(past) + ptModelHtml(past) : ''}
+              </div>
+
+              ${ptClosingHtml()}
+              <div class="pt-pdfbar">
+                <span>All ${PT_SECTIONS.length} sections \u00b7 branded \u00b7 landscape</span>
+                <button type="button" class="pt-pdfbtn" data-action="pt-pdf" title="Build a branded PDF of every partner section"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 12 5 5 5-5"/><path d="M5 21h14"/></svg>Download the partner PDF</button>
+              </div>
             </div>
           </section>
         `;
@@ -13774,6 +13944,7 @@
           }
           if (action === 'toggle-pt') { if (STATE.ptRunning && !STATE.ptPaused) { STATE.ptPaused = true; STATE.ptTimers.forEach(id => clearTimeout(id)); STATE.ptTimers = []; scrollPreserveRender(); } else if (STATE.ptRunning && STATE.ptPaused) { STATE.ptPaused = false; scrollPreserveRender(); runPtQueue(); } else { startPt(false); } return; }
           if (action === 'pt-play-all') { startPt(true); const _sw = document.querySelector('.pt-stagewrap'); if (_sw) _sw.classList.add('pt-enter'); return; }
+          if (action === 'pt-pdf') { ptExportPdf(); return; }
           if (action === 'pt-section') { const _i = parseInt(act.getAttribute('data-idx'), 10) || 0; STATE.ptTour = false; STATE.ptSection = _i; startPt(false); const _sw = document.querySelector('.pt-stagewrap'); if (_sw) _sw.classList.add('pt-enter'); return; }
           if (action === 'step-pt') { stepPt(); return; }
           if (action === 'reset-pt') { resetPt(); return; }
