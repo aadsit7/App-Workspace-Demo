@@ -998,21 +998,12 @@
       .pt-bar.pt-grow { height: var(--h, 12px); }
       .pt-side-right .pt-bar { background: #12a58c; }
       .pt-bar-tick { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 8.5px; color: #737d92; white-space: nowrap; }
-      .pt-strips { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-      @media (max-width: 860px) { .pt-strips { grid-template-columns: 1fr; } }
-      .pt-strip { border-radius: 10px; border: 1px solid #dce1ec; background: #fbfcfe; padding: 10px 12px; }
-      .pt-strip-title { font-size: 10px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #3b4457; margin-bottom: 6px; }
-      .pt-chipset { display: flex; flex-wrap: wrap; gap: 4px; }
-      .pt-chip { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: 600; border: 1px solid #dce1ec; background: white; color: #3b4457; }
-      .pt-chip i { width: 11px; height: 11px; color: #737d92; }
-      .pt-strip-foot { font-size: 9.5px; color: #737d92; margin-top: 7px; line-height: 1.45; }
       .pt-closer { text-align: center; font-size: 13px; font-weight: 700; color: #1745bf; background: #eef3ff; border-radius: 8px; padding: 10px 14px; }
       .pt-donechip { display: inline-flex; align-items: center; gap: 5px; padding: 4px 9px; border-radius: 6px; font-size: 10px; font-weight: 700; margin-top: 7px; }
       .pt-donechip i { width: 12px; height: 12px; }
       .pt-donechip-left { background: #eef1f8; border: 1px solid #c4cbdb; color: #3b4457; }
       .pt-donechip-right { background: #e4f6ef; border: 1px solid #bfe9e1; color: #055c53; }
       .pt-master-note { font-size: 9.5px; color: #077a6e; font-weight: 600; margin-top: 7px; }
-      .pt-footnote { font-size: 9px; color: #9aa3b7; line-height: 1.5; text-align: center; }
       .pt-pillbar { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 12px; }
       .pt-pill { display: inline-flex; flex-direction: column; align-items: flex-start; gap: 1px; padding: 6px 12px; border-radius: 10px; border: 1px solid #dce1ec; background: white; cursor: pointer; transition: all 0.18s ease; text-align: left; }
       .pt-pill:hover { border-color: #9aa3b7; background: #fbfcfe; }
@@ -1070,15 +1061,6 @@
       .pt-stat-eyebrow { font-size: 9px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: #9aa3b7; margin-bottom: 4px; }
       .pt-stat-lead { font-size: 13px; font-weight: 700; color: #171d2b; letter-spacing: -0.005em; }
       .pt-stat-detail { font-size: 11px; font-weight: 500; color: #545d70; margin-top: 2px; }
-      .pt-strips { gap: 28px; border-top: 1px solid #dce1ec; padding-top: 14px; }
-      .pt-strip { border: 0; background: transparent; padding: 0; border-radius: 0; }
-      .pt-chipset { display: block; }
-      .pt-chip { display: flex; align-items: center; border: 0; background: transparent; border-radius: 0; padding: 3.5px 0; font-size: 11px; font-weight: 500; color: #3b4457; gap: 9px; }
-      .pt-chip i, .pt-chip svg { display: none; }
-      .pt-chip::before { content: ''; width: 4px; height: 4px; border-radius: 1px; background: #c4cbdb; flex-shrink: 0; }
-      .pt-strip-foot { color: #9aa3b7; }
-      .pt-shift { display: flex; gap: 24px; align-items: flex-start; flex-wrap: wrap; border-top: 1px solid #dce1ec; margin-top: 14px; padding-top: 14px; }
-      .pt-shift-body { font-size: 12px; color: #171d2b; line-height: 1.55; max-width: 78ch; font-weight: 500; }
       .ptm { border: 1px solid #dce1ec; border-radius: 12px; padding: 14px 16px; background: white; }
       .ptm-grid { display: grid; grid-template-columns: 320px 1fr; gap: 22px; margin-top: 12px; }
       @media (max-width: 860px) { .ptm-grid { grid-template-columns: 1fr; } }
@@ -1234,7 +1216,7 @@
          land on one baseline; entrances slide in FROM the left, so nothing drifts
          across the alignment while it animates. ── */
       .pt-statband { justify-content: flex-start; }
-      .pt-footnote, .pt-closer { text-align: left; }
+      .pt-closer { text-align: left; }
       .ptv-name, .ptv-hname, .pt-track-name { text-align: left; }
       .ptv-block, .ptv-plat, .ptv-band, .ptv-keep, .ptv-console { text-align: left; }
       .ptv-endchip, .aw-mult { margin-left: 8px; }
@@ -14094,42 +14076,6 @@
                 </div>
               </div>`;
       }
-      function ptClosingHtml(){
-        return `
-              <div class="pt-strips mt-3">
-                <div class="pt-strip">
-                  <div class="pt-strip-title">What stays with you either way</div>
-                  <div class="pt-chipset">
-                    <span class="pt-chip"><i data-lucide="clipboard-check"></i>Customer requirements + approvals</span>
-                    <span class="pt-chip"><i data-lucide="sliders-horizontal"></i>Config choices \u2014 language, features, timing</span>
-                    <span class="pt-chip"><i data-lucide="flask-conical"></i>Acceptance testing + ring design</span>
-                    <span class="pt-chip"><i data-lucide="undo-2"></i>Release + rollback authority</span>
-                    <span class="pt-chip"><i data-lucide="box"></i>Custom + exception apps</span>
-                    <span class="pt-chip"><i data-lucide="headphones"></i>Support ownership</span>
-                  </div>
-                  <div class="pt-strip-foot">Not zero-touch, and not every app is covered \u2014 saying that early is what makes the rest credible.</div>
-                </div>
-                <div class="pt-strip">
-                  <div class="pt-strip-title">What the returned capacity can fund \u2014 keep these separate</div>
-                  <div class="pt-chipset">
-                    <span class="pt-chip"><i data-lucide="piggy-bank"></i>Margin recovery on contracts already priced</span>
-                    <span class="pt-chip"><i data-lucide="shopping-bag"></i>A sellable Managed Application Delivery service</span>
-                    <span class="pt-chip"><i data-lucide="rocket"></i>Project acceleration \u2014 Intune, AVD / W365, Citrix exit</span>
-                    <span class="pt-chip"><i data-lucide="users"></i>Growth without proportional packaging headcount</span>
-                  </div>
-                  <div class="pt-strip-foot">Capacity returned is not cash savings until a staffing or spend decision exists.</div>
-                </div>
-              </div>
-
-              <div class="pt-shift">
-                <div style="flex:1;min-width:260px">
-                  <div class="pt-stat-eyebrow">The shift, in one statement</div>
-                  <div class="pt-shift-body">Today, application delivery is a resource-intensive manual service \u2014 packaging, testing, approval, and deployment repeated across customer environments. Application Workspace turns it into a standardized, repeatable offering: proven packages and workflows reused across customers, customer-specific controls preserved, faster deployments, and a more scalable managed service.</div>
-                </div>
-
-              </div>
-              <div class="pt-footnote mt-3">Drawn from the partner operating-model comparison \u2014 outcomes vary by portfolio and application mix; validate with a measured bake-off, not assumptions.</div>`;
-      }
       function renderPartner(){
         const p = STATE.ptPhase;
         const past = (target) => {
@@ -14158,7 +14104,6 @@
               ${S.key === 'business' ? ptScoreHtml(past) + ptModelHtml(past) : ''}
               </div>
 
-              ${ptClosingHtml()}
               <div class="pt-pdfbar">
                 <span>Current state \u00b7 the Recast approach \u00b7 all ${PT_SECTIONS.length} partner sections \u00b7 business impact</span>
                 <button type="button" class="pt-pdfbtn" data-action="pt-pdf" title="Build the branded Partner Playbook PDF \u2014 current state, the Recast approach, every partner section, and the business case"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 12 5 5 5-5"/><path d="M5 21h14"/></svg>Create the partner playbook PDF</button>
