@@ -13324,20 +13324,32 @@
       }
 
       /* ═══════════════════════════════════════════════════════════════════
-         EXECUTIVE IMPACT SUMMARY — PDF EXPORT
-         Four pages, in the order the story is told on screen: where things
-         stand, what the Recast approach is, what it is estimated to be worth,
-         and how every number was produced.
+         EXECUTIVE SUMMARY — PDF EXPORT
+         Three pages, one per tab, in the order the story is told on screen:
+
+           Page 1 — The market challenge (Current State). The measured
+                    pressure on IT teams, why the work multiplies, what
+                    running every platform separately costs, and the
+                    capacity gap those forces open.
+           Page 2 — The Recast approach. The approach diagram exactly as
+                    the application draws it, then the seven Application
+                    Workspace modules, each with a screenshot captured from
+                    its own walkthrough posed at its finished state.
+           Page 3 — Benefits & outcomes (Benefits). The three numbers, what
+                    changes across the lifecycle and what does not, the
+                    bake-off scorecard outcomes, and what stays with the
+                    team either way.
 
          Accuracy is the design constraint. Nothing in the document is typed
-         twice: the industry figures come from STAT_CARDS with their published
-         sources, the per-platform costs from PLATFORM_SILO_IMPACTS, the proof
-         and rollout points from NEW_CARDS, the module list from
-         LIFECYCLE_MODULES, the diagram walkthrough from the labels read back
-         out of the captured diagram itself, and every currency and hour
-         figure from calculateImpact(). Modelled figures are labelled as
-         modelled, and page 4 discloses every input, rate and benchmark
-         behind them.
+         twice: the industry figures come from STAT_CARDS with their
+         published sources, the demand drivers from STATE.drivers, the
+         chart labels from STATE.chartConfig and STATE.tippingPoint, the
+         per-platform costs from PLATFORM_SILO_IMPACTS, the diagram
+         walkthrough from the labels read back out of the captured diagram
+         itself, the module tiles from LIFECYCLE_MODULES rendered by each
+         module's own view function, and every page-3 figure from the PT_*
+         tables the Benefits tab renders. Reference-model figures are
+         labelled as the reference model they are.
          ═══════════════════════════════════════════════════════════════════ */
 
       /* Exact values from the Recast brand system. */
@@ -13437,37 +13449,136 @@
         }
       }
 
+      /* Width each module view is mounted at for capture — a desktop-modal
+         width, so every screenshot shows the layout a viewer of the live
+         walkthrough sees. */
+      const MODULE_SHOT_W = 1000;
+
+      /* How each Recast Approach module is posed for its screenshot: the
+         STATE flags that put the view in its finished, fully-revealed state
+         (the same state its walkthrough ends on), and the render function
+         that draws it. The flags are swapped in only long enough to build
+         the markup string, then restored, so posing a capture never
+         disturbs the live page. */
+      const PDF_MODULE_SHOTS = {
+        setupstore: { render: () => renderSetupStoreView(),
+          pose: { ssAct: 'done', ssCounter: SS_COUNTER_TARGET, ssCaption: '', ssCaptionFinal: false, ssMode: 'curated',
+                  ssTickerHistory: [], ssFieldStep: 9, ssBadgesAdobe: true, ssYourCardIn: true, ssInheritStep: 9,
+                  ssBadgesYour: true, ssAdobeShifted: true } },
+        admin: { render: () => renderAdminConsole(),
+          /* Scenario 3 = the auto-update story, whose final beat shows the
+             console with the new version promoted through the pipeline.
+             _acSeen is pre-marked so nothing waits on an entry animation. */
+          pose: { flowScenarioIdx: 3, flowPhase: 'final', flowRunning: false,
+                  _acSeen: { lifecycle: 1, modal: 1, freshrow: 1, promote: 1 } } },
+        onboarding: { render: () => renderOnboardingView(), pose: { obPhase: 'done' } },
+        user: { render: () => renderUserView(),
+          /* Scenario 0 = self-service: the catalog story ends on the app
+             open in every frame. The flow must read as live for the user
+             view to draw its final beat. */
+          pose: { flowScenarioIdx: 0, flowPhase: 'final', flowRunning: true, flowAppOpened: true,
+                  _firstOpenDone: true, _firstDeliveryBadgeDone: false } },
+        dashboard: { render: () => renderDashboardView(), pose: { drPhase: 'done' } },
+        ai: { render: () => renderAiView(), pose: { aiPhase: 'done', aiScenarioIdx: 0, aiTyping: false } },
+        multitenant: { render: () => renderMultiTenantView(), pose: { mtPhase: 'done' } }
+      };
+
+      /* What each module tile says beside its screenshot. Each line quotes
+         the claims the module's own walkthrough makes on screen — the
+         catalog size from the Setup Store counter, the DTAP pipeline from
+         the console, the 15-minute onboarding from the split-screen demo —
+         so the document never says more than the application shows. */
+      const PDF_MODULE_COPY = {
+        setupstore: '8,000+ pre-packaged commercial applications — verified sources, tested install logic, updated daily — and your custom apps inherit the same package structure.',
+        admin: 'Packages, deployments, entitlements and contexts in one console. Changes are authored once and promoted Development, Test, Acceptance, Production.',
+        onboarding: 'Autopilot installs the Workspace agent during enrollment and every entitled app lands at first sign-in — 15 minutes to productive instead of hours.',
+        user: 'People browse an approved catalog and click Get. The app arrives installed, configured and policy-compliant in seconds — no ticket raised.',
+        dashboard: 'One analytics feed — packages, deployments, devices, events, licenses — powers dashboards in any reporting tool, aggregated across every zone.',
+        ai: 'Microsoft Copilot for Application Workspace reads that same analytics feed and answers in plain English — grounded in your environment, not general knowledge.',
+        multitenant: 'A primary zone publishes shared and custom catalogs to every customer zone, with entitlements, scoped deployments, reporting and governance kept separate.'
+      };
+
+      /* Pose all seven modules, mount them off-screen at desktop width in
+         one host, then rasterize them one at a time. A module whose capture
+         fails simply returns no shot — the page falls back to a labelled
+         tile, and the export never fails because one screenshot did. */
+      async function captureModuleShots(){
+        const views = LIFECYCLE_MODULES.map(m => m.view);
+        const html = {};
+        views.forEach((view) => {
+          const def = PDF_MODULE_SHOTS[view];
+          if (!def) return;
+          const prev = {};
+          Object.keys(def.pose).forEach((k) => { prev[k] = STATE[k]; STATE[k] = def.pose[k]; });
+          try { html[view] = def.render(); }
+          catch (err) { console.warn('Module render failed for PDF:', view, err); }
+          finally { Object.keys(prev).forEach((k) => { STATE[k] = prev[k]; }); }
+        });
+
+        const host = document.createElement('div');
+        host.className = 'rws-shot-host';
+        host.setAttribute('aria-hidden', 'true');
+        host.innerHTML = views.filter(v => html[v])
+          .map(v => `<div class="rws-shot" data-shot-view="${v}" style="width:${MODULE_SHOT_W}px">${html[v]}</div>`).join('');
+        document.body.appendChild(host);
+
+        const shots = {};
+        try {
+          if (window.lucide?.createIcons) { try { window.lucide.createIcons(); } catch {} }
+          try { await document.fonts.ready; } catch {}
+          /* Two frames: the second lets the Tailwind runtime emit any
+             utility class these views are the first to use this session. */
+          await new Promise(requestAnimationFrame);
+          await new Promise(requestAnimationFrame);
+          if (!window.html2canvas) return shots;
+          for (const v of views){
+            const target = host.querySelector(`[data-shot-view="${v}"]`);
+            if (!target || !target.offsetWidth) continue;
+            try {
+              const canvas = await window.html2canvas(target, {
+                backgroundColor: '#FFFFFF',
+                scale: 1.4,
+                logging: false,
+                useCORS: true,
+                windowWidth: 1400,
+                windowHeight: 1000
+              });
+              /* JPEG: the tiles print small, and seven PNGs would triple the
+                 file for detail no reader can see. */
+              shots[v] = { data: canvas.toDataURL('image/jpeg', 0.88), fmt: 'JPEG', w: canvas.width, h: canvas.height };
+            } catch (err) {
+              console.warn('Module capture failed for PDF:', v, err);
+            }
+          }
+        } finally {
+          host.remove();
+        }
+        return shots;
+      }
+
       async function generatePDF(companyName){
         if (!window.jspdf) { alert('PDF library not loaded. Please refresh and try again.'); return; }
-        if (!STATE.calcResult) { alert('Calculate the impact first, then download the summary.'); return; }
 
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF({ unit: 'pt', format: 'letter' });
         const B = PDF_BRAND;
         const W = 612, H = 792, ML = 40, MR = 40, CW = W - ML - MR;
         const HEAD_H = 56, FOOT_H = 18, TOP = HEAD_H + 16;
-        const r = STATE.calcResult, ci = STATE.calcInputs, a = ROI_ASSUMPTIONS[STATE.calcScenario], pb = PACKAGING_BENCHMARKS;
         const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
         const co = companyName;
-        const pct = (v) => Math.round(v * 100) + '%';
+        const cs = STATE.currentState || STATE.defaultsCurrentState();
 
         const setC = (c) => doc.setTextColor(c[0], c[1], c[2]);
         const setF = (c) => doc.setFillColor(c[0], c[1], c[2]);
         const setD = (c) => doc.setDrawColor(c[0], c[1], c[2]);
 
-        /* Split a rounded whole across parts by weight, so the parts on the
-           page always add up to the total on the page. */
-        function allocate(total, weights){
-          const sum = weights.reduce((s, w) => s + w, 0);
-          if (sum <= 0) return weights.map(() => 0);
-          const exact = weights.map(w => (w / sum) * total);
-          const out = exact.map(Math.floor);
-          let left = Math.round(total) - out.reduce((s, v) => s + v, 0);
-          exact.map((v, i) => [v - Math.floor(v), i])
-               .sort((p, q) => q[0] - p[0])
-               .forEach(([, i]) => { if (left > 0) { out[i] += 1; left -= 1; } });
-          return out;
-        }
+        /* Current State bullets carry "Title. = body" strings for the
+           screen's dropdowns; split them back apart for the page. */
+        const csSplit = (s) => {
+          const t = pdfPlain(s);
+          const i = t.indexOf('=');
+          return i < 0 ? { head: '', body: t } : { head: t.slice(0, i).trim(), body: t.slice(i + 1).trim() };
+        };
 
         // ── Chrome ────────────────────────────────────────────────────────
         function header(context){
@@ -13482,7 +13593,7 @@
           doc.setFontSize(6.5); setC(B.muted);
           doc.text('APPLICATION WORKSPACE', ML, 41);
           doc.setFont('Helvetica', 'bold'); doc.setFontSize(12); setC(B.white);
-          doc.text('Executive Impact Summary', W - MR, 23, { align: 'right' });
+          doc.text('Executive Summary', W - MR, 23, { align: 'right' });
           doc.setFont('Helvetica', 'normal'); doc.setFontSize(7); setC(B.muted);
           doc.text('Prepared for ' + co + '  ·  ' + today, W - MR, 34, { align: 'right' });
           doc.setFontSize(7); setC(B.cyan);
@@ -13496,7 +13607,7 @@
             doc.setPage(p);
             setF(B.blue); doc.rect(0, H - FOOT_H, W, FOOT_H, 'F');
             doc.setFont('Helvetica', 'normal'); doc.setFontSize(6.5); setC(B.muted);
-            doc.text('Recast Software  |  Executive Impact Summary  |  Prepared for ' + co, ML, H - 6.5);
+            doc.text('Recast Software  |  Executive Summary  |  Prepared for ' + co, ML, H - 6.5);
             doc.text('Page ' + p + ' of ' + total, W - MR, H - 6.5, { align: 'right' });
           }
         }
@@ -13536,7 +13647,7 @@
           doc.setFontSize(fs);
           if (bold){
             doc.setFont('Helvetica', 'bold'); setC(B.dark);
-            const bw = doc.getTextWidth(bold + ' ');
+            const bw = doc.getTextWidth(bold) + 4;
             doc.text(bold, bx, y + 6);
             doc.setFont('Helvetica', 'normal'); setC(B.gray);
             const head = doc.splitTextToSize(text, Math.max(24, mw - bw));
@@ -13571,39 +13682,6 @@
           return callout(H - FOOT_H - 16 - h, text);
         }
 
-        function kv(x, y, w, label, value){
-          doc.setFont('Helvetica', 'bold');   doc.setFontSize(7.5); setC(B.dark);
-          doc.text(label, x, y + 6);
-          doc.setFont('Helvetica', 'normal'); setC(B.gray);
-          doc.text(String(value), x + w, y + 6, { align: 'right' });
-          setD(B.rule); doc.setLineWidth(0.4); doc.line(x, y + 9.5, x + w, y + 9.5);
-          return y + 13;
-        }
-
-        function subhead(x, y, w, text){
-          doc.setFont('Helvetica', 'bold'); doc.setFontSize(7); setC(B.blue);
-          doc.text(text.toUpperCase(), x, y + 6);
-          return y + 12;
-        }
-
-        /* Label, proportional bar, value on the right, optional detail under it. */
-        function bar(y, label, pctFill, valueText, color, detail){
-          const bx = ML + 116, bw = CW - 116 - 108, bh = 9;
-          doc.setFont('Helvetica', 'bold'); doc.setFontSize(9); setC(B.dark);
-          doc.text(label, ML, y + 8);
-          setF(B.light); doc.rect(bx, y + 1.5, bw, bh, 'F');
-          setF(color);   doc.rect(bx, y + 1.5, Math.max(0, Math.min(1, pctFill)) * bw, bh, 'F');
-          doc.setFont('Helvetica', 'bold'); doc.setFontSize(9); setC(color);
-          doc.text(valueText, W - MR, y + 8, { align: 'right' });
-          y += 13;
-          if (detail){
-            doc.setFont('Helvetica', 'normal'); doc.setFontSize(7.5); setC(B.soft);
-            doc.text(detail, bx, y + 5);
-            y += 11;
-          }
-          return y + 3;
-        }
-
         function statCards(y, cards, cols, cardH){
           const gap = 10, cw = (CW - gap * (cols - 1)) / cols;
           cards.forEach((c, i) => {
@@ -13625,95 +13703,174 @@
           return y + Math.ceil(cards.length / cols) * (cardH + gap);
         }
 
-        // Capture the diagram before any drawing so page 2 can be laid out
-        // around whatever actually came back.
-        const { shot, model } = await captureApproachDiagram();
+        /* Draw a raster to exactly fill its frame — scaled to cover, centred
+           horizontally, anchored to the top so a view's own header stays in
+           the crop — with the overflow clipped away. */
+        function coverImage(img, x, y, w, h){
+          const s = Math.max(w / img.w, h / img.h);
+          const dw = img.w * s, dh = img.h * s;
+          doc.saveGraphicsState();
+          doc.rect(x, y, w, h, null);
+          doc.clip();
+          doc.discardPath();
+          doc.addImage(img.data, img.fmt || 'PNG', x - (dw - w) / 2, y, dw, dh, undefined, 'FAST');
+          doc.restoreGraphicsState();
+          setD(B.rule); doc.setLineWidth(0.5); doc.rect(x, y, w, h, 'S');
+        }
 
-        /* ══════════ PAGE 1 — WHERE THINGS STAND ══════════ */
-        header('01  ·  Where things stand');
+        /* The Current State tab's hero chart, redrawn as vectors: demand
+           bends up the curve the sliders drive, capacity stays near flat,
+           and the shaded wedge between them is the labelled gap. */
+        function capacityChart(y, h){
+          const cc = STATE.chartConfig || {};
+          setF(B.white); setD(B.rule); doc.setLineWidth(0.6); doc.rect(ML, y, CW, h, 'FD');
+          const padL = 26, padR = 12, padT = 12, padB = 18;
+          const px = ML + padL, pw = CW - padL - padR, pyB = y + h - padB, ph = h - padT - padB;
+          const exp = STATE.currentDemandExponent || 1.6;
+          const dY = (t) => pyB - ph * (0.16 + 0.76 * Math.pow(t, exp));
+          const cY = (t) => pyB - ph * (0.24 + 0.06 * t);
+
+          /* Shade the gap first, so both curves print on top of it. */
+          let tc = 1;
+          for (let t = 0; t <= 1.0005; t += 0.01){ if (dY(t) <= cY(t)) { tc = t; break; } }
+          if (tc < 1){
+            const N = 36, pts = [];
+            for (let i = 0; i <= N; i++){ const t = tc + (1 - tc) * (i / N); pts.push([px + pw * t, dY(t)]); }
+            for (let i = N; i >= 0; i--){ const t = tc + (1 - tc) * (i / N); pts.push([px + pw * t, cY(t)]); }
+            const seg = [];
+            for (let i = 1; i < pts.length; i++) seg.push([pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]]);
+            setF([253, 238, 238]);
+            doc.lines(seg, pts[0][0], pts[0][1], [1, 1], 'F', true);
+          }
+
+          setD([200, 200, 214]); doc.setLineWidth(0.7);
+          doc.line(px, y + padT, px, pyB); doc.line(px, pyB, px + pw, pyB);
+
+          const poly = (fn, col, lw) => {
+            setD(col); doc.setLineWidth(lw);
+            let prev = [px, fn(0)];
+            for (let i = 1; i <= 36; i++){
+              const t = i / 36, p = [px + pw * t, fn(t)];
+              doc.line(prev[0], prev[1], p[0], p[1]);
+              prev = p;
+            }
+          };
+          poly(dY, B.red, 1.4);
+          poly(cY, B.blue, 1.4);
+          doc.setLineWidth(0.5);
+
+          doc.setFont('Helvetica', 'bold'); doc.setFontSize(6.5);
+          setC(B.red);  doc.text('Demand', px + pw - 3, Math.max(y + padT + 8, dY(1) - 5), { align: 'right' });
+          setC(B.blue); doc.text('IT capacity', px + pw - 3, cY(1) - 4, { align: 'right' });
+
+          /* The demand exponent is driver-controlled at runtime, so every
+             landmark is placed relative to where the curves actually cross:
+             the marker a beat past the crossing, the gap label centred in
+             the widest part of the wedge, right of the marker. */
+          const tt = Math.min(0.9, tc + (1 - tc) * 0.55), tx = px + pw * tt;
+          setD(B.red); doc.setLineWidth(0.8); doc.setLineDashPattern([2.2, 1.8], 0);
+          doc.line(tx, y + padT + 3, tx, pyB);
+          doc.setLineDashPattern([], 0); doc.setLineWidth(0.5);
+          setF(B.red); doc.circle(tx, dY(tt), 2.2, 'F');
+          doc.setFont('Helvetica', 'bold'); doc.setFontSize(6.3); setC(B.red);
+          doc.text(cc.tipping || 'Operational breaking point', tx - 5, y + padT + 9, { align: 'right' });
+
+          const gt = Math.min(0.94, tt + (1 - tt) * 0.55);
+          doc.setFont('Helvetica', 'bold'); doc.setFontSize(8); setC(B.dark);
+          doc.text(cc.center || 'The Capacity Gap', px + pw * gt, (dY(gt) + cY(gt)) / 2 + 2.6, { align: 'center' });
+
+          doc.setFont('Helvetica', 'normal'); doc.setFontSize(6.3); setC(B.soft);
+          doc.text(cc.xAxis || 'Time', px + pw / 2, y + h - 6, { align: 'center' });
+          doc.text(cc.yAxis || 'Demand on IT', ML + 12, pyB - ph / 2, { angle: 90, align: 'center' });
+          return y + h + 7;
+        }
+
+        /* One of the Benefits tab's three claims: the headline figure, its
+           qualifier, and the today-versus-Workspace pair it derives from. */
+        function claimBox(x, y, w, h, big, em, lab, rows){
+          setF(B.tint); setD(B.rule); doc.setLineWidth(0.5); doc.rect(x, y, w, h, 'FD');
+          setF(B.blue); doc.rect(x, y, w, 2, 'F');
+          doc.setFont('Helvetica', 'bold'); doc.setFontSize(19); setC(B.blue);
+          doc.text(big, x + 9, y + 23);
+          const bw = doc.getTextWidth(big);
+          doc.setFont('Helvetica', 'bold'); doc.setFontSize(8); setC(B.dark);
+          doc.text(em, x + 12 + bw, y + 23);
+          doc.setFont('Helvetica', 'normal'); doc.setFontSize(6.4); setC(B.gray);
+          const labLines = doc.splitTextToSize(lab, w - 18);
+          doc.text(labLines.slice(0, 2), x + 9, y + 32);
+          let ry = y + 34 + Math.min(2, labLines.length) * 7.4;
+          const barX = x + 9 + 24, barW = w - 18 - 24 - 33;
+          rows.forEach(([tag, frac, val, col]) => {
+            doc.setFont('Helvetica', 'bold'); doc.setFontSize(5.6); setC(B.soft);
+            doc.text(tag.toUpperCase(), x + 9, ry + 4.4);
+            setF(B.light); doc.rect(barX, ry, barW, 4.6, 'F');
+            setF(col); doc.rect(barX, ry, Math.max(0.045, Math.min(1, frac)) * barW, 4.6, 'F');
+            doc.setFont('Helvetica', 'bold'); doc.setFontSize(6.4); setC(B.dark);
+            doc.text(val, x + w - 9, ry + 4.4, { align: 'right' });
+            ry += 9;
+          });
+        }
+
+        // Capture both kinds of raster before any drawing, so every page is
+        // laid out around what actually came back.
+        const { shot, model } = await captureApproachDiagram();
+        const moduleShots = await captureModuleShots();
+
+        /* ══════════ PAGE 1 — THE MARKET CHALLENGE ══════════ */
+        header('01  ·  The market challenge');
         let y = TOP;
 
-        doc.setFont('Helvetica', 'bold'); doc.setFontSize(17); setC(B.dark);
-        const title = doc.splitTextToSize('One place to package, deliver, update, govern and retire every application.', CW);
-        doc.text(title, ML, y + 13);
-        y += title.length * 19 + 6;
+        doc.setFont('Helvetica', 'bold'); doc.setFontSize(16); setC(B.dark);
+        const title = doc.splitTextToSize('The application layer is now the #1 primary constraint in modern IT.', CW);
+        doc.text(title, ML, y + 12);
+        y += title.length * 18 + 4;
 
-        doc.setFont('Helvetica', 'normal'); doc.setFontSize(9); setC(B.gray);
-        const deck = doc.splitTextToSize(
-          'Recast Application Workspace is one layer above the endpoint tools already in place — Intune, ConfigMgr, Citrix, AVD and Jamf. An application is prepared once, then delivered, updated, governed and retired everywhere it is needed, without being rebuilt per platform.', CW);
-        doc.text(deck, ML, y + 7);
-        y += deck.length * 12 + 8;
+        doc.setFont('Helvetica', 'normal'); doc.setFontSize(8.5); setC(B.gray);
+        const deck = doc.splitTextToSize(csSplit(cs.change.bullets[0] || '').body, CW);
+        doc.text(deck, ML, y + 6);
+        y += deck.length * 11 + 2;
+        doc.setFont('Helvetica', 'italic'); doc.setFontSize(7); setC(B.soft);
+        doc.text('Three pages: the pressure on IT today  ·  the approach that changes the model  ·  the outcomes that follow.', ML, y + 6);
+        y += 16;
 
-        y = section(y, 'WHAT IS IN THIS DOCUMENT');
-        [
-          ['Page 1 — Where things stand.', 'The pressure on IT teams right now, with the published source under each figure.'],
-          ['Page 2 — The Recast approach.', 'What Application Workspace is, shown as the application itself draws it, with the diagram explained piece by piece.'],
-          ['Page 3 — What it is worth to ' + co + '.', 'Hours, capacity and money, estimated from the ' + a.label.toLowerCase() + ' scenario.'],
-          ['Page 4 — Getting there, and the maths.', 'The rollout, who else runs it, and every input, rate and benchmark behind page 3.']
-        ].forEach(([b, t]) => { y = bullet(ML, y, CW, 'act', b, t); });
-        y += 6;
+        y = section(y, 'THE PRESSURE ON IT, MEASURED',
+          'Four measured shifts, none of which a team can hire its way out of. Each is the figure shown in the Current State view of this application, with its published source.');
+        y = statCards(y, STAT_CARDS.map(c => ({ stat: c.stat, label: c.label, body: c.body, source: c.source })), 2, 60);
+        y += 3;
 
-        y = section(y, 'THE PRESSURE IS NOT COMING FROM INSIDE IT',
-          'Four measured shifts, none of which a team can hire its way out of. Each is the figure shown in the Current State view of this application, with its source.');
-        y = statCards(y, STAT_CARDS.map(c => ({ stat: c.stat, label: c.label, body: c.body, source: c.source })), 2, 62);
+        y = section(y, 'WHY THE WORK MULTIPLIES');
+        (STATE.drivers || []).forEach((d) => {
+          y = bullet(ML, y, CW, 'risk', d.label + '.', pdfPlain(d.short || ''), 7.8);
+        });
         y += 4;
 
-        y = section(y, 'WHAT THAT COSTS WHEN EVERY PLATFORM IS RUN ON ITS OWN',
-          'With no layer above them, each platform is packaged, tested and patched separately. The same application is built once per platform, and the evidence for an audit is assembled by hand.');
+        y = section(y, 'WHAT RUNNING EVERY PLATFORM ON ITS OWN COSTS',
+          'Intune, ConfigMgr, Citrix, AVD / W365 and Jamf each demand their own packaging format, deployment path, testing pass and patch cycle. The Current State silo view puts numbers on that:');
         const impW = (CW - 8 * 4) / 5;
         PLATFORM_SILO_IMPACTS.forEach((im, i) => {
           const ix = ML + (impW + 8) * i;
-          setF(B.tint); setD(B.rule); doc.setLineWidth(0.5); doc.rect(ix, y, impW, 38, 'FD');
-          doc.setFont('Helvetica', 'bold'); doc.setFontSize(11.5); setC(B.red);
-          doc.text(im.stat, ix + impW / 2, y + 16, { align: 'center' });
-          doc.setFont('Helvetica', 'normal'); doc.setFontSize(7); setC(B.gray);
-          doc.text(doc.splitTextToSize(im.desc, impW - 10), ix + impW / 2, y + 26, { align: 'center' });
+          setF(B.tint); setD(B.rule); doc.setLineWidth(0.5); doc.rect(ix, y, impW, 36, 'FD');
+          doc.setFont('Helvetica', 'bold'); doc.setFontSize(11); setC(B.red);
+          doc.text(im.stat, ix + impW / 2, y + 15, { align: 'center' });
+          doc.setFont('Helvetica', 'normal'); doc.setFontSize(6.8); setC(B.gray);
+          doc.text(doc.splitTextToSize(im.desc, impW - 10), ix + impW / 2, y + 24, { align: 'center' });
         });
-        y += 46;
+        y += 43;
 
-        y = section(y, 'THE STARTING POINT THIS ESTIMATE USES',
-          'Hours a month spent on application work today. These are the inputs listed on page 4, not a measurement of ' + co + '.');
-        const baseline = [
-          { v: num(r.currentSupportHours), l: 'support hours a month', s: num(ci.monthlyTickets) + ' tickets × ' + ci.avgTicketMins + ' min' },
-          { v: num(ci.pkgHours),           l: 'packaging hours a month', s: 'package and repackage' },
-          { v: num(ci.patchHours),         l: 'patching hours a month', s: 'validate and deploy' },
-          { v: num(Math.round(r.baselineRaw)), l: 'hours a month in total', s: 'the pool the model works from' }
-        ];
-        const bw2 = (CW - 8 * 3) / 4;
-        baseline.forEach((k, i) => {
-          const kx = ML + (bw2 + 8) * i;
-          const last = i === baseline.length - 1;
-          setF(last ? B.quote : B.tint); setD(last ? B.blue : B.rule); doc.setLineWidth(last ? 0.8 : 0.5);
-          doc.rect(kx, y, bw2, 44, 'FD');
-          doc.setFont('Helvetica', 'bold'); doc.setFontSize(15); setC(last ? B.blue : B.dark);
-          doc.text(k.v, kx + 9, y + 20);
-          doc.setFont('Helvetica', 'normal'); doc.setFontSize(7); setC(B.gray);
-          doc.text(doc.splitTextToSize(k.l, bw2 - 18), kx + 9, y + 30);
-          doc.setFont('Helvetica', 'italic'); doc.setFontSize(6.5); setC(B.soft);
-          doc.text(doc.splitTextToSize(k.s, bw2 - 18), kx + 9, y + 39);
-        });
-        y += 52;
+        y = section(y, 'THE CAPACITY GAP',
+          'The five drivers above push demand up the curve while headcount holds capacity near flat. The wedge between the two lines is the backlog — and the roadmap it displaces.');
+        y = capacityChart(y, 118);
+        const tp = STATE.tippingPoint || {};
+        const tpLabel = 'Past the ' + (tp.title || 'Inflection Point').toLowerCase() + ':';
+        doc.setFont('Helvetica', 'bold'); doc.setFontSize(7); setC(B.dark);
+        doc.text(tpLabel, ML, y + 5);
+        const tpLabelW = doc.getTextWidth(tpLabel);
+        doc.setFont('Helvetica', 'normal'); setC(B.gray);
+        doc.text((tp.bullets || []).join('   ·   '), ML + tpLabelW + 6, y + 5);
+        doc.setFont('Helvetica', 'italic'); doc.setFontSize(6.8); setC(B.soft);
+        doc.text(pdfPlain(tp.closing || ''), ML, y + 15);
 
-        y = section(y, 'WHAT THAT WORK COSTS IN A YEAR',
-          'The same hours priced at the $' + (ci.loadedRate || 95) + ' loaded engineer rate. Only application work is counted here — no licences, hardware or downtime.');
-        const costs = [
-          { v: fmtDollars(r.supportCostAnnual),     l: 'answering application tickets',   c: B.dark },
-          { v: fmtDollars(r.engineeringCostAnnual), l: 'packaging and patching',           c: B.dark },
-          { v: fmtDollars(r.supportCostAnnual + r.engineeringCostAnnual), l: 'spent on application work each year', c: B.blue }
-        ];
-        const cwd = (CW - 8 * 2) / 3;
-        costs.forEach((k, i) => {
-          const kx = ML + (cwd + 8) * i;
-          const last = i === costs.length - 1;
-          setF(last ? B.quote : B.tint); setD(last ? B.blue : B.rule); doc.setLineWidth(last ? 0.8 : 0.5);
-          doc.rect(kx, y, cwd, 40, 'FD');
-          doc.setFont('Helvetica', 'bold'); doc.setFontSize(17); setC(k.c);
-          doc.text(k.v, kx + 10, y + 22);
-          doc.setFont('Helvetica', 'normal'); doc.setFontSize(7.5); setC(B.gray);
-          doc.text(doc.splitTextToSize(k.l, cwd - 20), kx + 10, y + 33);
-        });
-
-        calloutAtFoot('The application layer is now the #1 primary constraint in modern IT.');
+        calloutAtFoot(pdfPlain(cs.change.analyst || ''));
 
         /* ══════════ PAGE 2 — THE RECAST APPROACH ══════════ */
         doc.addPage('letter', 'portrait');
@@ -13724,10 +13881,10 @@
           'Read the picture from the top down. The tools already in place sit above; the one layer that prepares and delivers applications sits in the middle; every person and device that has to be served sits below. Nothing above or below is replaced.');
 
         if (shot){
-          /* Fit inside the column, capped so the walkthrough below it still
+          /* Fit inside the column, capped so the module grid below still
              lands on the same page. */
           const natural = CW * (shot.h / shot.w);
-          const imgH = Math.min(292, natural);
+          const imgH = Math.min(222, natural);
           const drawW = imgH < natural ? imgH * (shot.w / shot.h) : CW;
           const drawX = ML + (CW - drawW) / 2;
           doc.addImage(shot.data, 'PNG', drawX, y, drawW, imgH, undefined, 'FAST');
@@ -13735,7 +13892,7 @@
           y += imgH + 5;
           doc.setFont('Helvetica', 'italic'); doc.setFontSize(6.5); setC(B.soft);
           doc.text('Screenshot — the Recast Approach view, captured from this application.', ML, y + 5);
-          y += 13;
+          y += 14;
         } else {
           /* No raster available. Redraw the same three bands as vectors, from
              the same labels, and do not call the result a screenshot. */
@@ -13744,8 +13901,6 @@
             doc.text(label.toUpperCase(), ML + CW / 2, ry + 6, { align: 'center' });
             ry += 12;
             doc.setFont('Helvetica', 'bold'); doc.setFontSize(7.5);
-            /* Greedy wrap, so a long rail becomes two centred rows instead of
-               running off the page. */
             const rows = [[]];
             items.forEach((t) => {
               const w = doc.getTextWidth(t) + 16;
@@ -13767,298 +13922,176 @@
             return ry + 2;
           };
           y = railRow(model.upstream.label, model.upstream.items, y);
-          const slabTop = y, slabH = 74;
+          const slabTop = y, slabH = 70;
           setF(B.quote); setD([221, 224, 247]); doc.setLineWidth(0.7); doc.rect(ML, slabTop, CW, slabH, 'FD');
           doc.setFont('Helvetica', 'bold'); doc.setFontSize(10); setC(B.dark);
-          doc.text(model.title || 'Recast Application Workspace', ML + 12, slabTop + 16);
+          doc.text(model.title || 'Recast Application Workspace', ML + 12, slabTop + 15);
           const stW = (CW - 24 - 8 * 4) / 5;
           model.stages.forEach((st, i) => {
             const sx = ML + 12 + (stW + 8) * i;
-            setF(B.white); setD(B.rule); doc.setLineWidth(0.5); doc.rect(sx, slabTop + 24, stW, 42, 'FD');
-            setF(B.blue); doc.rect(sx, slabTop + 24, stW, 2, 'F');
+            setF(B.white); setD(B.rule); doc.setLineWidth(0.5); doc.rect(sx, slabTop + 22, stW, 40, 'FD');
+            setF(B.blue); doc.rect(sx, slabTop + 22, stW, 2, 'F');
             doc.setFont('Helvetica', 'bold'); doc.setFontSize(8.5); setC(B.blue);
-            doc.text(st.name, sx + stW / 2, slabTop + 38, { align: 'center' });
+            doc.text(st.name, sx + stW / 2, slabTop + 35, { align: 'center' });
             doc.setFont('Helvetica', 'normal'); doc.setFontSize(6.5); setC(B.gray);
-            doc.text(doc.splitTextToSize(st.detail, stW - 10), sx + stW / 2, slabTop + 48, { align: 'center' });
+            doc.text(doc.splitTextToSize(st.detail, stW - 10), sx + stW / 2, slabTop + 44, { align: 'center' });
             if (i < model.stages.length - 1){
               setF(B.cyan);
-              doc.triangle(sx + stW + 1.5, slabTop + 42, sx + stW + 1.5, slabTop + 48, sx + stW + 6, slabTop + 45, 'F');
+              doc.triangle(sx + stW + 1.5, slabTop + 39, sx + stW + 1.5, slabTop + 45, sx + stW + 6, slabTop + 42, 'F');
             }
           });
           y = slabTop + slabH + 8;
           y = railRow(model.downstream.label, model.downstream.items, y);
           doc.setFont('Helvetica', 'italic'); doc.setFontSize(6.5); setC(B.soft);
           doc.text('Diagram — redrawn from the Recast Approach view of this application.', ML, y + 5);
-          y += 13;
+          y += 14;
         }
 
-        y = section(y, 'READING THE DIAGRAM', 'Each label below is the label on the picture above.');
-        y = bullet(ML, y, CW, 'info', model.upstream.label + ':',
-          model.upstream.items.join(', ') + '. Application Workspace runs on top of these — they stay, and no new infrastructure is introduced.');
-        y = bullet(ML, y, CW, 'info', model.input.label + ':', model.input.items.join('; ') + '.');
-        y = bullet(ML, y, CW, 'info', 'The five stages every application passes through:', '');
-        const stW2 = (CW - 20 - 7 * 4) / 5;
-        model.stages.forEach((st, i) => {
-          const sx = ML + 20 + (stW2 + 7) * i;
-          setF(B.quote); doc.rect(sx, y, stW2, 44, 'F');
-          setF(B.blue);  doc.rect(sx, y, stW2, 2, 'F');
-          doc.setFont('Helvetica', 'bold'); doc.setFontSize(8.5); setC(B.blue);
-          doc.text(String(i + 1) + '. ' + st.name, sx + 7, y + 15);
-          doc.setFont('Helvetica', 'normal'); doc.setFontSize(7); setC(B.gray);
-          doc.text(doc.splitTextToSize(st.detail, stW2 - 14), sx + 7, y + 25);
-        });
-        y += 50;
-        y = bullet(ML, y, CW, 'good', model.output.label + ':', model.output.items.join('; ') + '.');
-        y = bullet(ML, y, CW, 'info', model.downstream.label + ':', model.downstream.items.join(', ') + '.');
-        y += 5;
+        y = section(y, 'INSIDE APPLICATION WORKSPACE — THE SEVEN MODULES',
+          'One tile per lifecycle stage, in the order the platform runs them. Every screenshot is captured from that module’s own walkthrough in this application, at the point its story finishes.');
 
-        y = section(y, 'WHAT YOU CAN OPEN AND WATCH',
-          'These are the ' + LIFECYCLE_MODULES.length + ' walkthroughs behind the diagram in the Recast Approach tab. Each one runs the stage above it end to end.');
-        const modW = (CW - 6 * 6) / 7;
-        LIFECYCLE_MODULES.forEach((m, i) => {
-          const mx = ML + (modW + 6) * i;
-          setF(B.tint); setD(B.rule); doc.setLineWidth(0.5); doc.rect(mx, y, modW, 34, 'FD');
-          doc.setFont('Helvetica', 'bold'); doc.setFontSize(6); setC(B.cyan);
-          doc.text(m.stage, mx + modW / 2, y + 11, { align: 'center' });
-          doc.setFont('Helvetica', 'bold'); doc.setFontSize(7); setC(B.dark);
-          doc.text(doc.splitTextToSize(m.name, modW - 6), mx + modW / 2, y + 21, { align: 'center' });
+        const gap2 = 8, cellW = (CW - gap2) / 2, cellH = 72;
+        LIFECYCLE_MODULES.forEach((mod, i) => {
+          const cx = ML + (i % 2) * (cellW + gap2);
+          const cy = y + Math.floor(i / 2) * (cellH + gap2);
+          setF(B.tint); setD(B.rule); doc.setLineWidth(0.5); doc.rect(cx, cy, cellW, cellH, 'FD');
+          setF(B.blue); doc.rect(cx, cy, 2, cellH, 'F');
+          const tx2 = cx + 8, tw2 = 104, th2 = cellH - 14, ty2 = cy + 7;
+          const ms = moduleShots[mod.view];
+          if (ms){
+            coverImage(ms, tx2, ty2, tw2, th2);
+          } else {
+            setF(B.quote); setD(B.rule); doc.setLineWidth(0.5); doc.rect(tx2, ty2, tw2, th2, 'FD');
+            doc.setFont('Helvetica', 'bold'); doc.setFontSize(7); setC(B.cyan);
+            doc.text(mod.stage, tx2 + tw2 / 2, ty2 + th2 / 2 + 2.5, { align: 'center' });
+          }
+          const ix2 = tx2 + tw2 + 9, iw2 = cellW - (8 + tw2 + 9) - 7;
+          doc.setFont('Helvetica', 'bold'); doc.setFontSize(5.8); setC(B.cyan);
+          doc.text(String(i + 1).padStart(2, '0') + '  ·  ' + mod.stage, ix2, cy + 13);
+          doc.setFont('Helvetica', 'bold'); doc.setFontSize(8); setC(B.dark);
+          doc.text(mod.name, ix2, cy + 22.5);
+          doc.setFont('Helvetica', 'normal'); doc.setFontSize(6.3); setC(B.gray);
+          const desc = doc.splitTextToSize(PDF_MODULE_COPY[mod.view] || '', iw2);
+          doc.text(desc.slice(0, 5), ix2, cy + 30.5);
         });
+        /* Eighth cell: where to see the modules run. */
+        {
+          const cx = ML + cellW + gap2;
+          const cy = y + 3 * (cellH + gap2);
+          setF(B.quote); setD(B.rule); doc.setLineWidth(0.5); doc.rect(cx, cy, cellW, cellH, 'FD');
+          setF(B.cyan); doc.rect(cx, cy, 2, cellH, 'F');
+          doc.setFont('Helvetica', 'bold'); doc.setFontSize(5.8); setC(B.cyan);
+          doc.text('SEE IT LIVE', cx + 10, cy + 13);
+          doc.setFont('Helvetica', 'normal'); doc.setFontSize(6.8); setC(B.dark);
+          const see = doc.splitTextToSize('Every tile on this page is a guided walkthrough in the Recast Approach tab of this application. Open any module and watch its stage run end to end — the screenshots here are where each one lands.', cellW - 20);
+          doc.text(see, cx + 10, cy + 23);
+        }
+
         calloutAtFoot('Package once. Deliver everywhere. Nothing above or below the layer has to change for that to be true.');
 
-        /* ══════════ PAGE 3 — WHAT IT IS WORTH ══════════ */
+        /* ══════════ PAGE 3 — BENEFITS & OUTCOMES ══════════ */
         doc.addPage('letter', 'portrait');
-        header('03  ·  What it is worth');
+        header('03  ·  Benefits & outcomes');
         y = TOP;
 
-        setF(B.light); doc.rect(ML, y, CW, 18, 'F');
-        /* The scenario pill is sized to its own text, and the title is fitted
-           to whatever room is left — a long company name shrinks the title
-           rather than running underneath the pill. */
-        doc.setFont('Helvetica', 'bold'); doc.setFontSize(7);
-        const pillLabel = a.label.toUpperCase() + ' SCENARIO';
-        const pillW = doc.getTextWidth(pillLabel) + 18;
-        setF(B.blue); doc.roundedRect(W - MR - pillW - 4, y + 2.5, pillW, 13, 3, 3, 'F');
-        setC(B.white); doc.text(pillLabel, W - MR - pillW / 2 - 4, y + 11.4, { align: 'center' });
-        const titleRoom = CW - pillW - 32;
-        let impactTitle = 'ESTIMATED IMPACT FOR ' + co.toUpperCase(), impactSize = 10;
-        doc.setFont('Helvetica', 'bold');
-        while (impactSize > 7.5){
-          doc.setFontSize(impactSize);
-          if (doc.getTextWidth(impactTitle) <= titleRoom) break;
-          impactSize -= 0.5;
-        }
-        doc.setFontSize(impactSize);
-        if (doc.getTextWidth(impactTitle) > titleRoom){ impactTitle = 'ESTIMATED IMPACT'; doc.setFontSize(10); }
-        setC(B.blue); doc.text(impactTitle, ML + 10, y + 12.5);
-        y += 23;
+        y = section(y, 'THE OUTCOME IN THREE NUMBERS',
+          'The Benefits tab’s reference model, measured before and after Application Workspace: build time per application, application tickets, and margin on the same delivery contract. Each pair below is the measurement behind the headline.');
+        const clW = (CW - 16) / 3, clH = 68;
+        claimBox(ML,                 y, clW, clH, '88%', 'faster',        'Per-app build time, vs. building once per platform',
+          [['now', 1, '6.3 hrs', B.red], ['AW', 0.13, '0.8 hrs', B.green]]);
+        claimBox(ML + clW + 8,       y, clW, clH, '70%', 'fewer tickets', 'Application support tickets per 1,000 users',
+          [['now', 1, '50 / mo', B.red], ['AW', 0.30, '15 / mo', B.green]]);
+        claimBox(ML + 2 * (clW + 8), y, clW, clH, '60%', 'more margin',   'On the same contract — efficiency, not repricing',
+          [['now', 0.62, '43%', B.red], ['AW', 1, '69%', B.green]]);
+        y += clH + 10;
 
-        doc.setFont('Helvetica', 'normal'); doc.setFontSize(8); setC(B.gray);
-        const modelNote = doc.splitTextToSize(
-          'Modelled, not measured. Every figure below is calculated from ' + num(ci.users) + ' employees and the inputs on page 4, using the ' +
-          a.label.toLowerCase() + ' reduction rates. Replace the inputs with ' + co + '’s own numbers before treating any of it as a commitment.', CW);
-        doc.text(modelNote, ML, y + 6);
-        y += modelNote.length * 10.5 + 8;
-
-        const heroes = [
-          { v: num(r.totalHoursYear), l: 'hours a year recovered',           s: 'about ' + num(r.totalHoursMonth) + ' hours a month', c: B.blue },
-          /* A team that recovers less than a full FTE reads "Under 1" rather
-             than a bare rounded zero. */
-          { v: r.fteCapacity >= 1 ? String(r.fteCapacity) : 'Under 1',
-            l: 'full-time equivalent' + (r.fteCapacity === 1 || r.fteCapacity < 1 ? '' : 's') + ' of capacity',
-            s: 'at ' + num(a.fteHours) + ' hours a year each', c: B.blue },
-          { v: num(r.strategicHours), l: 'of those hours, freed for projects', s: pct(a.strategicRealloc) + ' redirected, not removed', c: B.green }
-        ];
-        const hw = CW / 3;
-        heroes.forEach((h, i) => {
-          const cx = ML + hw * i + hw / 2;
-          doc.setFont('Helvetica', 'bold'); doc.setFontSize(26); setC(h.c);
-          doc.text(h.v, cx, y + 20, { align: 'center' });
-          doc.setFont('Helvetica', 'bold'); doc.setFontSize(8.5); setC(B.dark);
-          doc.text(doc.splitTextToSize(h.l, hw - 16), cx, y + 33, { align: 'center' });
-          doc.setFont('Helvetica', 'italic'); doc.setFontSize(7); setC(B.soft);
-          doc.text(h.s, cx, y + 44, { align: 'center' });
+        y = section(y, 'WHAT CHANGES ACROSS THE LIFECYCLE — AND WHAT DOES NOT',
+          'The five stages of the application lifecycle, run separately today versus run through Application Workspace. The authority named in each row stays with your team.');
+        const c1 = 56, c2 = 194, c3 = CW - c1 - c2;
+        setF(B.light); doc.rect(ML, y, CW, 13, 'F');
+        doc.setFont('Helvetica', 'bold'); doc.setFontSize(6.4);
+        setC(B.dark);  doc.text('STAGE', ML + 6, y + 8.8);
+        setC(B.red);   doc.text('RUN SEPARATELY TODAY', ML + c1 + 6, y + 8.8);
+        setC(B.green); doc.text('WITH APPLICATION WORKSPACE', ML + c1 + c2 + 6, y + 8.8);
+        y += 13;
+        PT_MATRIX.forEach((r, i) => {
+          doc.setFontSize(6.8);
+          doc.setFont('Helvetica', 'normal');
+          const tLines = doc.splitTextToSize(pdfPlain(r.now), c2 - 12);
+          const aLines = doc.splitTextToSize(pdfPlain(r.aw), c3 - 12);
+          doc.setFont('Helvetica', 'italic'); doc.setFontSize(6.2);
+          const kLines = doc.splitTextToSize('You keep: ' + pdfPlain(r.keep), c3 - 12);
+          const rh = Math.max(tLines.length * 8.2, aLines.length * 8.2 + kLines.length * 7.6) + 9;
+          if (i % 2 === 0){ setF(B.tint); doc.rect(ML, y, CW, rh, 'F'); }
+          doc.setFont('Helvetica', 'bold'); doc.setFontSize(7.6); setC(B.blue);
+          doc.text(r.st, ML + 6, y + 10);
+          doc.setFont('Helvetica', 'normal'); doc.setFontSize(6.8); setC(B.gray);
+          doc.text(tLines, ML + c1 + 6, y + 10);
+          setC(B.dark); doc.text(aLines, ML + c1 + c2 + 6, y + 10);
+          doc.setFont('Helvetica', 'italic'); doc.setFontSize(6.2); setC(B.soft);
+          doc.text(kLines, ML + c1 + c2 + 6, y + 10 + aLines.length * 8.2);
+          setD(B.rule); doc.setLineWidth(0.4); doc.line(ML, y + rh, ML + CW, y + rh);
+          y += rh;
         });
-        y += 54;
-        setD(B.coral); doc.setLineWidth(0.7); doc.line(ML, y, ML + CW * 0.22, y);
-        y += 10;
+        y += 8;
 
-        y = section(y, 'WHERE THE HOURS COME FROM',
-          'Three pools of work, each reduced by a different amount. The bar shows how much of that pool the model takes back; the figure on the right is the hours a month it returns.');
-        const parts = allocate(r.totalHoursMonth, [r.ticketHoursReturnedRaw, r.pkgHoursReturnedRaw, r.patchHoursReturnedRaw]);
-        const hrsMo = (n) => num(n) + (n === 1 ? ' hr/mo' : ' hrs/mo');
-        y = bar(y, 'Support tickets', a.ticketReduction, hrsMo(parts[0]), B.green,
-          pct(a.ticketReduction) + ' fewer application tickets — about ' + num(r.ticketsAvoided) + ' of ' + num(ci.monthlyTickets) + ' a month never raised');
-        y = bar(y, 'Packaging', r.blendedPkgReduction, hrsMo(parts[1]), B.blue,
-          pct(r.blendedPkgReduction) + ' blended — ' + pct(a.catalogPkgReduction) + ' on catalogue apps, ' + pct(a.customPkgReduction) + ' on the ' + num(ci.customApps) + ' custom ones');
-        y = bar(y, 'Patching', a.patchReduction, hrsMo(parts[2]), B.cyan,
-          pct(a.patchReduction) + ' — one staged pipeline promotes a version instead of a rebuild per platform');
-        doc.setFont('Helvetica', 'bold'); doc.setFontSize(8); setC(B.dark);
-        const totalLabel = 'Total  ' + num(r.totalHoursMonth) + ' hours a month';
-        const totalW = doc.getTextWidth(totalLabel);   // measured in the bold face it is drawn in
-        doc.text(totalLabel, ML, y + 6);
-        doc.setFont('Helvetica', 'normal'); setC(B.soft);
-        doc.text('·  roughly ' + num(r.totalHoursYear) + ' hours a year at the same rate', ML + totalW + 8, y + 6);
-        y += 16;
-
-        y = section(y, 'WHAT IT COSTS AND WHAT COMES BACK',
-          'Recovered hours valued at the loaded engineer rate on page 4, against Application Workspace list pricing for ' + num(ci.users) + ' users.');
-        const paybackM = r.paybackMonths || 0;
-        const roiKpis = [
-          { label: 'ANNUAL INVESTMENT', val: fmtDollars(r.awAnnualInvestment || 0),
-            sub: '$' + (r.awBlendedPerUserMonth || 0).toFixed(2) + ' per user per month, list', bg: B.light, fg: B.dark, sfg: B.gray },
-          { label: 'YEAR 1 NET BENEFIT', val: ((r.year1Net || 0) >= 0 ? '+' : '-') + fmtDollars(Math.abs(r.year1Net || 0)),
-            sub: (r.year1ROIMultiple || 0).toFixed(1) + '× the subscription in year one', bg: [234, 245, 238], fg: B.green, sfg: B.green },
-          { label: 'PAYBACK', val: paybackM <= 0 ? 'Immediate' : paybackM < 1 ? 'Under a month' : paybackM.toFixed(1) + ' months',
-            sub: paybackM <= 0 ? 'the one-off packaging saving covers year one' : 'then the recurring saving continues', bg: B.quote, fg: B.blue, sfg: B.blue }
-        ];
-        const rkW = (CW - 8 * 2) / 3;
-        roiKpis.forEach((k, i) => {
-          const kx = ML + (rkW + 8) * i;
-          setF(k.bg); doc.rect(kx, y, rkW, 46, 'F');
-          doc.setFont('Helvetica', 'bold'); doc.setFontSize(6.5); setC(k.sfg);
-          doc.text(k.label, kx + 10, y + 12);
-          doc.setFont('Helvetica', 'bold'); doc.setFontSize(15); setC(k.fg);
-          doc.text(k.val, kx + 10, y + 29);
-          doc.setFont('Helvetica', 'normal'); doc.setFontSize(6.5); setC(k.sfg);
-          doc.text(doc.splitTextToSize(k.sub, rkW - 20), kx + 10, y + 39);
-        });
-        y += 52;
-        doc.setFont('Helvetica', 'normal'); doc.setFontSize(7); setC(B.soft);
-        const yr1 = doc.splitTextToSize(
-          'Year one value ' + fmtDollars(r.year1Value || 0) + ' = ' + fmtDollars(r.recurringAnnualValue || 0) + ' of recovered hours each year plus ' +
-          fmtDollars(r.oneTimePackagingValue || 0) + ' one-off from packaging the existing catalogue, against a ' + fmtDollars(r.awAnnualInvestment || 0) +
-          ' subscription. Over three years: ' + fmtDollars(r.threeYearValue || 0) + ' of value against ' + fmtDollars(r.threeYearInvestment || 0) +
-          ' of subscription, a net of ' + ((r.threeYearNet || 0) >= 0 ? '+' : '-') + fmtDollars(Math.abs(r.threeYearNet || 0)) + '.', CW);
-        doc.text(yr1, ML, y + 5);
-        y += yr1.length * 9.5 + 9;
-
-        y = section(y, 'PACKAGING THE EXISTING CATALOGUE — A ONE-OFF SAVING',
-          'The ' + num(ci.apps) + ' applications already in use have to be packaged once either way. This compares the two ways of doing it, at the per-application benchmarks on page 4.');
-        const pkgScale = Math.max(r.tradCycleHours || 0, r.awCycleHours || 0, 1);
-        y = bar(y, 'Traditional', (r.tradCycleHours || 0) / pkgScale, num(Math.round(r.tradCycleHours || 0)) + ' hrs', B.red, null);
-        y = bar(y, 'Application Workspace', (r.awCycleHours || 0) / pkgScale, num(Math.round(r.awCycleHours || 0)) + ' hrs', B.blue, null);
-        y += 2;
-        const cyc = [
-          { l: 'HOURS SAVED',        v: num(Math.round(r.cycleHoursSaved || 0)), u: 'hrs',             c: B.blue },
-          { l: 'TIMES FASTER',       v: (r.cycleTimeMultiple || 0).toFixed(1),   u: '×',               c: B.green },
-          { l: 'CAPACITY RECLAIMED', v: ((r.cycleHoursSaved || 0) / 160).toFixed(1), u: 'engineer-months', c: B.green },
-          { l: 'VALUE OF THAT TIME', v: fmtDollars(r.cycleDollarsSaved || 0),    u: 'one-off',         c: B.blue }
-        ];
-        const cW = (CW - 8 * 3) / 4;
-        cyc.forEach((k, i) => {
-          const kx = ML + (cW + 8) * i;
-          setF(B.tint); setD(B.rule); doc.setLineWidth(0.5); doc.rect(kx, y, cW, 30, 'FD');
-          doc.setFont('Helvetica', 'normal'); doc.setFontSize(6); setC(B.soft);
-          doc.text(k.l, kx + 9, y + 10);
-          doc.setFont('Helvetica', 'bold'); doc.setFontSize(13); setC(k.c);
-          const vw = doc.getTextWidth(k.v);              // measured in the bold face it is drawn in
-          doc.text(k.v, kx + 9, y + 24);
-          doc.setFont('Helvetica', 'normal'); doc.setFontSize(6.5); setC(B.gray);
-          doc.text(k.u, kx + 9 + vw + 3, y + 24);
-        });
-        y += 36;
-        doc.setFont('Helvetica', 'italic'); doc.setFontSize(6.5); setC(B.soft);
-        doc.text(num(r.cycleStandardApps) + ' standard and ' + num(r.cycleComplexApps) + ' complex applications · engineer-months at 160 hours · valued at $' +
-          (ci.loadedRate || 95) + ' per loaded hour.', ML, y + 5);
-        y += 16;
-
-        y = section(y, 'WHAT THIS MODEL DOES NOT COUNT',
-          'So the figures above are read for what they are. Everything left out would move the total in Recast’s favour, and none of it is claimed here.');
-        y = bullet(ML, y, CW, 'warn', 'Only three pools of work.',
-          'Support tickets, packaging and patching. Licences, hardware, downtime, security incidents and the time employees spend waiting for an application are not counted.');
-        y = bullet(ML, y, CW, 'warn', 'Freed hours are capacity, not cash.',
-          'The ' + num(r.strategicHours) + ' hours are counted as work the team can now take on. They are not a headcount reduction and not a budget line that disappears.');
-        y = bullet(ML, y, CW, 'warn', 'The one-off packaging saving happens once.',
-          'It assumes all ' + num(ci.apps) + ' applications in use are packaged once. Only the ' + fmtDollars(r.recurringAnnualValue || 0) + ' of recovered hours recurs each year.');
-
-        /* ══════════ PAGE 4 — GETTING THERE, AND THE MATHS ══════════ */
-        doc.addPage('letter', 'portrait');
-        header('04  ·  Getting there, and the maths');
-        y = TOP;
-
-        const onb = NEW_CARDS.find(c => c.id === 'onboarding');
-        y = section(y, 'GETTING TO PRODUCTION', pdfPlain(onb.closer));
-        const phases = ['Kickoff', 'Implementation', 'UAT', 'Launch', 'Enablement'];
-        const inset = 34, step = (CW - inset * 2) / (phases.length - 1);
-        phases.forEach((p, i) => {
-          const dx = ML + inset + step * i;
-          if (i < phases.length - 1){
-            setD(B.rule); doc.setLineWidth(1.2); doc.line(dx + 5, y + 6, dx + step - 5, y + 6);
-          }
-          setF(i === phases.length - 1 ? B.green : B.blue); doc.circle(dx, y + 6, 3.6, 'F');
+        y = section(y, 'MEASURED OUTCOMES — THE BAKE-OFF SCORECARD',
+          'Six of the metrics the Benefits tab says to measure before committing, pre-filled with the reference model’s expected results. Run the same scorecard on your own portfolio.');
+        const SCORE_PICKS = [1, 2, 4, 5, 7, 10];
+        const sM = 232, sN = 62, sA = 62;
+        setF(B.light); doc.rect(ML, y, CW, 12, 'F');
+        doc.setFont('Helvetica', 'bold'); doc.setFontSize(6.2); setC(B.dark);
+        doc.text('METRIC', ML + 6, y + 8.4);
+        doc.text('CURRENT', ML + sM + sN - 6, y + 8.4, { align: 'right' });
+        doc.text('WITH AW', ML + sM + sN + sA - 6, y + 8.4, { align: 'right' });
+        doc.text('PASS THRESHOLD', ML + sM + sN + sA + 10, y + 8.4);
+        y += 12;
+        SCORE_PICKS.forEach((pi, i) => {
+          const r = PT_SCORE[pi];
+          if (!r) return;
+          const rowH = 19;
+          if (i % 2 === 0){ setF(B.tint); doc.rect(ML, y, CW, rowH, 'F'); }
           doc.setFont('Helvetica', 'bold'); doc.setFontSize(7); setC(B.dark);
-          doc.text(p, dx, y + 20, { align: 'center' });
+          doc.text(r[0], ML + 6, y + 8.4);
+          doc.setFont('Helvetica', 'normal'); doc.setFontSize(6); setC(B.soft);
+          doc.text(doc.splitTextToSize(pdfPlain(r[1]), sM - 12)[0] || '', ML + 6, y + 15.6);
+          doc.setFont('Helvetica', 'normal'); doc.setFontSize(7); setC(B.gray);
+          doc.text(r[2], ML + sM + sN - 6, y + 11.6, { align: 'right' });
+          doc.setFont('Helvetica', 'bold'); setC(B.green);
+          doc.text(r[3], ML + sM + sN + sA - 6, y + 11.6, { align: 'right' });
+          doc.setFont('Helvetica', 'italic'); doc.setFontSize(6); setC(B.soft);
+          doc.text(doc.splitTextToSize(pdfPlain(r[4]), CW - sM - sN - sA - 16)[0] || '', ML + sM + sN + sA + 10, y + 11.6);
+          setD(B.rule); doc.setLineWidth(0.4); doc.line(ML, y + rowH, ML + CW, y + rowH);
+          y += rowH;
         });
-        doc.setLineWidth(0.5);
-        y += 28;
-        onb.bullets.forEach(b => { y = bullet(ML, y, CW, 'act', '', pdfPlain(b)); });
-        y += 6;
+        y += 8;
 
-        const trust = NEW_CARDS.find(c => c.id === 'trust');
-        y = section(y, 'WHO ELSE RUNS IT', pdfPlain(trust.closer));
-        trust.bullets.forEach(b => { y = bullet(ML, y, CW, 'good', '', pdfPlain(b)); });
-        y += 6;
+        y = section(y, 'WHAT STAYS WITH YOU',
+          'Application Workspace changes where the work runs — not who owns it. These stay with your team either way:');
+        {
+          let chipX = ML, chipY = y;
+          doc.setFont('Helvetica', 'bold'); doc.setFontSize(6.8);
+          PT_KEEP_CHIPS.forEach((chipText) => {
+            const cwd = doc.getTextWidth(chipText) + 18;
+            if (chipX + cwd > ML + CW){ chipX = ML; chipY += 17; }
+            setF(B.quote); setD([213, 218, 245]); doc.setLineWidth(0.5);
+            doc.roundedRect(chipX, chipY, cwd, 13, 6.5, 6.5, 'FD');
+            setF(B.cyan); doc.circle(chipX + 7.5, chipY + 6.5, 1.6, 'F');
+            setC(B.dark); doc.text(chipText, chipX + 13, chipY + 9);
+            chipX += cwd + 6;
+          });
+          y = chipY + 20;
+        }
 
-        y = section(y, 'HOW EVERY NUMBER ON PAGE 3 WAS PRODUCED',
-          'Environment figures start from standard IT ratios applied to the employee count and can be edited in the Assumptions panel. The values used for this document are listed here.');
-        const colGap = 16, colW = (CW - colGap) / 2, RX = ML + colW + colGap;
-        let ly = y, ry = y;
+        doc.setFont('Helvetica', 'italic'); doc.setFontSize(6.4); setC(B.soft);
+        const refNote = doc.splitTextToSize(
+          'Reference model: 1,000 users · $95 per loaded hour · an application-delivery line sold at $10 per user per month · Application Workspace at $1.65 per user per month. These are the planning benchmarks the Benefits tab of this application renders — not a measurement of ' + co + '’s environment. Validate them with the bake-off scorecard before they are used commercially.', CW);
+        doc.text(refNote, ML, y + 5);
 
-        ly = subhead(ML, ly, colW, 'Environment used');
-        [
-          ['Employees',              num(ci.users)],
-          ['Endpoints',              num(ci.endpoints)],
-          ['Environments',           String(ci.envs)],
-          ['Applications managed',   num(ci.apps)],
-          ['Custom / internal apps', num(ci.customApps)],
-          ['Application tickets',    num(ci.monthlyTickets) + ' / month'],
-          ['Average ticket time',    ci.avgTicketMins + ' min'],
-          ['Packaging effort',       num(ci.pkgHours) + ' hrs / month'],
-          ['Patching effort',        num(ci.patchHours) + ' hrs / month'],
-          ['Complex-app mix',        Math.round(ci.complexMixPct ?? 20) + '%'],
-          ['Loaded engineer rate',   '$' + (ci.loadedRate || 95) + ' / hr']
-        ].forEach(([k, v]) => { ly = kv(ML, ly, colW, k, v); });
-
-        ry = subhead(RX, ry, colW, a.label + ' scenario — reduction rates');
-        [
-          ['Support tickets',            pct(a.ticketReduction)],
-          ['Catalogue app packaging',    pct(a.catalogPkgReduction)],
-          ['Custom app packaging',       pct(a.customPkgReduction)],
-          ['Patching',                   pct(a.patchReduction)],
-          ['Redirected to project work', pct(a.strategicRealloc)],
-          ['Hours per FTE per year',     num(a.fteHours)]
-        ].forEach(([k, v]) => { ry = kv(RX, ry, colW, k, v); });
-        ry += 4;
-        ry = subhead(RX, ry, colW, 'Per-application benchmarks (Recast field test)');
-        [
-          ['Workspace · standard app',   pb.awStdHrs + ' hrs'],
-          ['Workspace · complex app',    pb.awComplexHrs + ' hrs'],
-          ['Traditional · standard app', pb.tradStdHrs + ' hrs'],
-          ['Traditional · complex app',  pb.tradComplexHrs + ' hrs']
-        ].forEach(([k, v]) => { ry = kv(RX, ry, colW, k, v); });
-        ry += 4;
-        ry = subhead(RX, ry, colW, 'Pricing');
-        [
-          ['List price applied',   '$' + (r.awBlendedPerUserMonth || 0).toFixed(2) + ' / user / month'],
-          ['Pricing basis',        'graduated tiers, 250 user floor'],
-          ['Annual subscription',  fmtDollars(r.awAnnualInvestment || 0)]
-        ].forEach(([k, v]) => { ry = kv(RX, ry, colW, k, v); });
-
-        y = Math.max(ly, ry) + 6;
-        y = subhead(ML, y, CW, 'The arithmetic');
-        [
-          'Support hours returned = tickets × minutes ÷ 60 × ticket reduction.',
-          'Packaging hours returned = catalogue share × catalogue rate + custom share × custom rate, applied to packaging hours.',
-          'Patching hours returned = patching hours × patching reduction.',
-          'Recovered value = hours returned × 12 × loaded rate. One-off packaging value = traditional hours less Workspace hours, × loaded rate.',
-          'Payback = annual subscription less the one-off packaging value, floored at zero, ÷ monthly recurring value.'
-        ].forEach(t => { y = bullet(ML, y, CW, 'info', '', t, 7.5); });
-        y += 4;
-
-        calloutAtFoot('What this is: a model. The hours and currency figures are calculated from the inputs above, not measured in ' + co + '’s environment. The industry figures on page 1 are attributed to their published sources. Pricing is Recast list pricing. Validate the inputs before these numbers are used commercially.');
+        calloutAtFoot('Faster delivery, fewer application tickets, and a materially better margin on the same contract — every figure above traces back to the same two measurements: package touch time, and tickets per 1,000 users.');
 
         footers();
-        doc.save('Recast-Impact-Summary-' + co.replace(/[^a-zA-Z0-9]/g, '-') + '.pdf');
+        doc.save('Recast-Executive-Summary-' + co.replace(/[^a-zA-Z0-9]/g, '-') + '.pdf');
       }
 
       /* Guard against a second click while the diagram capture is in flight. */
