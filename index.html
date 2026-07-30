@@ -1666,6 +1666,7 @@
       .pt-pdfbtn:hover { background: #0000A8; transform: translateY(-1px); }
       .pt-pdfbtn:active { transform: scale(0.98); }
       .pt-pdfbtn svg { width: 14px; height: 14px; }
+      .pt-pdfbtn .spinner, .bi-action-primary .spinner { width: 13px; height: 13px; border-color: rgba(255,255,255,0.35); border-top-color: #fff !important; }
       #pt-print { position: absolute; left: -99999px; top: 0; width: 1180px; pointer-events: none; }
       .ptp-page { width: 1180px; background: #fff; padding-bottom: 4px; }
       .ptp-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; border-bottom: 2px solid #0000CC; padding-bottom: 7px; margin-bottom: 13px; }
@@ -12226,12 +12227,6 @@
         });
         return pages.length;
       }
-      function ptExportPdf(){
-        let n = 0;
-        try { n = ptBuildPrint(); } catch (e) { console.warn('PDF build failed', e); }
-        if (!n) return;
-        setTimeout(function () { window.print(); }, 160);
-      }
       window.addEventListener('beforeprint', function () {
         if (!document.querySelector('#pt-print .ptp-page')) { try { ptBuildPrint(); } catch (e) {} }
       });
@@ -14094,15 +14089,20 @@
         doc.save('Recast-Executive-Summary-' + co.replace(/[^a-zA-Z0-9]/g, '-') + '.pdf');
       }
 
-      /* Guard against a second click while the diagram capture is in flight. */
+      /* Guard against a second click while the captures are in flight, and
+         keep a visible busy state on the download buttons — posing and
+         rasterizing the diagram plus seven module views takes long enough
+         that a silent button reads as broken. */
       let _pdfExportBusy = false;
       function startPdfExport(companyName){
         if (_pdfExportBusy) return;
         _pdfExportBusy = true;
+        STATE.pdfBusy = true;
+        render();
         Promise.resolve()
           .then(() => generatePDF(companyName))
           .catch((err) => { console.error('PDF generation error:', err); alert('PDF error: ' + (err?.message || err)); })
-          .finally(() => { _pdfExportBusy = false; });
+          .finally(() => { _pdfExportBusy = false; STATE.pdfBusy = false; render(); });
       }
 
       /* ========== PARTNER TAB ========== */
@@ -14301,8 +14301,21 @@
               </div>
 
               <div class="pt-pdfbar">
-                <span>Drawn from the partner operating-model comparison \u2014 outcomes vary by portfolio and application mix; validate with a measured bake-off, not assumptions.</span>
-                <button type="button" class="pt-pdfbtn" data-action="pt-pdf" title="Build a branded PDF of every partner section"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 12 5 5 5-5"/><path d="M5 21h14"/></svg>Download the partner PDF</button>
+                <span>Downloads the three-page executive summary \u2014 the market challenge, the Recast approach with live module screenshots, and the benefits &amp; outcomes \u2014 branded and ready to hand to a partner or client.</span>
+                ${STATE.pdfCompanyInput ? `
+                  <div class="bi-pdf-input">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--r-blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    <input type="text" id="pdf-company-input" placeholder="Enter partner or client name" value="${STATE.pdfCompanyName}">
+                    <button type="button" data-action="submit-pdf-company" class="bi-pdf-submit" title="Download the PDF">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                    </button>
+                    <span data-action="cancel-pdf-input" class="bi-pdf-cancel">\u00d7</span>
+                  </div>
+                ` : STATE.pdfBusy ? `
+                <button type="button" class="pt-pdfbtn" disabled style="opacity:0.75;cursor:progress"><span class="spinner"></span>Building the PDF — capturing screenshots…</button>
+                ` : `
+                <button type="button" class="pt-pdfbtn" data-action="open-pdf-input" title="Download the three-page executive summary PDF"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 12 5 5 5-5"/><path d="M5 21h14"/></svg>Download the partner PDF</button>
+                `}
               </div>
             </div>
           </section>
@@ -14419,6 +14432,11 @@
                     </button>
                     <span data-action="cancel-pdf-input" class="bi-pdf-cancel">×</span>
                   </div>
+                ` : STATE.pdfBusy ? `
+                  <button type="button" class="bi-action-primary" disabled style="opacity:0.75;cursor:progress">
+                    <span class="spinner"></span>
+                    Building the PDF — capturing screenshots…
+                  </button>
                 ` : `
                   <button type="button" data-action="open-pdf-input" class="bi-action-primary">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 18 15 15"/></svg>
@@ -15246,7 +15264,11 @@
           }
           if (action === 'toggle-pt') { if (STATE.ptRunning && !STATE.ptPaused) { STATE.ptPaused = true; STATE.ptTimers.forEach(id => clearTimeout(id)); STATE.ptTimers = []; scrollPreserveRender(); } else if (STATE.ptRunning && STATE.ptPaused) { STATE.ptPaused = false; scrollPreserveRender(); runPtQueue(); } else { startPt(false); } return; }
           if (action === 'pt-play-all') { startPt(true); const _sw = document.querySelector('.pt-stagewrap'); if (_sw) _sw.classList.add('pt-enter'); return; }
-          if (action === 'pt-pdf') { ptExportPdf(); return; }
+          /* The partner bar's download button shares the executive-summary
+             export: open-pdf-input asks who the document is prepared for,
+             submit-pdf-company builds and saves the three-page PDF. The old
+             print-dialog deck (ptBuildPrint) stays reachable via the
+             browser's own Print command only. */
           if (action === 'pt-section') { STATE.ptEnterFlag = true; const _i = parseInt(act.getAttribute('data-idx'), 10) || 0; STATE.ptTour = false; STATE.ptSection = _i; startPt(false); const _sw = document.querySelector('.pt-stagewrap'); if (_sw) _sw.classList.add('pt-enter'); return; }
           if (action === 'step-pt') { stepPt(); return; }
           if (action === 'reset-pt') { resetPt(); return; }
@@ -15498,7 +15520,22 @@
           if (action === 'reset-sliders') { resetSliders(); return; }
         });
 
-        root.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { const flipTarget = e.target.closest('[data-action="flip-card"]'); if (flipTarget) { flipTarget.click(); e.preventDefault(); } } });
+        root.addEventListener('keydown', (e) => {
+          if (e.key !== 'Enter' && e.key !== ' ') return;
+          /* Delegated, because the company-name input is created and torn
+             down per render — a direct listener would bind to nothing. */
+          if (e.key === 'Enter' && e.target?.id === 'pdf-company-input') {
+            e.preventDefault();
+            const name = (e.target.value || '').trim() || 'Your Organization';
+            STATE.pdfCompanyName = name;
+            startPdfExport(name);
+            STATE.pdfCompanyInput = false;
+            render();
+            return;
+          }
+          const flipTarget = e.target.closest('[data-action="flip-card"]');
+          if (flipTarget) { flipTarget.click(); e.preventDefault(); }
+        });
 
         let _roiDebounce = null;
         root.addEventListener('input', (e) => {
@@ -15537,8 +15574,6 @@
           if (buf) { const key = buf.getAttribute('data-key'); const sub = buf.getAttribute('data-subkey'); if (STATE.editBuffers?.[key]) STATE.editBuffers[key][sub] = e.target.value; }
           if (STATE.modalOpen && STATE.editTab === 'chart') { STATE.editChartBuffer = readChartFieldsRaw(); }
         });
-        const pdfInput = document.getElementById('pdf-company-input');
-        if (pdfInput) { pdfInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); const name = (pdfInput.value || '').trim() || 'Your Organization'; STATE.pdfCompanyName = name; startPdfExport(name); STATE.pdfCompanyInput = false; render(); } }); }
       }
 
       let accordionKeyboardBound = false;
