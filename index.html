@@ -2738,6 +2738,62 @@
       }
       @media (max-width: 720px) { .alm-outcomes { grid-template-columns: 1fr; } .alm-outcome { box-shadow: inset 0 1px 0 #DDDDEE; } .alm-outcome:first-child { box-shadow: none; } }
 
+      /* ─── Why Recast popout: one screen, no scrolling ──────────────────
+         The argument has to land in a single glance, so the claim column and
+         the architecture sit side by side rather than stacked, and every band
+         is tuned to fit inside the modal's 95vh. Two shorter-viewport tiers
+         shed detail in order of importance rather than introducing a
+         scrollbar. ─── */
+      .why-r { display: flex; flex-direction: column; gap: 10px; }
+      .why-r-split { display: grid; grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr); gap: 12px; align-items: stretch; }
+      .why-r-msg { display: flex; flex-direction: column; min-width: 0; }
+      .why-r-intro { font-size: 12.5px; font-weight: 700; line-height: 1.4; letter-spacing: -0.01em; color: #1A1A2E; margin-bottom: 7px; }
+      .why-r-list { display: flex; flex-direction: column; gap: 5px; }
+      .why-r-item { display: flex; align-items: flex-start; gap: 7px; padding: 6px 9px; border: 1px solid #DDDDEE; border-radius: 7px; background: #fff; }
+      .why-r-item .why-r-tick { width: 13px; height: 13px; flex: 0 0 13px; margin-top: 1px; color: #0000CC; }
+      .why-r-item b { display: block; font-size: 11px; font-weight: 700; letter-spacing: -0.01em; line-height: 1.25; color: #1A1A2E; }
+      .why-r-item span { display: block; margin-top: 1px; font-size: 10px; line-height: 1.35; color: #4A4A5A; text-wrap: pretty; }
+      .why-r-analyst { display: flex; align-items: center; gap: 8px; padding: 7px 11px; border-radius: 7px; background: #F6F8FF; border-left: 3px solid #00BFFF; }
+      .why-r-analyst p { font-size: 11.5px; font-style: italic; line-height: 1.4; color: #1A1A2E; }
+      .why-r-analyst .why-r-bulb { width: 14px; height: 14px; flex: 0 0 14px; color: #CC8800; }
+
+      /* Compact the two shared components for this context only. */
+      .why-r .alm-lede { padding: 10px 13px; gap: 3px; }
+      .why-r .alm-lede-txt { font-size: 11px; line-height: 1.45; }
+      .why-r .alm-outcome { padding: 9px 11px; gap: 2px; }
+      .why-r .alm-outcome .alm-ico { width: 19px; height: 19px; margin-bottom: 0; }
+      .why-r .alm-outcome b { font-size: 11px; }
+      .why-r .alm-outcome > span:last-child { font-size: 9.8px; line-height: 1.35; }
+      .why-r .hf { height: 100%; padding: 12px 12px 13px; }
+      .why-r .hf-h { margin-bottom: 9px; }
+      .why-r .hf-h b { font-size: 12px; }
+      .why-r .hf-h span { font-size: 10px; }
+      .why-r .hf-lab { font-size: 8px; margin-bottom: 5px; }
+      .why-r .hf-chips { gap: 5px; }
+      .why-r .hf-chip { padding: 4px 9px; font-size: 10px; }
+      .why-r .hf-arrow { margin: 6px 0; gap: 2px; }
+      .why-r .hf-arrow span { height: 10px; }
+      .why-r .hf-slab { padding: 11px 12px; }
+      .why-r .hf-slab-t { font-size: 13.5px; }
+      .why-r .hf-slab-sub { font-size: 10px; }
+      .why-r .hf-stages { gap: 4px; margin-top: 9px; }
+      .why-r .hf-stage { padding: 6px 3px; }
+      .why-r .hf-stage b { font-size: 9.5px; }
+      .why-r .hf-stage span { font-size: 8px; line-height: 1.3; margin-top: 1px; }
+
+      @media (max-width: 900px) { .why-r-split { grid-template-columns: 1fr; } }
+      @media (max-height: 800px) {
+        .why-r { gap: 8px; }
+        .why-r-item { padding: 5px 9px; }
+        .why-r-item span { font-size: 9.6px; }
+        .why-r .alm-lede-txt { font-size: 10.5px; }
+        .why-r .hf-stage span { display: none; }
+      }
+      @media (max-height: 700px) {
+        .why-r-item span { display: none; }
+        .why-r .alm-outcome > span:last-child { display: none; }
+      }
+
       /* ─── Architecture / Fit diagram (top of Recast Approach tab) ─── */
       .arch-fit { position: relative; padding: 12px 14px 14px; border-radius: 12px; background: linear-gradient(180deg, #FFFFFF 0%, #F6F8FF 100%); border: 1px solid #DDDDEE; }
       .arch-fit::after { content: ''; position: absolute; left: 16px; right: 16px; bottom: -1px; height: 2px; background: linear-gradient(90deg, transparent 0%, #00BFFF 18%, #00BFFF 82%, transparent 100%); border-radius: 2px; box-shadow: 0 0 14px rgba(0, 191, 255,0.55); pointer-events: none; }
@@ -8495,7 +8551,11 @@
         const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
         defs.innerHTML = `
           <linearGradient id="demandGradient" x1="0" y1="1" x2="1" y2="0"><stop offset="0%" stop-color="#CC2222"/><stop offset="100%" stop-color="#CC2222"/></linearGradient>
-          <linearGradient id="capacityGradient" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#0000CC"/><stop offset="100%" stop-color="#00BFFF"/></linearGradient>
+          <!-- userSpaceOnUse, not the default objectBoundingBox: the capacity line
+               is flat, and a horizontal path has a zero-height bounding box, which
+               SVG refuses to paint an objectBoundingBox gradient over. In bounding-box
+               units the line simply disappeared whenever it was level. -->
+          <linearGradient id="capacityGradient" gradientUnits="userSpaceOnUse" x1="${margin.left}" y1="0" x2="${margin.left + width}" y2="0"><stop offset="0%" stop-color="#0000CC"/><stop offset="100%" stop-color="#00BFFF"/></linearGradient>
           <linearGradient id="gapGradient" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(204, 34, 34,0.14)"/><stop offset="100%" stop-color="rgba(0, 0, 204,0.04)"/></linearGradient>
           <linearGradient id="capFillGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(0, 0, 204,0.08)"/><stop offset="100%" stop-color="rgba(0, 0, 204,0.01)"/></linearGradient>
           <pattern id="gapHatch" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="9" stroke="#CC2222" stroke-width="1" stroke-opacity="0.10"/></pattern>
@@ -9246,63 +9306,74 @@
         const isRecast = id === 'recast';
         return `
           <div class="fixed inset-0 z-50 flex items-center justify-center modal-overlay" role="dialog" aria-modal="true" aria-labelledby="why-modal-title-${id}">
-            <div class="w-full ${isRecast ? 'max-w-5xl' : 'max-w-4xl'} mx-4 rounded-2xl overflow-hidden transform modal-content glass" style="${isRecast ? 'max-height:95vh;display:flex;flex-direction:column' : ''}">
+            <div class="w-full ${isRecast ? 'max-w-6xl' : 'max-w-4xl'} mx-4 rounded-2xl overflow-hidden transform modal-content glass" style="${isRecast ? 'max-height:95vh;display:flex;flex-direction:column' : ''}">
               <div class="bg-white/40 backdrop-blur-lg px-6 py-4 flex items-center justify-between flex-shrink-0" style="border-bottom:1px solid var(--border-subtle)">
                 <div class="flex items-center gap-3"><i data-lucide="${iconMap[id]}" class="w-7 h-7 text-[#1A1A2E]" aria-hidden="true"></i><h2 id="why-modal-title-${id}" class="text-2xl font-bold tracking-tight text-[#1A1A2E]">${labelMap[id]}</h2></div>
                 <button type="button" class="text-slate-500 hover:text-slate-700 focus-ring p-2" data-action="close-why-modal" aria-label="Close"><i data-lucide="x" class="w-5 h-5"></i></button>
               </div>
               <div class="${isRecast ? 'px-6 py-4 overflow-y-auto' : 'p-8'} bg-white/35 backdrop-blur-lg" style="${isRecast ? 'flex:1;min-height:0' : ''}">
                 ${isRecast ? `
-                  <div class="alm-band mb-3">
-                    <div class="alm-lede">
-                      <span class="alm-lede-eyebrow">Application lifecycle management</span>
-                      <span class="alm-lede-txt">Application Workspace manages the <b>full application lifecycle</b> &mdash; packaging, deployment, patching, governance, and retirement &mdash; so IT moves faster and keeps applications current without manual work.</span>
-                    </div>
-                    <div class="alm-outcomes">
-                      <div class="alm-outcome"><span class="alm-ico"><i data-lucide="timer"></i></span><b>Save time</b><span>Automate packaging, patching, and repetitive application work.</span></div>
-                      <div class="alm-outcome"><span class="alm-ico"><i data-lucide="shield-check"></i></span><b>Reduce risk</b><span>Keep applications current, tested, controlled, and secure.</span></div>
-                      <div class="alm-outcome"><span class="alm-ico"><i data-lucide="layout-dashboard"></i></span><b>Gain control</b><span>One place for the whole lifecycle, across every platform.</span></div>
-                    </div>
-                  </div>
-                  <p class="text-sm leading-relaxed text-[#4A4A5A] mb-3">${data.intro}</p>
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">${data.bullets.map(b=>{const parts=b.split(' = ');const hasTitle=parts.length>1;return '<div class="bg-white/70 backdrop-blur-lg p-2.5 rounded-lg shadow-sm flex items-start gap-2 hover:shadow-md transition-shadow">'+'<div class="w-4 h-4 flex-shrink-0 mt-0.5"><i data-lucide="check-circle" class="w-4 h-4 text-[#0000CC]"></i></div>'+'<div>'+(hasTitle?'<div class="text-xs font-semibold text-[#1A1A2E] mb-0.5">'+parts[0]+'</div>':'')+'<p class="text-xs leading-relaxed text-[#4A4A5A]">'+(hasTitle?parts.slice(1).join(' = '):b)+'</p></div></div>';}).join('')}</div>
-                  <div class="bg-white/70 backdrop-blur-lg p-2.5 rounded-lg shadow-sm flex items-start gap-2 mb-4"><i data-lucide="lightbulb" class="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5"></i><p class="text-xs italic text-[#4A4A5A]">${data.analyst}</p></div>
-                  <div class="hf">
-                    <div class="hf-h"><b>How it fits together</b><span>Additive, not replacement &mdash; one layer over the tools you already run.</span></div>
-
-                    <div class="hf-lab">Your management tools, unchanged</div>
-                    <div class="hf-chips">
-                      ${['Intune','ConfigMgr','Citrix','AVD / W365','Jamf / macOS'].map(t => `<span class="hf-chip">${t}</span>`).join('')}
-                    </div>
-
-                    <div class="hf-arrow"><span></span><i data-lucide="chevron-down"></i></div>
-
-                    <div class="hf-slab">
-                      <div class="hf-slab-t">Application Workspace</div>
-                      <div class="hf-slab-sub">One definition, one pipeline, one place to control it</div>
-                      <div class="hf-stages">
-                        <div class="hf-stage"><b>Package</b><span>Built once, not per platform</span></div>
-                        <div class="hf-stage"><b>Deploy</b><span>Right user, right path</span></div>
-                        <div class="hf-stage"><b>Patch</b><span>Staged, tested, everywhere</span></div>
-                        <div class="hf-stage"><b>Govern</b><span>Approvals and audit trail</span></div>
-                        <div class="hf-stage"><b>Retire</b><span>Removed cleanly</span></div>
+                  <div class="why-r">
+                    <div class="alm-band">
+                      <div class="alm-lede">
+                        <span class="alm-lede-eyebrow">Application lifecycle management</span>
+                        <span class="alm-lede-txt">Application Workspace manages the <b>full application lifecycle</b> &mdash; packaging, deployment, patching, governance, and retirement &mdash; so IT moves faster and keeps applications current without manual work.</span>
+                      </div>
+                      <div class="alm-outcomes">
+                        <div class="alm-outcome"><span class="alm-ico"><i data-lucide="timer"></i></span><b>Save time</b><span>Automate packaging, patching, and repetitive application work.</span></div>
+                        <div class="alm-outcome"><span class="alm-ico"><i data-lucide="shield-check"></i></span><b>Reduce risk</b><span>Keep applications current, tested, controlled, and secure.</span></div>
+                        <div class="alm-outcome"><span class="alm-ico"><i data-lucide="layout-dashboard"></i></span><b>Gain control</b><span>One place for the whole lifecycle, across every platform.</span></div>
                       </div>
                     </div>
 
-                    <div class="hf-arrow"><span></span><i data-lucide="chevron-down"></i></div>
+                    <div class="why-r-split">
+                      <div class="why-r-msg">
+                        <p class="why-r-intro">${data.intro}</p>
+                        <div class="why-r-list">
+                          ${data.bullets.map(b => { const parts = b.split(' = '); const hasTitle = parts.length > 1; return '<div class="why-r-item"><i data-lucide="check-circle" class="why-r-tick"></i><div>' + (hasTitle ? '<b>' + parts[0] + '</b>' : '') + '<span>' + (hasTitle ? parts.slice(1).join(' = ') : b) + '</span></div></div>'; }).join('')}
+                        </div>
+                      </div>
 
-                    <div class="hf-lab">Every user, every device</div>
-                    <div class="hf-chips">
-                      ${['Windows','macOS','Virtual Desktop','Cloud PC / W365','BYOD / Remote'].map(d => `<span class="hf-chip">${d}</span>`).join('')}
+                      <div class="hf">
+                        <div class="hf-h"><b>How it fits together</b><span>Additive, not replacement &mdash; one layer over the tools you already run.</span></div>
+
+                        <div class="hf-lab">Your management tools, unchanged</div>
+                        <div class="hf-chips">
+                          ${['Intune','ConfigMgr','Citrix','AVD / W365','Jamf / macOS'].map(t => `<span class="hf-chip">${t}</span>`).join('')}
+                        </div>
+
+                        <div class="hf-arrow"><span></span><i data-lucide="chevron-down"></i></div>
+
+                        <div class="hf-slab">
+                          <div class="hf-slab-t">Application Workspace</div>
+                          <div class="hf-slab-sub">One definition, one pipeline, one place to control it</div>
+                          <div class="hf-stages">
+                            <div class="hf-stage"><b>Package</b><span>Built once, not per platform</span></div>
+                            <div class="hf-stage"><b>Deploy</b><span>Right user, right path</span></div>
+                            <div class="hf-stage"><b>Patch</b><span>Staged, tested, everywhere</span></div>
+                            <div class="hf-stage"><b>Govern</b><span>Approvals and audit trail</span></div>
+                            <div class="hf-stage"><b>Retire</b><span>Removed cleanly</span></div>
+                          </div>
+                        </div>
+
+                        <div class="hf-arrow"><span></span><i data-lucide="chevron-down"></i></div>
+
+                        <div class="hf-lab">Every user, every device</div>
+                        <div class="hf-chips">
+                          ${['Windows','macOS','Virtual Desktop','Cloud PC / W365','BYOD / Remote'].map(d => `<span class="hf-chip">${d}</span>`).join('')}
+                        </div>
+                      </div>
                     </div>
+
+                    <div class="why-r-analyst"><i data-lucide="lightbulb" class="why-r-bulb"></i><p>${data.analyst}</p></div>
                   </div>
                 ` : `
                   <p class="text-sm leading-relaxed text-[#4A4A5A] mb-5">${data.intro}</p>
                   <div class="space-y-3">${data.bullets.map(b=>{const parts=b.split(' = ');const hasTitle=parts.length>1;return '<div class="bg-white/70 backdrop-blur-lg p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow border-l-4 border-[#0000CC]">'+'<div class="flex items-start gap-3">'+'<i data-lucide="check-circle" class="w-5 h-5 text-[#0000CC] flex-shrink-0 mt-0.5"></i>'+'<div>'+(hasTitle?'<div class="text-sm font-bold text-[#1A1A2E] mb-1">'+parts[0]+'</div>':'')+'<p class="text-sm leading-relaxed text-[#6A6A7A]">'+(hasTitle?parts.slice(1).join(' = '):b)+'</p></div></div></div>';}).join('')}</div>
                   <div class="mt-5 bg-white/70 backdrop-blur-lg p-4 rounded-xl shadow-sm flex items-start gap-3 border-l-4 border-amber-400"><i data-lucide="lightbulb" class="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5"></i><p class="text-sm italic text-[#6A6A7A]">${data.analyst}</p></div>
                 `}
-                <div class="mt-4 flex flex-col items-center gap-3 w-full">
-                  ${!next ? '<div class="text-xs italic text-[#6A6A7A]">You\'ve seen why the model breaks. Now see what replaces it.</div>' : ''}
+                <div class="${isRecast ? 'mt-2.5 gap-1.5' : 'mt-4 gap-3'} flex flex-col items-center w-full">
+                  ${!next ? `<div class="${isRecast ? 'text-[11px]' : 'text-xs'} italic text-[#6A6A7A]">You\'ve seen why the model breaks. Now see what replaces it.</div>` : ''}
                   <div class="flex items-center justify-between w-full">
                   ${prev ? `<button type="button" class="re-secondary inline-flex items-center gap-2" data-action="why-nav" data-to="${prev}"><i data-lucide="arrow-left" class="w-4 h-4"></i> Back</button>` : '<div></div>'}
                   ${next ? `<button type="button" class="re-primary inline-flex items-center gap-2" data-action="why-nav" data-to="${next}">Next <i data-lucide="arrow-right" class="w-4 h-4"></i></button>` : `<button type="button" class="re-primary inline-flex items-center gap-2" data-action="advance" data-next="solution">See Approach <i data-lucide="arrow-right" class="w-4 h-4"></i></button>`}
@@ -14971,8 +15042,8 @@
           if (node) { const id = node.dataset.id; STATE.activePopover = STATE.activePopover === id ? null : id; render(); return; }
           if (!action) return;
 
-          if (action === 'switch-tab') { STATE.activeTab = act.getAttribute('data-tab'); STATE.visitedCards = []; STATE.activePopover = null; if (STATE.openWhyModal && STATE._savedDriverStates) { STATE.drivers.forEach((d, i) => { d.state = STATE._savedDriverStates[i]; }); STATE.showTippingPoint = STATE._savedTippingPoint; STATE.recastMode = STATE._savedRecastMode; STATE.targetDemandExponent = STATE._savedDemandExp; STATE.targetCapacitySlope = STATE._savedCapSlope; STATE._savedDriverStates = null; updateCurves(); } STATE.openWhyModal = null; STATE.insightContent = null; STATE.flowStep = -1; STATE.flowRunning = false; STATE.flowPaused = false; STATE.flowScenarioIdx = -1; STATE.flowPhase = 'idle'; STATE.flowAppOpened = false; STATE._firstOpenDone = false; STATE.showAdminView = false; STATE.showAutopilot = false; STATE.autopilotStep = -1; STATE.autopilotAppCount = 0; STATE.drPhase = 'idle'; STATE.drRunning = false; STATE.drPaused = false; STATE.drQueue = []; STATE.drQueueIdx = 0; STATE.obPhase = 'idle'; STATE.obRunning = false; STATE.obPaused = false; STATE.obQueue = []; STATE.obQueueIdx = 0; STATE.ssPhase = 'idle'; STATE.ssRunning = false; STATE.ssPaused = false; STATE.ssQueue = []; STATE.ssQueueIdx = 0; STATE.ssTimers.forEach(id => clearTimeout(id)); STATE.ssTimers = []; STATE.lcTimers.forEach(id => clearTimeout(id)); STATE.lcTimers = []; STATE.lifecyclePlaying = false; STATE.lcStep = -1; STATE.lcStepStart = 0; clearFlowTimers(); STATE.ptTimers.forEach(id => clearTimeout(id)); STATE.ptTimers = []; STATE.ptRunning = false; STATE.ptPaused = false; STATE.ptPhase = 'idle'; STATE.ptQueue = []; STATE.ptQueueIdx = 0; STATE.ptSection = 0; STATE.ptTour = false; STATE.ptClaimsSeen = false; STATE.ptEnterFlag = true; render(); if (STATE.activeTab === 'partner') { setTimeout(ptCountUp, 40); const _t = setTimeout(() => { if (STATE.activeTab === 'partner' && !STATE.ptRunning) startPt(false); }, 1150); STATE.ptTimers.push(_t); } return; }
-          if (action === 'advance') { STATE.activeTab = act.getAttribute('data-next'); if (STATE.openWhyModal && STATE._savedDriverStates) { STATE.drivers.forEach((d, i) => { d.state = STATE._savedDriverStates[i]; }); STATE.showTippingPoint = STATE._savedTippingPoint; STATE.recastMode = STATE._savedRecastMode; STATE.targetDemandExponent = STATE._savedDemandExp; STATE.targetCapacitySlope = STATE._savedCapSlope; STATE._savedDriverStates = null; updateCurves(); } STATE.openWhyModal = null; if (STATE.activeTab === 'roi') { calculateImpact(); } render(); if (STATE.activeTab === 'partner') { STATE.ptSection = 0; STATE.ptPhase = 'idle'; STATE.ptClaimsSeen = false; STATE.ptEnterFlag = true; setTimeout(ptCountUp, 40); const _t = setTimeout(() => { if (STATE.activeTab === 'partner' && !STATE.ptRunning) startPt(false); }, 1150); STATE.ptTimers.push(_t); } return; }
+          if (action === 'switch-tab') { STATE.activeTab = act.getAttribute('data-tab'); STATE.visitedCards = []; STATE.activePopover = null; STATE.openWhyModal = null; STATE.insightContent = null; STATE.flowStep = -1; STATE.flowRunning = false; STATE.flowPaused = false; STATE.flowScenarioIdx = -1; STATE.flowPhase = 'idle'; STATE.flowAppOpened = false; STATE._firstOpenDone = false; STATE.showAdminView = false; STATE.showAutopilot = false; STATE.autopilotStep = -1; STATE.autopilotAppCount = 0; STATE.drPhase = 'idle'; STATE.drRunning = false; STATE.drPaused = false; STATE.drQueue = []; STATE.drQueueIdx = 0; STATE.obPhase = 'idle'; STATE.obRunning = false; STATE.obPaused = false; STATE.obQueue = []; STATE.obQueueIdx = 0; STATE.ssPhase = 'idle'; STATE.ssRunning = false; STATE.ssPaused = false; STATE.ssQueue = []; STATE.ssQueueIdx = 0; STATE.ssTimers.forEach(id => clearTimeout(id)); STATE.ssTimers = []; STATE.lcTimers.forEach(id => clearTimeout(id)); STATE.lcTimers = []; STATE.lifecyclePlaying = false; STATE.lcStep = -1; STATE.lcStepStart = 0; clearFlowTimers(); STATE.ptTimers.forEach(id => clearTimeout(id)); STATE.ptTimers = []; STATE.ptRunning = false; STATE.ptPaused = false; STATE.ptPhase = 'idle'; STATE.ptQueue = []; STATE.ptQueueIdx = 0; STATE.ptSection = 0; STATE.ptTour = false; STATE.ptClaimsSeen = false; STATE.ptEnterFlag = true; render(); if (STATE.activeTab === 'partner') { setTimeout(ptCountUp, 40); const _t = setTimeout(() => { if (STATE.activeTab === 'partner' && !STATE.ptRunning) startPt(false); }, 1150); STATE.ptTimers.push(_t); } return; }
+          if (action === 'advance') { STATE.activeTab = act.getAttribute('data-next'); STATE.openWhyModal = null; if (STATE.activeTab === 'roi') { calculateImpact(); } render(); if (STATE.activeTab === 'partner') { STATE.ptSection = 0; STATE.ptPhase = 'idle'; STATE.ptClaimsSeen = false; STATE.ptEnterFlag = true; setTimeout(ptCountUp, 40); const _t = setTimeout(() => { if (STATE.activeTab === 'partner' && !STATE.ptRunning) startPt(false); }, 1150); STATE.ptTimers.push(_t); } return; }
           if (action === 'toggle-proof-details') { STATE.proofDetailsOpen = !STATE.proofDetailsOpen; render(); return; }
           if (action === 'toggle-solution-view' || action === 'next-demo-module') {
             const view = act.getAttribute('data-view');
@@ -15175,20 +15246,7 @@
             return;
           }
           if (action === 'close-modal') { STATE.modalOpen = false; render(); return; }
-          if (action === 'close-why-modal') {
-            STATE.openWhyModal = null;
-            // Restore chart state from before the modal was opened
-            if (STATE._savedDriverStates) {
-              STATE.drivers.forEach((d, i) => { d.state = STATE._savedDriverStates[i]; });
-              STATE.showTippingPoint = STATE._savedTippingPoint;
-              STATE.recastMode = STATE._savedRecastMode;
-              STATE.targetDemandExponent = STATE._savedDemandExp;
-              STATE.targetCapacitySlope = STATE._savedCapSlope;
-              STATE._savedDriverStates = null;
-              updateCurves(); requestAnimationFrame(animateCurves);
-            }
-            render(); return;
-          }
+          if (action === 'close-why-modal') { STATE.openWhyModal = null; render(); return; }
           if (action === 'open-analyst-modal') { STATE.showAnalystModal = true; render(); return; }
           if (action === 'close-analyst-modal') { STATE.showAnalystModal = false; render(); return; }
           if (action === 'open-ai-agent') { STATE.showAIAgent = true; render(); return; }
@@ -15211,19 +15269,12 @@
           }
 
           if (action === 'open-why-modal') {
-            const id = act.getAttribute('data-why');
-            // Save current chart state before temporarily changing it for the modal
-            STATE._savedDriverStates = STATE.drivers.map(d => d.state);
-            STATE._savedTippingPoint = STATE.showTippingPoint;
-            STATE._savedRecastMode = STATE.recastMode;
-            STATE._savedDemandExp = STATE.targetDemandExponent;
-            STATE._savedCapSlope = STATE.targetCapacitySlope;
-            STATE.recastMode = false; STATE.drivers.forEach(d => d.state = 'off'); STATE.showTippingPoint = false;
-            if (id === 'change') { STATE.drivers.forEach(d => { if (['more_apps','constant_updates','too_many_tools','manual_rework'].includes(d.id)) d.state = 'normal'; }); }
-            else if (id === 'now') { STATE.drivers.forEach(d => { if (['more_apps','constant_updates','too_many_tools','manual_rework','security_compliance'].includes(d.id)) d.state = 'accelerating'; }); STATE.showTippingPoint = true; }
-            else if (id === 'recast') { STATE.recastMode = true; }
-            updateCurves(); requestAnimationFrame(animateCurves);
-            STATE.openWhyModal = id; render(); return;
+            // The capacity-gap chart is a fixed picture of the argument, not a
+            // control surface. Opening a Why card used to re-drive the drivers,
+            // the tipping point and the capacity slope, so the chart looked
+            // different depending on which card you had last opened. It now
+            // stays exactly as it renders on load.
+            STATE.openWhyModal = act.getAttribute('data-why'); render(); return;
           }
 
           if (action === 'flip-card') { const cardId = act.getAttribute('data-card-id'); STATE.flippedCards[cardId] = !STATE.flippedCards[cardId]; const cardEl = act.closest('.flip-card'); if (cardEl) cardEl.classList.toggle('flipped'); return; }
@@ -15495,7 +15546,7 @@
           e.preventDefault();
           return;
         }
-        if(e.key==='Escape' && (STATE.modalOpen || STATE.openWhyModal || STATE.insightContent || STATE.showAnalystModal || STATE.showAIAgent)){ if (STATE.openWhyModal && STATE._savedDriverStates) { STATE.drivers.forEach((d, i) => { d.state = STATE._savedDriverStates[i]; }); STATE.showTippingPoint = STATE._savedTippingPoint; STATE.recastMode = STATE._savedRecastMode; STATE.targetDemandExponent = STATE._savedDemandExp; STATE.targetCapacitySlope = STATE._savedCapSlope; STATE._savedDriverStates = null; updateCurves(); requestAnimationFrame(animateCurves); } STATE.modalOpen=false; STATE.openWhyModal=null; STATE.insightContent=null; STATE.highlightDriverId=null; STATE.showAnalystModal=false; STATE.showAIAgent=false; render(); }
+        if(e.key==='Escape' && (STATE.modalOpen || STATE.openWhyModal || STATE.insightContent || STATE.showAnalystModal || STATE.showAIAgent)){ STATE.modalOpen=false; STATE.openWhyModal=null; STATE.insightContent=null; STATE.highlightDriverId=null; STATE.showAnalystModal=false; STATE.showAIAgent=false; render(); }
       });
     </script>
   </body>
