@@ -1660,8 +1660,7 @@
          phase, so the PDF cannot drift from what the screen shows. Screen: the
          container sits off-canvas. Print: the app hides and this prints, one
          landscape sheet per page, each scaled to fit. ── */
-      .pt-pdfbar { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-top: 14px; border-top: 1px solid #DDDDEE; padding-top: 12px; }
-      .pt-pdfbar span { flex: 1; font-size: 10px; line-height: 1.5; color: #8A8A9A; max-width: 96ch; }
+      .pt-pdfbar { display: flex; align-items: center; justify-content: center; gap: 20px; margin-top: 14px; border-top: 1px solid #DDDDEE; padding-top: 12px; }
       .pt-pdfbtn { display: inline-flex; align-items: center; gap: 7px; padding: 9px 16px; border-radius: 9999px; border: 0; background: #0000CC; color: #fff; font-size: 11.5px; font-weight: 700; cursor: pointer; box-shadow: 0 2px 6px rgba(0, 0, 204,0.28); transition: background 0.18s ease, transform 0.18s ease; }
       .pt-pdfbtn:hover { background: #0000A8; transform: translateY(-1px); }
       .pt-pdfbtn:active { transform: scale(0.98); }
@@ -7231,6 +7230,8 @@
       const onboardingMiniTimelineEnabled = true;
 
       function cx(...a){ return a.filter(Boolean).join(' '); }
+      /* For user-typed text interpolated into an HTML attribute. */
+      function escAttr(s){ return String(s ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;'); }
       function round(n){ return Math.round(n*100)/100; }
       function num(n){ return new Intl.NumberFormat().format(Math.round(n)); }
       function fmtDollars(n){ if (n >= 1000000) return '$' + (n / 1000000).toFixed(1) + 'M'; if (n >= 1000) return '$' + Math.round(n / 1000) + 'K'; return '$' + Math.round(n); }
@@ -13713,70 +13714,128 @@
           setD(B.rule); doc.setLineWidth(0.5); doc.rect(x, y, w, h, 'S');
         }
 
-        /* The Current State tab's hero chart, redrawn as vectors: demand
-           bends up the curve the sliders drive, capacity stays near flat,
-           and the shaded wedge between them is the labelled gap. */
+        /* The Current State tab's hero chart, redrawn as the modern
+           analytics card the screen shows: soft gridlines, translucent
+           washes under both curves, brand-colored lines with ringed
+           endpoint dots, a marker pinned to the actual crossing, and the
+           gap named and spanned with a measurement arrow. All vectors,
+           driven by the same config and demand exponent as the screen. */
         function capacityChart(y, h){
           const cc = STATE.chartConfig || {};
-          setF(B.white); setD(B.rule); doc.setLineWidth(0.6); doc.rect(ML, y, CW, h, 'FD');
-          const padL = 26, padR = 12, padT = 12, padB = 18;
-          const px = ML + padL, pw = CW - padL - padR, pyB = y + h - padB, ph = h - padT - padB;
+          /* Real translucency when the build supports ExtGState, so the
+             grid reads through the washes like the on-screen gradients;
+             alpha-on-white fallback colors otherwise. */
+          const hasG = typeof doc.GState === 'function';
+          const alpha = (a) => { if (hasG) doc.setGState(new doc.GState({ opacity: a })); };
+
+          setF(B.white); setD(B.rule); doc.setLineWidth(0.8);
+          doc.roundedRect(ML, y, CW, h, 5, 5, 'FD');
+
+          const padL = 30, padR = 16, padT = 21, padB = 20;
+          const px = ML + padL, pw = CW - padL - padR;
+          const pyT = y + padT, pyB = y + h - padB, ph = pyB - pyT;
           const exp = STATE.currentDemandExponent || 1.6;
           const dY = (t) => pyB - ph * (0.16 + 0.76 * Math.pow(t, exp));
           const cY = (t) => pyB - ph * (0.24 + 0.06 * t);
 
-          /* Shade the gap first, so both curves print on top of it. */
-          let tc = 1;
-          for (let t = 0; t <= 1.0005; t += 0.01){ if (dY(t) <= cY(t)) { tc = t; break; } }
-          if (tc < 1){
-            const N = 36, pts = [];
-            for (let i = 0; i <= N; i++){ const t = tc + (1 - tc) * (i / N); pts.push([px + pw * t, dY(t)]); }
-            for (let i = N; i >= 0; i--){ const t = tc + (1 - tc) * (i / N); pts.push([px + pw * t, cY(t)]); }
-            const seg = [];
-            for (let i = 1; i < pts.length; i++) seg.push([pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]]);
-            setF([253, 238, 238]);
-            doc.lines(seg, pts[0][0], pts[0][1], [1, 1], 'F', true);
+          /* Legend lives in the card's top strip, where no curve goes. */
+          let lx = px;
+          [[B.red, 'Demand'], [B.blue, 'IT capacity']].forEach(([col, lab]) => {
+            setF(col); doc.circle(lx + 2, y + 11, 2, 'F');
+            doc.setFont('Helvetica', 'bold'); doc.setFontSize(6.4); setC(B.gray);
+            doc.text(lab, lx + 6.5, y + 13.2);
+            lx += 6.5 + doc.getTextWidth(lab) + 12;
+          });
+
+          setD([236, 236, 243]); doc.setLineWidth(0.5);
+          for (let g = 1; g <= 3; g++){
+            const gy = pyB - (ph * g) / 4;
+            doc.line(px, gy, px + pw, gy);
           }
 
-          setD([200, 200, 214]); doc.setLineWidth(0.7);
-          doc.line(px, y + padT, px, pyB); doc.line(px, pyB, px + pw, pyB);
-
-          const poly = (fn, col, lw) => {
-            setD(col); doc.setLineWidth(lw);
-            let prev = [px, fn(0)];
-            for (let i = 1; i <= 36; i++){
-              const t = i / 36, p = [px + pw * t, fn(t)];
-              doc.line(prev[0], prev[1], p[0], p[1]);
-              prev = p;
-            }
+          const N = 56;
+          const path = (fn, t0, t1) => {
+            const pts = [];
+            for (let i = 0; i <= N; i++){ const t = t0 + (t1 - t0) * (i / N); pts.push([px + pw * t, fn(t)]); }
+            return pts;
           };
-          poly(dY, B.red, 1.4);
-          poly(cY, B.blue, 1.4);
-          doc.setLineWidth(0.5);
+          const fill = (pts, col, a, pastel) => {
+            const seg = [];
+            for (let i = 1; i < pts.length; i++) seg.push([pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]]);
+            setF(hasG ? col : pastel); alpha(a);
+            doc.lines(seg, pts[0][0], pts[0][1], [1, 1], 'F', true);
+            alpha(1);
+          };
 
-          doc.setFont('Helvetica', 'bold'); doc.setFontSize(6.5);
-          setC(B.red);  doc.text('Demand', px + pw - 3, Math.max(y + padT + 8, dY(1) - 5), { align: 'right' });
-          setC(B.blue); doc.text('IT capacity', px + pw - 3, cY(1) - 4, { align: 'right' });
+          /* Soft footprint under IT capacity, like the screen's blue wash. */
+          const capPts = path(cY, 0, 1);
+          fill([...capPts, [px + pw, pyB], [px, pyB]], B.blue, 0.06, [240, 240, 252]);
 
-          /* The demand exponent is driver-controlled at runtime, so every
-             landmark is placed relative to where the curves actually cross:
-             the marker a beat past the crossing, the gap label centred in
-             the widest part of the wedge, right of the marker. */
-          const tt = Math.min(0.9, tc + (1 - tc) * 0.55), tx = px + pw * tt;
-          setD(B.red); doc.setLineWidth(0.8); doc.setLineDashPattern([2.2, 1.8], 0);
-          doc.line(tx, y + padT + 3, tx, pyB);
-          doc.setLineDashPattern([], 0); doc.setLineWidth(0.5);
-          setF(B.red); doc.circle(tx, dY(tt), 2.2, 'F');
-          doc.setFont('Helvetica', 'bold'); doc.setFontSize(6.3); setC(B.red);
-          doc.text(cc.tipping || 'Operational breaking point', tx - 5, y + padT + 9, { align: 'right' });
+          /* Where demand actually overtakes capacity. */
+          let tc = 1;
+          for (let t = 0; t <= 1.0005; t += 0.004){ if (dY(t) <= cY(t)) { tc = t; break; } }
 
-          const gt = Math.min(0.94, tt + (1 - tt) * 0.55);
-          doc.setFont('Helvetica', 'bold'); doc.setFontSize(8); setC(B.dark);
-          doc.text(cc.center || 'The Capacity Gap', px + pw * gt, (dY(gt) + cY(gt)) / 2 + 2.6, { align: 'center' });
+          if (tc < 1){
+            fill([...path(dY, tc, 1), ...path(cY, 1, tc)], B.red, 0.11, [249, 229, 229]);
+          }
 
-          doc.setFont('Helvetica', 'normal'); doc.setFontSize(6.3); setC(B.soft);
-          doc.text(cc.xAxis || 'Time', px + pw / 2, y + h - 6, { align: 'center' });
-          doc.text(cc.yAxis || 'Demand on IT', ML + 12, pyB - ph / 2, { angle: 90, align: 'center' });
+          setD([228, 228, 238]); doc.setLineWidth(0.6); doc.line(px, pyT - 3, px, pyB);
+          setD([197, 197, 213]); doc.setLineWidth(0.8); doc.line(px, pyB, px + pw, pyB);
+
+          const stroke = (pts, col, lw) => {
+            setD(col); doc.setLineWidth(lw);
+            for (let i = 1; i < pts.length; i++) doc.line(pts[i - 1][0], pts[i - 1][1], pts[i][0], pts[i][1]);
+          };
+          doc.setLineCap('round'); doc.setLineJoin('round');
+          stroke(capPts, B.blue, 1.7);
+          stroke(path(dY, 0, 1), B.red, 1.7);
+          doc.setLineCap('butt'); doc.setLineJoin('miter'); doc.setLineWidth(0.5);
+
+          /* Endpoint dots, ringed in white so they pop off the washes. */
+          [[dY(1), B.red], [cY(1), B.blue]].forEach(([ey, col]) => {
+            setF(B.white); doc.circle(px + pw, ey, 3.1, 'F');
+            setF(col); doc.circle(px + pw, ey, 2, 'F');
+          });
+
+          if (tc < 1){
+            /* Crossing marker: a dashed guide, an open dot pinned to the
+               intersection, and the label in a tinted pill beside it. */
+            const gx = px + pw * tc, gy = dY(tc);
+            setD([228, 160, 160]); doc.setLineWidth(0.8); doc.setLineDashPattern([2.2, 2], 0);
+            doc.line(gx, pyT + 1, gx, pyB - 0.5);
+            doc.setLineDashPattern([], 0);
+            setF(B.white); doc.circle(gx, gy, 3.4, 'F');
+            setD(B.red); doc.setLineWidth(1.3); doc.circle(gx, gy, 2.2, 'S');
+
+            doc.setFont('Helvetica', 'bold'); doc.setFontSize(6.2);
+            const tip = cc.tipping || 'Operational breaking point';
+            const pillW = doc.getTextWidth(tip) + 11, pillH = 10.6;
+            const pillX = gx + 5 + pillW > px + pw ? gx - 5 - pillW : gx + 5;
+            setF([253, 241, 241]); setD([240, 205, 205]); doc.setLineWidth(0.6);
+            doc.roundedRect(pillX, pyT + 1, pillW, pillH, 5.3, 5.3, 'FD');
+            setC(B.red); doc.text(tip, pillX + 5.5, pyT + 8.4);
+            doc.setLineWidth(0.5);
+
+            /* The gap, named and measured with a spanning arrow. */
+            const ta = 0.965, ax = px + pw * ta;
+            const a0 = dY(ta) + 4.5, a1 = cY(ta) - 4.5;
+            if (a1 - a0 > 12){
+              setD(B.red); doc.setLineWidth(0.9);
+              doc.line(ax, a0 + 2.4, ax, a1 - 2.4);
+              setF(B.red);
+              doc.triangle(ax - 1.9, a0 + 3.4, ax + 1.9, a0 + 3.4, ax, a0, 'F');
+              doc.triangle(ax - 1.9, a1 - 3.4, ax + 1.9, a1 - 3.4, ax, a1, 'F');
+              doc.setLineWidth(0.5);
+            }
+            const gt = Math.min(0.9, tc + (1 - tc) * 0.58);
+            doc.setFont('Helvetica', 'bold'); doc.setFontSize(8.5); setC(B.dark);
+            doc.text(cc.center || 'The Capacity Gap', px + pw * gt, (dY(gt) + cY(gt)) / 2 + 3, { align: 'center' });
+          }
+
+          /* Letterspaced axis titles, like the app's section eyebrows. */
+          doc.setFont('Helvetica', 'bold'); doc.setFontSize(5.8); setC(B.soft);
+          doc.text((cc.xAxis || 'Time').toUpperCase(), px + pw / 2, y + h - 7.5, { align: 'center', charSpace: 0.7 });
+          doc.text((cc.yAxis || 'Demand on IT').toUpperCase(), ML + 13, (pyT + pyB) / 2, { angle: 90, align: 'center', charSpace: 0.7 });
           return y + h + 7;
         }
 
@@ -13854,7 +13913,7 @@
 
         y = section(y, 'THE CAPACITY GAP',
           'The five drivers above push demand up the curve while headcount holds capacity near flat. The wedge between the two lines is the backlog — and the roadmap it displaces.');
-        y = capacityChart(y, 118);
+        y = capacityChart(y, 126);
         const tp = STATE.tippingPoint || {};
         const tpLabel = 'Past the ' + (tp.title || 'Inflection Point').toLowerCase() + ':';
         doc.setFont('Helvetica', 'bold'); doc.setFontSize(7); setC(B.dark);
@@ -14301,20 +14360,19 @@
               </div>
 
               <div class="pt-pdfbar">
-                <span>Downloads the three-page executive summary \u2014 the market challenge, the Recast approach with live module screenshots, and the benefits &amp; outcomes \u2014 branded and ready to hand to a partner or client.</span>
                 ${STATE.pdfCompanyInput ? `
                   <div class="bi-pdf-input">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--r-blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                    <input type="text" id="pdf-company-input" placeholder="Enter partner or client name" value="${STATE.pdfCompanyName}">
-                    <button type="button" data-action="submit-pdf-company" class="bi-pdf-submit" title="Download the PDF">
+                    <input type="text" id="pdf-company-input" placeholder="Enter partner or client name" value="${escAttr(STATE.pdfCompanyName)}">
+                    <button type="button" data-action="submit-pdf-company" class="bi-pdf-submit" title="Download PDF">
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
                     </button>
                     <span data-action="cancel-pdf-input" class="bi-pdf-cancel">\u00d7</span>
                   </div>
                 ` : STATE.pdfBusy ? `
-                <button type="button" class="pt-pdfbtn" disabled style="opacity:0.75;cursor:progress"><span class="spinner"></span>Building the PDF — capturing screenshots…</button>
+                <button type="button" class="pt-pdfbtn" disabled style="opacity:0.75;cursor:progress"><span class="spinner"></span>Creating PDF…</button>
                 ` : `
-                <button type="button" class="pt-pdfbtn" data-action="open-pdf-input" title="Download the three-page executive summary PDF"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 12 5 5 5-5"/><path d="M5 21h14"/></svg>Download the partner PDF</button>
+                <button type="button" class="pt-pdfbtn" data-action="open-pdf-input" title="Download PDF"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 12 5 5 5-5"/><path d="M5 21h14"/></svg>Download PDF</button>
                 `}
               </div>
             </div>
@@ -14426,7 +14484,7 @@
                 ${STATE.pdfCompanyInput ? `
                   <div class="bi-pdf-input">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--r-blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                    <input type="text" id="pdf-company-input" placeholder="Enter company name" value="${STATE.pdfCompanyName}">
+                    <input type="text" id="pdf-company-input" placeholder="Enter company name" value="${escAttr(STATE.pdfCompanyName)}">
                     <button type="button" data-action="submit-pdf-company" class="bi-pdf-submit">
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
                     </button>
@@ -14435,7 +14493,7 @@
                 ` : STATE.pdfBusy ? `
                   <button type="button" class="bi-action-primary" disabled style="opacity:0.75;cursor:progress">
                     <span class="spinner"></span>
-                    Building the PDF — capturing screenshots…
+                    Creating PDF…
                   </button>
                 ` : `
                   <button type="button" data-action="open-pdf-input" class="bi-action-primary">
@@ -15486,7 +15544,9 @@
           }
           if (action === 'reset-autopilot') { clearFlowTimers(); STATE.autopilotStep = -1; STATE.autopilotAppCount = 0; scrollPreserveRender(); return; }
 
-          if (action === 'open-pdf-input') { STATE.pdfCompanyInput = true; render(); setTimeout(() => { const el = document.getElementById('pdf-company-input'); if (el) el.focus(); }, 50); return; }
+          /* Focus synchronously — render() is synchronous, and a delayed
+             focus opens a window where the first typed character is lost. */
+          if (action === 'open-pdf-input') { STATE.pdfCompanyInput = true; render(); const el = document.getElementById('pdf-company-input'); if (el) el.focus(); return; }
           if (action === 'cancel-pdf-input') { STATE.pdfCompanyInput = false; render(); return; }
           if (action === 'submit-pdf-company') { const input = document.getElementById('pdf-company-input'); const name = (input?.value || '').trim() || 'Your Organization'; STATE.pdfCompanyName = name; startPdfExport(name); STATE.pdfCompanyInput = false; render(); return; }
 
@@ -15539,6 +15599,10 @@
 
         let _roiDebounce = null;
         root.addEventListener('input', (e) => {
+          /* Mirror every keystroke into state: the Benefits tour re-renders
+             the panel on its own clock, and the rebuilt input is filled from
+             here — without this, typing is wiped mid-word. */
+          if (e.target?.id === 'pdf-company-input') { STATE.pdfCompanyName = e.target.value; return; }
           if (e.target?.id === 'ip-engineers')    { STATE.ipCalc.engineers = e.target.value; return; }
           if (e.target?.id === 'ip-employees')    { STATE.ipCalc.employees = e.target.value; return; }
           if (e.target?.id === 'roi-employees') { const n = cleanNum(e.target.value); if (n > 0) { deriveFromEmployees(n); calculateImpact(); clearTimeout(_roiDebounce); _roiDebounce = setTimeout(() => render(), 600); } return; }
