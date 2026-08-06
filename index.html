@@ -7671,12 +7671,17 @@
          almShow() — no app re-render, so each scene's entrance animation
          restarts cleanly when it becomes visible. */
 
-      /* The rail trigger is icon-only, so it opts out of the ≤900px
-         touch-target padding that would otherwise stretch it into an oval —
-         it stays a circle, sized up a little for touch. */
+      /* The rail trigger is icon-only: a solid brand-blue disc with a white
+         glyph, so it reads as an icon rather than an empty outline. Sizes are
+         !important because the ≤900px touch-target rule pads every button. */
+      .alm-icon-btn { width: 28px !important; height: 28px !important; min-height: 0 !important; padding: 0 !important; flex: none; display: inline-grid; place-items: center; border: none; border-radius: 9999px; background: var(--r-blue); color: #fff; cursor: pointer; transition: background 160ms cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 160ms cubic-bezier(0.2, 0.8, 0.2, 1); }
+      .alm-icon-btn:hover { background: #0000A8; box-shadow: 0 2px 8px rgba(0, 0, 204, 0.28); }
+      .alm-icon-btn:active { transform: translateY(1px); }
+      .alm-icon-btn i, .alm-icon-btn svg { width: 15px !important; height: 15px !important; stroke-width: 2.25; color: #fff; }
+      /* Bigger tap target where the touch-target rule applies. */
       @media (max-width: 900px) {
-        .alm-icon-btn { width: 36px !important; height: 36px !important; min-height: 36px; padding: 0 !important; }
-        .alm-icon-btn svg, .alm-icon-btn i[data-lucide] { width: 16px !important; height: 16px !important; }
+        .alm-icon-btn { width: 36px !important; height: 36px !important; }
+        .alm-icon-btn i, .alm-icon-btn svg { width: 18px !important; height: 18px !important; }
       }
 
       /* ── stage ── */
@@ -9245,7 +9250,7 @@
                 </div>
                 <div class="w-full bg-white/70 backdrop-blur-lg rounded-xl shadow-sm p-3 border border-slate-200 cs-challenges">
                   <div class="flex justify-end mb-1">
-                    <button type="button" data-action="open-alm-modal" class="alm-icon-btn w-7 h-7 rounded-full border-2 border-gray-300 bg-transparent text-gray-400 inline-flex items-center justify-center hover:text-[#0000CC] hover:border-[#0000CC] transition flex-shrink-0 focus-ring" title="Application Lifecycle Management" aria-label="Application Lifecycle Management explainer"><i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i></button>
+                    <button type="button" data-action="open-alm-modal" class="alm-icon-btn focus-ring" title="Application Lifecycle Management" aria-label="Application Lifecycle Management explainer"><i data-lucide="refresh-cw" aria-hidden="true"></i></button>
                   </div>
                   <h3 class="text-xs font-semibold uppercase tracking-wide text-[#1A1A2E] mb-2">Modern IT Challenges</h3>
                   <div class="grid grid-cols-1 gap-2 items-stretch">
