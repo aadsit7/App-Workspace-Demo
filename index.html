@@ -8213,16 +8213,31 @@
         envProgress: { appsProcessed: 0 },
         calcInputs: {
           users: 5000, endpoints: 6000, envs: 3, apps: 150, customApps: 25,
-          monthlyTickets: 600, avgTicketMins: 18, pkgHours: 80, patchHours: 60, deviceHours: 94,
+          monthlyTickets: 600, avgTicketMins: 18,
+          /* Workload hours are NOT seeded here. applicationLoad() computes them
+             from the estate at boot (deriveFromEmployees runs on STATE.calcInputs
+             .users) and on every change to the estate or the rate-of-change
+             drivers. Literals here would be read as the model's inputs and are
+             not: they were 40-70% adrift of what the load model actually
+             produces. null until computed; every consumer guards for it. */
+          pkgHours: null, patchHours: null, deviceHours: null,
+          pkgIntakeHours: null, pkgUpdateHours: null,
           openReqs: 0, delayedInitiatives: 0, regulated: false,
           complexMixPct: 20, loadedRate: 95,
+          /* Share of device application-layer touch time an Autopilot + Intune
+             estate with app assignment configured already automates. The tab's
+             own positioning is "you already have Intune", so the model must not
+             also charge the customer for that work. */
+          deviceAlreadyAutomatedPct: 60,
           /* Currency mode (W2/W3). catalogCovered / configCovered stay null
              until the AE enters a real Setup Store cross-reference. */
           appsTotal: 150, appsHighChurn: 23, cycleDaysNow: 14, pctAging60Now: 35,
           catalogCovered: null, configCovered: null,
           /* Invariant rates. Hours and custom-app counts are always derived
-             from these × the current estate, never scaled incrementally. */
-          pkgHrsPerApp: 80 / 150, patchHrsPerApp: 60 / 150, customSharePct: 25 / 150
+             from these × the current estate, never scaled incrementally.
+             pkgHrsPerApp / patchHrsPerApp are computed alongside the hours by
+             deriveFromEmployees; seeding them would be the same lie. */
+          pkgHrsPerApp: null, patchHrsPerApp: null, customSharePct: 25 / 150
         },
         impactMode: 'effort',
         exOpen: {},
@@ -10591,7 +10606,7 @@
           + '<div class="alm-hw-st wide" style="--i:4">' + hwChip(0)
           + '<b>Deploy</b><u>collections and assignments in each tool, ring by ring</u>'
           + '<div class="alm-hw-tools">' + HW_TOOLS.map((n, j) => '<span style="--i:' + j + '">' + n + '</span>').join('') + '</div></div>';
-        const hwHrs = (STATE.impact?.pkgHours || 6) * HW_TOOLS.length;
+        const hwHrs = (Math.round(releaseHoursAcrossTools(HW_TOOLS.length, (STATE.calcInputs?.complexMixPct ?? 20) / 100) * 10) / 10).toFixed(1);
         const rows = [
           { ic: 'download',   b: 'It shows up',      s: 'Installed' },
           { ic: 'refresh-cw', b: 'It stays current', s: 'Updated' },
@@ -10702,7 +10717,7 @@
                         </div>
                         <div class="alm-hw-line" style="--i:3">${stations}</div>
                         <div class="alm-hw-loop" style="--i:6"><i data-lucide="rotate-ccw"></i><span>every vendor update starts this over</span></div>
-                        <div class="alm-hw-sum" style="--i:7">Roughly <b>${hwHrs} hours</b> of engineering time per application, per release &mdash; scripted steps included.</div>
+                        <div class="alm-hw-sum" style="--i:7">Roughly <b>${hwHrs} hours</b> of engineering time per application, per release, across the ${HW_TOOLS.length} tools above &mdash; scripted steps included.</div>
                       </div>
                     </div>
                   </section>
@@ -13176,11 +13191,19 @@
         "Underlying endpoint, identity, virtual desktop, and device-management responsibilities.",
       ];
       /* The three numbers. Every figure derives from the same two measurements —
-         package touch time 8.0 h -> 1.6 h on the catalog path, and application
-         tickets 50 -> 15 per 1,000 users — so speed, support and margin cannot
-         drift apart. Reference model: 1,000 users, $95/h loaded, delivery line
-         sold at $10/user/month, Application Workspace at $1.65/user/month. */
-      const PT_REF = { users: 1000, rate: 95, rev: 10000, licPU: 1.65,
+         package touch time, read from PACKAGING_BENCHMARKS, and application
+         tickets 50 -> 15 per 1,000 users, read from PT_LADDER — so speed,
+         support and margin cannot drift apart. Reference model: 1,000 users,
+         $95/h loaded, delivery line sold at $10/user/month.
+
+         licBasis declares what licPU is quoting. 'partner net' means licPU is a
+         negotiated rate below the AW_PRICING_TIERS list price, and the discount
+         is rendered on the margin card and in the sources table — the payback
+         card elsewhere on the tab charges list, and the two must not appear to
+         describe the same purchase. Set it to 'list' to delete the negotiated
+         rate and derive licPU from the price book instead; refLicPU() and the
+         boot-time assertion below handle either. */
+      const PT_REF = { users: 1000, rate: 95, rev: 10000, licPU: 1.65, licBasis: 'partner net',
         delT: 45, delA: 11, supT: 15, supA: 4.5 };
       const PT_LADDER = {
         speed: { unit: "Elapsed working days \u2014 accepted request to deployed", suffix: "days",
@@ -13190,6 +13213,10 @@
       };
       /* Bake-off scorecard (playbook \u00a78) — the metrics a partner should measure,
          pre-filled with the reference model's expected results. */
+      /* Rows 0, 10, 11 and 12 are COMPUTED, not typed: syncDerivedClaims() writes
+         them from PACKAGING_BENCHMARKS, PT_REF and awAnnualCost() at boot and on
+         every recalculation. The literals below are placeholders — never edit
+         them to change a figure, edit the benchmark it derives from. */
       const PT_SCORE = [
         ["Active package hours", "Engineer touch time, intake through package-ready.", "8.0 h", "1.6 h", "Agreed reduction without quality loss."],
         ["Elapsed readiness time", "Calendar time from accepted request to pilot-ready.", "10 days", "2 days", "Improvement explained by actual workflow."],
@@ -13216,10 +13243,14 @@
           rows: [],
           stat: { hrs: "Governance \u00b7 reusable packages \u00b7 customer zones \u00b7 entitlement \u00b7 publishing \u00b7 release \u00b7 support \u00b7 reporting", sub: "future-state operating model" },
           verdict: "One operating model across every customer \u2014 with your release authority unchanged." },
-        { key: "business", pill: "The three numbers", tag: "88% \u00b7 70% \u00b7 60%", icon: "trending-up", full: true,
+        /* tag and stat.hrs are written by syncDerivedClaims() from the exhibits
+           they summarise. They previously read "88% \u00b7 70% \u00b7 60%" while the
+           speed ladder underneath rendered 80% and the margin depended on which
+           licence basis was in force. Placeholders only. */
+        { key: "business", pill: "The three numbers", tag: "\u2014", icon: "trending-up", full: true,
           event: "The business case in three numbers \u2014 faster delivery, fewer tickets, more margin",
           rows: [],
-          stat: { hrs: "88% faster delivery \u00b7 70% fewer application tickets \u00b7 60% more margin on the same contract", sub: "the three numbers" },
+          stat: { hrs: "\u2014", sub: "the three numbers" },
           verdict: "Faster delivery, fewer tickets, and a materially better margin on the same contract." },
         { key: "oem", pill: "Setup Store", tag: "8,000+ titles \u00b7 API \u00b7 OEM", icon: "store",
           event: "The shelf a partner would otherwise build title by title \u2014 already stocked, already current, and available through the API",
@@ -13351,7 +13382,7 @@
         }
         if (S.key === 'business') {
           const R = PT_REF, money = (n) => '$' + Math.round(n).toLocaleString('en-US');
-          const costT = (R.delT + R.supT) * R.rate, lic = R.users * R.licPU;
+          const costT = (R.delT + R.supT) * R.rate, lic = R.users * refLicPU();
           const costA = (R.delA + R.supA) * R.rate + lic;
           const marT = R.rev - costT, marA = R.rev - costA;
           const pctT = Math.round(marT / R.rev * 100), pctA = Math.round(marA / R.rev * 100);
@@ -13380,11 +13411,11 @@
               ${ladder(PT_LADDER.tickets, 'r2', 'fewer tickets', 'self-service install, repair, and automated versions', 'fewer')}
               <div class="ptc-group">
                 <div class="ptc-ghead"><span class="ptc-gnum">${Math.round((marA / marT - 1) * 100)}% more profitable</span><span class="ptc-gsub">same contract, same revenue \u2014 efficiency only</span></div>
-                <div class="ptc-unit">Gross margin on the application-delivery line \u00b7 ${R.users.toLocaleString('en-US')} users \u00b7 ${money(R.rev)} / month revenue \u00b7 $${R.rate}/h loaded</div>
+                <div class="ptc-unit">Gross margin on the application-delivery line \u00b7 ${R.users.toLocaleString('en-US')} users \u00b7 ${money(R.rev)} / month revenue \u00b7 $${R.rate}/h loaded \u00b7 ${refLicNote()}</div>
                 ${bar('Current state', 'now', [['Delivery labor ' + money(R.delT * R.rate), R.delT * R.rate], ['Support ' + money(R.supT * R.rate), R.supT * R.rate], ['Margin ' + money(marT), marT, 'mnow']], R.rev, 'r3', 0, `${pctT}% margin`)}
                 ${bar('With App Workspace', 'aw', [['Delivery', R.delA * R.rate], ['Support', R.supA * R.rate], ['License ' + money(lic), lic, 'lic'], ['Margin ' + money(marA), marA, 'maw']], R.rev, 'r3', 240, `${pctA}% margin`, `${(marA / marT).toFixed(2)}\u00d7 margin`)}
               </div>
-              <div class="pt-viz-foot">Everything above traces to two measurements \u2014 package touch time (8.0 h \u2192 1.6 h) and application tickets (${tkT} \u2192 ${tkA} per 1,000 users). The labor lines and the margin follow from those \u2014 no third assumption.</div>
+              <div class="pt-viz-foot">Everything above traces to two measurements \u2014 package touch time (${PACKAGING_BENCHMARKS.tradStdHrs.toFixed(1)} h \u2192 ${PACKAGING_BENCHMARKS.awStdHrs.toFixed(1)} h, ${PACKAGING_BENCHMARKS.scopeNote.toLowerCase()}) and application tickets (${tkT} \u2192 ${tkA} per 1,000 users). The labor lines follow from those \u2014 no third assumption. The margin line adds one input: the licence, ${PT_REF.licBasis === 'list' ? 'charged at list' : 'charged at partner net and named above'}.</div>
             </div>
           </div>`;
         }
@@ -13760,7 +13791,7 @@
           '<div class="ptp-cover-s">The current state of application delivery inside a managed service, what changes with Application Workspace, and the three numbers that follow. Every section is read the same way \u2014 today\u2019s model on the left, Application Workspace on the right \u2014 with the work that stays with the partner named explicitly.</div>' +
           ptClaimsHtml() +
           '<div class="ptp-toc">' + toc + '</div>' +
-          '<div class="ptp-note">Figures come from a reference model \u2014 1,000 users, $95 per loaded hour, an application-delivery line sold at $10 per user per month, and Application Workspace at $1.65 per user per month \u2014 not from a measurement of your portfolio. Validate them with the bake-off scorecard included here before they are used commercially. Not every application is covered, and customer-specific packaging, testing, approval, release authority, and support remain with the partner.</div>' +
+          '<div class="ptp-note">Figures come from a reference model \u2014 ' + PT_REF.users.toLocaleString('en-US') + ' users, $' + PT_REF.rate + ' per loaded hour, an application-delivery line sold at $' + (PT_REF.rev / PT_REF.users).toFixed(0) + ' per user per month, and Application Workspace at $' + refLicPU().toFixed(2) + ' per user per month (' + PT_REF.licBasis + ') \u2014 not from a measurement of your portfolio. ' + refLicNote() + ' Validate them with the bake-off scorecard included here before they are used commercially. Not every application is covered, and customer-specific packaging, testing, approval, release authority, and support remain with the partner.</div>' +
           '</div>' +
           '<div class="ptp-foot"><span>Recast Software \u00b7 confidential partner material</span><span class="ptp-pageno"></span></div></section>';
       }
@@ -15007,28 +15038,79 @@
       // to side-by-side field measurements: store/catalog apps collapse
       // to near-zero touch time, while complex custom apps still need
       // packaging engineering (just far less of it).
+      /* catalogPkgReduction is capped in the UI at 93%. A residual under 7%
+         puts all packaging, config review, testing and release work for a
+         catalog application under five minutes a month, which no field test
+         supports. The playbook's own planning default is 1.5 h against an
+         8 h baseline — 81%. */
       const ROI_ASSUMPTIONS = {
-        conservative: { ticketReduction: 0.20, catalogPkgReduction: 0.90, customPkgReduction: 0.55, patchReduction: 0.30, deviceReduction: 0.65, strategicRealloc: 0.40, fteHours: 1920, uxShare: 0.55, dashShare: 0.20, mtShare: 0.25, label: 'Conservative' },
-        expected:     { ticketReduction: 0.70, catalogPkgReduction: 0.97, customPkgReduction: 0.79, patchReduction: 0.45, deviceReduction: 0.80, strategicRealloc: 0.50, fteHours: 1920, uxShare: 0.55, dashShare: 0.20, mtShare: 0.25, label: 'Expected' },
-        high:         { ticketReduction: 0.90, catalogPkgReduction: 0.98, customPkgReduction: 0.85, patchReduction: 0.60, deviceReduction: 0.90, strategicRealloc: 0.70, fteHours: 1920, uxShare: 0.55, dashShare: 0.20, mtShare: 0.25, label: 'High' },
+        conservative: { ticketReduction: 0.20, catalogPkgReduction: 0.82, customPkgReduction: 0.55, patchReduction: 0.30, deviceReduction: 0.50, strategicRealloc: 0.40, fteHours: 1920, uxShare: 0.55, dashShare: 0.20, mtShare: 0.25, label: 'Conservative' },
+        expected:     { ticketReduction: 0.70, catalogPkgReduction: 0.88, customPkgReduction: 0.79, patchReduction: 0.45, deviceReduction: 0.65, strategicRealloc: 0.50, fteHours: 1920, uxShare: 0.55, dashShare: 0.20, mtShare: 0.25, label: 'Expected' },
+        high:         { ticketReduction: 0.90, catalogPkgReduction: 0.92, customPkgReduction: 0.85, patchReduction: 0.60, deviceReduction: 0.80, strategicRealloc: 0.70, fteHours: 1920, uxShare: 0.55, dashShare: 0.20, mtShare: 0.25, label: 'High' },
+      };
+      const CATALOG_PKG_REDUCTION_MAX = 0.93;
+
+      /* Packaging benchmarks — ONE set, for the whole application. Everything
+         that quotes a packaging hour reads from here: the load model, the
+         cycle card, the bake-off scorecard, the three-numbers claim boxes and
+         both PDFs. Change a number here and every packaging figure moves.
+
+         Scope is stated because the previous pair compared unlike things: a
+         0.21 h "package creation from the Setup Store" figure was divided into
+         a 4.33 h figure that included discovery, research and testing. Both
+         sides of the ratio are now intake-through-package-ready. */
+      const PACKAGING_BENCHMARKS = {
+        /* Share of a FIRST-PLATFORM BUILD repeated for each ADDITIONAL
+           environment. Not 100%: discovery, rationalisation and licence review
+           happen once. Format conversion, detection logic, testing and release
+           validation happen again per platform. */
+        envRepeatFirstBuild: 0.60,
+        /* Share of an UPDATE repeated per additional environment. Far lower:
+           by the time a version update arrives the detection logic, package
+           structure and release path already exist on every platform, so what
+           repeats is the format conversion and the re-test — not the build. */
+        envRepeatUpdate: 0.25,
+        cycleGateDays: PT_LADDER.speed.rows.reduce((s, r) => s + r[2], 0),
+        awStdHrs: 1.6,
+        awComplexHrs: 4.0,
+        tradStdHrs: 8.0,
+        tradComplexHrs: 14.0,
+        scopeNote: 'Intake through package-ready. Includes config review, test and approval — not package creation alone.'
       };
 
-      // Field-test packaging benchmarks. AW: 3 standard apps in 38 min = 0.21 hrs each; 3.0 hrs per complex app.
-      // Traditional: 27 hrs total − 14 hrs (complex) = 13 hrs across 3 standard apps = 4.33 hrs each; 14.0 hrs per complex.
-      /* Share of a first-platform build that is repeated for each ADDITIONAL
-         environment. Not 100%: discovery, rationalisation and licence review
-         happen once. Format conversion, detection logic, testing and release
-         validation happen again per platform. 0.60 is the field-test figure;
-         editable, and it is what turns "environments" from a display field into
-         a driver of every hours figure on the page. */
-      const PACKAGING_BENCHMARKS = {
-        envRepeatShare: 0.60,
-        cycleGateDays: PT_LADDER.speed.rows.reduce((s, r) => s + r[2], 0),
-        awStdHrs: 0.21,
-        awComplexHrs: 3.0,
-        tradStdHrs: 4.33,
-        tradComplexHrs: 14.0
-      };
+      /* Blended per-application hours at a given complex mix, and the headline
+         "faster" percentage that follows from them. Single definition so the
+         claim boxes, the PDF, the cycle card and exModel() cannot drift. */
+      function pkgBlended(cmix){
+        const pb = PACKAGING_BENCHMARKS;
+        const c = Math.max(0, Math.min(1, cmix == null ? 0.20 : cmix));
+        return { trad: (1 - c) * pb.tradStdHrs + c * pb.tradComplexHrs,
+                 aw:   (1 - c) * pb.awStdHrs   + c * pb.awComplexHrs };
+      }
+      function pkgFasterPct(cmix){
+        const b = pkgBlended(cmix);
+        return b.trad > 0 ? Math.round((1 - b.aw / b.trad) * 100) : 0;
+      }
+
+      /* Engineering hours for ONE release of ONE application across n delivery
+         tools: repackage plus release validation, each duplicated per
+         additional tool at the update repeat share. Was `(STATE.impact
+         ?.pkgHours || 6) * tools` — STATE.impact has never existed on STATE, so
+         the fallback WAS the figure, and the deck asserted a flat 30 hours per
+         application per release with nothing behind it. */
+      function releaseHoursAcrossTools(tools, cmix){
+        const d = DELIVERY_RATES, pb = PACKAGING_BENCHMARKS;
+        const n = Math.max(1, tools || 1);
+        const dup = 1 + (n - 1) * pb.envRepeatUpdate;
+        return (pkgBlended(cmix).trad * d.updateShareOfBuild + d.validationHrsPerEvent) * dup;
+      }
+
+      /* Implementation basis, declared once. Go-live at 4-6 weeks with 1-2
+         engineers part-time: 1.25 months at ~120 engineer-hours a month. Read
+         by the payback curve AND by the reference model's Year 1 cost, so the
+         deck cannot quote two different ramp costs. */
+      const IMPL_BASIS = { goLiveMonths: 1.25, hrsPerMonth: 120, rampEndMonths: 4 };
+      const implHoursFor = () => Math.round(IMPL_BASIS.goLiveMonths * IMPL_BASIS.hrsPerMonth);
 
       /* ═══ Application-layer load, from first principles ═══
          The old model carried a flat hours-per-month constant per employee
@@ -15074,14 +15156,49 @@
         const evCustom = ev(hiCustom, custom);
         /* Two components per pool: repackaging each new version, and building
            titles new to the estate. Both priced off the same build benchmark. */
-        const pool = (events, n) => events * buildHrs * d.updateShareOfBuild + n * d.intakePerYear / 12 * buildHrs;
-        const catalogPkg = pool(evCatalog, catalog);
-        const customPkg = pool(evCustom, custom);
+        /* Returned SEPARATELY, not summed here, because they carry different
+           platform-duplication multipliers downstream: intake is a first build
+           (envRepeatFirstBuild), a version update is not (envRepeatUpdate).
+           Collapsing them was charging first-build repeat cost to update work
+           on every platform in the estate. */
+        const updateOf = (events) => events * buildHrs * d.updateShareOfBuild;
+        const intakeOf = (n) => n * d.intakePerYear / 12 * buildHrs;
+        const catalogUpdate = updateOf(evCatalog), catalogIntake = intakeOf(catalog);
+        const customUpdate  = updateOf(evCustom),  customIntake  = intakeOf(custom);
+        const intakeHrs = catalogIntake + customIntake;
+        const updateHrs = catalogUpdate + customUpdate;
         const devicesPerMonth = Math.max(0, ci.endpoints || 0) * d.deviceRefreshPerYear / 12;
-        return { catalogPkg, customPkg, pkgHours: catalogPkg + customPkg,
+        return { catalogPkg: catalogIntake + catalogUpdate, customPkg: customIntake + customUpdate,
+          intakeHrs, updateHrs, pkgHours: intakeHrs + updateHrs,
+          /* Release-event work. Takes the update multiplier, not the first-build one. */
           validation: (evCatalog + evCustom) * d.validationHrsPerEvent,
           devicesPerMonth, deviceHrs: devicesPerMonth * d.appHrsPerDevice,
           events: evCatalog + evCustom, evCatalog, evCustom, buildHrs };
+      }
+
+      /* Per-environment packaging hours split into the two components, honouring
+         a hand-entered override of the combined figure. The override stays
+         authoritative: the split only supplies the ratio. */
+      /* Number.isFinite, not `>= 0`: null >= 0 is TRUE in JavaScript, so a
+         `>= 0` guard silently accepts a null and drops the component to zero
+         instead of falling back to the load model. */
+      const hrsOk = (v) => Number.isFinite(v) && v >= 0;
+      function pkgSplit(ci){
+        const L = applicationLoad(ci);
+        const iRaw = hrsOk(ci.pkgIntakeHours) ? ci.pkgIntakeHours : L.intakeHrs;
+        const uRaw = hrsOk(ci.pkgUpdateHours) ? ci.pkgUpdateHours : L.updateHrs;
+        const splitTot = iRaw + uRaw;
+        const total = Math.max(0, hrsOk(ci.pkgHours) ? ci.pkgHours : L.pkgHours);
+        const intakeShare = splitTot > 0 ? iRaw / splitTot : 0;
+        const intake = total * intakeShare;
+        return { intake, update: total - intake, total };
+      }
+
+      /* The two platform-duplication multipliers for the current estate. */
+      function envDupFactors(ci){
+        const pb = PACKAGING_BENCHMARKS;
+        const extra = Math.max(0, (ci.envs || 1) - 1);
+        return { first: 1 + extra * pb.envRepeatFirstBuild, update: 1 + extra * pb.envRepeatUpdate };
       }
 
       // Application Workspace pricing — graduated per-user/month list pricing from the Recast partner estimator.
@@ -15107,6 +15224,87 @@
         return monthly * 12;
       }
 
+      /* ═══ Reference-model licence, reconciled ═══
+         PT_REF.licPU drove the margin card; awAnnualCost() drove the payback
+         card. At 1,000 users those were $1.65 and $4.00 per user per month —
+         the same product, priced 2.4x apart, on the same tab. Neither figure
+         was wrong on its own; shipping both unlabelled was.
+
+         licBasis declares which one PT_REF is quoting. 'list' derives licPU
+         from the price book so the two cards can never diverge again;
+         'partner net' keeps the negotiated rate and REQUIRES the discount to
+         be named wherever the margin appears. */
+      const refListPU  = () => awAnnualCost(PT_REF.users) / 12 / Math.max(1, PT_REF.users);
+      const refLicPU   = () => (PT_REF.licBasis === 'list' ? refListPU() : PT_REF.licPU);
+      const refLicAnnual = () => refLicPU() * PT_REF.users * 12;
+      const refDiscountPct = () => { const l = refListPU(); return l > 0 ? Math.round((1 - refLicPU() / l) * 100) : 0; };
+      /* One sentence, rendered wherever the reference licence is quoted, so the
+         margin card and the payback card can never imply different economics
+         without the difference being on screen. */
+      function refLicNote(){
+        const d = refDiscountPct();
+        return PT_REF.licBasis === 'list'
+          ? 'Licence at $' + refLicPU().toFixed(2) + ' PUPM — the same list rate the payback card uses.'
+          : 'Licence at $' + refLicPU().toFixed(2) + ' PUPM partner net, ' + d + '% off the $' + refListPU().toFixed(2)
+            + ' list rate used in the payback card. At list the same model gives a ' + refMarginPct().now + '% → '
+            + refMarginAtList() + '% margin.';
+      }
+      function refMargin(licPU){
+        const R = PT_REF;
+        const now = R.rev - (R.delT + R.supT) * R.rate;
+        const aw  = R.rev - ((R.delA + R.supA) * R.rate + R.users * licPU);
+        return { now, aw };
+      }
+      function refMarginPct(){
+        const m = refMargin(refLicPU());
+        return { now: Math.round(m.now / PT_REF.rev * 100), aw: Math.round(m.aw / PT_REF.rev * 100),
+                 uplift: m.now > 0 ? Math.round((m.aw / m.now - 1) * 100) : 0, raw: m };
+      }
+      const refMarginAtList = () => Math.round(refMargin(refListPU()).aw / PT_REF.rev * 100);
+
+      /* ═══ Derived claims ═══
+         Every packaging figure quoted outside PACKAGING_BENCHMARKS is written
+         back here rather than typed. Called at boot and from calculateImpact(),
+         so editing a benchmark in the Assumptions panel moves the scorecard,
+         the three-numbers claim boxes and both PDFs in the same pass. */
+      function syncDerivedClaims(){
+        const pb = PACKAGING_BENCHMARKS, R = PT_REF;
+        const money = (n) => '$' + Math.round(n).toLocaleString('en-US');
+        const h = (n) => n.toFixed(n < 10 ? 1 : 0) + ' h';
+        // [0] Active package hours — the benchmark itself, both sides same scope.
+        PT_SCORE[0][1] = 'Engineer touch time. ' + pb.scopeNote;
+        PT_SCORE[0][2] = h(pb.tradStdHrs);
+        PT_SCORE[0][3] = h(pb.awStdHrs);
+        // [10] Cost per package change — loaded labour only; licence is row [11].
+        PT_SCORE[10][1] = 'Loaded labor per new or updated package, at the standard-app benchmark and $'
+          + R.rate + '/h. Licence is counted separately in Annualized cost.';
+        PT_SCORE[10][2] = money(pb.tradStdHrs * R.rate);
+        PT_SCORE[10][3] = money(pb.awStdHrs * R.rate);
+        // [11] Annualized cost — delivery + support labour, plus the licence.
+        const runNow = (R.delT + R.supT) * R.rate * 12;
+        const runAw  = (R.delA + R.supA) * R.rate * 12;
+        PT_SCORE[11][2] = money(runNow);
+        PT_SCORE[11][3] = money(runAw + refLicAnnual());
+        // [12] Year 1 — the same ramp the payback curve charges, not a second figure.
+        const ramp = implHoursFor() * R.rate;
+        PT_SCORE[12][1] = 'Ramp, implementation, training, migration, and license. Ramp is '
+          + implHoursFor() + ' engineer-hours at $' + R.rate + '/h — the same implementation basis the payback curve carries.';
+        PT_SCORE[12][2] = money(runNow);
+        PT_SCORE[12][3] = money(runAw + refLicAnnual() + ramp);
+        // The three numbers, each read back from what its own exhibit renders.
+        const faster = pkgFasterPct(0.20);
+        const tkT = PT_LADDER.tickets.rows.reduce((a, r) => a + r[1], 0);
+        const tkA = PT_LADDER.tickets.rows.reduce((a, r) => a + r[2], 0);
+        const tkCut = tkT > 0 ? Math.round((1 - tkA / tkT) * 100) : 0;
+        const marUp = refMarginPct().uplift;
+        const S = PT_SECTIONS.find((x) => x.key === 'business');
+        if (S){
+          S.tag = faster + '% · ' + tkCut + '% · ' + marUp + '%';
+          S.stat.hrs = faster + '% faster per-application build time · ' + tkCut
+            + '% fewer application tickets · ' + marUp + '% more margin on the same contract';
+        }
+      }
+
       function roiInput(id, icon, label, hint, placeholder, val, extra){
         return `<div><div class="text-[10px] font-semibold text-[#6A6A7A] uppercase tracking-wide mb-1 flex items-center gap-1.5"><i data-lucide="${icon}" class="w-3 h-3 text-[#0000CC]"></i> ${label}</div><div class="text-[10px] text-[#8A8A9A] mb-1.5">${hint}</div><div class="input-field"><input type="${extra === 'bool' ? 'hidden' : 'number'}" id="${id}" placeholder="${placeholder}" value="${val}" class="focus-ring" ${extra || ''}>${extra === 'bool' ? `<div class="flex gap-2"><button type="button" data-action="toggle-regulated" data-val="true" class="px-3 py-1.5 text-xs rounded-lg border ${STATE.calcInputs.regulated ? 'bg-[#0000CC] text-white border-[#0000CC]' : 'bg-white text-slate-500 border-slate-200'}">Yes</button><button type="button" data-action="toggle-regulated" data-val="false" class="px-3 py-1.5 text-xs rounded-lg border ${!STATE.calcInputs.regulated ? 'bg-[#0000CC] text-white border-[#0000CC]' : 'bg-white text-slate-500 border-slate-200'}">No</button></div>` : ''}</div></div>`;
       }
@@ -15114,20 +15312,25 @@
       function deriveFromEmployees(n){
         const ci = STATE.calcInputs;
         ci.users = n;
-        if (n <= 200) { ci.endpoints = n; ci.envs = 1; ci.apps = 25; ci.customApps = 2; ci.monthlyTickets = Math.round(n * 0.05); ci.avgTicketMins = 12; ci.pkgHours = 8; ci.patchHours = 5; }
-        else if (n <= 500) { ci.endpoints = Math.round(n * 1.1); ci.envs = 2; ci.apps = 50; ci.customApps = 5; ci.monthlyTickets = Math.round(n * 0.08); ci.avgTicketMins = 15; ci.pkgHours = 20; ci.patchHours = 15; }
-        else if (n <= 1000) { ci.endpoints = Math.round(n * 1.15); ci.envs = 2; ci.apps = 75; ci.customApps = 10; ci.monthlyTickets = Math.round(n * 0.10); ci.avgTicketMins = 15; ci.pkgHours = 35; ci.patchHours = 25; }
-        else if (n <= 3000) { ci.endpoints = Math.round(n * 1.2); ci.envs = 3; ci.apps = 100; ci.customApps = 15; ci.monthlyTickets = Math.round(n * 0.10); ci.avgTicketMins = 18; ci.pkgHours = 50; ci.patchHours = 35; }
-        else if (n <= 5000) { ci.endpoints = Math.round(n * 1.2); ci.envs = 3; ci.apps = 150; ci.customApps = 25; ci.monthlyTickets = Math.round(n * 0.12); ci.avgTicketMins = 18; ci.pkgHours = 80; ci.patchHours = 60; }
-        else if (n <= 10000) { ci.endpoints = Math.round(n * 1.25); ci.envs = 4; ci.apps = 175; ci.customApps = 30; ci.monthlyTickets = Math.round(n * 0.12); ci.avgTicketMins = 18; ci.pkgHours = 100; ci.patchHours = 70; }
-        else if (n <= 25000) { ci.endpoints = Math.round(n * 1.3); ci.envs = 5; ci.apps = 200; ci.customApps = 40; ci.monthlyTickets = Math.round(n * 0.12); ci.avgTicketMins = 20; ci.pkgHours = 130; ci.patchHours = 90; }
-        else { ci.endpoints = Math.round(n * 1.3); ci.envs = 6; ci.apps = 250; ci.customApps = 50; ci.monthlyTickets = Math.round(n * 0.12); ci.avgTicketMins = 20; ci.pkgHours = 160; ci.patchHours = 110; }
+        /* The band sets the ESTATE only. It carried pkgHours / patchHours
+           literals too, every one of them overwritten by applicationLoad()
+           four lines below — dead values that read as the model's inputs. */
+        if (n <= 200) { ci.endpoints = n; ci.envs = 1; ci.apps = 25; ci.customApps = 2; ci.monthlyTickets = Math.round(n * 0.05); ci.avgTicketMins = 12; }
+        else if (n <= 500) { ci.endpoints = Math.round(n * 1.1); ci.envs = 2; ci.apps = 50; ci.customApps = 5; ci.monthlyTickets = Math.round(n * 0.08); ci.avgTicketMins = 15; }
+        else if (n <= 1000) { ci.endpoints = Math.round(n * 1.15); ci.envs = 2; ci.apps = 75; ci.customApps = 10; ci.monthlyTickets = Math.round(n * 0.10); ci.avgTicketMins = 15; }
+        else if (n <= 3000) { ci.endpoints = Math.round(n * 1.2); ci.envs = 3; ci.apps = 100; ci.customApps = 15; ci.monthlyTickets = Math.round(n * 0.10); ci.avgTicketMins = 18; }
+        else if (n <= 5000) { ci.endpoints = Math.round(n * 1.2); ci.envs = 3; ci.apps = 150; ci.customApps = 25; ci.monthlyTickets = Math.round(n * 0.12); ci.avgTicketMins = 18; }
+        else if (n <= 10000) { ci.endpoints = Math.round(n * 1.25); ci.envs = 4; ci.apps = 175; ci.customApps = 30; ci.monthlyTickets = Math.round(n * 0.12); ci.avgTicketMins = 18; }
+        else if (n <= 25000) { ci.endpoints = Math.round(n * 1.3); ci.envs = 5; ci.apps = 200; ci.customApps = 40; ci.monthlyTickets = Math.round(n * 0.12); ci.avgTicketMins = 20; }
+        else { ci.endpoints = Math.round(n * 1.3); ci.envs = 6; ci.apps = 250; ci.customApps = 50; ci.monthlyTickets = Math.round(n * 0.12); ci.avgTicketMins = 20; }
         ci.appsTotal = ci.apps;
         ci.appsHighChurn = Math.round(ci.apps * DELIVERY_RATES.highCadenceShare);
-        /* The band sets the ESTATE. The hours follow from it, so a 25,000-seat
-           estate can no longer be modelled as under two engineers of work. */
+        /* The hours follow from the estate, so a 25,000-seat estate can no
+           longer be modelled as under two engineers of work. */
         const L0 = applicationLoad(ci);
         ci.pkgHours   = Math.round(L0.pkgHours * 10) / 10;
+        ci.pkgIntakeHours = Math.round(L0.intakeHrs * 100) / 100;
+        ci.pkgUpdateHours = Math.round(L0.updateHrs * 100) / 100;
         ci.patchHours = Math.round(L0.validation * 10) / 10;
         ci.deviceHours = Math.round(L0.deviceHrs * 10) / 10;
         /* Record the band's implied per-app rates. Editing the application
@@ -15156,6 +15359,8 @@
            and intake, and the catalog/custom split shifts with them. */
         const L = applicationLoad(ci);
         ci.pkgHours    = Math.round(L.pkgHours * 10) / 10;
+        ci.pkgIntakeHours = Math.round(L.intakeHrs * 100) / 100;
+        ci.pkgUpdateHours = Math.round(L.updateHrs * 100) / 100;
         ci.patchHours  = Math.round(L.validation * 10) / 10;
         ci.deviceHours = Math.round(L.deviceHrs * 10) / 10;
         ci.pkgHrsPerApp   = ci.pkgHours / apps;
@@ -15775,7 +15980,7 @@
           + '<div class="alm-hw-st wide" style="--i:4">' + hwChip(0)
           + '<b>Deploy</b><u>collections and assignments in each tool, ring by ring</u>'
           + '<div class="alm-hw-tools">' + HW_TOOLS.map((n, j) => '<span style="--i:' + j + '">' + n + '</span>').join('') + '</div></div>';
-        const hwHrs = (STATE.impact?.pkgHours || 6) * HW_TOOLS.length;
+        const hwHrs = (Math.round(releaseHoursAcrossTools(HW_TOOLS.length, (STATE.calcInputs?.complexMixPct ?? 20) / 100) * 10) / 10).toFixed(1);
         const rows = [[]];
             items.forEach((t) => {
               const w = doc.getTextWidth(t) + 16;
@@ -15872,13 +16077,25 @@
         y = section(y, 'THE OUTCOME IN THREE NUMBERS',
           'The Benefits tab’s reference model, measured before and after Application Workspace: build time per application, application tickets, and margin on the same delivery contract. Each pair below is the measurement behind the headline.');
         const clW = (CW - 16) / 3, clH = 68;
-        claimBox(ML,                 y, clW, clH, '88%', 'faster',        'Per-app build time, vs. building once per platform',
-          [['now', 1, '6.3 hrs', B.red], ['AW', 0.13, '0.8 hrs', B.green]]);
-        claimBox(ML + clW + 8,       y, clW, clH, '70%', 'fewer tickets', 'Application support tickets per 1,000 users',
-          [['now', 1, '50 / mo', B.red], ['AW', 0.30, '15 / mo', B.green]]);
-        claimBox(ML + 2 * (clW + 8), y, clW, clH, '60%', 'more margin',   'On the same contract — efficiency, not repricing',
-          [['now', 0.62, '43%', B.red], ['AW', 1, '69%', B.green]]);
-        y += clH + 10;
+        /* Read from the same constants the screen reads. The page and the tab
+           quoted these independently before, so a benchmark change moved one
+           and not the other. */
+        const clB = pkgBlended(0.20);
+        const clTkT = PT_LADDER.tickets.rows.reduce((a, r) => a + r[1], 0);
+        const clTkA = PT_LADDER.tickets.rows.reduce((a, r) => a + r[2], 0);
+        const clMp = refMarginPct();
+        claimBox(ML,                 y, clW, clH, pkgFasterPct(0.20) + '%', 'faster', 'Per-app build time, vs. building once per platform',
+          [['now', 1, clB.trad.toFixed(1) + ' hrs', B.red], ['AW', clB.trad > 0 ? clB.aw / clB.trad : 0, clB.aw.toFixed(1) + ' hrs', B.green]]);
+        claimBox(ML + clW + 8,       y, clW, clH, (clTkT > 0 ? Math.round((1 - clTkA / clTkT) * 100) : 0) + '%', 'fewer tickets', 'Application support tickets per 1,000 users',
+          [['now', 1, clTkT + ' / mo', B.red], ['AW', clTkT > 0 ? clTkA / clTkT : 0, clTkA + ' / mo', B.green]]);
+        claimBox(ML + 2 * (clW + 8), y, clW, clH, clMp.uplift + '%', 'more margin',   'On the same contract — efficiency, not repricing',
+          [['now', clMp.aw > 0 ? clMp.now / clMp.aw : 0, clMp.now + '%', B.red], ['AW', 1, clMp.aw + '%', B.green]]);
+        y += clH + 4;
+        /* The licence basis is named next to the margin claim, not left to the
+           reader to reconcile against the payback figures later in the deck. */
+        doc.setFont('Helvetica', 'italic'); doc.setFontSize(6.2); setC(B.soft);
+        doc.text(doc.splitTextToSize(refLicNote(), CW), ML, y);
+        y += 9;
 
         y = section(y, 'WHAT CHANGES ACROSS THE LIFECYCLE — AND WHAT DOES NOT',
           'The five stages of the application lifecycle, run separately today versus run through Application Workspace. The authority named in each row stays with your team.');
@@ -15960,7 +16177,7 @@
 
         doc.setFont('Helvetica', 'italic'); doc.setFontSize(6.4); setC(B.soft);
         const refNote = doc.splitTextToSize(
-          'Reference model: 1,000 users · $95 per loaded hour · an application-delivery line sold at $10 per user per month · Application Workspace at $1.65 per user per month. These are the planning benchmarks the Benefits tab of this application renders — not a measurement of ' + co + '’s environment. Validate them with the bake-off scorecard before they are used commercially.', CW);
+          'Reference model: ' + PT_REF.users.toLocaleString('en-US') + ' users · $' + PT_REF.rate + ' per loaded hour · an application-delivery line sold at $' + (PT_REF.rev / PT_REF.users).toFixed(0) + ' per user per month · Application Workspace at $' + refLicPU().toFixed(2) + ' per user per month (' + PT_REF.licBasis + '). ' + refLicNote() + ' These are the planning benchmarks the Benefits tab of this application renders — not a measurement of ' + co + '’s environment. Validate them with the bake-off scorecard before they are used commercially.', CW);
         doc.text(refNote, ML, y + 5);
 
         calloutAtFoot('Faster delivery, fewer application tickets, and a materially better margin on the same contract — every figure above traces back to the same two measurements: package touch time, and tickets per 1,000 users.');
@@ -16131,35 +16348,47 @@
          `past` gates the reveals; the export passes a resolver that returns
          true for every beat, so the document is the same markup the screen
          shows with every animation already landed. ── */
+      /* Every figure in the three claim boxes is read from the constant that
+         defines it \u2014 the packaging benchmarks, the ticket ladder and the
+         reference margin. None of them is typed here, so a benchmark edit in
+         the Assumptions panel moves the headline claims too. */
       function ptClaimsHtml(anim){
+        const b = pkgBlended(0.20), faster = pkgFasterPct(0.20);
+        const awW = b.trad > 0 ? Math.round(b.aw / b.trad * 100) : 0;
+        const tkT = PT_LADDER.tickets.rows.reduce((a, r) => a + r[1], 0);
+        const tkA = PT_LADDER.tickets.rows.reduce((a, r) => a + r[2], 0);
+        const tkCut = tkT > 0 ? Math.round((1 - tkA / tkT) * 100) : 0;
+        const mp = refMarginPct();
+        const marW = mp.aw > 0 ? Math.round(mp.now / mp.aw * 100) : 0;
         return `
               <div class="ptc-frame">
                 <span class="ptc-frame-t">Application delivery today vs. with Application Workspace</span>
               </div>
               <div class="ptc-claims ${anim ? 'ptc-count' : ''}">
                 <div class="ptc-claim">
-                  <div class="ptc-big"><span class="ptc-num" data-to="88">88%</span><em>faster app delivery</em></div>
+                  <div class="ptc-big"><span class="ptc-num" data-to="${faster}">${faster}%</span><em>faster app delivery</em></div>
                   <div class="ptc-lab">Per app \u2014 vs. Intune / ConfigMgr alone</div>
                   <div class="ptc-mini">
-                    <span class="ptc-mini-row"><i>Today</i><span class="ptc-mini-t"><b class="ptc-mini-now" style="--w:100%"></b></span><u>6.3 h / app</u></span>
-                    <span class="ptc-mini-row"><i>With AW</i><span class="ptc-mini-t"><b class="ptc-mini-aw" style="--w:13%"></b></span><u>0.8 h / app</u></span>
+                    <span class="ptc-mini-row"><i>Today</i><span class="ptc-mini-t"><b class="ptc-mini-now" style="--w:100%"></b></span><u>${b.trad.toFixed(1)} h / app</u></span>
+                    <span class="ptc-mini-row"><i>With AW</i><span class="ptc-mini-t"><b class="ptc-mini-aw" style="--w:${awW}%"></b></span><u>${b.aw.toFixed(1)} h / app</u></span>
                   </div>
                 </div>
                 <div class="ptc-claim">
-                  <div class="ptc-big"><span class="ptc-num" data-to="70">70%</span><em>fewer app tickets</em></div>
+                  <div class="ptc-big"><span class="ptc-num" data-to="${tkCut}">${tkCut}%</span><em>fewer app tickets</em></div>
                   <div class="ptc-lab">Users self-serve installs, updates, and fixes</div>
                   <div class="ptc-mini">
-                    <span class="ptc-mini-row"><i>Today</i><span class="ptc-mini-t"><b class="ptc-mini-now" style="--w:100%"></b></span><u>50 / mo</u></span>
-                    <span class="ptc-mini-row"><i>With AW</i><span class="ptc-mini-t"><b class="ptc-mini-aw" style="--w:30%"></b></span><u>15 / mo</u></span>
+                    <span class="ptc-mini-row"><i>Today</i><span class="ptc-mini-t"><b class="ptc-mini-now" style="--w:100%"></b></span><u>${tkT} / mo</u></span>
+                    <span class="ptc-mini-row"><i>With AW</i><span class="ptc-mini-t"><b class="ptc-mini-aw" style="--w:${tkT > 0 ? Math.round(tkA / tkT * 100) : 0}%"></b></span><u>${tkA} / mo</u></span>
                   </div>
                 </div>
                 <div class="ptc-claim">
-                  <div class="ptc-big"><span class="ptc-num" data-to="60">60%</span><em>more margin</em></div>
+                  <div class="ptc-big"><span class="ptc-num" data-to="${mp.uplift}">${mp.uplift}%</span><em>more margin</em></div>
                   <div class="ptc-lab">Same contract \u2014 lower cost to deliver</div>
                   <div class="ptc-mini">
-                    <span class="ptc-mini-row"><i>Today</i><span class="ptc-mini-t"><b class="ptc-mini-now" style="--w:62%"></b></span><u>43% margin</u></span>
-                    <span class="ptc-mini-row"><i>With AW</i><span class="ptc-mini-t"><b class="ptc-mini-aw" style="--w:100%"></b></span><u>69% margin</u></span>
+                    <span class="ptc-mini-row"><i>Today</i><span class="ptc-mini-t"><b class="ptc-mini-now" style="--w:${marW}%"></b></span><u>${mp.now}% margin</u></span>
+                    <span class="ptc-mini-row"><i>With AW</i><span class="ptc-mini-t"><b class="ptc-mini-aw" style="--w:100%"></b></span><u>${mp.aw}% margin</u></span>
                   </div>
+                  <div class="ptc-lab" style="margin-top:4px">${refLicNote()}</div>
                 </div>
               </div>`;
       }
@@ -16411,10 +16640,9 @@
         const pb = PACKAGING_BENCHMARKS;
         const rate = r.rate || ci.loadedRate || 95;
         const cmix = Math.max(0, Math.min(1, (ci.complexMixPct ?? 20) / 100));
-        const smix = 1 - cmix;
-        const tradBlended = smix * pb.tradStdHrs + cmix * pb.tradComplexHrs;
-        const awBlended = smix * pb.awStdHrs + cmix * pb.awComplexHrs;
-        const faster = tradBlended > 0 ? Math.round((1 - awBlended / tradBlended) * 100) : 0;
+        const _b = pkgBlended(cmix);
+        const tradBlended = _b.trad, awBlended = _b.aw;
+        const faster = pkgFasterPct(cmix);
 
         const cadWk = (all) => Array.from({ length: 52 }, (_, i) =>
           '<i class="' + (all || i === 25 ? 'on' : '') + '" style="--w:' + i + '"></i>').join('');
@@ -16449,13 +16677,13 @@
           + '<div class="alm-hw-st wide" style="--i:4">' + hwChip(0)
           + '<b>Deploy</b><u>collections and assignments in each tool, ring by ring</u>'
           + '<div class="alm-hw-tools">' + HW_TOOLS.map((n, j) => '<span style="--i:' + j + '">' + n + '</span>').join('') + '</div></div>';
-        const hwHrs = (STATE.impact?.pkgHours || 6) * HW_TOOLS.length;
+        const hwHrs = (Math.round(releaseHoursAcrossTools(HW_TOOLS.length, (STATE.calcInputs?.complexMixPct ?? 20) / 100) * 10) / 10).toFixed(1);
         const rows = [
           { k: 'Managed applications', d: 'Recast packages, tests and maintains these titles \u2014 the work leaves the team', now: r.catalogPkgHoursRaw, ret: r.catalogPkgReturnedRaw },
           { k: 'Custom packaging', d: 'In-house titles: build, detection logic, remediation \u2014 automated, not removed', now: r.customPkgHoursRaw, ret: r.customPkgReturnedRaw },
           { k: 'Update validation', d: 'Test, approve, stage and ship each new version, in every environment', now: r.patchHoursAll ?? ci.patchHours, ret: r.patchHoursReturnedRaw },
           { k: 'Support and access', d: 'Install, access, entitlement and failure tickets', now: r.currentSupportHoursRaw, ret: r.ticketHoursReturnedRaw },
-          { k: 'Device delivery', d: 'The application set on every new build and refresh', now: r.deviceHoursAll, ret: r.deviceHoursReturnedRaw },
+          { k: 'Device delivery', d: 'The application set on every new build and refresh — net of what Autopilot and Intune app assignment already automate', now: r.deviceHoursAll, ret: r.deviceHoursReturnedRaw },
         ].map((x) => {
           const nowR = Math.round(x.now || 0);
           const awR = Math.max(0, Math.round((x.now || 0) - (x.ret || 0)));
@@ -16479,9 +16707,9 @@
            first ~5 weeks, a linear ramp as the rings promote, run rate from
            month 4. Payback carries the rollout effort as well as the licence. */
         const monthly = annualValue / 12;
-        const goLive = 1.25;
-        const rampEnd = 4;
-        const implHrs = Math.round(goLive * 120);
+        const goLive = IMPL_BASIS.goLiveMonths;
+        const rampEnd = IMPL_BASIS.rampEndMonths;
+        const implHrs = implHoursFor();
         const implCost = implHrs * rate;
         const sunk = invest + implCost;
         const cashAt = (t) => {
@@ -16516,8 +16744,8 @@
         const tkAw = PT_LADDER.tickets.rows.reduce((a, x) => a + x[2], 0);
         const tkCut = tkNow > 0 ? Math.round((tkNow - tkAw) / tkNow * 100) : 0;
         const R = PT_REF;
-        const marT = R.rev - (R.delT + R.supT) * R.rate;
-        const marA = R.rev - ((R.delA + R.supA) * R.rate + R.users * R.licPU);
+        const _mar = refMargin(refLicPU());
+        const marT = _mar.now, marA = _mar.aw;
 
         return { r, ci, rate, tradBlended, awBlended, faster, rows, tNow, tAw,
           cut: tNow ? Math.round(monthlyReclaim / tNow * 100) : 0,
@@ -16662,11 +16890,13 @@
                 <div class="ex-assump-t">Modeled reductions (%)</div>
                 <div class="ex-assump-g">
                   <label class="ex-f"><span>Support tickets</span><input type="number" id="asn-ticket" min="0" max="100" value="${Math.round(a.ticketReduction * 100)}"></label>
-                  <label class="ex-f"><span>Catalog packaging</span><input type="number" id="asn-pkg-catalog" min="0" max="100" value="${Math.round(a.catalogPkgReduction * 100)}"></label>
+                  <label class="ex-f"><span>Catalog packaging</span><input type="number" id="asn-pkg-catalog" min="0" max="${Math.round(CATALOG_PKG_REDUCTION_MAX * 100)}" value="${Math.round(a.catalogPkgReduction * 100)}"></label>
                   <label class="ex-f"><span>Custom packaging</span><input type="number" id="asn-pkg-custom" min="0" max="100" value="${Math.round(a.customPkgReduction * 100)}"></label>
                   <label class="ex-f"><span>Update validation</span><input type="number" id="asn-patch" min="0" max="100" value="${Math.round(a.patchReduction * 100)}"></label>
-                  <label class="ex-f"><span>Device delivery</span><input type="number" id="asn-device" min="0" max="100" value="${Math.round((a.deviceReduction ?? 0.8) * 100)}"></label>
+                  <label class="ex-f"><span>Device delivery · residual</span><input type="number" id="asn-device" min="0" max="100" value="${Math.round((a.deviceReduction ?? 0.65) * 100)}"></label>
+                  <label class="ex-f"><span>Device work Intune already automates (%)</span><input type="number" id="asn-device-auto" min="0" max="100" value="${Math.round(ci.deviceAlreadyAutomatedPct ?? 60)}"></label>
                 </div>
+                <p class="ex-note" style="margin-top:2px">A residual under ${100 - Math.round(CATALOG_PKG_REDUCTION_MAX * 100)}% implies under five minutes per application per month for all packaging, config review, testing and release work combined. The playbook's own planning default is 1.5 h against an 8 h baseline (81%), so catalog packaging is capped at ${Math.round(CATALOG_PKG_REDUCTION_MAX * 100)}%. Device delivery reduction applies only to the share Intune does <em>not</em> already automate — at ${Math.round(ci.deviceAlreadyAutomatedPct ?? 60)}% already automated and ${Math.round((a.deviceReduction ?? 0.65) * 100)}% residual reduction, the modelled cut on that row is ${Math.round((1 - (ci.deviceAlreadyAutomatedPct ?? 60) / 100) * (a.deviceReduction ?? 0.65) * 100)}%.</p>
                 <div class="ex-assump-t">Rate of change — what drives the hours</div>
                 <div class="ex-assump-g">
                   <label class="ex-f"><span>Releases / yr · fast-cadence titles</span><input type="number" id="asn-rel-hi" value="${DELIVERY_RATES.releasesHiPerYear}"></label>
@@ -16684,8 +16914,10 @@
                   <label class="ex-f"><span>Platform \u00b7 complex</span><input type="number" id="asn-aw-cmp" step="0.1" value="${PACKAGING_BENCHMARKS.awComplexHrs}"></label>
                   <label class="ex-f"><span>Current \u00b7 standard</span><input type="number" id="asn-trad-std" step="0.01" value="${PACKAGING_BENCHMARKS.tradStdHrs}"></label>
                   <label class="ex-f"><span>Current \u00b7 complex</span><input type="number" id="asn-trad-cmp" step="0.1" value="${PACKAGING_BENCHMARKS.tradComplexHrs}"></label>
-                  <label class="ex-f"><span>Repeated per extra env (%)</span><input type="number" id="asn-env-repeat" min="0" max="100" value="${Math.round(PACKAGING_BENCHMARKS.envRepeatShare * 100)}"></label>
+                  <label class="ex-f"><span>First build repeated per extra env (%)</span><input type="number" id="asn-env-repeat-build" min="0" max="100" value="${Math.round(PACKAGING_BENCHMARKS.envRepeatFirstBuild * 100)}"></label>
+                  <label class="ex-f"><span>Update repeated per extra env (%)</span><input type="number" id="asn-env-repeat-update" min="0" max="100" value="${Math.round(PACKAGING_BENCHMARKS.envRepeatUpdate * 100)}"></label>
                 </div>
+                <p class="ex-note" style="margin-top:2px">${PACKAGING_BENCHMARKS.scopeNote} A first build repeats more per environment than an update does: when a new version arrives the detection logic, package structure and release path already exist on every platform, so only the format conversion and the re-test repeat.</p>
                 <div class="ex-assump-a">
                   <button type="button" class="ex-btn" data-action="save-assumptions">Save and recalculate</button>
                   <button type="button" class="ex-btn ex-btn-q" data-action="toggle-assumptions">Close</button>
@@ -16783,7 +17015,7 @@
           + '<div class="alm-hw-st wide" style="--i:4">' + hwChip(0)
           + '<b>Deploy</b><u>collections and assignments in each tool, ring by ring</u>'
           + '<div class="alm-hw-tools">' + HW_TOOLS.map((n, j) => '<span style="--i:' + j + '">' + n + '</span>').join('') + '</div></div>';
-        const hwHrs = (STATE.impact?.pkgHours || 6) * HW_TOOLS.length;
+        const hwHrs = (Math.round(releaseHoursAcrossTools(HW_TOOLS.length, (STATE.calcInputs?.complexMixPct ?? 20) / 100) * 10) / 10).toFixed(1);
         const rows = [
           ['Applications on automated updates', num(r.appsAutomatedBefore || 0) + ' \u2192 ' + num(r.appsAutomatedAfter || 0),
             'Of ' + num(r.appsTotalCur || 0) + ' in production. ' + (r.covEntered ? 'From the cross-reference entered above.' : 'Estimated until a cross-reference is entered above.')],
@@ -16851,15 +17083,20 @@
         const pb = PACKAGING_BENCHMARKS;
         const src = [
           ['Packaging benchmarks', pb.tradStdHrs + ' / ' + pb.tradComplexHrs + ' hrs current, ' + pb.awStdHrs + ' / ' + pb.awComplexHrs + ' hrs on the platform, standard / complex',
-            'Recast field test. Editable under Assumptions in \u00a74.'],
+            pb.scopeNote + ' One set of benchmarks drives the load model, the cycle card, the scorecard and both PDFs \u2014 no packaging hour is quoted anywhere else. Editable under Assumptions in \u00a74.'],
           ['Modeled reductions', Math.round(a.ticketReduction * 100) + '% support, ' + Math.round(a.catalogPkgReduction * 100) + '% catalog packaging, ' + Math.round(a.customPkgReduction * 100) + '% custom packaging, ' + Math.round(a.patchReduction * 100) + '% update validation',
             'Recast expected-case assumptions. Conservative values are available and change every figure on this page.'],
           ['Loaded engineer rate', '$' + (ci.loadedRate || 95) + ' per hour',
             'Your input. Applied uniformly to every hours-to-dollars conversion.'],
           ['Licence pricing', 'Graduated per-user list pricing, $4.00 down to $1.50 per user per month by band',
             'Recast list pricing. A quoted price replaces it.'],
-          ['Platform duplication', Math.round(pb.envRepeatShare * 100) + '% of a first-platform build repeated per additional environment \u2014 \u00d7' + (m.r.envDup || 1).toFixed(2) + ' across ' + ci.envs + ' environments',
-            'Applied to packaging and update-validation hours and to the one-time rebuild figure. Discovery, rationalisation and licence review are counted once.'],
+          ['Platform duplication', Math.round(pb.envRepeatFirstBuild * 100) + '% of a FIRST BUILD repeated per additional environment (\u00d7' + (m.r.envDupFirst || 1).toFixed(2) + ' across ' + ci.envs + ' environments); '
+            + Math.round(pb.envRepeatUpdate * 100) + '% of an UPDATE (\u00d7' + (m.r.envDupUpdate || 1).toFixed(2) + ')',
+            'Two multipliers, because they are not the same work. A first build repeats format conversion, detection logic, testing and release validation per platform; discovery, rationalisation and licence review are counted once. A version update repeats neither the detection logic nor the package structure \u2014 those already exist on every platform \u2014 so only the conversion and the re-test repeat. Update validation takes the update share; the one-time portfolio rebuild takes the first-build share.'],
+          ['Device delivery', num(Math.round(m.r.deviceHoursAll || 0)) + ' hrs/mo of application-layer touch time on builds and refreshes, of which '
+            + Math.round((m.r.deviceAlreadyAutomated || 0) * 100) + '% is already automated \u2014 ' + num(Math.round(m.r.deviceHoursAddressable || 0)) + ' hrs/mo addressable, '
+            + Math.round((a.deviceReduction ?? 0.65) * 100) + '% of that modelled as returned',
+            'Application-layer touch time per build or refresh, net of what Autopilot and Intune app assignment already automate. The model must not claim work the endpoint platform is already doing \u2014 this tab\u2019s own position is that enrollment, provisioning and policy stay where they are.'],
           ['Update-workload weighting', '12 updates a year for monthly-or-faster titles, 3 for the remainder',
             'Modeling convention, stated so the weighted view can be checked.'],
           ['Application estate', num(ci.apps) + ' applications generating ' + num(Math.round(applicationLoad(ci).events)) + ' release events a month at ' + applicationLoad(ci).buildHrs.toFixed(2) + ' blended build hours each a month, per environment',
@@ -16869,8 +17106,8 @@
           ['Application-layer figures', '696 applications in the average large enterprise; four-week browser release cadence; mean time to remediate complex third-party applications five months, ten days',
             'Zylo SaaS Management Index 2026; Chromium/Mozilla release schedules; Qualys enterprise remediation benchmark 2026. Shown in full under Current State.'],
         ];
-        if (!ent) src.push(['Reference model', num(PT_REF.users) + ' users, ' + exMoney(PT_REF.rev) + ' monthly revenue, $' + PT_REF.rate + ' per hour loaded, $' + PT_REF.licPU + ' per user per month licence',
-          'Basis for the delivery-line margin figure in the case above. Every other figure on this page comes from your own inputs.']);
+        if (!ent) src.push(['Reference model', num(PT_REF.users) + ' users, ' + exMoney(PT_REF.rev) + ' monthly revenue, $' + PT_REF.rate + ' per hour loaded, $' + refLicPU().toFixed(2) + ' per user per month licence (' + PT_REF.licBasis + ')',
+          refLicNote() + ' Basis for the delivery-line margin figure in the case above. Every other figure on this page comes from your own inputs.']);
         return `
               <table class="ex-tbl">
                 <tbody>
@@ -17511,6 +17748,20 @@
         const ci = STATE.calcInputs;
         const a = ROI_ASSUMPTIONS[STATE.calcScenario];
         const rate = ci.loadedRate || 95; // single editable loaded rate, used everywhere
+        /* The workload hours are computed, not seeded. If anything reaches here
+           before deriveFromEmployees has run — or after a field is cleared —
+           fall back to the load model rather than to a literal. */
+        if (!hrsOk(ci.pkgHours) || !hrsOk(ci.patchHours) || !hrsOk(ci.deviceHours)
+            || !hrsOk(ci.pkgIntakeHours) || !hrsOk(ci.pkgUpdateHours)) {
+          const L = applicationLoad(ci);
+          if (!hrsOk(ci.pkgHours))       ci.pkgHours       = Math.round(L.pkgHours * 10) / 10;
+          if (!hrsOk(ci.pkgIntakeHours)) ci.pkgIntakeHours = Math.round(L.intakeHrs * 100) / 100;
+          if (!hrsOk(ci.pkgUpdateHours)) ci.pkgUpdateHours = Math.round(L.updateHrs * 100) / 100;
+          if (!hrsOk(ci.patchHours))     ci.patchHours     = Math.round(L.validation * 10) / 10;
+          if (!hrsOk(ci.deviceHours))    ci.deviceHours    = Math.round(L.deviceHrs * 10) / 10;
+        }
+        /* Keep every derived claim in step with the benchmarks that produce it. */
+        syncDerivedClaims();
 
         // ── Raw (unrounded) values are the canonical source of truth ──
         // Every monthly-hours figure flows from these. We round only on output
@@ -17521,11 +17772,23 @@
         // Packaging is two distinct pools — catalog/store apps collapse
         // near-completely; custom apps still need engineering. Split the
         // pool by app share, apply per-pool reductions, then recombine.
-        /* dupFactor lives further down with the cycle model; recompute locally
-           so the pools and the cycle cannot use different factors. */
-        const envDup = 1 + Math.max(0, (ci.envs || 1) - 1) * PACKAGING_BENCHMARKS.envRepeatShare;
-        const pkgHoursAll   = ci.pkgHours * envDup;
-        const patchHoursAll = ci.patchHours * envDup;
+        /* Two platform-duplication multipliers, not one. A first build repeats
+           at 60% per additional environment — format conversion, detection
+           logic, testing, release validation. A version UPDATE does not: the
+           detection logic and package structure already exist on every
+           platform, so only the conversion and the re-test repeat, at 25%.
+           Applying the first-build share to update work was charging ~4.8 h to
+           repackage one release across three environments and another 3.5 h to
+           validate it — 100 hours a year for a single fast-cadence browser. */
+        const dup = envDupFactors(ci);
+        const envDupFirst = dup.first, envDupUpdate = dup.update;
+        const pkgParts = pkgSplit(ci);
+        const pkgHoursAll   = pkgParts.intake * envDupFirst + pkgParts.update * envDupUpdate;
+        /* Update validation is release-event work: it takes the update share. */
+        const patchHoursAll = Math.max(0, ci.patchHours ?? applicationLoad(ci).validation) * envDupUpdate;
+        /* Blended factor, for display only — the two components above are what
+           the engine actually uses. */
+        const envDup = pkgParts.total > 0 ? pkgHoursAll / pkgParts.total : envDupUpdate;
         const totalApps    = Math.max(0, ci.apps);
         const customApps   = Math.max(0, Math.min(ci.customApps, totalApps));
         const customShare  = totalApps > 0 ? customApps / totalApps : 0;
@@ -17542,9 +17805,19 @@
         /* Device delivery. Every new build and every refresh needs its
            application set put on it, and that work was missing from the model
            entirely. Counted once per device, not per environment: a device is
-           built once, whichever platform it is. */
+           built once, whichever platform it is.
+
+           Net of what the endpoint platform already does. This tab's own
+           positioning is "you already have Intune" — on an Autopilot + Intune
+           estate with app assignment configured, most application-layer touch
+           time on a build is already automated. Claiming a reduction against
+           the gross figure charges the customer twice for the same automation,
+           once to Microsoft and once to us. Only the residual is ours to
+           reduce. */
         const deviceHoursAll = Math.max(0, ci.deviceHours ?? applicationLoad(ci).deviceHrs);
-        const deviceHoursReturnedRaw = deviceHoursAll * (a.deviceReduction ?? 0.8);
+        const deviceAlreadyAutomated = Math.max(0, Math.min(100, ci.deviceAlreadyAutomatedPct ?? 60)) / 100;
+        const deviceHoursAddressable = deviceHoursAll * (1 - deviceAlreadyAutomated);
+        const deviceHoursReturnedRaw = deviceHoursAddressable * (a.deviceReduction ?? 0.65);
 
         const totalReturnedRaw       = ticketHoursReturnedRaw + pkgHoursReturnedRaw + patchHoursReturnedRaw + deviceHoursReturnedRaw;
         const baselineRaw            = currentSupportHoursRaw + pkgHoursAll + patchHoursAll + deviceHoursAll;
@@ -17579,7 +17852,10 @@
         // Hours_Saved    = Trad − AW;   Time_Multiple = Trad ÷ AW;   $_Saved = Hours_Saved × loadedRate
         const pb = PACKAGING_BENCHMARKS;
         const complexMix = Math.max(0, Math.min(1, (ci.complexMixPct ?? 20) / 100));
-        const dupFactor = 1 + Math.max(0, (ci.envs || 1) - 1) * pb.envRepeatShare;
+        /* The one-time figure rebuilds the EXISTING portfolio per environment.
+           That is a first build in each one, so it takes the first-build share,
+           not the update share. */
+        const dupFactor = envDupFirst;
         const standardMix = 1 - complexMix;
         const cycleStandardApps = Math.round(ci.apps * standardMix);
         const cycleComplexApps  = Math.max(0, ci.apps - cycleStandardApps);
@@ -17655,7 +17931,10 @@
           totalRecoveredAnnual, monthlyCostOfWaiting,
           cycleStandardApps, cycleComplexApps, awCycleHours, tradCycleHours, cycleHoursSaved,
           cycleTimeMultiple, cycleDollarsSaved,
-          pkgHoursAll: Math.round(pkgHoursAll), patchHoursAll: Math.round(patchHoursAll), envDup,
+          pkgHoursAll: Math.round(pkgHoursAll), patchHoursAll: Math.round(patchHoursAll),
+          envDup, envDupFirst, envDupUpdate,
+          pkgIntakeAll: pkgParts.intake * envDupFirst, pkgUpdateAll: pkgParts.update * envDupUpdate,
+          deviceAlreadyAutomated, deviceHoursAddressable,
           awAnnualInvestment, recurringAnnualValue, oneTimePackagingValue, year1Value, year1Net,
           year1ROIMultiple, recurringROIMultiple, paybackMonths,
           threeYearValue, threeYearInvestment, threeYearNet, awBlendedPerUserMonth,
@@ -18065,11 +18344,16 @@
             const t = document.getElementById('asn-ticket'); const pCat = document.getElementById('asn-pkg-catalog'); const pCust = document.getElementById('asn-pkg-custom'); const pa = document.getElementById('asn-patch'); const s = document.getElementById('asn-strategic');
             const ux = document.getElementById('asn-ux'); const dh = document.getElementById('asn-dash'); const mt = document.getElementById('asn-mt');
             if (t) ROI_ASSUMPTIONS[sc].ticketReduction = clamp(t.value);
-            if (pCat)  ROI_ASSUMPTIONS[sc].catalogPkgReduction = clamp(pCat.value);
+            /* Clamped here as well as in the markup: max= is a hint a user can
+               step past with the keyboard, and a 97% catalog reduction is not a
+               number this model is willing to produce. */
+            if (pCat)  ROI_ASSUMPTIONS[sc].catalogPkgReduction = Math.min(CATALOG_PKG_REDUCTION_MAX, clamp(pCat.value));
             if (pCust) ROI_ASSUMPTIONS[sc].customPkgReduction  = clamp(pCust.value);
             if (pa) ROI_ASSUMPTIONS[sc].patchReduction = clamp(pa.value); if (s) ROI_ASSUMPTIONS[sc].strategicRealloc = clamp(s.value);
             const dev = document.getElementById('asn-device');
             if (dev) ROI_ASSUMPTIONS[sc].deviceReduction = clamp(dev.value);
+            const devAuto = document.getElementById('asn-device-auto');
+            if (devAuto) STATE.calcInputs.deviceAlreadyAutomatedPct = Math.max(0, Math.min(100, cleanNum(devAuto.value)));
             /* Rate-of-change drivers. Saving these re-derives the pools from
                the load model, so the hours on screen always match the rates
                that produced them. */
@@ -18087,6 +18371,8 @@
             if (rHi || rLo || hiSh || intk || upSh || valH || dRef || dHrs) {
               const L = applicationLoad(STATE.calcInputs);
               STATE.calcInputs.pkgHours    = Math.round(L.pkgHours * 10) / 10;
+              STATE.calcInputs.pkgIntakeHours = Math.round(L.intakeHrs * 100) / 100;
+              STATE.calcInputs.pkgUpdateHours = Math.round(L.updateHrs * 100) / 100;
               STATE.calcInputs.patchHours  = Math.round(L.validation * 10) / 10;
               STATE.calcInputs.deviceHours = Math.round(L.deviceHrs * 10) / 10;
             }
@@ -18101,8 +18387,19 @@
             if (awC)   PACKAGING_BENCHMARKS.awComplexHrs  = Math.max(0, cleanNum(awC.value));
             if (trS)   PACKAGING_BENCHMARKS.tradStdHrs    = Math.max(0, cleanNum(trS.value));
             if (trC)   PACKAGING_BENCHMARKS.tradComplexHrs= Math.max(0, cleanNum(trC.value));
-            const envR = document.getElementById('asn-env-repeat');
-            if (envR)  PACKAGING_BENCHMARKS.envRepeatShare = Math.max(0, Math.min(1, cleanNum(envR.value) / 100));
+            const envRB = document.getElementById('asn-env-repeat-build');
+            const envRU = document.getElementById('asn-env-repeat-update');
+            if (envRB) PACKAGING_BENCHMARKS.envRepeatFirstBuild = Math.max(0, Math.min(1, cleanNum(envRB.value) / 100));
+            if (envRU) PACKAGING_BENCHMARKS.envRepeatUpdate     = Math.max(0, Math.min(1, cleanNum(envRU.value) / 100));
+            /* Benchmarks changed: rebuild the workload the benchmarks drive, and
+               rewrite every derived claim that quotes them. */
+            if (awS || awC || trS || trC) {
+              const L2 = applicationLoad(STATE.calcInputs);
+              STATE.calcInputs.pkgHours    = Math.round(L2.pkgHours * 10) / 10;
+              STATE.calcInputs.pkgIntakeHours = Math.round(L2.intakeHrs * 100) / 100;
+              STATE.calcInputs.pkgUpdateHours = Math.round(L2.updateHrs * 100) / 100;
+            }
+            syncDerivedClaims();
             calculateImpact(); STATE.showAssumptions = false; render(); return;
           }
           if (action === 'toggle-regulated') { STATE.calcInputs.regulated = act.getAttribute('data-val') === 'true'; render(); return; }
@@ -18311,7 +18608,14 @@
           if (e.target?.id === 'roi-custom') { const ci = STATE.calcInputs; ci.customApps = Math.max(0, Math.min(ci.apps, cleanNum(e.target.value))); ci.customSharePct = ci.customApps / Math.max(1, ci.apps); return; }
           if (e.target?.id === 'roi-tickets') { STATE.calcInputs.monthlyTickets = cleanNum(e.target.value); return; }
           if (e.target?.id === 'roi-ticketmins') { STATE.calcInputs.avgTicketMins = cleanNum(e.target.value); return; }
-          if (e.target?.id === 'roi-pkghrs') { const ci = STATE.calcInputs; ci.pkgHours = Math.max(0, cleanNum(e.target.value)); ci.pkgHrsPerApp = ci.pkgHours / Math.max(1, ci.apps); return; }
+          /* A hand-entered combined figure stays authoritative; the intake /
+             update components are rescaled to it so the two duplication
+             multipliers keep applying to the right proportions. */
+          if (e.target?.id === 'roi-pkghrs') { const ci = STATE.calcInputs; const sp = pkgSplit(ci); const share = sp.total > 0 ? sp.intake / sp.total : 0;
+            ci.pkgHours = Math.max(0, cleanNum(e.target.value));
+            ci.pkgIntakeHours = Math.round(ci.pkgHours * share * 100) / 100;
+            ci.pkgUpdateHours = Math.round((ci.pkgHours - ci.pkgHours * share) * 100) / 100;
+            ci.pkgHrsPerApp = ci.pkgHours / Math.max(1, ci.apps); return; }
           if (e.target?.id === 'roi-patchhrs') { const ci = STATE.calcInputs; ci.patchHours = Math.max(0, cleanNum(e.target.value)); ci.patchHrsPerApp = ci.patchHours / Math.max(1, ci.apps); return; }
           if (e.target?.id === 'roi-devicehrs') { STATE.calcInputs.deviceHours = Math.max(0, cleanNum(e.target.value)); return; }
           if (e.target?.id === 'roi-reqs') { STATE.calcInputs.openReqs = cleanNum(e.target.value); return; }
@@ -18370,7 +18674,23 @@
       STATE.currentCapacitySlope = STATE.targetCapacitySlope;
 
       deriveFromEmployees(STATE.calcInputs.users);
+      syncDerivedClaims();
       calculateImpact();
+      /* Load-time guard on the reference licence. If PT_REF claims to be
+         quoting list pricing it must actually match the price book — otherwise
+         the margin card and the payback card describe two different purchases
+         and nothing on screen says so. */
+      (function assertRefLicence(){
+        if (PT_REF.licBasis !== 'list' && PT_REF.licBasis !== 'partner net') {
+          console.error('PT_REF.licBasis must be "list" or "partner net", got:', PT_REF.licBasis);
+          return;
+        }
+        if (PT_REF.licBasis === 'list' && Math.abs(PT_REF.licPU - refListPU()) > 0.01) {
+          console.error('PT_REF.licBasis is "list" but licPU ($' + PT_REF.licPU.toFixed(2)
+            + ') disagrees with the price book ($' + refListPU().toFixed(2)
+            + '). Either set licBasis to "partner net" or correct licPU.');
+        }
+      })();
       document.addEventListener('DOMContentLoaded', render);
       document.addEventListener('keydown',(e)=>{
         if (STATE.insightContent && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
