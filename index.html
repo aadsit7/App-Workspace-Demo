@@ -7665,6 +7665,184 @@
         .ac-pkgrow { padding: 6px 13px; }
         .ac-caption { margin-top: 5px; padding: 7px 12px; font-size: 11px; }
       }
+      /* ═══ ALM explainer ══════════════════════════════════════════════════
+         Rail button, plus a keynote-style walkthrough behind it: one idea per
+         scene, big type, one visual. Scene state is an `is-on` class driven by
+         almShow() — no app re-render, so each scene's entrance animation
+         restarts cleanly when it becomes visible. */
+      .alm-btn { width: 100%; display: flex; align-items: center; gap: 9px; padding: 9px 10px; margin-bottom: 10px; background: #fff; border: 1px solid var(--r-blue); border-radius: 6px; text-align: left; transition: background 160ms cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 160ms cubic-bezier(0.2, 0.8, 0.2, 1); }
+      .alm-btn:hover { background: var(--r-quote-bg); box-shadow: 0 2px 8px rgba(26, 26, 46, 0.08); }
+      .alm-btn:active { transform: translateY(1px); }
+      .alm-btn-ico { flex: none; width: 26px; height: 26px; border-radius: 6px; background: var(--r-blue); color: #fff; display: grid; place-items: center; }
+      .alm-btn-ico i, .alm-btn-ico svg { width: 14px; height: 14px; }
+      .alm-btn-tx { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+      .alm-btn-tx b { font-size: 12.5px; text-wrap: pretty; font-weight: 700; letter-spacing: -0.01em; line-height: 1.1; color: var(--r-ink); }
+      .alm-btn-tx u { text-decoration: none; font-size: 9.5px; font-weight: 600; line-height: 1.25; color: var(--r-ink-2); }
+      .alm-btn-play { flex: none; width: 16px; height: 16px; color: var(--r-blue); }
+
+      /* ── stage ── */
+      .alm-stage { position: relative; }
+      .alm-scene { display: none; }
+      .alm-scene.is-on { display: grid; grid-template-rows: auto 1fr; gap: 22px; height: 392px; }
+      .alm-sh { text-align: center; max-width: 800px; width: 100%; justify-self: center; }
+      .alm-sh h3 { margin: 0; text-align: center; font-size: 31px; font-weight: 800; letter-spacing: -0.025em; line-height: 1.16; color: var(--r-ink); }
+      .alm-sh p { margin: 9px 0 0; text-align: center; font-size: 15px; font-weight: 500; line-height: 1.5; color: var(--r-ink-2); text-wrap: pretty; }
+      .alm-scene.is-on .alm-sh { animation: almIn 500ms cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+      .alm-vis { display: grid; place-items: center; min-height: 0; }
+      @keyframes almIn { from { opacity: 0; transform: translateY(11px); } to { opacity: 1; transform: none; } }
+      @keyframes almFade { from { opacity: 0; } to { opacity: 1; } }
+      @keyframes almCell { from { opacity: 0; transform: scale(0.4); } to { opacity: 1; transform: none; } }
+
+      /* scene 1 — one phone, three beats */
+      .alm-p1 { display: grid; grid-template-columns: auto 230px; gap: 52px; align-items: center; }
+      .alm-phone { position: relative; width: 138px; padding: 18px 14px 16px; background: #fff; border: 2px solid #C6CCF2; border-radius: 22px; }
+      .alm-phone::before { content: ''; position: absolute; top: 7px; left: 50%; transform: translateX(-50%); width: 36px; height: 4px; border-radius: 999px; background: #C6CCF2; }
+      .alm-pgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+      .alm-pgrid i { display: block; aspect-ratio: 1; border-radius: 8px; background: #DDE3F5; }
+      .alm-pgrid i.hero { background: var(--r-blue); opacity: 0; }
+      .alm-scene.is-on .alm-pgrid i.hero { animation: almHero 8.6s linear both; }
+      @keyframes almHero {
+        0%, 4% { opacity: 0; transform: translateY(-11px) scale(0.84); }
+        10%, 70% { opacity: 1; transform: none; }
+        79%, 100% { opacity: 0; transform: scale(0.7); }
+      }
+      .alm-ver { position: absolute; left: 50%; bottom: -13px; width: 0; }
+      .alm-ver u { position: absolute; left: 0; top: 0; transform: translateX(-50%); text-decoration: none; white-space: nowrap; padding: 2px 7px; border-radius: 999px; background: var(--r-blue); color: #fff; font-family: ui-monospace, SFMono-Regular, monospace; font-size: 9.5px; font-weight: 700; opacity: 0; }
+      .alm-scene.is-on .alm-ver u.a { animation: almPillA 8.6s linear both; }
+      .alm-scene.is-on .alm-ver u.b { animation: almPillB 8.6s linear both; }
+      @keyframes almPillA { 0%, 9% { opacity: 0; } 13%, 36% { opacity: 1; } 40%, 100% { opacity: 0; } }
+      @keyframes almPillB { 0%, 40% { opacity: 0; } 45%, 70% { opacity: 1; } 78%, 100% { opacity: 0; } }
+      .alm-beats { display: flex; flex-direction: column; gap: 16px; }
+      .alm-beat { display: grid; grid-template-columns: 34px 1fr; gap: 13px; align-items: center; opacity: 0.18; }
+      .alm-beat .tk { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 8px; background: var(--r-surface-2); color: var(--r-blue); }
+      .alm-beat .tk i, .alm-beat .tk svg { width: 16px; height: 16px; }
+      .alm-beat > span:last-child { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; line-height: 1.3; color: var(--r-ink); }
+      .alm-scene.is-on .alm-beat { animation-duration: 8.6s; animation-timing-function: linear; animation-fill-mode: both; }
+      .alm-scene.is-on .alm-beat[data-b="0"] { animation-name: almBeat0; }
+      .alm-scene.is-on .alm-beat[data-b="1"] { animation-name: almBeat1; }
+      .alm-scene.is-on .alm-beat[data-b="2"] { animation-name: almBeat2; }
+      @keyframes almBeat0 { 0%, 2% { opacity: 0.16; } 8%, 100% { opacity: 1; } }
+      @keyframes almBeat1 { 0%, 36% { opacity: 0.16; } 43%, 100% { opacity: 1; } }
+      @keyframes almBeat2 { 0%, 72% { opacity: 0.16; } 79%, 100% { opacity: 1; } }
+
+      /* scene 2 — the three stages, named */
+      .alm-chain { display: flex; align-items: center; gap: 14px; }
+      .alm-link { display: grid; justify-items: center; gap: 10px; width: 178px; padding: 20px 16px; background: #fff; border: 1px solid var(--r-divider); border-radius: 8px; text-align: center; opacity: 0; }
+      .alm-scene.is-on .alm-link { animation: almIn 460ms cubic-bezier(0.2, 0.8, 0.2, 1) calc(280ms + var(--i) * 300ms) both; }
+      .alm-link .ic { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 9px; background: var(--r-surface-2); color: var(--r-blue); }
+      .alm-link .ic i, .alm-link .ic svg { width: 21px; height: 21px; }
+      .alm-link b { font-size: 15px; font-weight: 700; letter-spacing: -0.01em; color: var(--r-ink); }
+      .alm-link span { font-size: 11.5px; font-weight: 600; color: var(--r-ink-2); }
+      .alm-chev { width: 20px; height: 20px; color: #C6CCF2; opacity: 0; }
+      .alm-scene.is-on .alm-chev { animation: almFade 300ms ease-out calc(430ms + var(--i) * 300ms) both; }
+
+      /* scene 3 — the hospital */
+      .alm-p3 { display: grid; grid-template-columns: auto 1fr; gap: 40px; align-items: center; width: 100%; }
+      .alm-big { font-size: 78px; font-weight: 800; letter-spacing: -0.045em; line-height: 0.95; color: var(--r-blue); font-variant-numeric: tabular-nums; opacity: 0; }
+      .alm-scene.is-on .alm-big { animation: almIn 560ms cubic-bezier(0.2, 0.8, 0.2, 1) 200ms both; }
+      .alm-biglab { display: block; margin-top: 6px; font-size: 12.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--r-ink-2); }
+      .alm-fieldwrap { display: grid; gap: 9px; }
+      .alm-field { display: grid; grid-template-columns: repeat(20, 1fr); gap: 4px; }
+      .alm-field i { display: block; aspect-ratio: 1; border-radius: 3px; background: #AABBEE; opacity: 0; }
+      .alm-scene.is-on .alm-field i { animation: almCell 240ms ease-out calc(420ms + var(--i) * 9ms) both; }
+      .alm-fieldcap { font-size: 11px; font-weight: 600; color: var(--r-muted-blue); }
+
+      /* scene 4 — not the same software */
+      .alm-p4 { display: grid; gap: 14px; width: 100%; max-width: 700px; justify-items: center; }
+      .alm-roles2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; width: 100%; }
+      .alm-role { padding: 20px 22px 22px; background: #fff; border: 1px solid var(--r-divider); border-radius: 8px; display: grid; gap: 13px; opacity: 0; }
+      .alm-scene.is-on .alm-role { animation: almIn 480ms cubic-bezier(0.2, 0.8, 0.2, 1) calc(280ms + var(--i) * 380ms) both; }
+      .alm-role b { font-size: 17px; font-weight: 700; letter-spacing: -0.01em; color: var(--r-ink); }
+      .alm-role .apps { display: flex; flex-wrap: wrap; gap: 8px; }
+      .alm-role .apps i { display: block; width: 32px; height: 32px; border-radius: 8px; }
+
+      /* scene 5 — the work vs the team */
+      .alm-p5 { display: grid; grid-template-columns: 1fr auto 1fr; gap: 22px; align-items: center; width: 100%; max-width: 760px; }
+      .alm-card5 { padding: 16px 18px 18px; background: #fff; border: 1px solid var(--r-divider); border-radius: 8px; opacity: 0; }
+      .alm-scene.is-on .alm-card5 { animation: almIn 480ms cubic-bezier(0.2, 0.8, 0.2, 1) calc(260ms + var(--i) * 620ms) both; }
+      .alm-c5h { display: block; font-size: 10px; font-weight: 800; letter-spacing: 0.13em; text-transform: uppercase; color: var(--r-blue); margin-bottom: 9px; }
+      .alm-wrow { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 7px 0; }
+      .alm-wrow + .alm-wrow { border-top: 1px solid var(--r-surface-2); }
+      .alm-wrow em { font-style: normal; font-size: 13.5px; font-weight: 600; color: var(--r-ink); }
+      .alm-wrow u { text-decoration: none; font-family: ui-monospace, SFMono-Regular, monospace; font-size: 12.5px; font-weight: 700; color: var(--r-blue); }
+      .alm-lands { display: grid; justify-items: center; gap: 5px; opacity: 0; }
+      .alm-scene.is-on .alm-lands { animation: almFade 400ms ease-out 900ms both; }
+      .alm-lands i, .alm-lands svg { width: 24px; height: 24px; color: var(--r-blue); }
+      .alm-lands span { font-size: 10px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--r-muted-blue); }
+      .alm-teamrow { display: flex; justify-content: center; gap: 9px; color: var(--r-blue); padding: 4px 0 2px; }
+      .alm-teamrow i, .alm-teamrow svg { width: 24px; height: 24px; }
+
+      /* scene 6 — the name */
+      .alm-scene.alm-final.is-on { grid-template-rows: 1fr; align-content: center; }
+      .alm-fin { position: relative; width: 100%; padding: 34px 38px; border-radius: 8px; background: var(--r-quote-bg); border: 1px solid #C6CCF2; }
+      .alm-scene.is-on .alm-fin { animation: almIn 560ms cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+      .alm-fin b { display: block; font-size: 30px; font-weight: 800; letter-spacing: -0.028em; line-height: 1.15; color: var(--r-blue); }
+      .alm-fin p { margin: 13px 0 0; max-width: 64ch; font-size: 15.5px; line-height: 1.55; color: var(--r-ink-2); text-wrap: pretty; }
+
+      /* scene 7 — the pace changed */
+      .alm-p7 { display: grid; gap: 22px; width: 100%; max-width: 740px; }
+      .alm-lane { display: grid; grid-template-columns: 142px 1fr 122px; gap: 18px; align-items: center; opacity: 0; }
+      .alm-scene.is-on .alm-lane { animation: almIn 460ms cubic-bezier(0.2, 0.8, 0.2, 1) calc(var(--ld) - 400ms) both; }
+      .alm-lane-h b { display: block; font-size: 23px; font-weight: 800; letter-spacing: -0.025em; line-height: 1; color: var(--r-ink); }
+      .alm-lane-h u { display: block; margin-top: 3px; text-decoration: none; font-size: 11.5px; font-weight: 600; color: var(--r-ink-2); }
+      .alm-track { position: relative; height: 46px; border-radius: 6px; background: var(--r-surface-2); border: 1px solid var(--r-divider); }
+      .alm-track i { position: absolute; top: 9px; bottom: 9px; width: 2px; border-radius: 2px; background: var(--r-blue); opacity: 0; }
+      .alm-scene.is-on .alm-track i { animation: almFade 200ms ease-out calc(var(--ld) + var(--i) * var(--st)) both; }
+      .alm-lane-n { font-variant-numeric: tabular-nums; font-size: 25px; font-weight: 800; letter-spacing: -0.03em; line-height: 1; color: var(--r-blue); }
+      .alm-lane-n em { display: block; margin-top: 4px; font-style: normal; font-size: 10.5px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--r-ink-2); }
+
+      /* scene 8 — what that does to the team */
+      .alm-p8 { display: grid; gap: 18px; width: 100%; max-width: 700px; }
+      .alm-bar { display: grid; grid-template-columns: 132px 1fr 164px; gap: 18px; align-items: center; opacity: 0; }
+      .alm-scene.is-on .alm-bar { animation: almIn 460ms cubic-bezier(0.2, 0.8, 0.2, 1) calc(240ms + var(--i) * 700ms) both; }
+      .alm-bar-l { font-size: 14.5px; font-weight: 700; letter-spacing: -0.01em; color: var(--r-ink); }
+      .alm-bar-t { display: block; height: 28px; border-radius: 5px; background: var(--r-surface-2); overflow: hidden; }
+      .alm-bar-t b { display: block; width: 0; height: 100%; border-radius: 5px; background: var(--r-blue); }
+      .alm-scene.is-on .alm-bar-t b { animation: almGrow 1000ms cubic-bezier(0.2, 0.8, 0.2, 1) calc(620ms + var(--i) * 700ms) both; }
+      @keyframes almGrow { from { width: 0; } to { width: var(--w); } }
+      .alm-bar-v { font-size: 13px; font-weight: 700; color: var(--r-blue); }
+      .alm-bar.flat .alm-bar-t b { background: #AABBEE; }
+      .alm-bar.flat .alm-bar-v { color: var(--r-ink-2); }
+
+      /* ── controls ── */
+      .alm-ctl { display: flex; align-items: center; justify-content: center; gap: 14px; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--r-divider); }
+      .alm-nav { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 999px; border: 1px solid var(--r-divider); background: #fff; color: var(--r-ink-2); transition: border-color 150ms ease, color 150ms ease; }
+      .alm-nav:hover:not(:disabled) { border-color: var(--r-blue); color: var(--r-blue); }
+      .alm-nav:disabled { opacity: 0.32; }
+      .alm-nav i, .alm-nav svg { width: 15px; height: 15px; }
+      .alm-dots { display: flex; gap: 6px; }
+      .alm-dot { width: 38px; height: 5px; padding: 0; border: 0; border-radius: 999px; background: #DDE3F5; overflow: hidden; }
+      .alm-dot.done { background: var(--r-blue); }
+      .alm-dot > span { display: block; height: 100%; width: 0; background: var(--r-blue); }
+      .alm-dot.now > span { animation: almFill var(--dur, 6s) linear both; }
+      .alm-ctl[data-playing="0"] .alm-dot.now > span { animation-play-state: paused; }
+      @keyframes almFill { from { width: 0; } to { width: 100%; } }
+      .alm-count { min-width: 36px; text-align: center; font-size: 11px; font-weight: 700; color: var(--r-muted-blue); font-variant-numeric: tabular-nums; }
+      .alm-ctl[data-playing="1"] .alm-ico-play, .alm-ctl[data-playing="0"] .alm-ico-pause { display: none; }
+      .alm-replay { display: inline-flex; align-items: center; gap: 5px; padding: 5px 11px; border-radius: 999px; border: 1px solid var(--r-blue); background: #fff; font-size: 11px; font-weight: 600; color: var(--r-blue); transition: background 150ms ease; }
+      .alm-replay:hover { background: var(--r-quote-bg); }
+      .alm-replay svg, .alm-replay i { width: 13px; height: 13px; }
+
+      @media (prefers-reduced-motion: reduce) {
+        .alm-scene.is-on .alm-sh, .alm-scene.is-on .alm-link, .alm-scene.is-on .alm-chev,
+        .alm-scene.is-on .alm-big, .alm-scene.is-on .alm-field i, .alm-scene.is-on .alm-role,
+        .alm-scene.is-on .alm-card5, .alm-scene.is-on .alm-lands,
+        .alm-scene.is-on .alm-lane, .alm-scene.is-on .alm-track i, .alm-scene.is-on .alm-bar,
+        .alm-scene.is-on .alm-fin, .alm-dot.now > span { animation: none !important; opacity: 1 !important; transform: none !important; }
+        .alm-scene.is-on .alm-bar-t b { animation: none !important; width: var(--w) !important; }
+        .alm-scene.is-on .alm-pgrid i.hero, .alm-scene.is-on .alm-ver u.b { animation: none !important; opacity: 1 !important; }
+        .alm-scene.is-on .alm-ver u.a { display: none; }
+        .alm-scene.is-on .alm-beat { animation: none !important; opacity: 1 !important; }
+      }
+      @media (max-width: 900px) {
+        .alm-scene.is-on { height: auto; }
+        .alm-p1, .alm-p3, .alm-p5 { grid-template-columns: 1fr; gap: 22px; justify-items: center; }
+        .alm-lane, .alm-bar { grid-template-columns: 96px 1fr; }
+        .alm-lane-n, .alm-bar-v { grid-column: 2; }
+        .alm-chain { flex-direction: column; }
+        .alm-roles2 { grid-template-columns: 1fr; }
+        .alm-sh h3 { font-size: 24px; }
+      }
 </style>
   </head>
 
@@ -7750,6 +7928,7 @@
         showSolutionCards: true,
         openWhy: null,
         openWhyModal: null,
+        showALM: false,
         openImpactModal: null,
         openCards: { core: true, onboarding: false, trust: false },
         activeCard: 'core',
@@ -8986,6 +9165,7 @@
           </main>
           ${renderModal()}
           ${renderWhyModal()}
+          ${renderALMModal()}
           ${renderImpactModal()}
           ${renderInsightModal()}
           ${renderAnalystModal()}
@@ -9004,6 +9184,7 @@
             } catch {}
           }
         }
+        if (STATE.showALM) { almStart(); } else { almStop(); }
         if (STATE.activeTab === 'solution') { attachAccordionKeyboard(); }
         if (STATE.activeTab === 'roi' || STATE.activeTab === 'partner') { updateROIOutputs(); }
         if (STATE.activeTab === 'problems') {
@@ -9064,6 +9245,10 @@
                   <svg id="capacity-gap-chart" viewBox="0 0 860 420" preserveAspectRatio="xMidYMid meet"></svg>
                 </div>
                 <div class="w-full bg-white/70 backdrop-blur-lg rounded-xl shadow-sm p-3 border border-slate-200 cs-challenges">
+                  <button type="button" class="alm-btn focus-ring" data-action="open-alm-modal" aria-label="Application Lifecycle Management explainer">
+                    <span class="alm-btn-ico"><i data-lucide="refresh-cw" aria-hidden="true"></i></span>
+                    <span class="alm-btn-tx"><b>Application Lifecycle Management</b></span>
+                  </button>
                   <h3 class="text-xs font-semibold uppercase tracking-wide text-[#1A1A2E] mb-2">Modern IT Challenges</h3>
                   <div class="grid grid-cols-1 gap-2 items-stretch">
                     ${calloutDropdown('change','alert-triangle','Why Change','bg-slate-50')}
@@ -10128,6 +10313,216 @@
               </div>
               <div class="flex-1 min-h-0 bg-white">
                 <iframe src="https://app.nimbusweb.me/ai-agent-public/WrYUiYuwtl12Dvij?orgId=u268pl" width="100%" height="100%" frameborder="0" allow="clipboard-write"></iframe>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      // ────────────────────────────────────────────────────────────────
+      // ALM explainer — the 30-second version told as a keynote walkthrough.
+      // Six scenes, one idea each, auto-advancing with manual control. Scene
+      // switching is direct DOM (class toggle) rather than a full app render,
+      // so per-scene entrance animations restart and nothing else re-paints.
+      const ALM_DUR = [8600, 6400, 6600, 6400, 7000, 6200, 6800, 0];
+      let ALM = { i: 0, t: null, playing: true };
+
+      function almStop(){ if (ALM.t) { clearTimeout(ALM.t); ALM.t = null; } }
+
+      function almShow(n, manual){
+        const stage = document.querySelector('.alm-stage');
+        const ctl = document.querySelector('.alm-ctl');
+        if (!stage || !ctl) { almStop(); return; }
+        almStop();
+        if (manual) ALM.playing = false;
+        const scenes = stage.querySelectorAll('.alm-scene');
+        ALM.i = Math.max(0, Math.min(scenes.length - 1, n));
+        scenes.forEach((s, k) => s.classList.toggle('is-on', k === ALM.i));
+        ctl.setAttribute('data-playing', ALM.playing ? '1' : '0');
+        ctl.querySelectorAll('.alm-dot').forEach((d, k) => {
+          d.className = 'alm-dot' + (k < ALM.i ? ' done' : k === ALM.i ? ' now' : '');
+          d.style.setProperty('--dur', ALM_DUR[k] + 'ms');
+          d.innerHTML = '<span></span>';
+        });
+        const cnt = ctl.querySelector('.alm-count');
+        if (cnt) cnt.textContent = (ALM.i + 1) + ' / ' + scenes.length;
+        const p = ctl.querySelector('.alm-prev'); if (p) p.disabled = ALM.i === 0;
+        const nx = ctl.querySelector('.alm-next'); if (nx) nx.disabled = ALM.i === scenes.length - 1;
+        if (window.lucide?.createIcons) { try { window.lucide.createIcons(); } catch {} }
+        if (ALM.playing && ALM_DUR[ALM.i] > 0) ALM.t = setTimeout(() => almShow(ALM.i + 1), ALM_DUR[ALM.i]);
+      }
+
+      function almNext(){ almShow(ALM.i + 1, true); }
+      function almPrev(){ almShow(ALM.i - 1, true); }
+      function almToggle(){ ALM.playing = !ALM.playing; almShow(ALM.i); }
+      function almReplay(){ ALM.playing = true; almShow(0); }
+      function almStart(){
+        const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        ALM = { i: 0, t: null, playing: !reduce };
+        almShow(0);
+      }
+
+      function renderALMModal(){
+        if (!STATE.showALM) return '';
+        const ticks = (n, ld, st) => Array.from({ length: n }, (_, i) => '<i style="--i:' + i + ';left:calc(' + ((i + 0.5) / n * 100).toFixed(3) + '% - 1px)"></i>').join('');
+        const field = Array.from({ length: 80 }, (_, i) => '<i style="--i:' + i + '"></i>').join('');
+        const tiles = (n, c) => Array.from({ length: n }, () => '<i style="background:' + c + '"></i>').join('');
+        const stages = [
+          { ic: 'download',  b: 'It shows up',      s: 'Installed' },
+          { ic: 'refresh-cw', b: 'It stays current', s: 'Updated' },
+          { ic: 'trash-2',   b: 'It goes away',     s: 'Removed cleanly' }
+        ];
+        const chain = stages.map((x, i) => (i ? '<i data-lucide="chevron-right" class="alm-chev" style="--i:' + (i - 1) + '"></i>' : '')
+          + '<div class="alm-link" style="--i:' + i + '"><span class="ic"><i data-lucide="' + x.ic + '"></i></span>'
+          + '<b>' + x.b + '</b><span>' + x.s + '</span></div>').join('');
+        const dots = ALM_DUR.map((d, i) => '<button type="button" class="alm-dot" aria-label="Scene ' + (i + 1) + '" onclick="almShow(' + i + ',1)"><span></span></button>').join('');
+        return `
+          <div class="fixed inset-0 z-50 flex items-center justify-center modal-overlay" role="dialog" aria-modal="true" aria-labelledby="alm-modal-title">
+            <div class="w-full max-w-5xl mx-4 rounded-2xl overflow-hidden modal-content glass" style="max-height:94vh;display:flex;flex-direction:column">
+              <div class="bg-white/40 backdrop-blur-lg px-6 py-4 flex items-center justify-between gap-4 flex-shrink-0" style="border-bottom:1px solid var(--border-subtle)">
+                <div class="flex items-center gap-3">
+                  <i data-lucide="refresh-cw" class="w-7 h-7 text-[#1A1A2E]" aria-hidden="true"></i>
+                  <div>
+                    <h2 id="alm-modal-title" class="text-2xl font-bold tracking-tight text-[#1A1A2E]">Application Lifecycle Management</h2>
+                    <p class="text-[11.5px] font-semibold text-[#4A4A5A] mt-0.5">The 30-second version</p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-2 flex-shrink-0">
+                  <button type="button" class="text-slate-500 hover:text-slate-700 focus-ring p-2" data-action="close-alm-modal" aria-label="Close"><i data-lucide="x" class="w-5 h-5"></i></button>
+                </div>
+              </div>
+              <div class="px-7 py-6 bg-white overflow-y-auto" style="flex:1;min-height:0">
+                <div class="alm-stage">
+
+                  <section class="alm-scene">
+                    <div class="alm-sh"><h3>Think about the apps on your phone.</h3></div>
+                    <div class="alm-vis">
+                      <div class="alm-p1">
+                        <div class="alm-phone">
+                          <div class="alm-pgrid"><i></i><i></i><i></i><i></i><i class="hero"></i><i></i></div>
+                          <span class="alm-ver"><u class="a">v1.0</u><u class="b">v2.1</u></span>
+                        </div>
+                        <div class="alm-beats">
+                          <div class="alm-beat" data-b="0"><span class="tk"><i data-lucide="download"></i></span><span>Installs</span></div>
+                          <div class="alm-beat" data-b="1"><span class="tk"><i data-lucide="refresh-cw"></i></span><span>Updates itself</span></div>
+                          <div class="alm-beat" data-b="2"><span class="tk"><i data-lucide="trash-2"></i></span><span>Deletes cleanly</span></div>
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+
+                  <section class="alm-scene">
+                    <div class="alm-sh">
+                      <h3>On your phone, Apple or Google does it, and you never see them doing it.</h3>
+                    </div>
+                    <div class="alm-vis"><div class="alm-chain">${chain}</div></div>
+                  </section>
+
+                  <section class="alm-scene">
+                    <div class="alm-sh">
+                      <h3>Now picture a hospital with 8,000 employees.</h3>
+                    </div>
+                    <div class="alm-vis">
+                      <div class="alm-p3">
+                        <div><div class="alm-big">8,000</div><span class="alm-biglab">people</span></div>
+                        <div class="alm-fieldwrap">
+                          <div class="alm-field">${field}</div>
+                          <div class="alm-fieldcap">each square = 100 people</div>
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+
+                  <section class="alm-scene">
+                    <div class="alm-sh">
+                      <h3>A nurse needs different apps than an accountant.</h3>
+                    </div>
+                    <div class="alm-vis">
+                      <div class="alm-p4">
+                        <div class="alm-roles2">
+                          <div class="alm-role" style="--i:0"><b>A nurse</b><div class="apps">${tiles(6, '#0000CC')}</div></div>
+                          <div class="alm-role" style="--i:1"><b>An accountant</b><div class="apps">${tiles(3, '#005C7D')}</div></div>
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+
+                  <section class="alm-scene">
+                    <div class="alm-sh">
+                      <h3>There&rsquo;s no app store &mdash; a team of people does all of it, by hand.</h3>
+                    </div>
+                    <div class="alm-vis">
+                      <div class="alm-p5">
+                        <div class="alm-card5" style="--i:0">
+                          <span class="alm-c5h">The work</span>
+                          <div class="alm-wrow"><em>It shows up</em><u>&times; 8,000</u></div>
+                          <div class="alm-wrow"><em>It stays current</em><u>&times; 8,000</u></div>
+                          <div class="alm-wrow"><em>It goes away</em><u>&times; 8,000</u></div>
+                        </div>
+                        <div class="alm-lands"><i data-lucide="arrow-right"></i><span>lands on</span></div>
+                        <div class="alm-card5" style="--i:1">
+                          <span class="alm-c5h">The team</span>
+                          <div class="alm-teamrow"><i data-lucide="user"></i><i data-lucide="user"></i><i data-lucide="user"></i><i data-lucide="user"></i><i data-lucide="user"></i></div>
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+
+                  <section class="alm-scene alm-final">
+                    <div class="alm-vis">
+                      <div class="alm-fin">
+                        <b>That&rsquo;s application lifecycle management.</b>
+                        <p>It&rsquo;s the job of getting the right software onto the right computers, keeping it current, and taking it off cleanly when it&rsquo;s finished.</p>
+                      </div>
+                    </div>
+                  </section>
+
+                  <section class="alm-scene">
+                    <div class="alm-sh"><h3>An app that updated twice a year in 2018 now updates twice a week.</h3></div>
+                    <div class="alm-vis">
+                      <div class="alm-p7">
+                        <div class="alm-lane" style="--ld:0.6s;--st:420ms">
+                          <div class="alm-lane-h"><b>2018</b><u>once every six months</u></div>
+                          <div class="alm-track">${ticks(2)}</div>
+                          <div class="alm-lane-n">2<em>a year</em></div>
+                        </div>
+                        <div class="alm-lane" style="--ld:2.2s;--st:20ms">
+                          <div class="alm-lane-h"><b>2026</b><u>twice a week</u></div>
+                          <div class="alm-track">${ticks(104)}</div>
+                          <div class="alm-lane-n">104<em>a year</em></div>
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+
+                  <section class="alm-scene">
+                    <div class="alm-sh"><h3>Now imagine that landing on a team that was already under-resourced.</h3></div>
+                    <div class="alm-vis">
+                      <div class="alm-p8">
+                        <div class="alm-bar" style="--i:0">
+                          <span class="alm-bar-l">The work</span>
+                          <span class="alm-bar-t"><b style="--w:100%"></b></span>
+                          <span class="alm-bar-v">52&times; since 2018</span>
+                        </div>
+                        <div class="alm-bar flat" style="--i:1">
+                          <span class="alm-bar-l">The team</span>
+                          <span class="alm-bar-t"><b style="--w:11%"></b></span>
+                          <span class="alm-bar-v">no bigger than it was</span>
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+
+                </div>
+                <div class="alm-ctl" data-playing="1">
+                  <button type="button" class="alm-nav alm-prev focus-ring" onclick="almPrev()" aria-label="Previous"><i data-lucide="chevron-left"></i></button>
+                  <div class="alm-dots">${dots}</div>
+                  <button type="button" class="alm-nav alm-next focus-ring" onclick="almNext()" aria-label="Next"><i data-lucide="chevron-right"></i></button>
+                  <button type="button" class="alm-nav focus-ring" onclick="almToggle()" aria-label="Play or pause">
+                    <i data-lucide="pause" class="alm-ico-pause"></i><i data-lucide="play" class="alm-ico-play"></i>
+                  </button>
+                  <span class="alm-count">1 / 8</span>
+                </div>
               </div>
             </div>
           </div>
@@ -17207,6 +17602,8 @@
           }
           if (action === 'close-modal') { STATE.modalOpen = false; render(); return; }
           if (action === 'close-why-modal') { STATE.openWhyModal = null; render(); return; }
+          if (action === 'open-alm-modal') { STATE.showALM = true; render(); return; }
+          if (action === 'close-alm-modal') { almStop(); STATE.showALM = false; render(); return; }
           if (action === 'open-impact-modal') { STATE.openImpactModal = act.getAttribute('data-imp'); render(); return; }
           if (action === 'close-impact-modal') { STATE.openImpactModal = null; render(); return; }
           if (action === 'open-analyst-modal') { STATE.showAnalystModal = true; render(); return; }
@@ -17549,6 +17946,7 @@
           e.preventDefault();
           return;
         }
+        if(e.key==='Escape' && STATE.showALM){ almStop(); STATE.showALM=false; render(); return; }
         if(e.key==='Escape' && STATE.openImpactModal){ STATE.openImpactModal=null; render(); return; }
         if(e.key==='Escape' && (STATE.modalOpen || STATE.openWhyModal || STATE.insightContent || STATE.showAnalystModal || STATE.showAIAgent)){ STATE.modalOpen=false; STATE.openWhyModal=null; STATE.insightContent=null; STATE.highlightDriverId=null; STATE.showAnalystModal=false; STATE.showAIAgent=false; render(); }
       });
