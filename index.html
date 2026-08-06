@@ -7666,16 +7666,16 @@
         .ac-caption { margin-top: 5px; padding: 7px 12px; font-size: 11px; }
       }
       /* ═══ ALM explainer ══════════════════════════════════════════════════
-         Rail button, plus a keynote-style walkthrough behind it: one idea per
+         Trigger button, plus a keynote-style walkthrough behind it: one idea per
          scene, big type, one visual. Scene state is an `is-on` class driven by
          almShow() — no app re-render, so each scene's entrance animation
          restarts cleanly when it becomes visible. */
 
-      /* The rail trigger mirrors the modal it opens: the same bare refresh-cw
-         glyph in ink, no disc and no outline, matching how every other icon in
-         this rail is drawn. The button keeps a 28px hit area around an 18px
-         glyph; sizes are !important because the ≤900px touch-target rule pads
-         every button. */
+      /* The trigger sits in the panel header beside the edit pencil and mirrors
+         the modal it opens: the same bare refresh-cw glyph in ink, no disc and
+         no outline. The button keeps a 28px hit area around an 18px glyph,
+         matching the pencil's 28px box; sizes are !important because the ≤900px
+         touch-target rule pads every button. */
       .alm-icon-btn { width: 28px !important; height: 28px !important; min-height: 0 !important; padding: 0 !important; flex: none; display: inline-grid; place-items: center; border: none; background: none; color: var(--r-ink); cursor: pointer; transition: color 160ms cubic-bezier(0.2, 0.8, 0.2, 1); }
       .alm-icon-btn:hover { color: var(--r-blue); }
       .alm-icon-btn i, .alm-icon-btn svg { width: 18px !important; height: 18px !important; }
@@ -9217,7 +9217,10 @@
           <section id="panel-problems" class="space-y-2 cs-panel">
             <div class="flex items-center justify-between gap-3">
               <h2 class="cs-panel-title flex-1">The application layer is now the <span class="cs-panel-title-accent">#1 primary constraint</span> in modern <span class="analyst-trigger" data-action="open-analyst-modal">IT.</span></h2>
-              <button type="button" data-action="open-currentstate-editor" class="w-7 h-7 rounded-full border-2 border-gray-300 bg-transparent text-gray-400 inline-flex items-center justify-center hover:text-[#0000CC] hover:border-[#0000CC] transition flex-shrink-0" title="Edit Current State"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+              <div class="flex items-center gap-2 flex-shrink-0">
+                <button type="button" data-action="open-alm-modal" class="alm-icon-btn focus-ring" title="Application Lifecycle Management" aria-label="Application Lifecycle Management explainer"><i data-lucide="refresh-cw" aria-hidden="true"></i></button>
+                <button type="button" data-action="open-currentstate-editor" class="w-7 h-7 rounded-full border-2 border-gray-300 bg-transparent text-gray-400 inline-flex items-center justify-center hover:text-[#0000CC] hover:border-[#0000CC] transition flex-shrink-0" title="Edit Current State"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+              </div>
             </div>
             <div class="grid grid-cols-2 gap-2 sm:grid-cols-4 cs-stats">
               ${(STATE.audience === 'partner' ? STAT_CARDS : [STAT_CARDS[1], STAT_CARDS[0], STAT_CARDS[2], STAT_CARDS[3]]).map(card => {
@@ -9250,9 +9253,6 @@
                   <svg id="capacity-gap-chart" viewBox="0 0 860 420" preserveAspectRatio="xMidYMid meet"></svg>
                 </div>
                 <div class="w-full bg-white/70 backdrop-blur-lg rounded-xl shadow-sm p-3 border border-slate-200 cs-challenges">
-                  <div class="flex justify-end mb-1">
-                    <button type="button" data-action="open-alm-modal" class="alm-icon-btn focus-ring" title="Application Lifecycle Management" aria-label="Application Lifecycle Management explainer"><i data-lucide="refresh-cw" aria-hidden="true"></i></button>
-                  </div>
                   <h3 class="text-xs font-semibold uppercase tracking-wide text-[#1A1A2E] mb-2">Modern IT Challenges</h3>
                   <div class="grid grid-cols-1 gap-2 items-stretch">
                     ${calloutDropdown('change','alert-triangle','Why Change','bg-slate-50')}
