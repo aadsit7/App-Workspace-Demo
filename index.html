@@ -961,6 +961,128 @@
         .ac-actiongrid-head, .ac-actiongrid-row { grid-template-columns: 18px 1.5fr 1fr 1.2fr 26px; }
         .ac-actiongrid-cell-target { display: none; }
       }
+      /* ─── Admin console, value view (acx) ───────────────────────────
+         Laid out like the product: group rail, the package's own sub-nav,
+         then the release pipeline over its action sets. The devices below
+         are the payoff — the same package installing itself on each. */
+      .acx-stage { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px; padding: 8px 11px 8px; background: #FAFAFE; overflow: hidden; }
+
+      /* Group rail */
+      .acx-rail .ac-rail-section { padding: 3px 0 2px; }
+      .acx-rail .ac-rail-section.is-collapsed { padding: 2px 0; }
+      .acx-rail .ac-rail-item { padding-top: 2.5px; padding-bottom: 2.5px; font-size: 10.5px; }
+      /* Lucide swaps each <i> for an <svg>, which the base rail rules (written
+         for <i>) stop matching — without this every row grows to a 24px icon. */
+      .acx-rail .ac-rail-item svg { width: 13px; height: 13px; flex-shrink: 0; }
+      .acx-rail .ac-rail-section-label svg { width: 11px; height: 11px; flex-shrink: 0; }
+      .acx-rail svg.ac-rail-section-caret { width: 10px; height: 10px; flex-shrink: 0; }
+      .acx-rail .ac-rail-section-label { font-size: 8.5px; letter-spacing: 0.01em; min-width: 0; overflow: hidden; white-space: nowrap; }
+      .acx-rail .ac-rail-section-head { gap: 4px; padding: 2px 8px 2px 11px; }
+      .acx-rail-count { font-size: 8.5px; font-weight: 700; color: #B5B5C6; font-variant-numeric: tabular-nums; margin-right: 1px; }
+      .acx-rail::after { display: none; }
+
+      /* The package's own sub-nav */
+      .acx-sub { width: 142px; flex-shrink: 0; background: #FFFFFF; border-right: 1px solid #DDDDEE; display: flex; flex-direction: column; overflow: hidden; }
+      .acx-sub-head { display: flex; align-items: center; gap: 7px; padding: 7px 10px; border-bottom: 1px solid #F0F0F6; flex: none; }
+      .acx-sub-ico { width: 19px; height: 19px; border-radius: 4px; background: #5B53D6; color: #fff; display: grid; place-items: center; font-size: 9.5px; font-weight: 800; flex-shrink: 0; }
+      .acx-sub-name { font-size: 11px; font-weight: 700; color: #1A1A2E; line-height: 1.15; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .acx-sub-list { padding: 3px 0; }
+      .acx-sub-group { padding: 5px 10px 2px; font-size: 8.5px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: #A5A5B6; }
+      .acx-sub-item { display: flex; align-items: center; gap: 7px; padding: 2.5px 10px 2.5px 14px; font-size: 10.5px; color: #4A4A5A; line-height: 1.2; border-right: 2px solid transparent; }
+      .acx-sub-item svg, .acx-sub-item i { width: 12px; height: 12px; flex-shrink: 0; color: #8A8A9A; }
+      .acx-sub-item.is-active { color: #0000CC; font-weight: 700; background: #F6F8FF; border-right-color: #0000CC; }
+      .acx-sub-item.is-active svg, .acx-sub-item.is-active i { color: #0000CC; }
+
+      /* Release pipeline — the console's own chevron stepper, compacted */
+      .acx-lc { display: flex; align-items: stretch; gap: 3px; flex: none; }
+      .acx-lc-s { flex: 1 1 0; min-width: 0; height: 25px; display: flex; align-items: center; gap: 6px; padding: 0 8px 0 13px; background: #FFFFFF; border: 1px solid #E3E7F5; color: #A5A5B6; font-size: 10px; font-weight: 700; clip-path: polygon(0 0, calc(100% - 9px) 0, 100% 50%, calc(100% - 9px) 100%, 0 100%, 9px 50%); transition: background 0.45s ease, color 0.45s ease, border-color 0.45s ease; }
+      .acx-lc-s:first-child { clip-path: polygon(0 0, calc(100% - 9px) 0, 100% 50%, calc(100% - 9px) 100%, 0 100%); padding-left: 10px; }
+      .acx-lc-s:last-child { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 9px 50%); }
+      .acx-lc-s svg, .acx-lc-s i { width: 11px; height: 11px; flex-shrink: 0; }
+      .acx-lc-s.is-done { background: #F6F8FF; border-color: #C9D2FF; color: #0000CC; }
+      .acx-lc-s.is-on { background: #0000CC; border-color: #0000CC; color: #FFFFFF; }
+      .acx-lc-v { margin-left: auto; font-size: 8.5px; font-weight: 700; letter-spacing: 0.04em; opacity: 0.85; white-space: nowrap; }
+      .acx-lc-s.is-flash { animation: ac-lc-promote 1.2s cubic-bezier(0.22, 1, 0.36, 1); }
+
+      /* Action sets */
+      .acx-grid { flex: none; background: #fff; border: 1px solid #DDDDEE; border-radius: 8px; overflow: hidden; }
+      .acx-gr { display: grid; grid-template-columns: 1.35fr 0.95fr 1.05fr 62px 30px; gap: 9px; align-items: center; padding: 0 10px; height: 20px; }
+      .acx-gr-head { height: 18px; background: #F6F8FF; border-bottom: 1px solid #E3E7F5; font-size: 8.5px; font-weight: 800; letter-spacing: 0.09em; text-transform: uppercase; color: #8A8A9A; }
+      .acx-sec { display: flex; align-items: center; gap: 7px; height: 17px; padding: 0 10px; background: #FBFCFF; border-bottom: 1px solid #F2F4FB; font-size: 9px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: #4A4A5A; opacity: 0; transition: opacity 0.45s ease; transition-delay: var(--d, 0ms); }
+      .acx-sec.is-in { opacity: 1; }
+      .acx-sec span { font-size: 8.5px; font-weight: 700; letter-spacing: 0.02em; text-transform: none; color: #A5A5B6; }
+      .acx-gr-row { font-size: 10.5px; color: #2A2A3E; border-bottom: 1px solid #F2F4FB; opacity: 0; transform: translateY(3px); transition: opacity 0.45s ease, transform 0.45s ease; transition-delay: var(--d, 0ms); }
+      .acx-gr-row:last-child { border-bottom: 0; }
+      .acx-gr-row.is-in { opacity: 1; transform: none; }
+      .acx-gr-name { display: flex; align-items: center; gap: 6px; font-weight: 600; color: #1A1A2E; min-width: 0; }
+      .acx-gr-name svg, .acx-gr-name i { width: 11px; height: 11px; color: #0000CC; flex-shrink: 0; }
+      .acx-gr-name span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .acx-gr-type { color: #6A6A7A; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .acx-gr-chip { display: inline-flex; align-items: center; gap: 4px; padding: 1px 7px; border-radius: 999px; background: #F0F0F6; border: 1px solid #DDDDEE; font-size: 9px; font-weight: 600; color: #4A4A5A; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .acx-gr-chip svg, .acx-gr-chip i { width: 8px; height: 8px; color: #8A8A9A; flex-shrink: 0; }
+      .acx-gr-plat { display: flex; align-items: center; gap: 4px; }
+      .acx-plat { width: 15px; height: 15px; border-radius: 4px; background: #F0F0F6; color: #6A6A7A; display: grid; place-items: center; font-size: 7.5px; font-weight: 800; }
+      .acx-gr-on { display: grid; place-items: center; }
+      .acx-on { width: 13px; height: 13px; border-radius: 3px; background: #0000CC; color: #fff; display: grid; place-items: center; }
+      .acx-on svg, .acx-on i { width: 8px; height: 8px; stroke-width: 3.5; }
+
+      /* Devices — the payoff, drawn rather than listed */
+      .acx-lab { font-size: 8.5px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: #8A8A9A; line-height: 1.3; }
+      .acx-deliver { flex: 0 0 auto; display: flex; flex-direction: column; gap: 5px; margin-top: auto; }
+      .acx-delhead { display: flex; align-items: baseline; gap: 12px; }
+      .acx-sum { margin-left: auto; display: flex; align-items: baseline; gap: 13px; opacity: 0; transform: translateY(3px); transition: opacity 0.5s ease, transform 0.5s ease; }
+      .acx-sum.is-in { opacity: 1; transform: none; }
+      .acx-sum .acx-fig b { color: #0000CC; }
+      .acx-sum .acx-fig span { color: #6A6A7A; }
+      .acx-deliver .acx-lab { opacity: 0; transform: translateY(4px); transition: opacity 0.5s ease, transform 0.5s ease; }
+      .acx-deliver .acx-lab.is-in { opacity: 1; transform: none; }
+      .acx-devices { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; align-items: end; }
+      .acx-dev { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 3px; opacity: 0.35; filter: grayscale(1); transform: translateY(5px); transition: opacity 0.5s ease, transform 0.5s ease, filter 0.5s ease; transition-delay: var(--d, 0ms); }
+      .acx-dev.is-in { opacity: 1; filter: none; transform: none; }
+      .acx-dev-body { width: 100%; max-width: 94px; display: flex; flex-direction: column; align-items: center; }
+      .acx-dev-screen { position: relative; width: 100%; height: 42px; border-radius: 5px; border: 1.5px solid #4A4A5A; background: linear-gradient(#FFFFFF, #EEF1FA); overflow: hidden; }
+      .acx-dev-taskbar { position: absolute; left: 0; right: 0; bottom: 0; height: 7px; background: #E1E5F2; }
+      .acx-dev-taskbar::before { content: ''; position: absolute; left: 4px; top: 2px; width: 3px; height: 3px; border-radius: 1px; background: #8A8A9A; }
+      .acx-dev-bar { position: absolute; left: 16%; right: 16%; bottom: 13px; height: 3px; border-radius: 2px; background: #DDE3F5; overflow: hidden; opacity: 0; }
+      .acx-dev-bar i { display: block; width: 0; height: 100%; background: #0000CC; border-radius: 2px; }
+      .acx-dev.is-in .acx-dev-bar { opacity: 1; animation: acxBarOut 320ms ease forwards; animation-delay: calc(var(--d, 0ms) + 760ms); }
+      .acx-dev.is-in .acx-dev-bar i { animation: acxFill 740ms cubic-bezier(0.4, 0, 0.2, 1) forwards; animation-delay: var(--d, 0ms); }
+      @keyframes acxFill { from { width: 0; } to { width: 100%; } }
+      @keyframes acxBarOut { to { opacity: 0; } }
+      .acx-dev-app { position: absolute; left: 50%; top: 42%; width: 19px; height: 19px; margin: -9.5px 0 0 -9.5px; border-radius: 5px; background: #5B53D6; color: #fff; display: grid; place-items: center; font-size: 9px; font-weight: 800; opacity: 0; transform: scale(0.4); transition: opacity 0.35s ease, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1); transition-delay: calc(var(--d, 0ms) + 820ms); }
+      .acx-dev.is-in .acx-dev-app { opacity: 1; transform: scale(1); }
+      .acx-dev-hinge { width: 108%; height: 4px; border-radius: 0 0 4px 4px; background: #C3C3D2; }
+      .acx-dev-stand { width: 22%; height: 4px; background: #C3C3D2; }
+      .acx-dev-foot { width: 52%; height: 3px; border-radius: 2px; background: #C3C3D2; }
+      .acx-dev-spacer { height: 7px; }
+      .acx-dev-mac .acx-dev-screen { border-color: #2A2A3E; border-radius: 6px; }
+      .acx-dev-mac .acx-dev-taskbar { top: 0; bottom: auto; height: 6px; background: #E9ECF6; }
+      .acx-dev-mac .acx-dev-hinge { background: #B9B9C8; }
+      .acx-dev-cloud .acx-dev-screen { border-color: #0000CC; }
+      .acx-dev-cloud .acx-dev-taskbar { background: #D8DFFA; }
+      .acx-dev-browser .acx-dev-screen { border-color: #8A8A9A; }
+      .acx-dev-browser .acx-dev-taskbar { top: 0; bottom: auto; height: 9px; background: #EDEFF7; }
+      .acx-dev-cloudbadge { position: absolute; top: 4px; right: 4px; width: 14px; height: 14px; border-radius: 999px; background: #0000CC; color: #fff; display: grid; place-items: center; }
+      .acx-dev-cloudbadge svg, .acx-dev-cloudbadge i { width: 8px; height: 8px; }
+      .acx-dev-tag { display: flex; flex-direction: column; align-items: center; line-height: 1.2; text-align: center; }
+      .acx-dev-tag b { font-size: 10px; font-weight: 700; color: #1A1A2E; }
+      .acx-dev-tag span { font-size: 8.5px; color: #6A6A7A; }
+
+      .acx-tally { display: flex; align-items: center; gap: 15px; padding: 5px 11px; border-radius: 8px; background: #0000CC; color: #fff; flex: none; margin-top: auto; opacity: 0; transform: translateY(5px); transition: opacity 0.5s ease, transform 0.5s ease; }
+      .acx-tally.is-in { opacity: 1; transform: none; }
+      .acx-fig { display: inline-flex; align-items: baseline; gap: 5px; }
+      .acx-fig b { font-size: 13px; font-weight: 800; letter-spacing: -0.01em; }
+      .acx-fig span { font-size: 9.5px; font-weight: 600; color: rgba(255,255,255,0.78); }
+      .acx-tally-note { margin-left: auto; font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.92); text-align: right; }
+
+      @media (max-height: 660px) {
+        .acx-dev-screen { height: 38px; }
+        .acx-gr { height: 19px; }
+        .acx-gr-head { height: 17px; }
+        .acx-lc-s { height: 23px; }
+        .acx-stage { gap: 4px; padding-bottom: 5px; }
+      }
+
       /* Phase status label */
       .phase-status { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; transition: all 0.3s ease; }
       /* Multi-tenant view */
@@ -3497,36 +3619,20 @@
       .flip-card-txt { display: flex; flex-direction: column; gap: 2px; min-width: 0; text-align: left; }
       .flip-card-label { font-size: 11px; font-weight: 600; line-height: 1.3; color: #4A4A5A; text-wrap: pretty; }
 
-      /* Current State runs these four cards as one quiet band across the top of
-         the panel, so the front face carries only the mark, the figure, what it
-         measures, and a nudge that there is more underneath. The sequence
-         number and category chip the Business Impact deck uses are noise at
-         four cards — hence the scope to #panel-problems, which also outranks
-         the column layout the desktop block forces on every other flip deck. */
-      #panel-problems .flip-card { min-height: 78px !important; }
+      /* Current State faces: one quiet line — the figure and an invitation.
+         Everything else lives on the flip. Scoped to the panel so the
+         Business Impact cards keep their own face. */
+      #panel-problems .flip-card { height: auto; min-height: 67px; }
+      #panel-problems .flip-card.flipped { height: 336px; }
       #panel-problems .flip-card-front {
-        flex-direction: row !important;
-        align-items: center !important;
-        justify-content: flex-start !important;
-        gap: 11px !important;
-        padding: 12px 14px !important;
+        flex-direction: row !important; align-items: center !important;
+        justify-content: space-between !important; gap: 10px !important;
+        padding: 0 14px !important;
       }
-      #panel-problems .flip-card-front > i[data-lucide],
-      #panel-problems .flip-card-front > svg { width: 16px; height: 16px; color: #0000CC; flex-shrink: 0; }
-      #panel-problems .flip-card-tap {
-        margin-left: auto; align-self: flex-end; padding-bottom: 3px; white-space: nowrap;
-        font-size: 9px; color: #B5B5C6; opacity: 0; animation: fadeIn 1s ease 2s forwards;
-      }
-      /* Revealed, a card is as tall as what it actually says: the back face
-         joins the flow instead of stretching to a fixed height, so the source
-         line sits under the last paragraph rather than under a band of white.
-         Grid stretch still squares all four off against the tallest, and the
-         copy can be edited without anyone re-deriving a magic height. */
-      #panel-problems .flip-card.flipped { height: auto !important; display: flex; flex-direction: column; }
-      #panel-problems .flip-card.flipped .flip-card-inner { height: auto; flex: 1; display: flex; flex-direction: column; }
-      #panel-problems .flip-card.flipped .flip-card-back {
-        position: relative; inset: auto; flex: 1; gap: 10px; animation: fadeIn 0.35s ease;
-      }
+      .flip-card-face { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1 1 auto; }
+      .flip-card-face i, .flip-card-face svg { width: 17px; height: 17px; color: #0000CC; flex-shrink: 0; }
+      #panel-problems .flip-card-stat { white-space: normal !important; font-size: 21px !important; line-height: 1.12 !important; }
+      .flip-card-hint { font-size: 9.5px; font-weight: 500; color: #8A8A9A; white-space: nowrap; flex: 0 0 auto; align-self: center; }
 
       @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
@@ -5660,8 +5766,6 @@
         /* ── Flip cards ───────────────────────────────── */
         .flip-card { height: auto !important; min-height: 96px !important; }
         .flip-card-inner, .flip-card-front, .flip-card-back { position: relative !important; height: auto !important; min-height: 96px !important; }
-        /* Two columns leaves no room beside the figure for the hint. */
-        #panel-problems .flip-card-tap { display: none; }
 
         /* ── ROI form ─────────────────────────────────── */
         .roi-form-row,
@@ -5816,6 +5920,7 @@
           min-height: 96px !important;
           cursor: pointer !important;
         }
+        #panel-problems .flip-card { min-height: 67px !important; }
         .flip-card.flipped { height: 336px !important; }
         /* Force-hide inactive face — bypasses unreliable backface-visibility */
         .flip-card:not(.flipped) .flip-card-back { visibility: hidden !important; }
@@ -8545,7 +8650,7 @@
       // pop-out modal's Next button (which advances to the adjacent module).
       /* Dwell per lifecycle step (ms) — the tour timer and the rail's progress
          bar read the same array, so the bar can never disagree with the tour. */
-      const LC_DWELL = [12200, 11800, 11200, 12000, 8900, 8600, 8900];
+      const LC_DWELL = [8800, 11800, 11200, 12000, 8900, 8600, 8900];
       const LIFECYCLE_MODULES = [
         {view:'setupstore', stage:'PACKAGE',   name:'Setup Store',           icon:'library'},
         {view:'admin',      stage:'DEPLOY',    name:'Admin Console',         icon:'settings-2'},
@@ -9192,6 +9297,10 @@
       const DEMO_REVEALS = [
         // [revealClass, stable base selector — identity is index within base]
         ['is-in', '.ahub-row'],
+        ['is-in', '.acx-gr-row'],
+        ['is-in', '.acx-sec'],
+        ['is-in', '.acx-dev'],
+        ['is-in', '.acx-tally'],
         ['is-in', '.ahub-tally'],
         ['ob-visible', '.ob-device, .ob-laptop'],
         ['dr-visible', '.dr-zone'],
@@ -9576,12 +9685,8 @@
                 return '<div class="flip-card '+(isFlipped ? 'flipped' : '')+'" data-action="flip-card" data-card-id="'+card.id+'" role="button" tabindex="0" aria-label="'+card.title+'">'
                   +'<div class="flip-card-inner">'
                     +'<div class="flip-card-front section-card">'
-                      +'<i data-lucide="'+card.icon+'" class="w-4 h-4 text-[#0000CC] flex-shrink-0"></i>'
-                      +'<div class="flip-card-txt">'
-                        +'<div class="flip-card-stat">'+card.stat+'</div>'
-                        +'<div class="flip-card-label">'+(card.label||'')+'</div>'
-                      +'</div>'
-                      +'<div class="flip-card-tap">tap to reveal</div>'
+                      +'<div class="flip-card-face"><i data-lucide="'+card.icon+'"></i><div class="flip-card-stat">'+card.stat+'</div></div>'
+                      +'<span class="flip-card-hint">tap to reveal</span>'
                     +'</div>'
                     +'<div class="flip-card-back">'
                       +'<div>'
@@ -11279,396 +11384,157 @@
         `;
       }
 
-      /* ========== ADMIN CONSOLE VIEW (Recast-faithful: tabs · group rail · sub-nav · workspace) ==========
-         The admin console mirrors the real Recast Software UI from the screenshots:
-           1. Top bar — Recast wordmark + Workspace · Contacts · Catalog · Manage tabs
-           2. Group rail — IDENTITIES / WORKSPACE / AUTOMATION sections (Packages active)
-           3. Sub-nav — Microsoft Teams package nav (Releases > Actions active)
-           4. Workspace — package row, lifecycle stepper (Dev → Test → Acceptance → Prod),
-              Action Sets table, with a "Create action" modal that opens, fills, and confirms
-              in sync with the user-flow phases.
-
-         Phase choreography (drives both reveal AND the modal demo):
-           clicking → reveal lifecycle stepper + action grid header (cursor approaches +Create)
-           checking → cursor clicks "+ Create action set", modal animates open
-           routing  → modal fields fill in (Type → Name → Process → Filters tab)
-           config   → all fields complete, Confirm button pulses
-           done     → modal closes, new action row lands in grid with green flash
-           final    → lifecycle promotes Development → Test  */
+      /* ========== ADMIN CONSOLE ==========
+         Laid out like the product — group rail, the package's own sub-nav,
+         the release pipeline over its action sets — so the breadth is
+         visible, then the devices below carry the value: one setup, and the
+         same package installs itself on whatever people work on. */
       function renderAdminConsole(){
-        const sc = STATE.flowScenarioIdx;
-        const phase = STATE.flowPhase;
-        const scenario = sc >= 0 && sc < SCENARIOS.length ? SCENARIOS[sc] : null;
-
-        // Phase ordering used for both reveal and modal stages
         const PHASE_ORDER = ['idle','launch','catalog','clicking','checking','routing','config','done','final'];
-        const curIdx = scenario ? Math.max(0, PHASE_ORDER.indexOf(phase)) : 0;
-        const at = (name) => PHASE_ORDER.indexOf(name);
+        const at = (n) => PHASE_ORDER.indexOf(n);
+        const sc = STATE.flowScenarioIdx;
+        const scenario = sc >= 0 && sc < SCENARIOS.length ? SCENARIOS[sc] : null;
+        const i = Math.max(0, PHASE_ORDER.indexOf(STATE.flowPhase));
 
-        // Visibility thresholds
-        const showLifecycle = curIdx >= at('clicking');
-        const showCanvas    = curIdx >= at('clicking');
-        const modalOpen     = curIdx >= at('checking') && curIdx < at('done');
-        const fieldsActive  = curIdx >= at('routing') && curIdx < at('done');
-        const fieldsAllDone = curIdx >= at('config') && curIdx < at('done');
-        const newRowLanded  = curIdx >= at('done');
-        const promoted      = curIdx >= at('final');
+        const installIn = i >= at('clicking');
+        const launchIn  = i >= at('checking');
+        const landed    = i >= at('config') ? 4 : i >= at('routing') ? 2 : 0;
+        const promoted  = i >= at('done');
+        const shipped   = i >= at('final');
 
-        // Track first-reveal phase per element so re-renders within the same phase
-        // don't re-trigger their entry animation.
-        if (!STATE._acSeen) STATE._acSeen = {};
-        const seenAt = (key, threshold) => {
-          if (curIdx < threshold) return null;
-          if (STATE._acSeen[key] == null) STATE._acSeen[key] = curIdx;
-          return STATE._acSeen[key];
-        };
-        const animatingNow = (key, threshold) => seenAt(key, threshold) === curIdx;
-        const animLifecycle = animatingNow('lifecycle', at('clicking'));
-        const animModal     = animatingNow('modal',     at('checking'));
-        const animFreshRow  = animatingNow('freshrow',  at('done'));
-        const animPromote   = animatingNow('promote',   at('final'));
-
-        // Per-scenario action being authored (drives the modal contents).
-        // The modal is a window into "configuring the routing path" — same data the
-        // pipeline + user view show, just from the admin's authoring perspective.
-        const activePath = scenario?.activePath || 'local';
-        const actionAuth = ({
-          local:  { type:'Start process',          name:'Launch Microsoft Teams',          target:'teams.exe',                              filters:['Group: Engineering','Device: Corporate'] },
-          saas:   { type:'Open URL',               name:'Route to Teams Web',              target:'https://teams.microsoft.com',           filters:['Group: Field Sales','Device: Personal'] },
-          update: { type:'Run upgrade',            name:'Auto-update Teams',               target:'teams-installer.exe /upgrade',          filters:['Version: < v2.2','Window: Maintenance'] },
-        }[activePath]) || { type:'Start process', name:'Launch Microsoft Teams', target:'teams.exe', filters:['Group: All','Device: Corporate'] };
-
-        // Top tabs (Manage active)
-        const topTabs = ['Workspace','Contacts','Catalog','Manage'];
-
-        // Group rail (left): IDENTITIES / WORKSPACE / AUTOMATION / PORTAL / AUTHENTICATION
-        const railGroups = [
-          {key:'IDENTITIES', label:'Identities', icon:'users', items:[
-            {label:'Devices',          icon:'monitor'},
-            {label:'Users',            icon:'user'},
-          ]},
-          {key:'WORKSPACE', label:'Workspace', icon:'briefcase', items:[
-            {label:'Packages',  icon:'package',  active:true},
-            {label:'Licenses',  icon:'key'},
-            {label:'Variables', icon:'braces'},
-          ]},
-          {key:'AUTOMATION', label:'Automation', icon:'workflow', items:[
-            {label:'Condition Sets',  icon:'list-checks'},
-            {label:'Deployments',     icon:'rocket'},
-          ]},
-        ];
-
-        // Sub-nav (right of rail): Microsoft Teams package's own pages
-        const subnavSections = [
-          {label:null, items:[
-            {label:'Overview',     icon:'briefcase'},
-            {label:'Entitlements', icon:'shield-check'},
-          ]},
-          {label:'Catalog', items:[
-            {label:'Overview',  icon:'shopping-bag'},
-            {label:'Licenses',  icon:'key'},
-          ]},
-          {label:'Releases', items:[
-            {label:'Overview',  icon:'layers'},
-            {label:'Filters',   icon:'filter'},
-            {label:'Actions',   icon:'play-circle', active:true},
-          ]},
-        ];
-
-        // Lifecycle stepper data — Development is the live working version, others promote on `final`.
-        const lifecycle = [
-          {key:'dev',    version:'Version 1', name:'Development', icon:'play'},
-          {key:'test',   version:'',          name:'Test',        icon:'flask-conical'},
-          {key:'accept', version:'',          name:'Acceptance',  icon:'check-check'},
-          {key:'prod',   version:'',          name:'Production',  icon:'rocket'},
-        ];
-        // After `final`, the new package config is "promoted to Test"
-        const lifecycleActiveKey = promoted ? 'test' : 'dev';
-
-        // Existing action set rows (already in production for this package)
-        const existingActions = [
-          {name:'Stop service: Teams autoupdater',   type:'Stop process',  target:'TeamsUpdater.exe',                filters:['v1.7'], status:'Active'},
-          {name:'Pre-install: Cleanup old WebView',  type:'Run script',    target:'cleanup-webview.ps1',             filters:['Always'], status:'Active'},
-        ];
-        // The action being authored — appears with green flash once `done`
-        const newAction = {
-          name: actionAuth.name, type: actionAuth.type, target: actionAuth.target,
-          filters: actionAuth.filters, status: 'Active', isNew: true,
-        };
-        const allActions = newRowLanded ? [...existingActions, newAction] : existingActions;
-
-        // Caption text drives a small explainer ribbon at the bottom of the frame
-        const captionFor = (p) => {
-          if (curIdx < at('clicking')) return null;
-          if (curIdx === at('clicking')) return { text: 'Sarah opens <strong>Releases · Actions</strong> to author the routing logic for Microsoft Teams.' };
-          if (curIdx === at('checking')) return { text: 'She clicks <strong>+ Create action set</strong>. The same dialog the user flow exercises is just config to her.' };
-          if (curIdx === at('routing'))  return { text: 'One action defines what runs (<strong>' + actionAuth.type + '</strong>) and who it routes to.' };
-          if (curIdx === at('config'))   return { text: 'Filters target the right group and device. Confirm to save the action.' };
-          if (curIdx === at('done'))     return { text: 'Action saved to <strong>Development</strong>. The package is staged for promotion.' };
-          if (curIdx >= at('final'))     return { text: 'Promoted to <strong>Test</strong>. Acceptance and Production gate behind their own approvals.' };
-          return null;
-        };
-        const caption = captionFor(curIdx);
-
-        // Cursor positions per phase (relative to the frame). Roughly: rests right of rail,
-        // travels to the +Create button, then to the modal Confirm.
-        const cursorByPhase = {
-          clicking: { x: '54%', y: '28%' },                  // hovering near +Create
-          checking: { x: '52%', y: '26%', clicking: true },  // clicking +Create
-          routing:  { x: '70%', y: '52%' },                  // entering name field
-          config:   { x: '76%', y: '70%' },                  // hovering Confirm
-          done:     { x: '76%', y: '70%', clicking: true },  // clicking Confirm
-          final:    { x: '36%', y: '46%' },                  // hovering Test step
-        };
-        const cursor = cursorByPhase[phase];
-
-        // ── Empty state ─────────────────────────────────────────────────
-        if (!scenario) {
-          return `
-            <div class="section-card p-0 overflow-hidden">
-              <div class="ac-frame">
-                <div class="ac-titlebar">
-                  <div class="ac-dots"><span class="ac-dot" style="background:#FF5F57"></span><span class="ac-dot" style="background:#FEBC2E"></span><span class="ac-dot" style="background:#28C840"></span></div>
-                  <div class="ac-url"><i data-lucide="lock"></i><span class="ac-url-page">app-workspace.recastsoftware.com</span><span class="ac-url-path">/packages/microsoft-teams/actions</span></div>
-                </div>
-                <div class="ac-empty">
-                  <i data-lucide="settings-2"></i>
-                  <div class="text-sm">Press <strong>Play</strong> or <strong>Step</strong> to watch Sarah author a Teams action set.</div>
-                </div>
-              </div>
-            </div>
-          `;
-        }
-
-        // Active sub-nav item (Actions). The other sections render normally.
-        const renderRail = () => railGroups.map(g => `
-          <div class="ac-rail-section">
-            <div class="ac-rail-section-head">
-              <span class="ac-rail-section-label"><i data-lucide="${g.icon}"></i>${g.key}</span>
-              <i data-lucide="chevron-up" class="ac-rail-section-caret"></i>
-            </div>
-            ${g.items.map(it => `
-              <div class="ac-rail-item ${it.active ? 'is-active' : ''}">
-                <i data-lucide="${it.icon}"></i><span>${it.label}</span>
-              </div>
-            `).join('')}
-          </div>
-        `).join('');
-
-        const renderSubnav = () => subnavSections.map(sec => `
-          ${sec.label ? `<div class="ac-subnav-group-label">${sec.label}</div>` : ''}
-          ${sec.items.map(it => `
-            <div class="ac-subnav-item ${it.active ? 'is-active' : ''}">
-              <i data-lucide="${it.icon}"></i><span>${it.label}</span>
-            </div>
-          `).join('')}
-        `).join('');
-
-        const renderLifecycle = () => lifecycle.map((s, i) => {
-          const isActive   = s.key === lifecycleActiveKey;
-          const isPromoted = promoted && s.key === 'dev'; // dev becomes "promoted-from"
-          const flash = animPromote && (s.key === 'test') ? 'ac-lc-promote-flash' : '';
-          return `
-            <div class="ac-lc-step ${isActive ? 'is-active' : ''} ${isPromoted ? 'is-promoted' : ''} ${flash}">
-              <div class="ac-lc-step-num"><i data-lucide="${s.icon}"></i></div>
-              <div class="ac-lc-step-meta">
-                ${isActive && s.key === 'dev' ? `<span class="ac-lc-step-version">Version 1</span>` : `<span class="ac-lc-step-version">${isActive ? 'NOW' : ''}</span>`}
-                <span class="ac-lc-step-name">${s.name}${isActive && s.key === 'dev' ? ' *' : ''}</span>
-              </div>
-            </div>
-          `;
-        }).join('');
-
-        const renderActionRow = (a, i) => {
-          const showCls = showCanvas ? 'is-shown' : '';
-          const freshCls = (a.isNew && animFreshRow) ? 'is-fresh' : '';
-          const delay = (i + 1) * 80;
-          return `
-            <div class="ac-actiongrid-row ${showCls} ${freshCls}" style="--ac-d:${delay}ms">
-              <div class="ac-actiongrid-cell-handle"><i data-lucide="grip-vertical"></i></div>
-              <div class="ac-actiongrid-cell-name"><i data-lucide="${a.isNew ? 'sparkles' : 'play'}"></i><span>${a.name}</span></div>
-              <div class="ac-actiongrid-cell-type">${a.type}</div>
-              <div class="ac-actiongrid-cell-target">${a.target}</div>
-              <div class="ac-actiongrid-cell-filters">
-                ${a.filters.map(f => `<span class="ac-filter-chip"><i data-lucide="filter"></i>${f}</span>`).join('')}
-              </div>
-              <div class="ac-actiongrid-cell-more"><i data-lucide="more-horizontal"></i></div>
-            </div>
-          `;
-        };
-
-        // Modal field render: each field has stages — empty → typing → done
-        // Stage chosen by phase + field index so they fill one after another.
-        const fieldStages = (() => {
-          // 4 fields: Type, Name, Process, Filters tab fields
-          // routing phase: fields 0,1 typing; config phase: all done
-          if (curIdx < at('routing'))      return [0,0,0,0];                  // empty
-          if (curIdx === at('routing'))    return [2,1,0,0];                  // 0 done, 1 typing
-          if (curIdx === at('config'))     return [2,2,2,2];                  // all done
-          return [2,2,2,2];
-        })();
-        const stageCls = (s) => s === 2 ? 'has-value' : s === 1 ? 'is-typing' : 'is-empty';
-        const stageText = (s, val, placeholder) => s >= 1 ? val : placeholder;
-
-        // Cursor SVG — Mac-style arrow
-        const cursorSVG = `<svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg"><path d="M2 1.5 L2 14 L5.5 11 L7.7 16 L10 15 L7.8 10 L12.5 9.5 Z" fill="#FFFFFF" stroke="#1A1A2E" stroke-width="1.2" stroke-linejoin="round"/></svg>`;
-
-        return `
+        const chrome = (inner) => `
           <div class="section-card p-0 overflow-hidden">
             <div class="ac-frame">
-              <!-- Browser title bar -->
               <div class="ac-titlebar">
                 <div class="ac-dots"><span class="ac-dot" style="background:#FF5F57"></span><span class="ac-dot" style="background:#FEBC2E"></span><span class="ac-dot" style="background:#28C840"></span></div>
                 <div class="ac-url"><i data-lucide="lock"></i><span class="ac-url-page">app-workspace.recastsoftware.com</span><span class="ac-url-path">/packages/microsoft-teams/actions</span></div>
               </div>
-
-              <!-- Recast top bar: brand + tabs -->
               <div class="ac-topbar">
                 <div class="ac-topbar-brand"><span class="ac-topbar-brand-text">Recast</span></div>
-                <div class="ac-topbar-tabs">
-                  ${topTabs.map(t => `<div class="ac-topbar-tab ${t === 'Manage' ? 'is-active' : ''}">${t}</div>`).join('')}
-                </div>
+                <div class="ac-topbar-tabs">${['Workspace','Contacts','Catalog','Manage'].map(t => `<div class="ac-topbar-tab ${t === 'Manage' ? 'is-active' : ''}">${t}</div>`).join('')}</div>
                 <div class="ac-topbar-user"><i data-lucide="user-circle-2"></i></div>
               </div>
+              ${inner}
+            </div>
+          </div>`;
 
-              <div class="ac-body">
-                <!-- Group rail -->
-                <aside class="ac-rail">${renderRail()}</aside>
+        if (!scenario) {
+          return chrome(`
+            <div class="ac-empty">
+              <i data-lucide="settings-2"></i>
+              <div class="text-sm">Press <strong>Play</strong> or <strong>Step</strong> to set one package up once</div>
+              <div class="text-[10px] text-slate-400 mt-1">One hub \u00b7 any user \u00b7 any device</div>
+            </div>`);
+        }
 
-                <!-- Sub-nav for the package -->
-                <aside class="ac-subnav">
-                  <div class="ac-subnav-toolbar">
-                    <span class="ac-subnav-tool"><i data-lucide="panel-left-close"></i></span>
-                    <span class="ac-subnav-tool"><i data-lucide="link"></i></span>
-                    <span class="ac-crumb" style="font-size:10.5px;flex:1;min-width:0;overflow:hidden">
-                      <span style="color:#6A6A7A">Manage</span>
-                      <span class="ac-crumb-sep">/</span>
-                      <span style="color:#6A6A7A">Workspace</span>
-                      <span class="ac-crumb-sep">/</span>
-                      <span style="color:#6A6A7A">Packages</span>
-                      <span class="ac-crumb-sep">/</span>
-                      <span class="ac-crumb-active">MS Teams</span>
-                    </span>
-                  </div>
-                  <div class="ac-subnav-pkghead">
-                    <div class="ac-subnav-pkgicon">T</div>
-                    <div class="ac-subnav-pkgname">Microsoft Teams</div>
-                  </div>
-                  <div class="ac-subnav-list">${renderSubnav()}</div>
-                </aside>
+        /* The rail carries the console's real breadth — six groups, the one
+           being worked in expanded, the rest collapsed with their count. */
+        const railGroups = [
+          {key:'IDENTITIES',     icon:'users',        count:6},
+          {key:'WORKSPACE',      icon:'briefcase',    items:[['Categories','folder'],['Licenses','key'],['Packages','package',true],['Tags','tag'],['Teams','users-2'],['Variables','braces']]},
+          {key:'AUTOMATION',     icon:'workflow',     count:4},
+          {key:'PORTAL',         icon:'layout-grid',  count:3},
+          {key:'AUTHENTICATION', icon:'shield-check', count:4},
+          {key:'SYSTEM',         icon:'settings',     count:5},
+        ];
+        const rail = railGroups.map(g => `
+          <div class="ac-rail-section ${g.items ? '' : 'is-collapsed'}">
+            <div class="ac-rail-section-head">
+              <span class="ac-rail-section-label"><i data-lucide="${g.icon}"></i>${g.key}</span>
+              ${g.items ? `<i data-lucide="chevron-up" class="ac-rail-section-caret"></i>`
+                        : `<span class="acx-rail-count">${g.count}</span><i data-lucide="chevron-down" class="ac-rail-section-caret"></i>`}
+            </div>
+            ${(g.items || []).map(([label, icon, active]) => `
+              <div class="ac-rail-item ${active ? 'is-active' : ''}"><i data-lucide="${icon}"></i><span>${label}</span></div>`).join('')}
+          </div>`).join('');
 
-                <!-- Workspace -->
-                <div class="ac-work">
-                  <div class="ac-work-bar">
-                    <div class="ac-crumb">
-                      <span>Releases</span>
-                      <span class="ac-crumb-sep">/</span>
-                      <span class="ac-crumb-active">Actions</span>
-                    </div>
-                    <div class="ac-crumb-tools">
-                      <i data-lucide="search"></i>
-                      <i data-lucide="filter"></i>
-                      <i data-lucide="more-vertical"></i>
-                    </div>
-                  </div>
+        /* The package's own pages, as the console groups them. */
+        const subSections = [
+          {label:null, items:[['Overview','layout-dashboard'],['Events','bell'],['Entitlements','shield-check']]},
+          {label:'Catalog', items:[['Overview','shopping-bag'],['Licenses','key']]},
+          {label:'Releases', items:[['Overview','layers'],['Filters','filter'],['Actions','play-circle', true]]},
+        ];
+        const subnav = subSections.map(s => `
+          ${s.label ? `<div class="acx-sub-group">${s.label}</div>` : ''}
+          ${s.items.map(([label, icon, active]) => `
+            <div class="acx-sub-item ${active ? 'is-active' : ''}"><i data-lucide="${icon}"></i><span>${label}</span></div>`).join('')}`).join('');
 
-                  <div class="ac-pkgrow">
-                    <div class="ac-pkgrow-left">
-                      <div class="ac-pkgrow-icon">T</div>
-                      <div class="ac-pkgrow-name">Microsoft Teams</div>
-                    </div>
-                    <button class="ac-pkgrow-create" type="button" data-cursor-target="create"><i data-lucide="plus"></i> Create action set</button>
-                  </div>
+        /* Release pipeline: Development while it is authored, Test on save,
+           Production on the closing beat. */
+        const lcIdx = shipped ? 3 : promoted ? 1 : 0;
+        const LC = [['Development','play'],['Test','flask-conical'],['Acceptance','check-check'],['Production','rocket']];
+        const pipeline = LC.map(([name, icon], n) => {
+          const on = n === lcIdx;
+          const flash = on && (shipped || promoted) ? ' is-flash' : '';
+          return `<div class="acx-lc-s ${on ? 'is-on' : n < lcIdx ? 'is-done' : ''}${flash}">
+            <i data-lucide="${icon}"></i><span>${name}</span>${on ? '<span class="acx-lc-v">v2.2</span>' : ''}
+          </div>`;
+        }).join('');
 
-                  <!-- Lifecycle stepper -->
-                  <div class="ac-lifecycle ${showLifecycle ? 'is-shown' : ''}">${renderLifecycle()}</div>
+        const row = (ic, name, type, who, shown, d) => `
+          <div class="acx-gr acx-gr-row ${shown ? 'is-in' : ''}" style="--d:${d}ms">
+            <div class="acx-gr-name"><i data-lucide="${ic}"></i><span>${name}</span></div>
+            <div class="acx-gr-type">${type}</div>
+            <div><span class="acx-gr-chip"><i data-lucide="filter"></i>${who}</span></div>
+            <div class="acx-gr-plat">${['W','M','C'].map(p => `<span class="acx-plat">${p}</span>`).join('')}</div>
+            <div class="acx-gr-on"><span class="acx-on"><i data-lucide="check"></i></span></div>
+          </div>`;
 
-                  <!-- Actions canvas -->
-                  <div class="ac-canvas ${showCanvas ? 'is-shown' : ''}">
-                    <div class="ac-section-title">Install</div>
-                    <div class="ac-actiongrid">
-                      <div class="ac-actiongrid-head">
-                        <div></div>
-                        <div>Name</div>
-                        <div>Type</div>
-                        <div>Target</div>
-                        <div>Filters</div>
-                        <div></div>
-                      </div>
-                      ${allActions.map((a, i) => renderActionRow(a, i)).join('')}
-                    </div>
-                  </div>
+        const DEVICES = [
+          {cls:'acx-dev-win',     name:'Windows laptop', how:'Installed locally', chrome:'laptop'},
+          {cls:'acx-dev-mac',     name:'MacBook',        how:'Installed locally', chrome:'laptop'},
+          {cls:'acx-dev-cloud',   name:'Cloud PC',       how:'Streamed',          chrome:'monitor', badge:true},
+          {cls:'acx-dev-browser', name:'Browser',        how:'No agent',          chrome:'window'},
+        ];
+        const devices = DEVICES.map((d, n) => `
+          <div class="acx-dev ${d.cls} ${n < landed ? 'is-in' : ''}" style="--d:${n * 240}ms">
+            <div class="acx-dev-body">
+              <div class="acx-dev-screen">
+                <div class="acx-dev-taskbar"></div>
+                ${d.badge ? `<span class="acx-dev-cloudbadge"><i data-lucide="cloud"></i></span>` : ''}
+                <div class="acx-dev-bar"><i></i></div>
+                <div class="acx-dev-app">T</div>
+              </div>
+              ${d.chrome === 'laptop' ? '<div class="acx-dev-hinge"></div>'
+                : d.chrome === 'monitor' ? '<div class="acx-dev-stand"></div><div class="acx-dev-foot"></div>' : '<div class="acx-dev-spacer"></div>'}
+            </div>
+            <div class="acx-dev-tag"><b>${d.name}</b><span>${d.how}</span></div>
+          </div>`).join('');
+
+        return chrome(`
+          <div class="ac-body">
+            <aside class="ac-rail acx-rail">${rail}</aside>
+            <aside class="acx-sub">
+              <div class="acx-sub-head"><span class="acx-sub-ico">T</span><span class="acx-sub-name">Microsoft Teams</span></div>
+              <div class="acx-sub-list">${subnav}</div>
+            </aside>
+            <div class="acx-stage">
+              <div class="acx-lc">${pipeline}</div>
+
+              <div class="acx-grid">
+                <div class="acx-gr acx-gr-head">
+                  <div>Action</div><div>Type</div><div>Filter</div><div>Platforms</div><div>On</div>
                 </div>
-
-                <!-- Create action MODAL -->
-                <div class="ac-modal-overlay ${modalOpen ? 'is-open' : ''}">
-                  <div class="ac-modal">
-                    <div class="ac-modal-head">
-                      <div class="ac-modal-title">Create action</div>
-                      <span class="ac-modal-close"><i data-lucide="x"></i></span>
-                    </div>
-                    <div class="ac-modal-tabs">
-                      <div class="ac-modal-tab is-active">General</div>
-                      <div class="ac-modal-tab">Advanced</div>
-                      <div class="ac-modal-tab ${fieldStages[3] >= 1 ? '' : ''}">Filters</div>
-                    </div>
-                    <div class="ac-modal-body">
-                      <div class="ac-field is-shown" style="--ac-d:80ms">
-                        <label class="ac-field-label">Type</label>
-                        <div class="ac-field-input is-select ${stageCls(fieldStages[0])}">
-                          <span class="ac-field-input-text">${stageText(fieldStages[0], actionAuth.type, 'Select…')}</span>
-                        </div>
-                      </div>
-                      <div class="ac-field is-shown" style="--ac-d:140ms">
-                        <label class="ac-field-label">Name <span class="ac-field-req">*</span></label>
-                        <div class="ac-field-input ${stageCls(fieldStages[1])}">
-                          <span class="ac-field-input-text">${stageText(fieldStages[1], actionAuth.name, 'Action name')}</span>
-                        </div>
-                      </div>
-                      <div class="ac-field is-shown" style="--ac-d:200ms">
-                        <label class="ac-field-label">Process <span class="ac-field-req">*</span></label>
-                        <div class="ac-field-aux">
-                          <div class="ac-field-input ${stageCls(fieldStages[2])}">
-                            <span class="ac-field-input-text">${stageText(fieldStages[2], actionAuth.target, 'process.exe')}</span>
-                          </div>
-                          <button class="ac-field-aux-btn" type="button"><i data-lucide="more-horizontal"></i></button>
-                        </div>
-                      </div>
-                      <div class="ac-field is-shown" style="--ac-d:260ms">
-                        <label class="ac-field-label">Filters</label>
-                        <div class="ac-field-aux">
-                          <div class="ac-field-input ${stageCls(fieldStages[3])}" style="gap:6px">
-                            ${fieldStages[3] >= 1
-                              ? actionAuth.filters.map(f => `<span class="ac-filter-chip"><i data-lucide="filter"></i>${f}</span>`).join('')
-                              : `<span class="ac-field-input-text">Optional…</span>`}
-                          </div>
-                          <button class="ac-field-aux-btn ac-field-aux-folder" type="button"><i data-lucide="folder-open"></i></button>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="ac-modal-foot">
-                      <button class="ac-modal-btn ac-modal-btn-primary ${fieldsAllDone ? 'is-pulsing' : ''}" type="button">Confirm</button>
-                      <button class="ac-modal-btn ac-modal-btn-ghost" type="button">Cancel</button>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Driving cursor -->
-                ${cursor ? `
-                  <div class="ac-cursor is-shown ${cursor.clicking ? 'is-clicking' : ''}" style="left:${cursor.x};top:${cursor.y}">${cursorSVG}</div>
-                ` : ''}
+                <div class="acx-sec ${installIn ? 'is-in' : ''}" style="--d:0ms">Install <span>1 action</span></div>
+                ${row('download', 'Install package', 'Install package', 'All staff', installIn, 90)}
+                <div class="acx-sec ${launchIn ? 'is-in' : ''}" style="--d:0ms">Launch <span>2 actions</span></div>
+                ${row('play', 'Start Teams local', 'Start process', 'Corporate device', launchIn, 90)}
+                ${row('globe', 'Open in web client', 'Open URL', 'Unmanaged device', launchIn, 200)}
               </div>
 
-              <!-- Caption ribbon -->
-              ${caption ? `
-                <div class="ac-caption is-shown">
-                  <span class="ac-caption-dot"></span>
-                  <div class="ac-caption-text">${caption.text}</div>
+              <div class="acx-deliver">
+                <div class="acx-delhead">
+                  <span class="acx-lab ${landed ? 'is-in' : ''}">Lands on any device</span>
+                  <div class="acx-sum ${shipped ? 'is-in' : ''}">
+                    <span class="acx-fig"><b>1</b><span>setup</span></span>
+                    <span class="acx-fig"><b>4</b><span>device types</span></span>
+                    <span class="acx-fig"><b>0</b><span>rebuilds</span></span>
+                  </div>
                 </div>
-              ` : ''}
+                <div class="acx-devices">${devices}</div>
+              </div>
             </div>
-          </div>
-        `;
+          </div>`);
       }
 
       /* ========== MULTI-TENANT VIEW ========== */
@@ -11718,11 +11584,9 @@
 
         // Header — replaces phase counter with act counter when animating
         const actLabel = act === '1' ? 'Act 1 · Catalog scale'
-                        : act === '2' ? 'Act 2 · Package depth'
-                        : act === '3' ? 'Act 3 · Custom inheritance'
-                        : act === 'final' ? 'Final · One pipeline'
+                        : act === 'final' ? 'Act 2 · One pipeline'
                         : act === 'done' ? 'Complete' : '';
-        const actNum = act === '1' ? 1 : act === '2' ? 2 : act === '3' ? 3 : (act === 'final' || act === 'done') ? 4 : 0;
+        const actNum = act === '1' ? 1 : (act === 'final' || act === 'done') ? 2 : 0;
 
         return `
           <div class="section-card p-4" id="ss-panel">
@@ -11731,11 +11595,11 @@
                 <i data-lucide="library" class="w-3 h-3"></i> Setup Store
               </div>
               ${animating ? `
-                <div class="ss-act-progress" role="progressbar" aria-valuemin="1" aria-valuemax="4" aria-valuenow="${actNum}">
-                  ${[1,2,3,4].map(n => `
+                <div class="ss-act-progress" role="progressbar" aria-valuemin="1" aria-valuemax="2" aria-valuenow="${actNum}">
+                  ${[1,2].map(n => `
                     <span class="ss-act-step ${n < actNum ? 'is-done' : ''} ${n === actNum ? 'is-active' : ''}">
                       <span class="ss-act-step-dot"></span>
-                      <span class="ss-act-step-label">${n === 1 ? 'Catalog' : n === 2 ? 'Package' : n === 3 ? 'Custom' : 'Deliver'}</span>
+                      <span class="ss-act-step-label">${n === 1 ? 'Catalog' : 'Deliver'}</span>
                     </span>
                   `).join('')}
                 </div>
@@ -11753,7 +11617,7 @@
           <div class="text-center py-6 text-sm text-slate-400">
             <i data-lucide="${mode === 'custom' ? 'box' : 'library'}" class="w-8 h-8 mx-auto mb-2 text-slate-300"></i>
             <div>Press <strong>Play</strong> to see how 8,000+ commercial apps and your custom apps share <strong>one pipeline</strong></div>
-            <div class="text-[10px] text-slate-300 mt-1">Search the store → how deep a package goes → your own apps, same pipeline</div>
+            <div class="text-[10px] text-slate-300 mt-1">Search the store → everything it delivers, already packaged and current</div>
           </div>
         `;
       }
@@ -14348,11 +14212,9 @@
       }
 
       /* ════════════════════════════════════════════════════════════
-         SS ANIMATION ENGINE — 3-act sequence (~13s total)
-         Act 1 (3.6s): Catalog scale — vendor cascade + counter + ticker captions
-         Act 2 (5.0s): Package depth — Adobe fields fill sequentially + badges
-         Act 3 (4.0s): Custom inheritance — YourApp slides in, cyan lines draw, fields fill
-         Final (1.6s): Combined fanout from one Setup Store source
+         SS ANIMATION ENGINE — 2-act sequence (~8s total)
+         Act 1 (5.1s): Catalog scale — vendor cascade + counter + ticker captions
+         Deliver (2.8s): Synthesis frame — one pipeline, both inputs, one console
          ════════════════════════════════════════════════════════════ */
       const SS_COUNTER_TARGET = 8047;
 
@@ -14383,70 +14245,13 @@
            6 windows x 620ms plus the takeaway reveal. */
         push(5100, () => { ssTickerStop(); });
 
-        // ── ACT 2 ──────────────────────────────────────────────
-        push(420, () => {
-          STATE.ssAct = '2';
-          STATE.ssCaption = SS_PACKAGE_FIELDS[0].capAdobe;
-          STATE.ssCaptionFinal = false;
-          STATE.ssFieldStep = 0;
-          demoPhaseRender();
-        });
-        // 8 fields in quick succession — the point is the depth, not the wait
-        for (let i = 0; i < SS_PACKAGE_FIELDS.length; i++) {
-          push(120, () => {
-            STATE.ssFieldStep = i + 1;
-            const next = SS_PACKAGE_FIELDS[i + 1];
-            if (next) {
-              STATE.ssCaption = next.capAdobe;
-            }
-            // Targeted flip — a full render every tick skipped the field
-            // transition and repainted the whole modal 8x per act.
-            if (!(ssFillFieldDOM('adobe', i) && ssSetCaptionDOM())) demoPhaseRender();
-          });
-        }
-        push(220, () => {
-          STATE.ssBadgesAdobe = true;
-          STATE.ssCaption = 'All 8 packaging steps complete. Per app. Per day. Times 8,000.';
-          STATE.ssCaptionFinal = true;
-          if (!(ssShowBadgesDOM('adobe') && ssSetCaptionDOM())) demoPhaseRender();
-        });
-
-        // ── ACT 3 ──────────────────────────────────────────────
-        push(620, () => {
-          STATE.ssAct = '3';
-          STATE.ssAdobeShifted = true;
-          STATE.ssYourCardIn = true;
-          STATE.ssCaption = SS_PACKAGE_FIELDS[0].capYour;
-          STATE.ssCaptionFinal = false;
-          STATE.ssInheritStep = 0;
-          demoPhaseRender();
-        });
-        // Wait for slide-in to settle, then draw inheritance lines + fill fields
-        push(240, () => {
-          ssDrawInheritLines();
-        });
-        for (let i = 0; i < SS_PACKAGE_FIELDS.length; i++) {
-          push(130, () => {
-            STATE.ssInheritStep = i + 1;
-            const next = SS_PACKAGE_FIELDS[i + 1];
-            if (next) {
-              STATE.ssCaption = next.capYour;
-            }
-            if (!(ssFillFieldDOM('your', i) && ssSetCaptionDOM())) demoPhaseRender();
-            // Draw the newly-earned inheritance line
-            requestAnimationFrame(() => ssDrawInheritLines());
-          });
-        }
-        push(220, () => {
-          STATE.ssBadgesYour = true;
-          STATE.ssCaption = 'Your custom apps. OEM-grade pipeline. Same tools we use on the 8,000.';
-          STATE.ssCaptionFinal = true;
-          if (!(ssShowBadgesDOM('your') && ssSetCaptionDOM())) demoPhaseRender();
-          requestAnimationFrame(() => ssDrawInheritLines());
-        });
+        /* Package depth (Adobe field fill) and custom inheritance are no longer
+           played — the sequence runs Catalog → Deliver. The card stage markup
+           stays in place for the PDF pose and can be re-enabled by restoring
+           the act 2/3 pushes here. */
 
         // ── FINAL beat ────────────────────────────────────────
-        push(640, () => {
+        push(760, () => {
           STATE.ssAct = 'final';
           STATE.ssCaption = '';
           STATE.ssCaptionFinal = false;
@@ -14849,17 +14654,7 @@
       }
 
       function renderConsoleModule(){
-        const pane = STATE.adminPane === 'ship' ? 'ship' : 'console';
-        const seg = (id, icon, label) => `
-          <button type="button" class="adm-seg-b ${pane === id ? 'is-on' : ''}" data-action="set-admin-pane" data-pane="${id}" aria-pressed="${pane === id}">
-            <i data-lucide="${icon}" class="w-3.5 h-3.5"></i>${label}
-          </button>`;
-        return `
-          <div class="adm-seg">
-            ${seg('console', 'settings-2', 'Set it up')}
-            ${seg('ship', 'send', 'What it ships \u2014 deploy and update')}
-          </div>
-          ${pane === 'ship' ? renderUpdateView() : renderAdminConsole()}`;
+        return renderAdminConsole();
       }
 
       function renderAdminPanel(){
