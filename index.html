@@ -719,8 +719,6 @@
       .lifecycle-dot.lifecycle-dot-done::before { background: #0F7A3F; inset: 0; }
       .lifecycle-dot.lifecycle-dot-playing::before { animation: lc-pulse 1.4s ease-in-out infinite; }
       @keyframes lc-pulse { 0%,100%{ transform:scale(1); opacity:1; } 50%{ transform:scale(1.8); opacity:0.6; } }
-      .lifecycle-connector { flex: 1; height: 1px; background: #DDDDEE; min-width: 6px; margin-bottom: 28px; align-self: center; transition: background 0.3s ease; }
-      .lifecycle-connector.lc-done { background: #0F7A3F; }
       /* ── Lifecycle rail: the seven modules read as one sequence ──
          Idle, a slow pulse walks the dots left to right on the same 7s clock
          as the diagram above. Playing, the current module carries a bar that
@@ -8249,6 +8247,201 @@
         .alm-hw-loop span { white-space: normal; }
         .alm-chart { max-width: 100%; }
       }
+
+      /* ══════════════════════════════════════════════════════════════════
+         WHAT'S INSIDE APPLICATION WORKSPACE — the orbit
+         Six modules ring the one they exist to serve. Geometry is owned by
+         LC_ORBIT in script and arrives on the elements as inline percentages
+         and SVG user units; everything here is paint. Below 900px the ring is
+         dropped and the same markup falls back to a wrapped list with the hub
+         leading, so nothing depends on the circle being drawable.
+         ══════════════════════════════════════════════════════════════════ */
+      .lc-orbit-wrap { display: flex; align-items: center; justify-content: center; gap: 26px; max-width: 1200px; margin: 0 auto; }
+      .lc-orbit {
+        position: relative;
+        flex: 0 1 800px; width: 100%; max-width: 800px;
+        aspect-ratio: 800 / 420;
+      }
+
+      /* Gutter notes: what each half of the ring is for. The rule runs down
+         the side facing the circle and takes the colour of that half's state. */
+      .lc-arc {
+        flex: 0 1 172px; display: flex; flex-direction: column; gap: 4px;
+        transition: border-color 0.3s ease;
+      }
+      .lc-arc-l { text-align: right; padding-right: 13px; border-right: 2px solid var(--r-divider, #DDDDEE); }
+      .lc-arc-r { text-align: left;  padding-left:  13px; border-left:  2px solid var(--r-divider, #DDDDEE); }
+      .lc-arc.is-live { border-color: var(--r-blue, #0000CC); }
+      .lc-arc.is-done { border-color: var(--re-green, #0F7A3F); }
+      .lc-arc-t {
+        font-size: 12px; font-weight: 800; letter-spacing: -0.015em; line-height: 1.2;
+        color: var(--r-ink, #1A1A2E); transition: color 0.3s ease;
+      }
+      .lc-arc.is-live .lc-arc-t { color: var(--r-blue, #0000CC); }
+      .lc-arc-c { font-size: 10.5px; font-weight: 500; line-height: 1.45; color: #6A6A7A; }
+      .lc-orbit-svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+      .lc-orbit-hint {
+        margin-top: 8px; text-align: center;
+        font-size: 10px; font-weight: 600; letter-spacing: 0.04em; color: #8A8A9A;
+      }
+
+      /* The ring stays quiet so the pills remain the loudest thing on it. */
+      .lc-ring-base  { fill: none; stroke: #DDDDEE; stroke-width: 1.5; stroke-dasharray: 2.5 7; stroke-linecap: round; }
+      /* The tour closes the circle as it goes; the arc is the progress bar. */
+      .lc-ring-prog  {
+        fill: none; stroke: var(--r-blue, #0000CC); stroke-width: 2.5; stroke-linecap: round;
+        stroke-dasharray: 100; stroke-dashoffset: 100; opacity: 0;
+        transition: stroke-dashoffset 700ms cubic-bezier(0.22, 1, 0.36, 1), opacity 300ms ease;
+      }
+      .lc-live .lc-ring-prog { opacity: 1; }
+
+      /* Spokes: every module reports to the middle. */
+      .lc-spoke { stroke: #DDDDEE; stroke-width: 1.25; stroke-linecap: round; transition: stroke 0.3s ease, stroke-width 0.3s ease; }
+      .lc-spoke.is-live { stroke: var(--r-blue, #0000CC); stroke-width: 1.9; }
+      .lc-spoke.is-done { stroke: var(--re-green, #0F7A3F); }
+
+      /* Idle, one mark runs the loop clockwise on the same 7s clock as the
+         diagram above, and each spoke lights as it is passed — so the section
+         reads as a cycle before anyone clicks anything. */
+      .lc-orbit-mark {
+        fill: var(--r-cyan, #00BFFF);
+        filter: drop-shadow(0 0 6px rgba(0, 191, 255, 0.9));
+        animation: lcOrbitRun 7s linear infinite;
+      }
+      @keyframes lcOrbitRun { from { offset-distance: 0%; } to { offset-distance: 100%; } }
+      .lc-orbit-trail {
+        fill: none; stroke: var(--r-cyan, #00BFFF); stroke-width: 2.6; stroke-linecap: round;
+        stroke-dasharray: 8 92; opacity: 0.5;
+        animation: lcOrbitTrail 7s linear infinite;
+      }
+      @keyframes lcOrbitTrail { from { stroke-dashoffset: 8; } to { stroke-dashoffset: -92; } }
+      .lc-live .lc-orbit-mark, .lc-live .lc-orbit-trail { opacity: 0; }
+      .arch-lifecycle-strip:not(.lc-live) .lc-spoke {
+        animation: lcSpokePass 7s ease-in-out infinite;
+        animation-delay: calc(var(--lc-slot, 0) * 1.1666s);
+      }
+      @keyframes lcSpokePass { 0%, 100% { stroke: #DDDDEE; } 4% { stroke: rgba(0, 0, 204, 0.55); } 16% { stroke: #DDDDEE; } }
+      /* The dots walk the ring on the same clock, so re-time the stagger from
+         the module's ring slot instead of its position in the source array. */
+      .arch-lifecycle-strip:not(.lc-live) .lc-sat .lifecycle-dot::before { animation-delay: calc(var(--lc-slot, 0) * 1.1666s); }
+
+      /* ── Satellites ── */
+      .lc-sat { position: absolute; transform: translate(-50%, -50%); z-index: 2; gap: 4px; }
+      .lc-sat.lc-out-b { flex-direction: column-reverse; }   /* labels always radiate outward */
+      .lc-sat .lifecycle-label { padding: 1px 5px; border-radius: 4px; background: rgba(252, 252, 255, 0.94); }
+      .lc-item-current.lc-sat { transform: translate(-50%, -50%) scale(1.07); }
+      .lc-sat .view-toggle { box-shadow: 0 2px 8px -3px rgba(26, 26, 46, 0.16); background: #fff; white-space: nowrap; }
+      .lc-sat .view-toggle:hover:not(.active) { box-shadow: 0 4px 14px -4px rgba(26, 26, 46, 0.22); }
+
+      /* ── Hub: the user experience, and the reason for the other six ── */
+      .lc-hub {
+        position: absolute; left: 50%; top: 50%;
+        transform: translate(-50%, -50%);
+        display: block; width: 23.75%; max-width: 190px; z-index: 3;
+      }
+      .lc-hub-halo {
+        position: absolute; inset: -26%; border-radius: 50%; pointer-events: none;
+        background: radial-gradient(circle at 50% 50%, rgba(0, 0, 204, 0.13) 32%, rgba(0, 0, 204, 0.05) 42%, rgba(0, 0, 204, 0.014) 54%, transparent 68%);
+        animation: lcHubBreathe 7s ease-in-out infinite;
+      }
+      @keyframes lcHubBreathe { 0%, 100% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.06); opacity: 1; } }
+      .lc-hub-btn {
+        position: relative; z-index: 1;
+        display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+        width: 100%; aspect-ratio: 1; padding: 0 17px;
+        border-radius: 50%; border: 1.5px solid var(--r-divider, #DDDDEE); background: #fff;
+        text-align: center; cursor: pointer;
+        box-shadow: 0 8px 26px -10px rgba(26, 26, 46, 0.26);
+        transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease, transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+      }
+      .lc-hub-btn:hover { transform: translateY(-1px); border-color: var(--r-blue, #0000CC); box-shadow: 0 12px 32px -10px rgba(0, 0, 204, 0.34); }
+      .lc-hub-btn.active,
+      .lc-item-current .lc-hub-btn {
+        border-color: var(--r-blue, #0000CC);
+        background: linear-gradient(180deg, #fff 0%, var(--r-quote-bg, #F6F8FF) 100%);
+        box-shadow: 0 12px 32px -10px rgba(0, 0, 204, 0.34);
+      }
+      .lc-hub-stage { line-height: 1.1; }
+      .lc-hub-ico {
+        display: grid; place-items: center;
+        width: 34px; height: 34px; margin-top: 3px;
+        border-radius: 9px; background: var(--r-blue, #0000CC);
+        box-shadow: 0 3px 10px -3px rgba(0, 0, 204, 0.5);
+      }
+      .lc-hub-ico svg, .lc-hub-ico i { width: 18px; height: 18px; color: #fff; }
+      .lc-hub-name { margin-top: 4px; font-size: 14px; font-weight: 800; letter-spacing: -0.022em; line-height: 1.15; color: var(--r-ink, #1A1A2E); }
+      .lc-hub-sub  { margin-top: 1px; font-size: 9px; font-weight: 600; letter-spacing: 0.01em; line-height: 1.3; color: #8A8A9A; }
+      .lc-hub-btn.active .lc-hub-sub, .lc-item-current .lc-hub-sub { color: var(--r-blue, #0000CC); }
+      /* A circle has no bottom edge, so the hub's step timer is a ring. */
+      .lc-hub-prog { position: absolute; inset: -7px; width: calc(100% + 14px); height: calc(100% + 14px); transform: rotate(-90deg); pointer-events: none; z-index: 2; }
+      .lc-hub-prog-c {
+        fill: none; stroke: var(--r-cyan, #00BFFF); stroke-width: 2.4; stroke-linecap: round;
+        stroke-dasharray: 100; stroke-dashoffset: 100;
+        animation-name: lcRingFill; animation-timing-function: linear; animation-fill-mode: forwards;
+      }
+      @keyframes lcRingFill { from { stroke-dashoffset: 100; } to { stroke-dashoffset: 0; } }
+      .lc-hub-tick {
+        position: absolute; top: 6%; right: 6%; z-index: 3;
+        display: grid; place-items: center; width: 20px; height: 20px;
+        border-radius: 50%; background: var(--re-green, #0F7A3F); color: #fff;
+        box-shadow: 0 0 0 3px #fff;
+      }
+      .lc-hub-tick svg { width: 10px; height: 10px; }
+
+      @media (prefers-reduced-motion: reduce) {
+        .lc-orbit-mark, .lc-orbit-trail, .lc-spoke, .lc-hub-halo, .lc-hub-prog-c { animation: none !important; }
+        .lc-hub-prog-c { stroke-dashoffset: 0; }
+      }
+
+      /* Three columns need 800px of ring plus both gutters. Under that the
+         gutters drop below the circle rather than squeezing it, because a
+         shrunken ring crowds the pills long before it runs out of room. */
+      @media (max-width: 1320px) {
+        .lc-orbit-wrap { flex-wrap: wrap; gap: 18px 26px; }
+        .lc-orbit { flex: 1 1 100%; margin: 0 auto; }
+        .lc-arc-l, .lc-arc-r {
+          flex: 0 1 320px; text-align: left; padding: 0 0 0 13px;
+          border-right: none; border-left: 2px solid var(--r-divider, #DDDDEE);
+        }
+        .lc-arc-r { order: 1; }
+        .lc-arc-l { order: 2; }
+        .lc-orbit-hint { margin-top: 14px; }
+        .lc-arc.is-live { border-color: var(--r-blue, #0000CC); }
+        .lc-arc.is-done { border-color: var(--re-green, #0F7A3F); }
+      }
+
+      /* ── Under 900px the circle stops paying for itself: same markup, laid
+           out as a wrapped list with the hub leading, so the message survives
+           even though the geometry does not. ── */
+      @media (max-width: 900px) {
+        .lc-arc { display: none; }
+        .lc-orbit {
+          max-width: none; aspect-ratio: auto;
+          display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-end;
+          gap: 12px 8px;
+        }
+        .lc-orbit-svg { display: none; }
+        .lc-sat { position: static; transform: none; }
+        .lc-sat .lifecycle-label { padding: 0; background: none; }
+        .lc-sat.lc-out-b { flex-direction: column; }
+        .lc-item-current.lc-sat { transform: translateY(-2px); }
+        .lc-hub {
+          position: relative; left: auto; top: auto; transform: none;
+          width: 100%; max-width: none; order: -1; margin-bottom: 2px;
+        }
+        .lc-hub-halo, .lc-hub-prog { display: none; }
+        .lc-hub-btn {
+          flex-direction: row; gap: 10px; justify-content: center;
+          aspect-ratio: auto; padding: 11px 18px; border-radius: 14px;
+          box-shadow: 0 2px 10px -4px rgba(26, 26, 46, 0.2);
+        }
+        .lc-hub-btn:hover, .lc-hub-btn.active, .lc-item-current .lc-hub-btn { box-shadow: 0 4px 14px -5px rgba(0, 0, 204, 0.32); }
+        .lc-hub-ico { order: -1; width: 28px; height: 28px; margin-top: 0; border-radius: 8px; }
+        .lc-hub-ico svg, .lc-hub-ico i { width: 15px; height: 15px; }
+        .lc-hub-name { margin-top: 0; font-size: 14px; }
+        .lc-hub-sub { display: none; }
+        .lc-hub-tick { top: 50%; right: 10px; transform: translateY(-50%); }
+      }
 </style>
   </head>
 
@@ -8667,6 +8860,40 @@
       })[view];
       const activeLifecycleView = () =>
         LIFECYCLE_MODULES.find(m => STATE[lifecycleViewFlag(m.view)])?.view || null;
+
+      /* ── "What's inside" orbit geometry ──────────────────────────────────
+         The seven modules used to read left-to-right, which said they were a
+         queue of equals. They are not. Six of them exist to produce and
+         protect the seventh, so RUN is lifted out of the line and made the
+         hub, and the rest ring it in lifecycle order, clockwise from twelve
+         o'clock, every spoke pointing at the thing the customer actually
+         buys. The ring, the spokes, the arrows and the pill positions are all
+         derived from these numbers, so the drawing and the layout cannot
+         drift apart. Order is untouched: LIFECYCLE_MODULES stays index-
+         aligned with the guided tour's step list. ── */
+      const LC_HUB_VIEW = 'user';
+      const LC_ORBIT = { w: 800, h: 420, cx: 400, cy: 210, rx: 300, ry: 158, hubR: 95 };
+      const lcHubIndex  = () => LIFECYCLE_MODULES.findIndex(m => m.view === LC_HUB_VIEW);
+      const lcRingCount = () => LIFECYCLE_MODULES.length - 1;
+      /* Ring slot for a module index: the hub is lifted out, the rest close up. */
+      const lcSlot = (idx) => idx < lcHubIndex() ? idx : idx - 1;
+      const lcPoint = (slot) => {
+        const a = (-90 + (360 / lcRingCount()) * slot) * Math.PI / 180;
+        return { x: LC_ORBIT.cx + LC_ORBIT.rx * Math.cos(a), y: LC_ORBIT.cy + LC_ORBIT.ry * Math.sin(a) };
+      };
+      const LC_RING_PATH = (() => {
+        const { cx, cy, rx, ry } = LC_ORBIT;
+        return `M ${cx} ${cy - ry} A ${rx} ${ry} 0 1 1 ${cx} ${cy + ry} A ${rx} ${ry} 0 1 1 ${cx} ${cy - ry}`;
+      })();
+      /* How far round the ring the guided tour has travelled. The hub is not
+         on the ring, so the arc holds at the halfway mark while the tour is
+         inside the user experience, then carries on where it left off. */
+      const lcRingProgress = () => {
+        if (!STATE.lifecyclePlaying || STATE.lcStep < 0) return 0;
+        const hub = lcHubIndex();
+        const reached = STATE.lcStep >= hub ? STATE.lcStep : STATE.lcStep + 1;
+        return Math.max(0, Math.min(1, reached / lcRingCount()));
+      };
 
       /* ── The Recast Approach diagram ────────────────────────────────────
          Static markup, held here rather than inline in renderSolution so the
@@ -14490,27 +14717,105 @@
               <div class="arch-lifecycle-strip ${STATE.lifecyclePlaying ? 'lc-live' : ''}">
                 <div class="arch-inside-h">
                   <h3 class="arch-inside-t">What&rsquo;s inside Application Workspace</h3>
+                  <p class="arch-inside-s">Every module exists to produce and protect one thing &mdash; what the person on the device actually experiences.</p>
                 </div>
-                <div class="flex items-end gap-1.5 flex-wrap">
-                  ${LIFECYCLE_MODULES.map((m) => ({...m, active: STATE[lifecycleViewFlag(m.view)]}))
-                    .map((item, idx, arr) => {
-                    const isDone    = STATE.lifecyclePlaying && idx < STATE.lcStep;
-                    const isCurrent = STATE.lifecyclePlaying && idx === STATE.lcStep;
-                    const dotClass  = isDone ? 'lifecycle-dot-done' : (isCurrent ? 'lifecycle-dot-active lifecycle-dot-playing' : (item.active ? 'lifecycle-dot-active' : ''));
-                    const lblClass  = isDone ? 'lc-done' : (isCurrent ? 'lc-active' : '');
-                    const connClass = isDone ? 'lc-done' : '';
+                ${(() => {
+                  /* One pass builds the tour state for all seven modules, then the
+                     hub and the six satellites are drawn from it. Play / Step /
+                     Reset live only in the pop-out header: the rail's copy used to
+                     render under exactly the same condition as the modal, so both
+                     clusters were always on screen at once. */
+                  const HUB   = lcHubIndex();
+                  const total = LIFECYCLE_MODULES.length;
+                  const items = LIFECYCLE_MODULES.map((m, idx) => ({
+                    ...m, idx,
+                    active:    STATE[lifecycleViewFlag(m.view)],
+                    isDone:    STATE.lifecyclePlaying && idx < STATE.lcStep,
+                    isCurrent: STATE.lifecyclePlaying && idx === STATE.lcStep,
+                    hub:       idx === HUB,
+                    slot:      idx === HUB ? -1 : lcSlot(idx),
+                  }));
+                  const elapsed = Math.max(0, Date.now() - (STATE.lcStepStart || Date.now()));
+                  const TICK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+
+                  /* Spokes stop short of both ends so the ring reads as convergence,
+                     not as a wheel welded to its axle. */
+                  const spokes = items.filter(it => !it.hub).map(it => {
+                    const p  = lcPoint(it.slot);
+                    const dx = p.x - LC_ORBIT.cx, dy = p.y - LC_ORBIT.cy;
+                    const len = Math.hypot(dx, dy) || 1;
+                    const ux = dx / len, uy = dy / len;
+                    const st = it.isDone ? 'is-done' : ((it.isCurrent || it.active) ? 'is-live' : '');
+                    return `<line class="lc-spoke ${st}" style="--lc-slot:${it.slot}"
+                      x1="${(LC_ORBIT.cx + ux * (LC_ORBIT.hubR + 9)).toFixed(1)}" y1="${(LC_ORBIT.cy + uy * (LC_ORBIT.hubR + 9)).toFixed(1)}"
+                      x2="${(p.x - ux * 27).toFixed(1)}" y2="${(p.y - uy * 27).toFixed(1)}"/>`;
+                  }).join('');
+
+                  const node = (it) => {
+                    const dotClass = it.isDone ? 'lifecycle-dot-done' : (it.isCurrent ? 'lifecycle-dot-active lifecycle-dot-playing' : (it.active ? 'lifecycle-dot-active' : ''));
+                    const lblClass = it.isDone ? 'lc-done' : (it.isCurrent ? 'lc-active' : '');
+                    const count    = it.isCurrent ? `<em class="lc-count">${it.idx + 1}/${total}</em>` : '';
+                    const stateCls = `${it.isCurrent ? 'lc-item-current' : ''} ${it.isDone ? 'lc-item-done' : ''}`;
+
+                    if (it.hub) {
+                      /* The hub carries the step timer as a ring rather than the
+                         satellites' underline, because a circle has no bottom edge. */
+                      return `
+                      <div class="lifecycle-item lc-hub ${stateCls}" style="--lc:${it.idx}">
+                        <span class="lc-hub-halo" aria-hidden="true"></span>
+                        ${it.isCurrent ? `<svg class="lc-hub-prog" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><circle class="lc-hub-prog-c" cx="50" cy="50" r="49" pathLength="100" style="animation-duration:${LC_DWELL[it.idx] || 9000}ms;animation-delay:-${elapsed}ms"/></svg>` : ''}
+                        <button type="button" data-action="toggle-solution-view" data-view="${it.view}" class="lc-hub-btn ${it.active ? 'active' : ''}" aria-label="${it.stage}: ${it.name}">
+                          <span class="lifecycle-label lc-hub-stage ${lblClass}">${it.stage}${count}</span>
+                          <span class="lc-hub-ico"><i data-lucide="${it.icon}"></i></span>
+                          <span class="lc-hub-name">${it.name}</span>
+                          <span class="lc-hub-sub">Everything here serves this</span>
+                        </button>
+                        ${it.isDone ? `<span class="lc-hub-tick" aria-hidden="true">${TICK}</span>` : ''}
+                      </div>`;
+                    }
+
+                    const p = lcPoint(it.slot);
                     return `
-                    <div class="lifecycle-item ${isCurrent ? 'lc-item-current' : ''} ${isDone ? 'lc-item-done' : ''}" style="--lc:${idx}">
-                      <span class="lifecycle-label ${lblClass}">${item.stage}${isCurrent ? `<em class="lc-count">${idx + 1}/${arr.length}</em>` : ''}</span>
-                      <div class="lifecycle-dot ${dotClass}">${isDone ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>' : ''}</div>
-                      <button type="button" data-action="toggle-solution-view" data-view="${item.view}" class="view-toggle ${item.active ? 'active' : ''}"><i data-lucide="${item.icon}" class="w-3.5 h-3.5"></i> ${item.name}${isCurrent ? `<span class="lc-fill" style="animation-duration:${LC_DWELL[idx] || 9000}ms;animation-delay:-${Math.max(0, Date.now() - (STATE.lcStepStart || Date.now()))}ms"></span>` : ''}</button>
-                    </div>
-                    ${idx < arr.length - 1 ? '<div class="lifecycle-connector ' + connClass + '"></div>' : ''}
-                  `;}).join('')}
-                  <!-- Play / Step / Reset live only in the pop-out header. The rail's
-                       copy rendered under exactly the same condition as the modal, so
-                       both clusters were always on screen at once. -->
-                </div>
+                    <div class="lifecycle-item lc-sat ${p.y > LC_ORBIT.cy ? 'lc-out-b' : 'lc-out-t'} ${stateCls}"
+                         style="--lc:${it.idx};--lc-slot:${it.slot};left:${(p.x / LC_ORBIT.w * 100).toFixed(3)}%;top:${(p.y / LC_ORBIT.h * 100).toFixed(3)}%">
+                      <span class="lifecycle-label ${lblClass}">${it.stage}${count}</span>
+                      <div class="lifecycle-dot ${dotClass}">${it.isDone ? TICK : ''}</div>
+                      <button type="button" data-action="toggle-solution-view" data-view="${it.view}" class="view-toggle ${it.active ? 'active' : ''}"><i data-lucide="${it.icon}" class="w-3.5 h-3.5"></i> ${it.name}${it.isCurrent ? `<span class="lc-fill" style="animation-duration:${LC_DWELL[it.idx] || 9000}ms;animation-delay:-${elapsed}ms"></span>` : ''}</button>
+                    </div>`;
+                  };
+
+                  /* The ring splits cleanly in half: the three modules on the
+                     right of it run before anyone asks, the three on the left
+                     run for as long as the app is installed. Naming the halves
+                     fills the gutters either side of the circle and gives the
+                     loop a plot, rather than leaving it a ring of seven names. */
+                  const arcNote = (slots, side, title, copy) => {
+                    const on = slots.map(sl => items.find(it => it.slot === sl)).filter(Boolean);
+                    const st = on.some(it => it.isCurrent || it.active) ? 'is-live'
+                             : (on.every(it => it.isDone) && on.length ? 'is-done' : '');
+                    return `<div class="lc-arc lc-arc-${side} ${st}">
+                      <span class="lc-arc-t">${title}</span>
+                      <span class="lc-arc-c">${copy}</span>
+                    </div>`;
+                  };
+
+                  return `
+                  <div class="lc-orbit-wrap">
+                  ${arcNote([3, 4, 5], 'l', 'Keep it right', 'Governed, supported and scaled for as long as it stays installed.')}
+                  <div class="lc-orbit">
+                    <svg class="lc-orbit-svg" viewBox="0 0 ${LC_ORBIT.w} ${LC_ORBIT.h}" aria-hidden="true" focusable="false">
+                      <path class="lc-ring-base" d="${LC_RING_PATH}"/>
+                      ${spokes}
+                      <path class="lc-orbit-trail" d="${LC_RING_PATH}" pathLength="100"/>
+                      <path class="lc-ring-prog" d="${LC_RING_PATH}" pathLength="100" style="stroke-dashoffset:${(100 - lcRingProgress() * 100).toFixed(2)}"/>
+                      <circle class="lc-orbit-mark" r="4.5" style="offset-path:path('${LC_RING_PATH}')"/>
+                    </svg>
+                    ${items.map(node).join('')}
+                  </div>
+                  ${arcNote([0, 1, 2], 'r', 'Get it there', 'Sourced, packaged, tested and deployed before anyone raises a ticket.')}
+                  </div>
+                  <p class="lc-orbit-hint">Select any module to open the real screen</p>`;
+                })()}
               </div>
             </div>
 
