@@ -3173,7 +3173,7 @@
       .rws-chip svg { width: 15px; height: 15px; flex: 0 0 15px; }
       .rws-chip i, .rws-chip svg { width: 14px; height: 14px; color: #6A6A7A; }
       .rws-chips-sm .rws-chip { font-size: 11.5px; padding: 5px 12px; }
-      .rws-brk { position: relative; width: 38%; min-width: 220px; margin: 0 auto; height: 22px; border: 1.4px dashed #AABBEE; }
+      .rws-brk { position: relative; width: 26%; min-width: 170px; margin: 0 auto; height: 15px; border: 1.4px dashed #AABBEE; }
       .rws-brk-t { border-top: 0; border-radius: 0 0 12px 12px; margin-top: 7px; }
       .rws-brk-b { border-bottom: 0; border-radius: 12px 12px 0 0; margin-bottom: 7px; }
       /* The vertical run each bracket funnels into. Three dots ride it on a
@@ -3250,9 +3250,11 @@
         .rws-stages { padding-top: 0; grid-template-columns: repeat(2, 1fr); }
         .rws-diff { grid-template-columns: 1fr; }
       }
-      @media (max-height: 900px) {
+      @media (max-height: 1000px) {
         .rws-slab { padding: 12px 14px 13px; }
-        .rws-slab.rws-quiet { padding: 0 0 13px; }
+        .rws-slab.rws-quiet { padding: 0; }
+        .rws-rail { padding: 8px 14px 9px; }
+        .rws-rail .rws-rail-lab { margin-bottom: 5px; }
         .rws-quiet .rws-head { padding: 11px 14px 12px; }
         .rws-quiet .rws-io { padding: 0 14px; margin-top: 12px; }
         .rws-slab-t { font-size: 15.5px; }
@@ -3267,12 +3269,12 @@
         .rws-diffc { padding: 9px 10px 10px; }
         .rws-diffc b { font-size: 12px; }
         .rws-diffc span { font-size: 10.4px; }
-        .rws-brk { height: 18px; }
-        @keyframes rwsFlowDown { 0% { transform: translateY(-3px); opacity: 0; } 12% { opacity: 1; } 82% { opacity: 1; } 100% { transform: translateY(18px); opacity: 0; } }
+        .rws-brk { height: 13px; }
+        @keyframes rwsFlowDown { 0% { transform: translateY(-3px); opacity: 0; } 12% { opacity: 1; } 82% { opacity: 1; } 100% { transform: translateY(13px); opacity: 0; } }
         .rws-chip { padding: 5px 11px; font-size: 11.5px; }
       }
       /* ── Quiet treatment of the workspace slab (blue as accent, not field) ── */
-      .rws-slab.rws-quiet { background: #FFFFFF; border: 1px solid #DDDDEE; box-shadow: 0 1px 2px rgba(26, 26, 46,0.06); color: #1A1A2E; padding: 0 0 16px; }
+      .rws-slab.rws-quiet { background: #FFFFFF; border: 1px solid #DDDDEE; box-shadow: 0 1px 2px rgba(26, 26, 46,0.06); color: #1A1A2E; padding: 0; }
       .rws-quiet .rws-head { background: #0000CC; padding: 13px 17px 14px; }
       .rws-quiet .rws-slab-t { color: #FFFFFF; }
       .rws-quiet .rws-slab-s { color: #AABBEE; }
@@ -3294,6 +3296,22 @@
       .rws-quiet .rws-diffc-ic i, .rws-quiet .rws-diffc-ic svg { color: #0086B3; }
       .rws-quiet .rws-diffc span { color: #4A4A5A; }
       @media (max-width: 1180px) { .rws-quiet .rws-stage + .rws-stage::before { display: none; } }
+
+      /* ── The banner tops the whole picture ───────────────────────────────
+         What you already run and everyone you support used to sit outside
+         the box, which read as three separate things wired together. They
+         are not: both are inside Application Workspace. So the blue banner
+         now caps the whole diagram and the two rails become tinted bands
+         top and bottom, framing the white pipeline that runs between them.
+         Document order is unchanged, so the PDF's reader still finds the
+         title, both rails and both chip rows where it expects them. ── */
+      .rws-rail { padding: 11px 17px 12px; background: #F7F7FC; }
+      .rws-rail-in  { border-bottom: 1px solid var(--r-divider, #DDDDEE); }
+      .rws-rail-out { border-top: 1px solid var(--r-divider, #DDDDEE); }
+      .rws-rail .rws-rail-lab { margin-bottom: 6px; }
+      /* The brackets are now internal plumbing between band and core. */
+      .rws-quiet .rws-brk-t { margin-top: 0; }
+      .rws-quiet .rws-brk-b { margin-bottom: 0; }
       /* ── Deploy & Update: one spine, run twice ── */
       .udx-runs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
       .udx-run { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border: 1px solid #DDDDEE; border-radius: 8px; background: #FFFFFF; transition: border-color 260ms cubic-bezier(0.2, 0.8, 0.2, 1), background 260ms cubic-bezier(0.2, 0.8, 0.2, 1); }
@@ -3400,7 +3418,7 @@
       /* ── Flow: one pale current sweeping the slab, chevrons firing in order ── */
       .rws-slab.rws-quiet { position: relative; overflow: hidden; }
       .rws-quiet > * { position: relative; z-index: 1; }
-      .rws-quiet::before { content: ""; position: absolute; z-index: 0; top: 56px; bottom: 0; left: 0; width: 42%; pointer-events: none;
+      .rws-quiet::before { content: ""; position: absolute; z-index: 0; top: 40px; bottom: 0; left: 0; width: 42%; pointer-events: none;
         background: linear-gradient(100deg, rgba(0, 0, 204,0) 0%, rgba(0, 0, 204,0.085) 45%, rgba(0, 0, 204,0) 100%);
         animation: rwsCurrent 9s cubic-bezier(0.45, 0, 0.55, 1) infinite; }
       @keyframes rwsCurrent { 0% { transform: translateX(-105%); } 100% { transform: translateX(345%); } }
@@ -3416,6 +3434,7 @@
       .rws-brk::after { animation: rwsNode 2.6s ease-in-out infinite; }
       .rws-brk-b::after { animation-delay: 1.3s; }
       @keyframes rwsNode { 0%, 100% { box-shadow: 0 0 0 0 rgba(0, 0, 204,0.28); } 55% { box-shadow: 0 0 0 5px rgba(0, 0, 204,0); } }
+      @media (max-width: 900px) { .rws-quiet::before { display: none; } }
       @media (prefers-reduced-motion: reduce) {
         .rws-quiet::before, .rws-quiet .rws-stage + .rws-stage::before, .rws-brk::after { animation: none; }
         .rws-flow { display: none; }
@@ -3490,9 +3509,9 @@
       .cardtab-sub { color: #8A8A9A; }
       .cardtab-active .cardtab-sub { color: #4A4A5A; }
       .arch-lifecycle-strip { position: relative; padding: 2px 4px; }
-      .arch-inside-h { text-align: center; margin-bottom: 13px; }
-      .arch-inside-t { font-size: 17px; font-weight: 800; letter-spacing: -0.028em; line-height: 1.25; color: #1A1A2E; }
-      .arch-inside-s { margin-top: 3px; font-size: 12px; font-weight: 500; color: #6A6A7A; }
+      .arch-inside-h { text-align: center; margin-bottom: 9px; }
+      .arch-inside-t { font-size: 16px; font-weight: 800; letter-spacing: -0.028em; line-height: 1.25; color: #1A1A2E; }
+      .arch-inside-s { margin-top: 2px; font-size: 11.5px; font-weight: 500; line-height: 1.35; color: #6A6A7A; }
       @media (max-width: 860px) { .arch-inside-t { font-size: 15px; } }
       .demo-loop-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px 8px 14px; border-radius: 999px; background: #0000CC; color: #fff; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; border: none; cursor: pointer; transition: all 160ms cubic-bezier(0.2,0.8,0.2,1); box-shadow: 0 2px 8px -2px rgba(0, 0, 204,0.4); }
       .demo-loop-btn:hover { background: #00BFFF; color: #1A1A2E; box-shadow: 0 4px 12px -2px rgba(0, 191, 255,0.5); }
@@ -6085,7 +6104,7 @@
         #panel-solution > .section-card .mt-2.text-\\[10px\\] { font-size: 9px !important; margin-top: 6px !important; }
 
         /* Control strip: thinner */
-        #panel-solution .view-toggle { padding: 6px 10px !important; font-size: 11px !important; }
+        #panel-solution .view-toggle { padding: clamp(2.6px, 0.68cqw, 6px) clamp(4.5px, 1.14cqw, 10px) !important; font-size: clamp(7.4px, 1.25cqw, 11px) !important; gap: clamp(3px, 0.57cqw, 5px) !important; }
 
         /* CTA row: less vertical whitespace */
         #panel-solution > .flex.flex-col.items-end { margin-top: 4px !important; }
@@ -8256,17 +8275,27 @@
          dropped and the same markup falls back to a wrapped list with the hub
          leading, so nothing depends on the circle being drawable.
          ══════════════════════════════════════════════════════════════════ */
-      .lc-orbit-wrap { display: flex; align-items: center; justify-content: center; gap: 26px; max-width: 1200px; margin: 0 auto; }
+      .lc-orbit-wrap { display: flex; align-items: center; justify-content: center; gap: 30px; max-width: 1320px; margin: 0 auto; }
       .lc-orbit {
         position: relative;
-        flex: 0 1 800px; width: 100%; max-width: 800px;
-        aspect-ratio: 800 / 420;
+        flex: 0 1 880px; width: 100%; max-width: 880px;
+        aspect-ratio: 880 / 390;
+        container-type: inline-size;
       }
+      /* Every size below is tuned so that at the design width of 800px the
+         numbers land exactly where they were set by hand; below it the whole
+         composition scales instead of the type stranding at fixed pixels. */
+      .lc-sat .lifecycle-label { font-size: clamp(5.9px, 0.97cqw, 8.5px); }
+      .lc-sat .view-toggle svg, .lc-sat .view-toggle i { width: clamp(8.5px, 1.59cqw, 14px); height: clamp(8.5px, 1.59cqw, 14px); }
+      .lc-hub-ico { width: clamp(20px, 3.86cqw, 34px); height: clamp(20px, 3.86cqw, 34px); }
+      .lc-hub-ico svg, .lc-hub-ico i { width: clamp(11px, 2.05cqw, 18px); height: clamp(11px, 2.05cqw, 18px); }
+      .lc-hub-name { font-size: clamp(8.6px, 1.59cqw, 14px); }
+      .lc-hub-sub { font-size: clamp(6px, 1.02cqw, 9px); }
 
       /* Gutter notes: what each half of the ring is for. The rule runs down
          the side facing the circle and takes the colour of that half's state. */
       .lc-arc {
-        flex: 0 1 172px; display: flex; flex-direction: column; gap: 4px;
+        flex: 1 1 172px; max-width: 252px; display: flex; flex-direction: column; gap: 4px;
         transition: border-color 0.3s ease;
       }
       .lc-arc-l { text-align: right; padding-right: 13px; border-right: 2px solid var(--r-divider, #DDDDEE); }
@@ -8281,8 +8310,8 @@
       .lc-arc-c { font-size: 10.5px; font-weight: 500; line-height: 1.45; color: #6A6A7A; }
       .lc-orbit-svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
       .lc-orbit-hint {
-        margin-top: 8px; text-align: center;
-        font-size: 10px; font-weight: 600; letter-spacing: 0.04em; color: #8A8A9A;
+        margin-top: 6px; text-align: center;
+        font-size: 9.5px; font-weight: 600; letter-spacing: 0.04em; color: #8A8A9A;
       }
 
       /* The ring stays quiet so the pills remain the loudest thing on it. */
@@ -8337,7 +8366,7 @@
       .lc-hub {
         position: absolute; left: 50%; top: 50%;
         transform: translate(-50%, -50%);
-        display: block; width: 23.75%; max-width: 190px; z-index: 3;
+        display: block; width: 20.91%; max-width: 190px; z-index: 3;
       }
       .lc-hub-halo {
         position: absolute; inset: -26%; border-radius: 50%; pointer-events: none;
@@ -8352,6 +8381,7 @@
         border-radius: 50%; border: 1.5px solid var(--r-divider, #DDDDEE); background: #fff;
         text-align: center; cursor: pointer;
         box-shadow: 0 8px 26px -10px rgba(26, 26, 46, 0.26);
+        overflow: hidden;
         transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease, transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
       }
       .lc-hub-btn:hover { transform: translateY(-1px); border-color: var(--r-blue, #0000CC); box-shadow: 0 12px 32px -10px rgba(0, 0, 204, 0.34); }
@@ -8369,8 +8399,8 @@
         box-shadow: 0 3px 10px -3px rgba(0, 0, 204, 0.5);
       }
       .lc-hub-ico svg, .lc-hub-ico i { width: 18px; height: 18px; color: #fff; }
-      .lc-hub-name { margin-top: 4px; font-size: 14px; font-weight: 800; letter-spacing: -0.022em; line-height: 1.15; color: var(--r-ink, #1A1A2E); }
-      .lc-hub-sub  { margin-top: 1px; font-size: 9px; font-weight: 600; letter-spacing: 0.01em; line-height: 1.3; color: #8A8A9A; }
+      .lc-hub-name { margin-top: 4px; font-weight: 800; letter-spacing: -0.022em; line-height: 1.15; color: var(--r-ink, #1A1A2E); }
+      .lc-hub-sub  { margin-top: 1px; font-size: 9px; font-weight: 600; letter-spacing: 0.01em; line-height: 1.3; color: #8A8A9A; text-wrap: balance; }
       .lc-hub-btn.active .lc-hub-sub, .lc-item-current .lc-hub-sub { color: var(--r-blue, #0000CC); }
       /* A circle has no bottom edge, so the hub's step timer is a ring. */
       .lc-hub-prog { position: absolute; inset: -7px; width: calc(100% + 14px); height: calc(100% + 14px); transform: rotate(-90deg); pointer-events: none; z-index: 2; }
@@ -8387,10 +8417,72 @@
         box-shadow: 0 0 0 3px #fff;
       }
       .lc-hub-tick svg { width: 10px; height: 10px; }
+      @container (max-width: 660px) { .lc-hub-sub { display: none; } }
+      @container (max-width: 545px) { .lc-hub-stage { display: none; } }
 
       @media (prefers-reduced-motion: reduce) {
         .lc-orbit-mark, .lc-orbit-trail, .lc-spoke, .lc-hub-halo, .lc-hub-prog-c { animation: none !important; }
         .lc-hub-prog-c { stroke-dashoffset: 0; }
+      }
+
+      /* ── Fitting a full screen ───────────────────────────────────────────
+         The panel has to sit inside one viewport without scrolling, and the
+         circle is the tallest thing in it. Because .lc-orbit is a size
+         container, one max-width scales the ring, the pills and their type
+         together, so shorter viewports get a smaller composition rather than
+         a broken one. Steps are set from the panel's real budget: chrome and
+         the card tabs take ~180px, the pipeline card takes the rest. ── */
+      /* The circle is the only thing here that can shrink continuously, so it
+         absorbs the whole height budget: width follows the room left over
+         once the chrome, the card tabs and the pipeline card have taken
+         theirs (880/390 converts leftover height back into width). The
+         subtracted constant changes per band because the pipeline card and
+         the circle's own heading step down at those same breakpoints. */
+      @media (min-width: 901px) and (max-height: 1100px) { .lc-orbit { max-width: clamp(430px, calc((100vh - 650px) * 2.2564), 880px); } }
+      @media (min-width: 901px) and (max-height: 1000px) { .lc-orbit { max-width: clamp(430px, calc((100vh - 628px) * 2.2564), 880px); } }
+      @media (min-width: 901px) and (max-height: 900px)  { .lc-orbit { max-width: clamp(430px, calc((100vh - 590px) * 2.2564), 880px); } }
+      @media (min-width: 901px) and (max-height: 820px)  { .lc-orbit { max-width: clamp(430px, calc((100vh - 575px) * 2.2564), 880px); } }
+      @media (min-width: 901px) and (max-height: 1100px) {
+        /* card tabs */
+        #panel-solution > .grid .cardtab > div { padding: 8px 14px; }
+        #panel-solution > .grid .cardtab-icon { height: 30px; width: 30px; }
+        /* the circle */
+        #panel-solution > .section-card { padding: 10px 14px !important; }
+        /* the pipeline */
+        .rws-quiet .rws-head { padding: 9px 14px 10px; }
+        .rws-slab-t { font-size: 15px; }
+        .rws-rail { padding: 7px 14px 8px; }
+        .rws-chip { padding: 4px 10px; font-size: 11px; }
+        .rws-chips-sm .rws-chip { padding: 3.5px 9px; font-size: 10.5px; }
+        .rws-chip i, .rws-chip svg { width: 13px; height: 13px; }
+        .rws-rail-lab { font-size: 8px; margin-bottom: 4px; }
+        .rws-quiet .rws-io { margin-top: 10px; }
+        /* a wider input column takes the note from three lines to two, which
+           is where most of this card's spare height was sitting */
+        .rws-io { grid-template-columns: 0.95fr 2.15fr 0.9fr; gap: 10px; }
+        .rws-stages { padding-top: 15px; gap: 7px; }
+        .rws-stage { padding: 7px 7px 8px; gap: 3px; }
+        .rws-stage-ic { width: 23px; height: 23px; }
+        .rws-pills { gap: 5px; }
+        .rws-pill { padding: 5px 9px; }
+        .rws-inote { margin: 0 0 1px; font-size: 9.2px; line-height: 1.3; }
+        .rws-lab { margin-bottom: 4px; }
+        .rws-brk { height: 11px; }
+      }
+      @media (min-width: 901px) and (max-height: 1000px) {
+        .arch-inside-t { font-size: 15px; }
+        .arch-inside-s { font-size: 11px; }
+        .arch-inside-h { margin-bottom: 7px; }
+        .lc-orbit-hint { display: none; }
+      }
+      @media (min-width: 901px) and (max-height: 900px) {
+        .rws-inote { display: none; }
+        .rws-stage span { font-size: 8.8px; }
+        .rws-stage b { font-size: 11.5px; }
+        .rws-chip { padding: 3.5px 9px; font-size: 10.5px; }
+      }
+      @media (min-width: 901px) and (max-height: 820px) {
+        .arch-inside-s { display: none; }
       }
 
       /* Three columns need 800px of ring plus both gutters. Under that the
@@ -8400,7 +8492,7 @@
         .lc-orbit-wrap { flex-wrap: wrap; gap: 18px 26px; }
         .lc-orbit { flex: 1 1 100%; margin: 0 auto; }
         .lc-arc-l, .lc-arc-r {
-          flex: 0 1 320px; text-align: left; padding: 0 0 0 13px;
+          flex: 0 1 320px; max-width: 320px; text-align: left; padding: 0 0 0 13px;
           border-right: none; border-left: 2px solid var(--r-divider, #DDDDEE);
         }
         .lc-arc-r { order: 1; }
@@ -8413,7 +8505,7 @@
       /* ── Under 900px the circle stops paying for itself: same markup, laid
            out as a wrapped list with the hub leading, so the message survives
            even though the geometry does not. ── */
-      @media (max-width: 900px) {
+      @media (max-width: 900px), (max-height: 700px) {
         .lc-arc { display: none; }
         .lc-orbit {
           max-width: none; aspect-ratio: auto;
@@ -8872,7 +8964,7 @@
          drift apart. Order is untouched: LIFECYCLE_MODULES stays index-
          aligned with the guided tour's step list. ── */
       const LC_HUB_VIEW = 'user';
-      const LC_ORBIT = { w: 800, h: 420, cx: 400, cy: 210, rx: 300, ry: 158, hubR: 95 };
+      const LC_ORBIT = { w: 880, h: 390, cx: 440, cy: 195, rx: 340, ry: 148, hubR: 92 };
       const lcHubIndex  = () => LIFECYCLE_MODULES.findIndex(m => m.view === LC_HUB_VIEW);
       const lcRingCount = () => LIFECYCLE_MODULES.length - 1;
       /* Ring slot for a module index: the hub is lifted out, the rest close up. */
@@ -8895,6 +8987,16 @@
         return Math.max(0, Math.min(1, reached / lcRingCount()));
       };
 
+      /* Walk order for the pop-out's next arrow and its progress dots: the hub
+         first, because it is the thing the other six serve, then the ring
+         clockwise — the same path the orbit draws. Held apart from
+         LIFECYCLE_MODULES so that array stays index-aligned with the guided
+         tour's step list and with the PDF module capture. */
+      const LC_NAV = [
+        ...LIFECYCLE_MODULES.filter(m => m.view === LC_HUB_VIEW),
+        ...LIFECYCLE_MODULES.filter(m => m.view !== LC_HUB_VIEW),
+      ];
+
       /* ── The Recast Approach diagram ────────────────────────────────────
          Static markup, held here rather than inline in renderSolution so the
          Executive Summary PDF can mount the identical nodes off-screen and
@@ -8903,6 +9005,12 @@
          reads its labels straight back out of these nodes. ── */
       const RWS_DIAGRAM_HTML = `
               <div class="rws">
+                <div class="rws-slab rws-quiet">
+                <div class="rws-head">
+                  <div class="rws-slab-t">Recast Application Delivery Software</div>
+                </div>
+
+                <div class="rws-rail rws-rail-in">
                 <div class="rws-rail-lab">What you already run</div>
                 <div class="rws-chips">
                   <span class="rws-chip"><svg viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="rwsIn" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#00BFFF"/><stop offset="1" stop-color="#0078D4"/></linearGradient></defs><path fill="url(#rwsIn)" d="M22.5 12.5a6.5 6.5 0 0 0-12.7-1.7A5 5 0 0 0 10 21h12a4.5 4.5 0 0 0 .5-8.5z"/></svg>Intune</span>
@@ -8911,12 +9019,8 @@
                   <span class="rws-chip"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="4" width="11.5" height="11.5" fill="#F25022"/><rect x="16.5" y="4" width="11.5" height="11.5" fill="#7FBA00"/><rect x="4" y="16.5" width="11.5" height="11.5" fill="#00A4EF"/><rect x="16.5" y="16.5" width="11.5" height="11.5" fill="#FFB900"/></svg>AVD / W365</span>
                   <span class="rws-chip"><svg viewBox="0 0 32 32" aria-hidden="true"><path fill="#1168ED" d="M22.5 4.5c.6 0 1 .5 1 1.1V18c0 5-4 9-9 9-2.4 0-4.5-.9-6.1-2.4-.4-.4-.4-1 0-1.4l2.1-2.1c.4-.4 1-.4 1.4-.1.7.6 1.6 1 2.6 1 2.2 0 4-1.8 4-4V5.6c0-.6.5-1.1 1.1-1.1h2.9z"/></svg>Jamf</span>
                 </div>
+                </div>
                 <div class="rws-brk rws-brk-t" aria-hidden="true"><span class="rws-flow"></span><span class="rws-flow"></span><span class="rws-flow"></span></div>
-
-                <div class="rws-slab rws-quiet">
-                  <div class="rws-head">
-                    <div class="rws-slab-t">Recast Application Delivery Software</div>
-                  </div>
 
                   <div class="rws-io">
                     <div class="rws-col">
@@ -8948,9 +9052,8 @@
                     </div>
                   </div>
 
-                </div>
-
                 <div class="rws-brk rws-brk-b" aria-hidden="true"><span class="rws-flow"></span><span class="rws-flow"></span><span class="rws-flow"></span></div>
+                <div class="rws-rail rws-rail-out">
                 <div class="rws-rail-lab">Everyone you support</div>
                 <div class="rws-chips rws-chips-sm">
                   <span class="rws-chip"><i data-lucide="monitor"></i>Windows</span>
@@ -8961,7 +9064,9 @@
                   <span class="rws-chip"><i data-lucide="laptop"></i>BYOD / Remote</span>
                   <span class="rws-chip"><i data-lucide="globe"></i>Browser-Based</span>
                 </div>
+                </div>
 
+                </div>
               </div>`;
 
       const SCENARIOS = [
@@ -14827,9 +14932,9 @@
             ${(() => {
               const activeView = activeLifecycleView();
               if (!activeView) return '';
-              const idx = LIFECYCLE_MODULES.findIndex(m => m.view === activeView);
-              const mod = LIFECYCLE_MODULES[idx];
-              const nextMod = idx < LIFECYCLE_MODULES.length - 1 ? LIFECYCLE_MODULES[idx + 1] : null;
+              const idx = LC_NAV.findIndex(m => m.view === activeView);
+              const mod = LC_NAV[idx];
+              const nextMod = idx >= 0 && idx < LC_NAV.length - 1 ? LC_NAV[idx + 1] : null;
               return `
               <div class="demo-modal-backdrop ${STATE._modalFresh ? 'is-fresh' : ''}" data-action="close-demo-modal">
                 <div class="demo-modal-panel" role="dialog" aria-modal="true" aria-labelledby="demo-modal-title" onclick="var a=event.target.closest('[data-action]');if(!a||!this.contains(a))event.stopPropagation()">
@@ -14839,8 +14944,8 @@
                       <i data-lucide="${mod.icon}"></i>
                       <span>${mod.name}</span>
                     </span>
-                    <span class="demo-modal-progress" aria-label="Step ${idx + 1} of ${LIFECYCLE_MODULES.length}">
-                      ${LIFECYCLE_MODULES.map((m, i) => `<button type="button" class="demo-modal-progress-dot ${i === idx ? 'is-active' : ''}" data-action="next-demo-module" data-view="${m.view}" title="${m.name}" aria-label="Jump to ${m.name}"></button>`).join('')}
+                    <span class="demo-modal-progress" aria-label="Step ${idx + 1} of ${LC_NAV.length}">
+                      ${LC_NAV.map((m, i) => `<button type="button" class="demo-modal-progress-dot ${i === idx ? 'is-active' : ''}" data-action="next-demo-module" data-view="${m.view}" title="${m.name}" aria-label="Jump to ${m.name}"></button>`).join('')}
                     </span>
                     <span class="demo-modal-controls">
                       ${(() => {
