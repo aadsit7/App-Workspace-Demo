@@ -456,6 +456,37 @@
         from { opacity: 0; transform: translateY(6px); }
         to   { opacity: 1; transform: translateY(0); }
       }
+      /* Teams-embedded beats: launch mark, in-Teams container, entitlement
+         strip, and the Salesforce tab content. */
+      .ux-frame-teams-mark { background: #5B53D6; color: #fff; font-size: 15px; font-weight: 800; }
+      .ux-frame-inteams { flex: 1; background: #ffffff; display: flex; min-height: 0; }
+      .ux-entitle {
+        display: flex; align-items: center; gap: 4px; flex-wrap: wrap;
+        padding: 5px 8px; border-bottom: 1px solid #DDDDEE; background: #FAFAFE;
+        font-size: 8px; color: #4A4A5A; opacity: 0;
+      }
+      .ux-entitle.is-in { animation: uxTeamsMsgIn 300ms ease 120ms forwards; }
+      .ux-entitle.is-in-instant { opacity: 1; }
+      .ux-entitle-count b { color: #0000CC; font-weight: 800; }
+      .ux-entitle-sep { color: #C3C3D2; }
+      .ux-entitle-note { color: #8A8A9A; }
+      .ux-entitle-chip {
+        padding: 1px 5px; border-radius: 999px; background: #E5F6FF;
+        border: 1px solid #BFEBFF; color: #005C7D; font-weight: 700;
+        font-size: 7px; letter-spacing: 0.03em; text-transform: uppercase;
+      }
+      .ux-sf-row { align-items: center; background: #ffffff; border: 1px solid #DDDDEE; border-radius: 6px; padding: 4px 7px; }
+      .ux-sf-ava {
+        width: 18px; height: 18px; border-radius: 50%; background: #0000CC;
+        color: #fff; font-size: 7px; font-weight: 800;
+        display: grid; place-items: center; flex-shrink: 0;
+      }
+      .ux-sf-line { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+      .ux-sf-line b { font-size: 9px; color: #1A1A2E; line-height: 1.2; }
+      .ux-sf-line span { font-size: 8px; color: #8A8A9A; line-height: 1.2; }
+      .ux-sf-fig { font-size: 9px; font-weight: 800; color: #00719A; flex-shrink: 0; }
+      .ux-sf-bars { height: 32px; align-items: flex-end; gap: 5px; padding: 0 2px; }
+      .ux-sf-bars i { flex: 1; background: #BFEBFF; border-top: 2px solid #00BFFF; border-radius: 2px 2px 0 0; }
       .ux-teams-avatar {
         width: 18px; height: 18px; border-radius: 50%;
         display: grid; place-items: center;
@@ -11588,8 +11619,9 @@
 
       /* ========== USER EXPERIENCE VIEW ==========
          Three-frame synchronized story: Windows · macOS · Cloud PC.
-         Same Application Workspace catalog inside each. Same Teams click,
-         pulse, and chat — all driven by STATE.flowPhase so the three
+         Microsoft Teams is open in every frame, with Application Workspace
+         embedded as a Teams tab. Same entitled catalog, same Salesforce
+         click, pulse, and open — all driven by STATE.flowPhase so the three
          frames advance in lockstep. Synchronicity IS the message. */
       function renderUserView(){
         const sc = STATE.flowScenarioIdx;
@@ -11620,14 +11652,12 @@
         if (!showDeliveryBadge) STATE._firstDeliveryBadgeDone = false;
         const deliveryBadgeClass = showDeliveryBadge ? (firstDeliveryBadge ? 'show' : 'show-instant') : '';
 
-        // Tighter catalog: 6 apps, 2 rows of 3. The viewer's eye lands on the
-        // scenario's target app — Creative Cloud for self-service (a gated,
-        // licensed app people actually queue for), Teams everywhere else.
-        const isCC = scenario && scenario.id === 'catalog';
-        const TARGET_APP = isCC
-          ? { id: 'cc', letter: 'Cc', name: 'Creative Cloud', color: '#DA1F26' }
-          : ((CATALOG_APPS.find(a => a.id === 'teams')) || { id:'teams', letter:'T', name:'Teams', color:'#5B53D6' });
-        const otherApps = CATALOG_APPS.filter(a => a.id !== 'teams' && a.id !== 'cc').slice(0, 5);
+        // Tighter catalog: 6 apps, 2 rows of 3, rendered inside the
+        // Application Workspace tab embedded in Microsoft Teams. Every
+        // scenario clicks the same target app — Salesforce — so the
+        // cross-device sameness reads instantly.
+        const TARGET_APP = (CATALOG_APPS.find(a => a.id === 'salesforce')) || { id:'salesforce', letter:'SF', name:'Salesforce', color:'#00A1E0' };
+        const otherApps = CATALOG_APPS.filter(a => a.id !== 'salesforce').slice(0, 5);
         const triCatalog = [otherApps[0], otherApps[1], TARGET_APP, otherApps[2], otherApps[3], otherApps[4]].filter(Boolean);
         const catalogGrid = () => `
           <div class="ux-catalog-grid" style="grid-template-columns:repeat(3,1fr);">
@@ -11647,66 +11677,56 @@
           </div>
         `;
 
-        // Teams chat that fills each frame's content area. Messages are tied
-        // to the three device personas so the chat content reinforces the
-        // visual claim ("opened on Windows / Cloud PC / Mac — works") instead
-        // of being decorative.
-        const teamsContent = () => `
+        // Microsoft Teams shell — persistent chrome across the catalog and
+        // app-open beats, so every phase visibly happens INSIDE Teams. The
+        // left rail and tab header stay put; only the tab content switches.
+        const teamsShell = (tabIcon, tabTitle, inner) => `
           <div class="ux-teams">
             <div class="ux-teams-side">
-              <div class="ux-teams-side-dot active"><i data-lucide="message-square" class="w-3 h-3"></i></div>
-              <div class="ux-teams-side-dot"><i data-lucide="users" class="w-3 h-3"></i></div>
+              <div class="ux-teams-side-dot"><i data-lucide="bell" class="w-3 h-3"></i></div>
+              <div class="ux-teams-side-dot"><i data-lucide="message-square" class="w-3 h-3"></i></div>
               <div class="ux-teams-side-dot"><i data-lucide="calendar" class="w-3 h-3"></i></div>
-              <div class="ux-teams-side-dot"><i data-lucide="phone" class="w-3 h-3"></i></div>
+              <div class="ux-teams-side-dot active"><i data-lucide="layout-grid" class="w-3 h-3"></i></div>
             </div>
             <div class="ux-teams-main">
-              <div class="ux-teams-header"><i data-lucide="hash" class="w-3 h-3 text-slate-400"></i> Project Atlas</div>
-              <div class="ux-teams-body">
-                <div class="ux-teams-msg ${msgClass}" style="transition-delay:${firstOpen ? '0.3s' : '0s'}">
-                  <div class="ux-teams-avatar" style="background:#0000CC">SM</div>
-                  <div class="ux-teams-bubble">Just opened Teams on my laptop &mdash; works.</div>
-                </div>
-                <div class="ux-teams-msg ${msgClass}" style="transition-delay:${firstOpen ? '0.65s' : '0s'}">
-                  <div class="ux-teams-avatar" style="background:#0F7A3F">JR</div>
-                  <div class="ux-teams-bubble">Same here from my Cloud PC.</div>
-                </div>
-                <div class="ux-teams-msg ${msgClass}" style="transition-delay:${firstOpen ? '1.0s' : '0s'}">
-                  <div class="ux-teams-bubble self">On the Mac too. 👍</div>
-                </div>
-              </div>
+              <div class="ux-teams-header"><i data-lucide="${tabIcon}" class="w-3 h-3 text-slate-400"></i> ${tabTitle}</div>
+              ${inner}
             </div>
           </div>
         `;
 
-        // Creative Cloud home that fills each frame on the self-service story —
-        // same layout skeleton as the Teams chat so the convergence still reads.
-        const ccContent = () => `
-          <div class="ux-teams">
-            <div class="ux-teams-side">
-              <div class="ux-teams-side-dot active"><i data-lucide="layout-grid" class="w-3 h-3"></i></div>
-              <div class="ux-teams-side-dot"><i data-lucide="image" class="w-3 h-3"></i></div>
-              <div class="ux-teams-side-dot"><i data-lucide="film" class="w-3 h-3"></i></div>
-              <div class="ux-teams-side-dot"><i data-lucide="cloud" class="w-3 h-3"></i></div>
+        // Application Workspace as a Teams tab: entitlement strip + catalog.
+        // The strip carries the product claim — the user sees only what
+        // identity, device, role, and policy entitle them to.
+        const embeddedCatalog = () => teamsShell('layout-grid', 'Application Workspace', `
+          <div class="ux-entitle ${effectivePhase === 'catalog' ? 'is-in' : 'is-in-instant'}">
+            <span class="ux-entitle-count"><b>6</b> of 47 apps</span>
+            <span class="ux-entitle-sep">&middot;</span>
+            <span class="ux-entitle-note">entitled via</span>
+            ${['identity','device','role','policy'].map(c => `<span class="ux-entitle-chip">${c}</span>`).join('')}
+          </div>
+          <div class="ux-teams-body" style="justify-content:center">${catalogGrid()}</div>
+        `);
+
+        // Salesforce open as a tab inside the same Teams shell — identical
+        // content in all three frames; the sameness IS the message.
+        const salesforceContent = () => teamsShell('briefcase', 'Salesforce', `
+          <div class="ux-teams-body">
+            <div class="ux-teams-msg ux-sf-row ${msgClass}" style="animation-delay:${firstOpen ? '0.25s' : '0s'}">
+              <span class="ux-sf-ava">SM</span>
+              <div class="ux-sf-line"><b>Sarah Mitchell</b><span>Signed in via SSO &mdash; no setup</span></div>
+              <i data-lucide="badge-check" class="w-3 h-3" style="color:#0F7A3F;flex-shrink:0"></i>
             </div>
-            <div class="ux-teams-main">
-              <div class="ux-teams-header"><i data-lucide="badge-check" class="w-3 h-3 text-slate-400"></i> Creative Cloud &mdash; licensed to Sarah</div>
-              <div class="ux-teams-body">
-                ${[['Ps','#001E36','#31A8FF','Photoshop'],['Ai','#330000','#FF9A00','Illustrator'],['Pr','#00005B','#9999FF','Premiere Pro']].map((a, i) => `
-                  <div class="ux-teams-msg ${msgClass}" style="transition-delay:${firstOpen ? (0.3 + i * 0.35) + 's' : '0s'}">
-                    <div class="ux-teams-avatar" style="background:${a[1]};color:${a[2]}">${a[0]}</div>
-                    <div class="ux-teams-bubble">${a[3]} &mdash; installed, licensed, ready.</div>
-                  </div>
-                `).join('')}
-              </div>
+            <div class="ux-teams-msg ux-sf-row ${msgClass}" style="animation-delay:${firstOpen ? '0.55s' : '0s'}">
+              <span class="ux-sf-ava" style="background:#00A1E0">SF</span>
+              <div class="ux-sf-line"><b>Q3 Pipeline</b><span>18 open opportunities</span></div>
+              <span class="ux-sf-fig">$2.4M</span>
+            </div>
+            <div class="ux-teams-msg ux-sf-bars ${msgClass}" style="animation-delay:${firstOpen ? '0.85s' : '0s'}" aria-hidden="true">
+              ${[38,64,52,80,46,70].map(h => `<i style="height:${h}%"></i>`).join('')}
             </div>
           </div>
-        `;
-        const workspaceLabel = `
-          <div class="ux-workspace-label">
-            <i data-lucide="layout-grid"></i>
-            <span>Sarah's workspace</span>
-            <span class="ux-workspace-meta">&middot; 47 apps</span>
-          </div>`;
+        `);
 
         // The body of one frame switches with the global phase.
         const frameBody = () => {
@@ -11715,22 +11735,22 @@
           }
           if (showLaunch) {
             return `<div class="ux-frame-launch">
-              <div class="ux-frame-aw-mark"><i data-lucide="layout-grid" class="w-4 h-4 text-white"></i></div>
-              <div class="ux-frame-launch-text">Application Workspace</div>
+              <div class="ux-frame-aw-mark ux-frame-teams-mark">T</div>
+              <div class="ux-frame-launch-text">Microsoft Teams</div>
               <div class="ux-frame-launch-sub">Opening\u2026</div>
             </div>`;
           }
           if (showCatalog) {
-            return `<div class="ux-frame-catalog">${workspaceLabel}${catalogGrid()}</div>`;
+            return `<div class="ux-frame-inteams">${embeddedCatalog()}</div>`;
           }
-          // checking / routing / config / done / final → target app open
-          return `<div class="ux-frame-app ${appWindowClass}">${isCC ? ccContent() : teamsContent()}</div>`;
+          // checking / routing / config / done / final → Salesforce open in Teams
+          return `<div class="ux-frame-app ${appWindowClass}">${salesforceContent()}</div>`;
         };
 
         // Build one device frame. Each frame surfaces a divergent delivery
         // path during routing/config — the actual product truth (same click,
         // three different backend paths, identical outcome). The badge fades
-        // out as the three frames converge on identical Teams chat.
+        // out as the three frames converge on the same Salesforce tab in Teams.
         const deviceFrame = (variant) => {
           const badge = variant.deliveryMethod ? `
             <div class="ux-delivery-badge ${deliveryBadgeClass}">
@@ -11755,21 +11775,21 @@
 
         const winChromeTop = `
           <div class="ux-chrome-win-titlebar">
-            <span class="ux-titlebar-text">${appOpen ? (isCC ? 'Adobe Creative Cloud' : 'Microsoft Teams') : 'Application Workspace'}</span>
+            <span class="ux-titlebar-text">Microsoft Teams${appOpen ? ' \u2014 Salesforce' : ''}</span>
             <div class="ux-win-controls"><span></span><span></span><span class="ux-win-close"></span></div>
           </div>`;
         const winChromeBottom = `
           <div class="ux-chrome-win-taskbar">
             <div class="ux-win-start"><span></span><span></span><span></span><span></span></div>
             ${['#185ABD','#107C41','#4285F4','#106EBE'].map(c=>`<div class="ux-win-tb-icon" style="background:${c}"></div>`).join('')}
-            <div class="ux-win-tb-icon ux-win-tb-aw ${showLaunch ? 'pulse' : ''}"><i data-lucide="layout-grid" class="w-2.5 h-2.5 text-white"></i></div>
+            <div class="ux-win-tb-icon ux-win-tb-aw ${showLaunch ? 'pulse' : ''}" style="background:#5B53D6;color:#fff;font-size:7px;font-weight:800;display:grid;place-items:center">T</div>
             <div class="ux-win-tb-spacer"></div>
             <div class="ux-win-tb-clock">10:24</div>
           </div>`;
         const macChromeTop = `
           <div class="ux-chrome-mac-menubar">
             <i data-lucide="apple" class="w-3 h-3"></i>
-            <span class="ux-mac-app">${appOpen ? (isCC ? 'Creative Cloud' : 'Teams') : 'Workspace'}</span>
+            <span class="ux-mac-app">Teams</span>
             <span class="ux-mac-menu">File</span><span class="ux-mac-menu">Edit</span><span class="ux-mac-menu">View</span>
             <div class="ux-mac-spacer"></div>
             <i data-lucide="wifi" class="w-3 h-3"></i>
@@ -11780,7 +11800,7 @@
           <div class="ux-chrome-mac-dock">
             <div class="ux-mac-dock-inner">
               ${['#185ABD','#107C41','#4285F4','#106EBE'].map(c=>`<div class="ux-mac-dock-icon" style="background:${c}"></div>`).join('')}
-              <div class="ux-mac-dock-icon ux-mac-dock-aw ${showLaunch ? 'pulse' : ''}"><i data-lucide="layout-grid" class="w-2.5 h-2.5 text-white"></i></div>
+              <div class="ux-mac-dock-icon ux-mac-dock-aw ${showLaunch ? 'pulse' : ''}" style="background:#5B53D6;color:#fff;font-size:7px;font-weight:800;display:grid;place-items:center">T</div>
             </div>
           </div>`;
         const cloudChromeTop = `
@@ -11797,7 +11817,7 @@
         const cloudChromeBottom = `
           <div class="ux-chrome-cloud-status">
             <span class="ux-cloud-dot"></span>
-            <span>Connected \u2014 Windows 365 Cloud PC \u00b7 ${appOpen ? (isCC ? 'Creative Cloud running' : 'Teams running') : 'Workspace ready'}</span>
+            <span>Connected \u2014 Windows 365 Cloud PC \u00b7 ${appOpen ? 'Salesforce open in Teams' : 'Teams running'}</span>
           </div>`;
 
         // Per-device divergent delivery method. This is the product truth:
