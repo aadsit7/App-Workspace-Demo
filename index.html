@@ -3851,9 +3851,9 @@
       .us-half .us-dev-tag { margin-top: 6px; }
       .us-personas { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
       .us-personas-lab { font-size: 9px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #8A8A9A; }
-      .us-cursor { position: absolute; width: 18px; height: 18px; z-index: 40; pointer-events: none; filter: drop-shadow(0 1px 2px rgba(26, 26, 46, 0.4)); left: 61%; top: 62%; }
+      .us-cursor { position: absolute; width: 18px; height: 18px; z-index: 40; pointer-events: none; filter: drop-shadow(0 1px 2px rgba(26, 26, 46, 0.4)); left: 52%; top: 63%; }
       .us-cursor-travel { animation: usCursorGo 1100ms cubic-bezier(0.22, 1, 0.36, 1) forwards; }
-      @keyframes usCursorGo { from { left: 80%; top: 86%; } to { left: 61%; top: 62%; } }
+      @keyframes usCursorGo { from { left: 80%; top: 86%; } to { left: 52%; top: 63%; } }
       .us-cursor-click::after { content: ''; position: absolute; left: 6px; top: 6px; width: 9px; height: 9px; border-radius: 999px; background: rgba(0, 0, 204, 0.35); animation: uxCursorClick 480ms ease-out forwards; }
       .us-cursor-cat { left: 61%; top: 54%; }
       .us-flowcard { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); z-index: 30; background: #fff; border: 1px solid #DDDDEE; border-radius: 10px; padding: 10px 14px; display: flex; flex-direction: column; gap: 6px; width: min(340px, 86%); box-shadow: 0 14px 34px rgba(26, 26, 46, 0.18); }
@@ -3862,7 +3862,64 @@
       .us-flowstep { display: flex; align-items: center; gap: 8px; font-size: 10px; font-weight: 600; color: #4A4A5A; }
       .us-flowstep span { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
       .us-flowdev { width: 100%; display: flex; justify-content: center; }
+      .us-scene { width: 100%; display: flex; justify-content: center; }
+      .us-scenefade { animation: usSceneIn 300ms ease-out; }
+      @keyframes usSceneIn { from { opacity: 0; } to { opacity: 1; } }
       .us-openwrap-flow { gap: 10px; }
+      /* ── World-class UX story: opening user cards, portal chrome, install, finale ── */
+      .us-search { margin-left: auto; display: inline-flex; align-items: center; gap: 4px; background: rgba(255, 255, 255, 0.22); border-radius: 999px; padding: 2.5px 9px; font-size: 8px; font-weight: 600; color: rgba(255, 255, 255, 0.9); white-space: nowrap; }
+      .us-search i, .us-search svg { width: 9px; height: 9px; }
+      .us-win-user { margin-left: 0; }
+      .us-inst { display: block; width: 40px; height: 3px; border-radius: 999px; background: #E5E5F0; overflow: hidden; margin-top: 1px; }
+      .us-inst i { display: block; height: 100%; width: 0; background: #00BFFF; border-radius: 999px; animation: usInstFill 1.5s cubic-bezier(0.3, 0, 0.4, 1) forwards; }
+      @keyframes usInstFill { to { width: 100%; } }
+      .us-addedring { box-shadow: 0 0 0 2.5px #0F7A3F, 0 3px 8px rgba(0, 0, 0, 0.14); }
+      .us-splash { display: flex; flex-direction: column; align-items: center; gap: 5px; color: #fff; }
+      .us-splash-mark { width: 40px; height: 40px; border-radius: 11px; display: grid; place-items: center; font-size: 19px; font-weight: 800; color: #fff; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35); margin-bottom: 2px; }
+      .us-splash-brand { font-size: 13px; font-weight: 800; letter-spacing: -0.01em; }
+      .us-splash-id { display: flex; align-items: center; gap: 7px; font-size: 11px; font-weight: 700; margin-top: 8px; white-space: nowrap; }
+      .us-splash-id .us-who-ava { position: static; }
+      .us-splash-sso { display: flex; align-items: center; gap: 5px; font-size: 9px; font-weight: 600; color: rgba(255, 255, 255, 0.72); }
+      .us-splash-sso i, .us-splash-sso svg { width: 10px; height: 10px; }
+      .us-choose { display: flex; flex-direction: column; align-items: center; gap: 12px; width: 100%; }
+      .us-choose-t { font-size: 16px; font-weight: 800; letter-spacing: -0.01em; color: #1A1A2E; text-align: center; }
+      .us-choose-sub { font-size: 11px; font-weight: 600; color: #6A6A7A; margin-top: -8px; }
+      .us-choose-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; width: min(520px, 100%); }
+      @media (max-width: 700px) { .us-choose-row { grid-template-columns: 1fr; } }
+      .us-ucard { display: flex; flex-direction: column; align-items: center; gap: 5px; background: #FAFAFE; border: 1px solid #DDDDEE; border-radius: 12px; padding: 16px 14px 14px; cursor: pointer; transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease; }
+      .us-ucard:hover { transform: translateY(-4px); background: #fff; box-shadow: 0 0 0 1.5px var(--acc, #0000CC), 0 10px 24px rgba(26, 26, 46, 0.12); }
+      .us-ucard:active { transform: translateY(-1px); }
+      .us-ucard-ava { width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-size: 15px; font-weight: 800; box-shadow: 0 0 0 3px rgba(26, 26, 46, 0.07); margin-bottom: 2px; }
+      .us-ucard-name { font-size: 13.5px; font-weight: 800; color: #1A1A2E; letter-spacing: -0.01em; }
+      .us-ucard-role { display: inline-flex; align-items: center; gap: 4px; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: #0000CC; }
+      .us-ucard-role i, .us-ucard-role svg { width: 10px; height: 10px; }
+      .us-ucard-apps { display: flex; align-items: center; gap: 5px; margin-top: 5px; }
+      .us-ucard-ico { position: relative; width: 22px; height: 22px; border-radius: 6px; display: grid; place-items: center; overflow: hidden; color: #fff; font-size: 8px; font-weight: 800; }
+      .us-ucard-ico img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; padding: 2px; background: #fff; }
+      .us-ucard-more { font-size: 9px; font-weight: 700; color: #6A6A7A; }
+      .us-ucard-go { display: inline-flex; align-items: center; gap: 5px; background: #0000CC; color: #fff; font-size: 9px; font-weight: 800; padding: 5px 13px; border-radius: 999px; margin-top: 7px; transition: background 160ms ease, color 160ms ease; white-space: nowrap; }
+      .us-ucard:hover .us-ucard-go { background: #33CCFF; color: #0B2530; }
+      .us-ucard-go i, .us-ucard-go svg { width: 9px; height: 9px; }
+      .us-choose-devs { display: flex; align-items: center; gap: 6px; font-size: 9.5px; font-weight: 600; color: #6A6A7A; flex-wrap: wrap; justify-content: center; }
+      .us-choose-devs i, .us-choose-devs svg { width: 11px; height: 11px; color: #0000CC; }
+      .us-final { display: flex; flex-direction: column; gap: 10px; width: min(540px, 100%); }
+      .us-fintitle { font-size: 15px; font-weight: 800; letter-spacing: -0.01em; color: #1A1A2E; text-align: center; margin-bottom: 2px; }
+      .us-finrow { display: flex; align-items: center; gap: 10px; background: #FAFAFE; border: 1px solid #DDDDEE; border-radius: 10px; padding: 9px 12px; }
+      .us-finava { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-size: 10px; font-weight: 800; flex-shrink: 0; }
+      .us-finid { display: flex; flex-direction: column; min-width: 0; }
+      .us-finid b { font-size: 11.5px; color: #1A1A2E; white-space: nowrap; }
+      .us-finid span { font-size: 9px; color: #6A6A7A; font-weight: 600; }
+      .us-finapps { display: flex; align-items: center; gap: 5px; margin-left: auto; }
+      .us-finico { position: relative; width: 20px; height: 20px; border-radius: 5px; display: grid; place-items: center; overflow: hidden; color: #fff; font-size: 7px; font-weight: 800; }
+      .us-finico img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; padding: 2px; background: #fff; }
+      .us-finmore { font-size: 8.5px; font-weight: 700; color: #6A6A7A; }
+      .us-finlab { font-size: 7.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: #6A6A7A; background: #F0F0F6; border-radius: 999px; padding: 3px 8px; white-space: nowrap; flex-shrink: 0; }
+      .us-finlab-alt { color: #0000CC; background: #F6F8FF; border: 1px solid #D5DAF5; }
+      .us-findevs { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; margin-top: 2px; }
+      .us-findev { display: inline-flex; align-items: center; gap: 4px; font-size: 9.5px; font-weight: 700; color: #1A1A2E; border: 1px solid #DDDDEE; border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+      .us-findev i, .us-findev svg { width: 11px; height: 11px; color: #0000CC; }
+      .us-findev-note { font-size: 9px; font-style: italic; color: #6A6A7A; }
+      @media (max-width: 640px) { .us-finapps { display: none; } }
       .us-flowstep i, .us-flowstep svg { width: 12px; height: 12px; color: #00BFFF; flex-shrink: 0; }
       .us-flowstep b { margin-left: auto; color: #0F7A3F; font-weight: 800; }
       .us-flowstep-ok { color: #0F5A2F; font-weight: 800; background: #EAF5EE; border: 1px solid #C7E4D2; border-radius: 6px; padding: 5px 8px; }
@@ -10021,15 +10078,15 @@
         // Cinematic scene holds — keynote pacing for the user-story module;
         // 'approach' is the cursor-travel beat between catalog and click.
         const BEATS = [
-          ['launch',   2200],
-          ['catalog',  900],
-          ['approach', 1500],
-          ['clicking', 1500],
-          ['checking', 2200],
-          ['routing',  600],
-          ['config',   500],
+          ['launch',   2800],
+          ['catalog',  800],
+          ['approach', 1400],
+          ['clicking', 1900],
+          ['checking', 3000],
+          ['routing',  2000],
+          ['config',   2800],
           ['done',     2400],
-          ['final',    3400],
+          ['final',    4000],
         ];
         queue.push({ delay: 400, fn(){ STATE.flowScenarioIdx = idx; STATE.flowPhase = 'launch'; STATE.flowAppOpened = false; updateFlowDOM(); } });
         BEATS.slice(1).forEach((b, i) => {
@@ -10279,8 +10336,14 @@
         if (STATE.activeTab !== 'solution') { render(); return; }
         const panelSection = document.querySelector('main > section');
         if (!panelSection) { render(); return; }
+        // Skip the DOM write entirely when nothing visual changed — identical
+        // re-renders are what made the animations look glitchy (images and
+        // CSS animations restart on every innerHTML swap).
+        const newHTML = renderSolution();
+        if (panelSection.__lastFlowHTML === newHTML) return;
         const _revealPrev = _demoRevealSnapshot();
-        panelSection.innerHTML = renderSolution();
+        panelSection.innerHTML = newHTML;
+        panelSection.__lastFlowHTML = newHTML;
         if (window.lucide?.createIcons) try { window.lucide.createIcons(); } catch {}
         _demoReplayReveals(_revealPrev);
         _glideAcCursor();
@@ -11918,10 +11981,9 @@
         const live = STATE.flowRunning && STATE.flowScenarioIdx >= 0;
         const ph = live ? STATE.flowPhase : 'idle';
         const isMaya = STATE.uxPersona !== 1;
-        const reqOn = isMaya || STATE.uxReqManual;
-        const SCENE_OF = { idle:0, launch:1, catalog:1, approach:2, clicking:3, checking:4, routing:4, config:4, done: reqOn ? 5 : 4, final: reqOn ? 6 : 4 };
+        const SCENE_OF = { idle:0, launch:2, catalog:2, approach:3, clicking:4, checking:5, routing:6, config:7, done:8, final:9 };
         const scene = SCENE_OF[ph] !== undefined ? SCENE_OF[ph] : 0;
-        const ended = reqOn ? ph === 'final' : ['done','final'].includes(ph);
+        const ended = ph === 'final';
 
         // Real, recognizable app logos (icons8 CDN) with lettered-tile
         // fallback if any icon fails to load offline.
@@ -11943,54 +12005,69 @@
           figma:      { n:'Figma',      l:'F',   c:'#A259FF', s:'figma' },
           trello:     { n:'Trello',     l:'Tr',  c:'#0079BF', s:'trello' },
           dropbox:    { n:'Dropbox',    l:'Db',  c:'#0061FF', s:'dropbox' },
+          powerbi:    { n:'Power BI',   l:'PB',  c:'#F2C811', s:'power-bi' },
+          hubspot:    { n:'HubSpot',    l:'HS',  c:'#FF7A59', s:'hubspot' },
+          linkedin:   { n:'LinkedIn',   l:'in',  c:'#0A66C2', s:'linkedin' },
+          asana:      { n:'Asana',      l:'As',  c:'#F06A6A', s:'asana' },
+          notion:     { n:'Notion',     l:'N',   c:'#1A1A2E', s:'notion' },
         };
         const PERSONAS = [
           { name:'Maya Chen', initials:'MC', role:'Finance', roleIcon:'calculator', accent:'#0F7A3F', wall:'#12123E', desk:'#16266B',
-            apps:['excel','word','outlook','zoom','sap','dropbox','teams','salesforce'], target:'teams' },
+            apps:['excel','word','outlook','zoom','sap','powerbi','onedrive','teams','dropbox','edge'], target:'teams',
+            catalog:['trello','figma','slack','notion'], req:'slack' },
           { name:'Alex Rivera', initials:'AR', role:'Sales', roleIcon:'briefcase', accent:'#0000CC', wall:'#301345', desk:'#3B1E5E',
-            apps:['outlook','excel','teams','zoom','slack','chrome','salesforce','dropbox'], target:'salesforce' },
+            apps:['outlook','linkedin','slack','chrome','zoom','word','excel','salesforce','teams','notion'], target:'salesforce',
+            catalog:['figma','jira','trello','dropbox'], req:'trello' },
         ];
         const baseIdx = STATE.uxPersona === 1 ? 1 : 0;
         const p = PERSONAS[baseIdx];
         const A = (id) => { const o = APPS[id] || { n:id, l:'?', c:'#8A8A9A' }; return { name:o.n, letter:o.l, color:o.c, img:o.s ? `https://img.icons8.com/color/96/${o.s}.png` : '' }; };
         const target = A(p.target);
+        const req = A(p.req);
         const first = p.name.split(' ')[0];
+        const other = PERSONAS[1 - baseIdx];
 
         // Persistent story rail — the whole arc visible at once, the active
-        // chapter highlighted. Replaces the caption slideshow.
+        // chapter highlighted.
         const CHAPTERS = [
-          [`${PERSONAS[baseIdx].name.split(' ')[0]} signs in`, `Sees every app ${PERSONAS[baseIdx].role} is entitled to \u2014 ready to go, nothing to install.`],
-          [`Clicks ${A(PERSONAS[baseIdx].target).name}`, 'One click. No install prompts, no license keys, no ticket.'],
-          ['It opens and runs', `Signed in automatically. Click ${PERSONAS[1 - baseIdx].name.split(' ')[0]} above \u2014 a different list, same one click.`],
-          ...(reqOn ? [['Requests an app', 'One click in the Catalog \u2014 the approval workflow runs automatically. No ticket, no waiting.']] : []),
+          [`${first} signs in`, 'Once, on any device.'],
+          [isMaya ? 'Sees her apps' : 'Sees his apps', `${p.apps.length} apps, set by role and policy.`],
+          [`Opens ${target.name}`, 'Installs and signs in on its own.'],
+          [`Requests ${req.name}`, 'Approval runs in the background; the app appears.'],
+          ['Same on every device', `${other.name.split(' ')[0]} sees a different set.`],
         ];
-        const chap = ({ 0:-1, 1:0, 2:1, 3:1, 4:2, 5:3, 6:3 })[scene];
+        const chap = ({ 0:-1, 1:0, 2:1, 3:1, 4:2, 5:2, 6:3, 7:3, 8:3, 9:4 })[scene];
         const MICRO = [
           '',
-          `${p.apps.length} apps \u2014 everything ${p.role} can access`,
-          `One click \u2014 ${target.name}`,
-          'Opening\u2026',
-          'Running \u2014 signed in automatically',
-          'Requesting Slack \u2014 one click',
-          'Approved \u2014 automation did the rest',
+          'Signing in\u2026',
+          `${p.apps.length} apps \u2014 set by role and policy`,
+          `Opening ${target.name}`,
+          'Installing\u2026',
+          'Signed in',
+          `Requesting ${req.name}`,
+          'Approval running\u2026',
+          `${req.name} added`,
+          '',
         ];
 
         const plus = `<span class="us-plus" style="left:8%;top:16%">+</span><span class="us-plus" style="right:12%;top:64%">+</span><span class="us-plus" style="left:22%;bottom:10%">+</span>`;
 
         const tile = (app, o = {}) => `
           <div class="us-app ${o.pop ? 'us-in' : ''} ${o.clicked ? 'us-clicked' : ''}" style="--d:${o.d || 0}ms">
-            <div class="us-app-ico ${o.glow ? 'us-glow' : ''}" style="background:${app.color}">${app.letter}
+            <div class="us-app-ico ${o.glow ? 'us-glow' : ''} ${o.added ? 'us-addedring' : ''}" style="background:${app.color}">${app.letter}
               ${app.img ? `<img src="${app.img}" alt="" loading="lazy" onerror="this.remove()">` : ''}
               ${o.pulse ? '<span class="us-pulse"></span>' : ''}
             </div>
             <span class="us-app-name">${app.name}</span>
-            ${o.tag ? `<span class="us-get ${o.tag !== 'Get' ? 'is-ok' : ''}">${o.tag}</span>` : ''}
+            ${o.installing ? '<span class="us-inst"><i></i></span>' : ''}
+            ${o.tag ? `<span class="us-get ${o.tag !== 'Get' && o.tag !== 'Request' ? 'is-ok' : ''}">${o.tag}</span>` : ''}
           </div>`;
 
         const win = (tab, inner, o = {}) => `
           <div class="us-win ${o.cls || ''}" style="--acc:${(o.p || p).accent}">
             <div class="us-win-head" style="background:${(o.p || p).accent}">
               <span class="us-win-mark">A</span><span class="us-win-brand">Acme Workspace</span>
+              <span class="us-search"><i data-lucide="search"></i>Search apps</span>
               <span class="us-win-user">${(o.p || p).initials}</span>
             </div>
             <div class="us-win-tabs">
@@ -12000,18 +12077,27 @@
             <div class="us-win-body">${inner}</div>
           </div>`;
 
-        const wsInner = (pp, pop) => `
+        // The portal grid — one renderer for every workspace beat so the DOM
+        // stays stable between phases (no re-animation, no flicker).
+        const wsInner = (pp, o = {}) => {
+          const ids = o.withNew ? [...pp.apps, pp.req] : pp.apps;
+          return `
           <div class="us-greet">Good morning, ${pp.name.split(' ')[0]}</div>
-          <div class="us-greet-sub">${pp.apps.length} apps \u2014 everything ${pp.role} has access to</div>
-          <div class="us-grid" style="grid-template-columns:repeat(4,1fr)">${pp.apps.map((id, i) => {
+          <div class="us-greet-sub">${ids.length} apps \u2014 everything ${pp.role} has access to</div>
+          <div class="us-grid" style="grid-template-columns:repeat(${ids.length > 10 ? 6 : ids.length > 8 ? 5 : 4},1fr)">${ids.map((id, i) => {
             const isT = id === pp.target;
+            const isNew = o.withNew && id === pp.req;
             return tile(A(id), {
-              pop, d: 100 + i * 70,
+              pop: o.pop || (isNew && o.popNew), d: o.pop ? 100 + i * 70 : 250,
               glow: isT && ph === 'approach',
               clicked: isT && ph === 'clicking',
               pulse: isT && ph === 'clicking',
+              installing: isT && ph === 'clicking',
+              added: isNew,
+              tag: isNew ? 'Added \u2713' : '',
             });
           }).join('')}</div>`;
+        };
 
         // Realistic app-open views — animate in ONCE (on 'checking'); later
         // phase ticks re-render statically so nothing replays or flickers.
@@ -12102,71 +12188,88 @@
         };
         const dev = ['win','mac','vdi'].includes(STATE.uxDevice) ? STATE.uxDevice : 'win';
 
-        // Maya's Catalog request — anim=true on the request beat (cursor
-        // click), static afterwards with the tag flipped to Requested.
+        // Catalog request — anim=true on the request beat (cursor click),
+        // static afterwards with the tag flipped to Requested.
         const catReq = (anim) => `
           <div class="us-greet">Catalog</div>
-          <div class="us-greet-sub">Request anything \u2014 approval runs automatically</div>
-          <div class="us-grid" style="grid-template-columns:repeat(4,1fr)">${['trello','figma','slack','jira'].map((id, i) => {
-            const isT = id === 'slack';
+          <div class="us-greet-sub">Request an app</div>
+          <div class="us-grid" style="grid-template-columns:repeat(4,1fr)">${p.catalog.map((id, i) => {
+            const isT = id === p.req;
             return tile(A(id), {
               pop: anim, d: 80 + i * 70,
               clicked: isT && anim,
               pulse: isT && anim,
-              tag: isT ? (anim ? 'Request' : 'Requested \u2713') : '',
+              tag: isT ? (anim ? 'Request' : 'Requested \u2713') : 'Get',
             });
           }).join('')}</div>`;
 
         let stage = '';
         if (scene === 0) {
-          // Device picker — click any of the three; the journey plays inside
-          // that device and the experience is identical on every one.
-          const DEVS = [['win','Windows','monitor'],['mac','Mac','laptop'],['vdi','Virtual Desktop','cloud']];
-          stage = `<div class="us-pickwrap">
-              <div class="us-pick-hero us-in">
-                <span class="us-ava" style="background:${p.accent}">${p.initials}</span>
-                <div class="us-pick-hero-id">
-                  <div class="us-pick-hero-name">${p.name}</div>
-                  <span class="us-pick-hero-role"><i data-lucide="${p.roleIcon}"></i>${p.role} department</span>
-                </div>
-              </div>
-              <div class="us-pick-t">Where does ${first} sign in?</div>
-              <div class="us-pick-sub">Click a device \u2014 the experience is identical on all three</div>
-              <div class="us-devrow us-pickrow">
-                ${DEVS.map(([k, nm, ic], i) => `
-                  <button type="button" class="us-pick us-in focus-ring" style="--d:${i * 120}ms" data-action="pick-ux-device" data-dev="${k}">
-                    ${shell(k, `<div class="us-pick-inner"><span class="us-pick-mark" style="background:${p.accent}">A</span><span class="us-pick-name">Acme Workspace</span><span class="us-pick-go"><i data-lucide="play"></i>Start here</span></div>`)}
-                    <div class="us-dev-tag us-pick-tag"><i data-lucide="${ic}"></i><b>${nm}</b></div>
+          // Opening: two users, two jobs — click one to run their session.
+          stage = `<div class="us-choose">
+              <div class="us-choose-row">
+                ${PERSONAS.map((pp, i) => `
+                  <button type="button" class="us-ucard us-in focus-ring" style="--d:${i * 140}ms;--acc:${pp.accent}" data-action="pick-ux-user" data-idx="${i}">
+                    <span class="us-ucard-ava" style="background:${pp.accent}">${pp.initials}</span>
+                    <span class="us-ucard-name">${pp.name}</span>
+                    <span class="us-ucard-role"><i data-lucide="${pp.roleIcon}"></i>${pp.role}</span>
+                    <span class="us-ucard-apps">${pp.apps.slice(0, 4).map(id => { const a = A(id); return `<span class="us-ucard-ico" style="background:${a.color}">${a.letter}${a.img ? `<img src="${a.img}" alt="" onerror="this.remove()">` : ''}</span>`; }).join('')}<span class="us-ucard-more">+${pp.apps.length - 4}</span></span>
                   </button>`).join('')}
               </div>
+              <div class="us-choose-devs"><i data-lucide="monitor"></i>Windows<span>\u00b7</span><i data-lucide="laptop"></i>Mac<span>\u00b7</span><i data-lucide="cloud"></i>Virtual Desktop</div>
             </div>`;
-        } else if (scene >= 1 && scene <= 3) {
-          stage = shell(dev, win('ws', wsInner(p, ph === 'launch'), { cls: ph === 'launch' ? 'us-rise' : '' }), 'us-frame-lg');
-        } else {
+        } else if (scene >= 2 && scene <= 4) {
+          stage = shell(dev, win('ws', wsInner(p, { pop: ph === 'launch' }), { cls: ph === 'launch' ? 'us-rise' : '' }), 'us-frame-lg');
+        } else if (scene === 5) {
           const anim = ph === 'checking';
           stage = `<div class="us-openwrap">
-              <div class="us-added ${anim ? 'us-in' : 'us-still'}" style="--d:700ms"><i data-lucide="check"></i>Open \u00b7 signed in automatically</div>
+              <div class="us-added ${anim ? 'us-in' : 'us-still'}" style="--d:700ms"><i data-lucide="check"></i>Signed in</div>
               ${shell(dev, win('ws', appInner(anim)), 'us-frame-lg')}
             </div>`;
-        }
-        // The us-added pill and us-flowcard are absolutely positioned overlays,
-        // so the device never moves between scenes 4→5→6 — no layout jumps.
-        const anim6 = ph === 'final';
-        if (scene === 5) {
-          stage = shell(dev, win('cat', catReq(true)), 'us-frame-lg');
         } else if (scene === 6) {
+          stage = shell(dev, win('cat', catReq(true)), 'us-frame-lg');
+        } else if (scene === 7) {
+          const anim7 = ph === 'config';
           stage = `<div class="us-openwrap us-openwrap-flow">
-              <div class="us-flowcard ${anim6 ? 'us-zoom' : ''}">
-                <div class="us-flowcard-t"><i data-lucide="workflow"></i>Approval workflow \u00b7 running automatically</div>
-                <div class="us-flowstep us-in" style="--d:200ms"><i data-lucide="send"></i><span>Request submitted</span><b>\u2713</b></div>
-                <div class="us-flowstep us-in" style="--d:1000ms"><i data-lucide="shield-check"></i><span>Policy check \u00b7 ${p.role} \u00b7 license available</span><b>\u2713</b></div>
-                <div class="us-flowstep us-flowstep-ok us-in" style="--d:1900ms"><i data-lucide="check-circle-2"></i><span>Approved \u2014 added to My workspace</span><b>\u2713</b></div>
+              <div class="us-flowcard ${anim7 ? 'us-zoom' : ''}">
+                <div class="us-flowcard-t"><i data-lucide="workflow"></i>Approval</div>
+                <div class="us-flowstep ${anim7 ? 'us-in' : 'us-still'}" style="--d:200ms"><i data-lucide="send"></i><span>Request submitted</span><b>\u2713</b></div>
+                <div class="us-flowstep ${anim7 ? 'us-in' : 'us-still'}" style="--d:1000ms"><i data-lucide="shield-check"></i><span>Policy check \u00b7 ${p.role} \u00b7 license available</span><b>\u2713</b></div>
+                <div class="us-flowstep us-flowstep-ok ${anim7 ? 'us-in' : 'us-still'}" style="--d:1900ms"><i data-lucide="check-circle-2"></i><span>Approved</span><b>\u2713</b></div>
               </div>
               <div class="us-flowdev">${shell(dev, win('cat', catReq(false)), 'us-frame-lg')}</div>
             </div>`;
+        } else if (scene === 8) {
+          const anim8 = ph === 'done';
+          stage = `<div class="us-openwrap">
+              <div class="us-added ${anim8 ? 'us-in' : 'us-still'}" style="--d:500ms"><i data-lucide="check"></i>${req.name} added to My workspace</div>
+              ${shell(dev, win('ws', wsInner(p, { withNew: true, popNew: anim8 })), 'us-frame-lg')}
+            </div>`;
+        } else {
+          const finRow = (pp, d, watched) => `
+            <div class="us-finrow us-in" style="--d:${d}ms">
+              <span class="us-finava" style="background:${pp.accent}">${pp.initials}</span>
+              <div class="us-finid"><b>${pp.name}</b><span>${pp.role}</span></div>
+              <div class="us-finapps">${pp.apps.slice(0, 5).map(id => { const a = A(id); return `<span class="us-finico" style="background:${a.color}">${a.letter}${a.img ? `<img src="${a.img}" alt="" onerror="this.remove()">` : ''}</span>`; }).join('')}<span class="us-finmore">+${pp.apps.length - 5}</span></div>
+              <span class="us-finlab ${watched ? '' : 'us-finlab-alt'}">${watched ? `signed in as ${pp.name.split(' ')[0]}` : 'different apps'}</span>
+            </div>`;
+          stage = `<div class="us-final">
+              <div class="us-fintitle us-in" style="--d:50ms">Same workspace. Each their own apps.</div>
+              ${finRow(p, 250, true)}
+              ${finRow(other, 500, false)}
+              <div class="us-findevs us-in" style="--d:750ms">
+                ${[['monitor','Windows'],['laptop','Mac'],['cloud','Virtual Desktop']].map(([ic, nm]) => `<span class="us-findev"><i data-lucide="${ic}"></i>${nm}</span>`).join('')}
+                <span class="us-findev-note">same on every device</span>
+              </div>
+            </div>`;
         }
 
-        const cursor = (scene === 2 || scene === 3 || scene === 5) ? `<svg class="us-cursor ${scene === 2 ? 'us-cursor-travel' : scene === 5 ? 'us-cursor-click us-cursor-cat' : 'us-cursor-click'}" viewBox="0 0 24 24" fill="#1A1A2E" stroke="#fff" stroke-width="1.5" aria-hidden="true"><path d="M5 3l14 8-6 1.5L9.5 19z"/></svg>` : '';
+        const cursor = (scene === 3 || scene === 4 || scene === 6) ? `<svg class="us-cursor ${scene === 3 ? 'us-cursor-travel' : scene === 6 ? 'us-cursor-click us-cursor-cat' : 'us-cursor-click'}" viewBox="0 0 24 24" fill="#1A1A2E" stroke="#fff" stroke-width="1.5" aria-hidden="true"><path d="M5 3l14 8-6 1.5L9.5 19z"/></svg>` : '';
+
+        // Crossfade only when the SCENE changes — intra-scene ticks (cursor,
+        // pulses) re-render without a fade so nothing double-animates.
+        const sceneChanged = STATE._usScene !== scene;
+        STATE._usScene = scene;
 
         return `
           <div class="section-card p-4 us-card">
@@ -12192,7 +12295,7 @@
               <div class="us-stage" style="background:#FFFFFF;border:1px solid #DDDDEE">
                 ${who}
                 ${cursor}
-                ${stage}
+                <div class="us-scene ${sceneChanged ? 'us-scenefade' : ''}">${stage}</div>
                 ${MICRO[scene] ? `<div class="us-substrip" role="status" aria-live="polite" aria-atomic="true">${MICRO[scene]}</div>` : ''}
               </div>
               <aside class="us-rail" aria-label="Journey steps">
@@ -19426,13 +19529,21 @@
           if (action === 'ux-request') {
             // Click the Catalog tab → run the request-an-app workflow now.
             STATE.flowTimers.timeouts.forEach(id => clearTimeout(id)); STATE.flowTimers.timeouts = [];
-            STATE.uxReqManual = true;
             STATE.flowRunning = true;
             if (STATE.flowScenarioIdx < 0) STATE.flowScenarioIdx = STATE.uxScenarioIdx >= 0 ? STATE.uxScenarioIdx : 0;
-            STATE.flowPhase = 'done';
+            STATE.flowPhase = 'routing';
             scrollPreserveRender();
-            const t = setTimeout(() => { STATE.flowPhase = 'final'; updateFlowDOM(); }, 2600);
-            STATE.flowTimers.timeouts.push(t);
+            [['config', 2000], ['done', 4800], ['final', 7200]].forEach(([phx, at]) => {
+              const t = setTimeout(() => { STATE.flowPhase = phx; updateFlowDOM(); }, at);
+              STATE.flowTimers.timeouts.push(t);
+            });
+            return;
+          }
+          if (action === 'pick-ux-user') {
+            const pi = parseInt(act.getAttribute('data-idx'), 10);
+            STATE.uxPersona = pi === 1 ? 1 : 0;
+            if (STATE.flowRunning || STATE.flowScenarioIdx >= 0) resetFlow();
+            startFlow();
             return;
           }
           if (action === 'pick-ux-device') {
