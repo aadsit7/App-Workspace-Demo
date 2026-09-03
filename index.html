@@ -3730,6 +3730,276 @@
       .teams-chat-input { padding: 6px 10px; border-top: 1px solid #DDDDEE; display: flex; align-items: center; gap: 6px; }
       .teams-chat-input-box { flex: 1; height: 24px; border: 1px solid #DDDDEE; border-radius: 4px; background: white; padding: 0 8px; font-size: 9px; color: #8A8A9A; display: flex; align-items: center; }
 
+      /* ── User story: cinematic end-user scenes (imported) ── */
+      @keyframes uxCursorClick { 0% { transform: scale(0.4); opacity: 1; } 100% { transform: scale(3.2); opacity: 0; } }
+      .ux-persona-pill { display: inline-flex; align-items: center; gap: 5px; }
+      .ux-persona-dot { width: 8px; height: 8px; border-radius: 999px; flex-shrink: 0; }
+      .us-who { position: absolute; top: 10px; left: 12px; display: flex; align-items: center; gap: 6px; background: #F6F8FF; border: 1px solid #DDDDEE; border-radius: 999px; padding: 3px 10px 3px 4px; z-index: 5; }
+      .us-who-ava { width: 18px; height: 18px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-size: 7.5px; font-weight: 800; box-shadow: 0 0 0 1.5px rgba(26, 26, 46, 0.12); flex-shrink: 0; }
+      .us-who-txt { font-size: 9.5px; font-weight: 700; color: #1A1A2E; white-space: nowrap; }
+      .us-who-new { box-shadow: 0 0 0 2px rgba(0, 191, 255, 0.55); }
+      .us-openwrap { display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%; }
+      .us-added { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); z-index: 30; display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; background: #EAF5EE; border: 1px solid #C7E4D2; color: #0F7A3F; font-size: 10px; font-weight: 800; padding: 3px 11px; border-radius: 999px; box-shadow: 0 4px 12px rgba(15, 122, 63, 0.18); }
+      .us-added i { width: 11px; height: 11px; }
+      .us-stage { position: relative; border-radius: 10px; min-height: 330px; display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 42px 18px 20px; }
+      .us-plus { position: absolute; color: rgba(255, 255, 255, 0.13); font-size: 20px; font-weight: 700; pointer-events: none; }
+      .us-hint { display: flex; align-items: center; gap: 8px; color: #6A6A7A; font-size: 12px; font-weight: 600; }
+      .us-hint i { width: 18px; height: 18px; }
+      .us-in { opacity: 0; animation: usIn 420ms cubic-bezier(0.22, 1, 0.36, 1) var(--d, 0ms) forwards; }
+      @keyframes usIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+      .us-idcard { display: flex; flex-direction: column; align-items: center; gap: 4px; color: #fff; text-align: center; }
+      .us-ava { width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; font-size: 18px; font-weight: 800; color: #fff; box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.22); margin-bottom: 6px; }
+      .us-id-name { font-size: 17px; font-weight: 800; letter-spacing: -0.01em; }
+      .us-id-role { font-size: 11px; color: rgba(255, 255, 255, 0.75); font-weight: 600; }
+      .us-id-day { margin-top: 10px; font-size: 10px; color: rgba(255, 255, 255, 0.6); letter-spacing: 0.08em; text-transform: uppercase; }
+      .us-win { width: min(430px, 92%); background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 18px 44px rgba(0, 0, 0, 0.35); display: flex; flex-direction: column; }
+      .us-rise { animation: usRise 480ms cubic-bezier(0.22, 1, 0.36, 1); }
+      @keyframes usRise { from { opacity: 0; transform: translateY(22px) scale(0.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
+      .us-win-head { display: flex; align-items: center; gap: 7px; padding: 7px 11px; color: #fff; }
+      .us-win-mark { width: 18px; height: 18px; border-radius: 5px; background: rgba(255, 255, 255, 0.92); color: #1A1A2E; font-size: 11px; font-weight: 800; display: grid; place-items: center; flex-shrink: 0; }
+      .us-win-brand { font-size: 11.5px; font-weight: 800; letter-spacing: 0.01em; white-space: nowrap; }
+      .us-win-user { margin-left: auto; width: 18px; height: 18px; border-radius: 50%; background: rgba(255, 255, 255, 0.28); font-size: 8px; font-weight: 800; display: grid; place-items: center; flex-shrink: 0; }
+      .us-win-tabs { display: flex; gap: 4px; padding: 6px 11px 0; border-bottom: 1px solid #DDDDEE; background: #FAFAFE; }
+      .us-tab { font-size: 10px; font-weight: 700; color: #8A8A9A; padding: 4px 9px 6px; border-bottom: 2px solid transparent; white-space: nowrap; flex-shrink: 0; display: inline-block; }
+      .us-tab.is-on { color: #1A1A2E; border-bottom-color: var(--acc, #0000CC); }
+      .us-tab-btn { cursor: pointer; background: transparent; border-left: 0; border-right: 0; border-top: 0; }
+      .us-tab-btn:hover { color: #0000CC; }
+      .us-win-body { padding: 12px 14px 14px; }
+      .us-greet { font-size: 15.5px; font-weight: 800; color: #1A1A2E; letter-spacing: -0.01em; }
+      .us-greet-sub { font-size: 10px; color: #6A6A7A; margin: 2px 0 12px; }
+      .us-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px 8px; }
+      .us-app { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+      .us-app-ico { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; color: #fff; font-size: 14px; font-weight: 800; position: relative; box-shadow: 0 3px 8px rgba(0, 0, 0, 0.14); }
+      .us-app-ico img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; padding: 5px; background: #fff; border-radius: inherit; }
+      .us-app-name { font-size: 9.5px; font-weight: 600; color: #3A3A4C; }
+      .us-glow { box-shadow: 0 0 0 2.5px rgba(0, 191, 255, 0.6), 0 0 16px 3px rgba(0, 191, 255, 0.45); animation: uxTeamsGlow 1.4s ease-in-out infinite; }
+      .us-clicked .us-app-ico { animation: uxIconBump 320ms cubic-bezier(0.22, 1, 0.36, 1); }
+      .us-pulse { position: absolute; inset: -3px; border-radius: 12px; border: 2px solid #00BFFF; animation: uxClickPulse 900ms cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+      .us-get { font-size: 8.5px; font-weight: 800; white-space: nowrap; padding: 2px 10px; border-radius: 999px; border: 1px solid #AABBEE; color: #0000CC; background: #F6F8FF; }
+      .us-get.is-ok { border-color: #C7E4D2; color: #0F7A3F; background: #EAF5EE; }
+      .us-whisper { text-align: center; font-size: 9px; color: #8A8A9A; font-style: italic; margin-top: 10px; }
+      .us-appwin { border: 1px solid #DDDDEE; border-radius: 9px; overflow: hidden; box-shadow: 0 8px 22px rgba(26, 26, 46, 0.16); }
+      .us-zoom { animation: usZoom 460ms cubic-bezier(0.22, 1, 0.36, 1); }
+      @keyframes usZoom { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+      .us-appwin-bar { display: flex; align-items: center; gap: 7px; color: #fff; font-size: 11px; font-weight: 800; padding: 7px 10px; min-width: 0; }
+      .us-appwin-bar > span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .us-appwin-ico { width: 17px; height: 17px; border-radius: 5px; background: rgba(255, 255, 255, 0.28); display: grid; place-items: center; font-size: 8px; font-weight: 800; flex-shrink: 0; position: relative; }
+      .us-appwin-ico img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; padding: 2px; background: #fff; border-radius: inherit; }
+      .us-appwin-dots { margin-left: auto; display: flex; gap: 4px; }
+      .us-appwin-dots i { width: 6px; height: 6px; border-radius: 50%; background: rgba(255, 255, 255, 0.5); }
+      .us-appwin-body { padding: 12px; display: flex; flex-direction: column; gap: 10px; background: #fff; }
+      .us-still { opacity: 1; }
+      /* Salesforce opportunity view — slow scroll after it opens */
+      .us-sf-clip { background: #F3F5F9; overflow: hidden; max-height: 168px; }
+      .us-sf-scroll { display: flex; flex-direction: column; gap: 7px; padding: 10px 12px 12px; }
+      .us-sfanim { animation: usSfScroll 2.2s cubic-bezier(0.4, 0, 0.3, 1) 1400ms forwards; }
+      .us-sfdone { transform: translateY(-44px); }
+      @keyframes usSfScroll { from { transform: translateY(0); } to { transform: translateY(-44px); } }
+      .us-sf-opp { display: flex; align-items: center; gap: 8px; background: #fff; border: 1px solid #E2E6EE; border-radius: 6px; padding: 7px 9px; }
+      .us-sf-opp-ico { width: 22px; height: 22px; border-radius: 5px; background: #FF9A3C; display: grid; place-items: center; flex-shrink: 0; }
+      .us-sf-opp-ico i, .us-sf-opp-ico svg { width: 12px; height: 12px; color: #fff; }
+      .us-sf-opp-t { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+      .us-sf-opp-t span { font-size: 7.5px; color: #6A6A7A; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; }
+      .us-sf-opp-t b { font-size: 9.5px; color: #1A1A2E; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .us-sf-amt { font-size: 10.5px; font-weight: 800; color: #0F7A3F; flex-shrink: 0; }
+      .us-sf-path { display: flex; gap: 2px; }
+      .us-sf-step { flex: 1; text-align: center; font-size: 7px; font-weight: 700; padding: 4px 2px; background: #E2E6EE; color: #6A6A7A; white-space: nowrap; overflow: hidden; }
+      .us-sf-step:first-child { border-radius: 999px 0 0 999px; }
+      .us-sf-step:last-child { border-radius: 0 999px 999px 0; }
+      .us-sf-step.is-done { background: #C8E8D4; color: #0F5A2F; }
+      .us-sf-step.is-cur { background: #0176D3; color: #fff; }
+      .us-sf-rows, .us-sf-act { background: #fff; border: 1px solid #E2E6EE; border-radius: 6px; padding: 6px 9px; display: flex; flex-direction: column; gap: 4px; }
+      .us-sf-act-t { font-size: 7.5px; color: #6A6A7A; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; }
+      .us-sf-row { display: flex; justify-content: space-between; gap: 8px; font-size: 8.5px; }
+      .us-sf-row span { color: #6A6A7A; flex-shrink: 0; }
+      .us-sf-row b { color: #1A1A2E; font-weight: 700; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .us-chat { background: #fff; padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 9px; }
+      .us-chat-top { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #EDEDF4; padding-bottom: 6px; }
+      .us-chat-ch { font-size: 10.5px; font-weight: 800; color: #1A1A2E; }
+      .us-chat-day { font-size: 8.5px; color: #8A8A9A; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+      .us-msg { display: flex; gap: 7px; align-items: flex-start; }
+      .us-msg-me { justify-content: flex-end; }
+      .us-msg-ava { width: 20px; height: 20px; border-radius: 50%; color: #fff; font-size: 7.5px; font-weight: 800; display: grid; place-items: center; flex-shrink: 0; margin-top: 2px; }
+      .us-msg-body { display: flex; flex-direction: column; gap: 2px; max-width: 78%; }
+      .us-msg-me .us-msg-body { align-items: flex-end; }
+      .us-msg-name { font-size: 8px; font-weight: 700; color: #6A6A7A; }
+      .us-msg-name i { font-style: normal; font-weight: 500; color: #A0A0B0; margin-left: 3px; }
+      .us-msg-bubble { background: #F0F0F6; border-radius: 3px 10px 10px 10px; padding: 6px 9px; font-size: 9.5px; color: #1A1A2E; line-height: 1.4; }
+      .us-msg-bubble-me { background: #E3E8FD; border-radius: 10px 3px 10px 10px; }
+      .us-chat-input { display: flex; align-items: center; gap: 7px; border: 1px solid #DDDDEE; border-radius: 6px; padding: 6px 9px; margin-top: 2px; }
+      .us-chat-input span { flex: 1; font-size: 9px; color: #A0A0B0; }
+      .us-chat-input i, .us-chat-input svg { width: 11px; height: 11px; color: #6A6A7A; flex-shrink: 0; }
+      .us-appwin-body b { font-size: 12px; color: #1A1A2E; }
+      .us-dim { font-size: 10.5px; color: #6A6A7A; }
+      .us-bars { height: 52px; display: flex; align-items: flex-end; gap: 7px; }
+      .us-bars i { flex: 1; background: #E5F6FF; border-top: 3px solid #00BFFF; border-radius: 3px 3px 0 0; }
+      .us-devrow { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; width: 100%; align-items: end; }
+      .us-dev { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+      .us-dev-frame { border-radius: 9px; padding: 10px; display: flex; align-items: center; justify-content: center; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12); }
+      .us-win-mini { width: 100%; min-width: 0; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); }
+      .us-win-mini .us-win-brand { overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+      .us-win-mini .us-win-head { min-width: 0; }
+      .us-mini-app { display: flex; gap: 8px; align-items: center; padding: 10px; background: #fff; }
+      .us-mini-app b { display: block; font-size: 10.5px; color: #1A1A2E; }
+      .us-mini-app span { font-size: 9px; color: #0F7A3F; font-weight: 600; }
+      .us-dev-tag { text-align: center; font-size: 9.5px; color: #6A6A7A; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .us-dev-tag b { font-weight: 800; margin-right: 4px; color: #1A1A2E; }
+      .us-half .us-dev-tag, .us-half .us-dev-tag b { color: #4A4A5A; }
+      .us-half .us-dev-tag b { color: #1A1A2E; }
+      .us-finale { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; width: 100%; }
+      .us-half .us-win, .us-win-sm { width: 100%; box-shadow: 0 10px 26px rgba(0, 0, 0, 0.28); }
+      .us-half .us-dev-tag { margin-top: 6px; }
+      .us-personas { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+      .us-personas-lab { font-size: 9px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #8A8A9A; }
+      .us-cursor { position: absolute; width: 18px; height: 18px; z-index: 40; pointer-events: none; filter: drop-shadow(0 1px 2px rgba(26, 26, 46, 0.4)); left: 61%; top: 62%; }
+      .us-cursor-travel { animation: usCursorGo 1100ms cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+      @keyframes usCursorGo { from { left: 80%; top: 86%; } to { left: 61%; top: 62%; } }
+      .us-cursor-click::after { content: ''; position: absolute; left: 6px; top: 6px; width: 9px; height: 9px; border-radius: 999px; background: rgba(0, 0, 204, 0.35); animation: uxCursorClick 480ms ease-out forwards; }
+      .us-cursor-cat { left: 61%; top: 54%; }
+      .us-flowcard { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); z-index: 30; background: #fff; border: 1px solid #DDDDEE; border-radius: 10px; padding: 10px 14px; display: flex; flex-direction: column; gap: 6px; width: min(340px, 86%); box-shadow: 0 14px 34px rgba(26, 26, 46, 0.18); }
+      .us-flowcard-t { display: flex; align-items: center; gap: 6px; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.09em; color: #0000CC; padding-bottom: 4px; border-bottom: 1px solid #EDEDF4; }
+      .us-flowcard-t i, .us-flowcard-t svg { width: 12px; height: 12px; }
+      .us-flowstep { display: flex; align-items: center; gap: 8px; font-size: 10px; font-weight: 600; color: #4A4A5A; }
+      .us-flowstep span { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .us-flowdev { width: 100%; display: flex; justify-content: center; }
+      .us-openwrap-flow { gap: 10px; }
+      .us-flowstep i, .us-flowstep svg { width: 12px; height: 12px; color: #00BFFF; flex-shrink: 0; }
+      .us-flowstep b { margin-left: auto; color: #0F7A3F; font-weight: 800; }
+      .us-flowstep-ok { color: #0F5A2F; font-weight: 800; background: #EAF5EE; border: 1px solid #C7E4D2; border-radius: 6px; padding: 5px 8px; }
+      .us-flowstep-ok i, .us-flowstep-ok svg { color: #0F7A3F; }
+      .us-substrip { position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); background: rgba(0, 0, 0, 0.45); color: #fff; font-size: 10.5px; font-weight: 700; padding: 4px 13px; border-radius: 999px; white-space: nowrap; z-index: 6; animation: usIn 320ms ease; }
+      .us-body2 { display: grid; grid-template-columns: 2.15fr 0.85fr; gap: 14px; align-items: stretch; }
+      @media (max-width: 900px) { .us-body2 { grid-template-columns: 1fr; } }
+      .us-rail { display: flex; flex-direction: column; gap: 8px; padding: 4px 0 4px 2px; }
+      .us-rail-t { font-size: 9px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: #8A8A9A; margin-bottom: 2px; }
+      .us-step { display: flex; gap: 9px; align-items: flex-start; padding: 8px 10px; border-radius: 8px; border: 1px solid transparent; opacity: 0.45; transition: all 250ms ease; }
+      .us-step.is-on { opacity: 1; background: #F6F8FF; border-color: #D5DAF5; }
+      .us-step.is-done { opacity: 0.8; }
+      .us-step-n { width: 20px; height: 20px; border-radius: 999px; background: #F0F0F6; color: #4A4A5A; font-size: 10px; font-weight: 800; display: grid; place-items: center; flex-shrink: 0; margin-top: 1px; }
+      .us-step.is-on .us-step-n { background: #0000CC; color: #fff; }
+      .us-step.is-done .us-step-n { background: #EAF5EE; color: #0F7A3F; }
+      .us-step-tx b { display: block; font-size: 12px; color: #1A1A2E; letter-spacing: -0.01em; white-space: nowrap; }
+      .us-step-tx span { font-size: 10.5px; color: #6A6A7A; line-height: 1.4; display: none; }
+      .us-step.is-on .us-step-tx span { display: block; }
+      @media (max-width: 860px) { .us-devrow, .us-finale { grid-template-columns: 1fr; } }
+      @media (prefers-reduced-motion: reduce) {
+        .us-in, .us-rise, .us-zoom, .us-cursor-travel, .us-pulse, .us-glow { animation: none !important; }
+        .us-in { opacity: 1 !important; }
+        .us-cursor { opacity: 0 !important; }
+      }
+
+      /* Scene 6: real device chrome (laptops + browser) */
+      .us-lap { display: flex; flex-direction: column; align-items: center; width: 100%; filter: drop-shadow(0 16px 22px rgba(0, 0, 0, 0.45)); }
+      .us-screen { position: relative; overflow: hidden; width: 100%; border: 6px solid #0A0A12; border-bottom-width: 9px; border-radius: 14px; padding: 21px 10px 27px; display: flex; align-items: center; justify-content: center; min-height: 142px; background-clip: padding-box; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05), 0 1px 0 rgba(255, 255, 255, 0.08); }
+      .us-cam { position: absolute; top: 3px; left: 50%; transform: translateX(-50%); width: 4px; height: 4px; border-radius: 50%; background: #1E3A5F; box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.12); z-index: 3; }
+      .us-notch { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 42px; height: 7px; background: #0A0A12; border-radius: 0 0 6px 6px; z-index: 3; }
+      .us-browser .us-screen { border: 0; border-radius: 0; padding: 14px 10px; min-height: 126px; }
+      .us-lap-base { width: 128%; height: 10px; background: #3A3A4C; border-radius: 2px 2px 12px 12px; margin-top: -2px; position: relative; z-index: 2; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 4px 7px rgba(0, 0, 0, 0.45); }
+      .us-lap-base i { position: absolute; left: 50%; top: 0; transform: translateX(-50%); width: 48px; height: 4px; background: rgba(255, 255, 255, 0.16); border-radius: 0 0 7px 7px; display: block; }
+      .us-lap-base-mac { background: #DDE1E9; box-shadow: inset 0 1px 0 #F5F7FA, 0 4px 7px rgba(0, 0, 0, 0.45); }
+      .us-lap-base-mac i { background: #C0C6D1; }
+      .us-macbar { position: absolute; top: 0; left: 0; right: 0; height: 13px; background: rgba(250, 250, 254, 0.88); display: flex; align-items: center; gap: 6px; padding: 0 8px; font-size: 6.5px; font-weight: 700; color: #3A3A4C; z-index: 2; }
+      .us-macbar i { width: 7px; height: 7px; flex-shrink: 0; }
+      .us-macbar > span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .us-macbar-r { margin-left: auto; display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+      .us-dock { position: absolute; bottom: 5px; left: 50%; transform: translateX(-50%); display: flex; gap: 5px; background: rgba(255, 255, 255, 0.35); border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 8px; padding: 3px 7px; z-index: 2; }
+      .us-dock i { width: 10px; height: 10px; border-radius: 3px; display: block; }
+      .us-taskbar { position: absolute; bottom: 0; left: 0; right: 0; height: 17px; background: rgba(22, 22, 42, 0.85); display: flex; align-items: center; padding: 0 8px; z-index: 2; }
+      .us-tb-center { display: flex; align-items: center; gap: 6px; margin: 0 auto; }
+      .us-start { display: grid; grid-template-columns: 4px 4px; gap: 1px; flex-shrink: 0; }
+      .us-start i { width: 4px; height: 4px; background: #00BFFF; display: block; }
+      .us-tb-dot { width: 9px; height: 9px; border-radius: 2.5px; display: inline-block; flex-shrink: 0; }
+      .us-tb-clock { position: absolute; right: 8px; font-size: 6.5px; color: rgba(255, 255, 255, 0.85); font-weight: 700; }
+      .us-browser { border-radius: 8px; overflow: hidden; box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35); background: #F0F0F6; }
+      .us-btabs { display: flex; align-items: flex-end; gap: 4px; padding: 4px 8px 0; background: #DDDDEE; }
+      .us-btab { display: inline-flex; align-items: center; gap: 4px; background: #F0F0F6; border-radius: 6px 6px 0 0; font-size: 7px; font-weight: 700; color: #3A3A4C; padding: 3px 9px; white-space: nowrap; }
+      .us-btab i { width: 8px; height: 8px; }
+      .us-btab-ghost { width: 30px; height: 8px; background: rgba(255, 255, 255, 0.4); border-radius: 4px 4px 0 0; }
+      .us-burl { display: flex; align-items: center; gap: 4px; padding: 3px 7px; background: #F0F0F6; }
+      .us-bdot { width: 5px; height: 5px; border-radius: 50%; background: #C3C3D2; flex-shrink: 0; }
+      .us-burl .us-bdot:nth-child(1) { background: #FF5F57; }
+      .us-burl .us-bdot:nth-child(2) { background: #FEBC2E; }
+      .us-burl .us-bdot:nth-child(3) { background: #28C840; }
+      .us-burl-bar { flex: 1; min-width: 0; display: inline-flex; align-items: center; gap: 3px; background: #fff; border: 1px solid #DDDDEE; border-radius: 999px; font-size: 6.5px; color: #6A6A7A; font-weight: 600; padding: 2px 7px; white-space: nowrap; overflow: hidden; }
+      .us-burl-bar i { width: 7px; height: 7px; flex-shrink: 0; }
+      .us-screen .us-win-mini { width: 88%; }
+      .us-win-mini .us-win-head { padding: 4px 6px; gap: 4px; }
+      .us-win-mini .us-win-brand { font-size: 8px; letter-spacing: 0; }
+      .us-win-mini .us-win-mark { display: none; }
+      .us-mini-app { min-width: 0; }
+      .us-mini-app > div { min-width: 0; }
+      .us-mini-app b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .us-mini-app span { white-space: nowrap; }
+      /* Device picker + large journey frame — the workspace fills the screen */
+      .us-frame-lg { width: min(520px, 96%); }
+      .us-frame-lg .us-screen { height: 296px; min-height: 0; padding: 13px 0 17px; }
+      .us-browser.us-frame-lg .us-screen { height: 266px; padding: 0; }
+      .us-frame-lg .us-win { width: 100%; height: 100%; min-height: 0; border-radius: 0; box-shadow: none; }
+      .us-frame-lg .us-win-body { flex: 1; min-height: 0; overflow: hidden; padding: 8px 16px 20px; }
+      .us-frame-lg .us-greet { font-size: 14px; }
+      .us-frame-lg .us-greet-sub { margin-bottom: 8px; }
+      .us-frame-lg .us-app-ico { width: 34px; height: 34px; font-size: 12px; }
+      .us-frame-lg .us-grid { gap: 8px; }
+      .us-frame-lg .us-whisper { display: none; }
+      .us-frame-lg .us-idcard { padding-bottom: 10px; }
+      .us-browser { width: 100%; }
+      .us-pickwrap { width: 100%; display: flex; flex-direction: column; gap: 14px; align-items: center; }
+      .us-pick-hero { display: flex; align-items: center; gap: 12px; background: #F6F8FF; border: 1px solid #DDDDEE; border-radius: 999px; padding: 8px 18px 8px 10px; }
+      .us-pick-hero .us-ava { width: 38px; height: 38px; font-size: 13px; margin: 0; box-shadow: 0 0 0 3px rgba(26, 26, 46, 0.08); }
+      .us-pick-hero-id { display: flex; flex-direction: column; gap: 2px; text-align: left; }
+      .us-pick-hero-name { color: #1A1A2E; font-size: 13px; font-weight: 800; letter-spacing: -0.01em; line-height: 1; }
+      .us-pick-hero-role { display: inline-flex; align-items: center; gap: 5px; color: #0000CC; font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; }
+      .us-pick-hero-role i, .us-pick-hero-role svg { width: 11px; height: 11px; }
+      .us-pick-t { color: #1A1A2E; font-size: 13px; font-weight: 800; text-align: center; margin-top: -4px; }
+      .us-pick { display: flex; flex-direction: column; gap: 7px; cursor: pointer; background: transparent; border: 0; padding: 8px; border-radius: 14px; transition: transform 180ms ease, background 180ms ease, box-shadow 180ms ease; min-width: 0; }
+      .us-pick:hover { transform: translateY(-5px); background: #F6F8FF; box-shadow: 0 0 0 1.5px rgba(0, 191, 255, 0.55); }
+      .us-pick:active { transform: translateY(-2px); }
+      .us-pick-inner { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+      .us-pick-mark { width: 34px; height: 34px; border-radius: 10px; color: #fff; font-size: 16px; font-weight: 800; display: grid; place-items: center; box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35); }
+      .us-pick-name { font-size: 9.5px; font-weight: 800; color: #fff; }
+      .us-pick-go { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; font-size: 8.5px; font-weight: 800; color: #fff; background: #0000CC; border-radius: 999px; padding: 4px 11px; margin-top: 3px; transition: background 160ms ease, color 160ms ease; animation: usPickPulse 2.2s ease-out infinite; }
+      .us-pick:hover .us-pick-go { background: #33CCFF; color: #0B2530; }
+      @keyframes usPickPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(0, 191, 255, 0.45); } 55% { box-shadow: 0 0 0 7px rgba(0, 191, 255, 0); } }
+      .us-pick-go i { width: 9px; height: 9px; }
+      .us-pick .us-screen { height: 128px; min-height: 0; padding: 18px 8px 24px; }
+      .us-pick .us-browser .us-screen { height: 104px; }
+      .us-pick-name { white-space: nowrap; }
+      .us-pickwrap .us-devrow { width: 100%; align-items: end; }
+      .us-pick-sub { color: #6A6A7A; font-size: 11px; font-weight: 600; text-align: center; margin: -8px 0 4px; }
+      .us-pick-tag { display: flex; align-items: center; justify-content: center; gap: 5px; }
+      .us-pick-tag i, .us-pick-tag svg { width: 11px; height: 11px; color: #0000CC; }
+      .us-pick-tag b { color: #1A1A2E; font-size: 11px; }
+      .us-dev .us-screen { height: 150px; min-height: 0; padding: 18px 8px 24px; }
+      .us-dev .us-win-mini { width: 84%; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.28); }
+      .ux-persona-pill, .ux-persona-pill span { white-space: nowrap; }
+      .us-devrow { gap: 10px; }
+      .us-devrow-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); width: min(440px, 100%); margin: 0 auto; }
+      .us-dev .us-win-mini { width: 90%; }
+      .us-dev .us-lap-base { width: 106%; }
+      .us-dev .us-mini-app { padding: 7px; gap: 6px; }
+      .us-dev .us-mini-app b { font-size: 9px; }
+      .us-dev .us-mini-app span { white-space: normal; font-size: 8px; line-height: 1.25; }
+      .us-half .us-win { zoom: 0.8; }
+      /* lucide swaps <i data-lucide> for <svg> \u2014 size those too */
+      .us-macbar svg { width: 7px; height: 7px; }
+      .us-hint svg { width: 18px; height: 18px; }
+      .us-added svg { width: 11px; height: 11px; }
+      .us-pick-go svg { width: 9px; height: 9px; }
+      .us-btab svg { width: 8px; height: 8px; }
+      .us-burl-bar svg { width: 7px; height: 7px; flex-shrink: 0; }
+      /* Scene 7 permission diff + finale note */
+      .us-diff { display: flex; align-items: center; gap: 10px; background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.16); border-radius: 999px; padding: 5px 12px; }
+      .us-diff-row { display: flex; align-items: center; gap: 5px; }
+      .us-diff-row.is-dim { opacity: 0.5; }
+      .us-diff-ava { width: 15px; height: 15px; border-radius: 50%; color: #fff; font-size: 6.5px; font-weight: 800; display: grid; place-items: center; flex-shrink: 0; }
+      .us-diff-role { font-size: 8.5px; font-weight: 700; color: rgba(255, 255, 255, 0.85); white-space: nowrap; }
+      .us-diff-apps { display: flex; gap: 3px; }
+      .us-diff-ico { width: 14px; height: 14px; border-radius: 4px; position: relative; color: #fff; font-size: 6px; font-weight: 800; display: grid; place-items: center; overflow: hidden; flex-shrink: 0; }
+      .us-diff-ico img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; padding: 1px; background: #fff; }
+      .us-diff-arrow { width: 12px; height: 12px; color: #00BFFF; flex-shrink: 0; }
+      .us-finalewrap { width: 100%; display: flex; flex-direction: column; gap: 10px; }
+      .us-finale-note { text-align: center; font-size: 11.5px; font-weight: 800; color: #1A1A2E; }
+
       /* Cinema Mode */
       .cinema-mode .device-frame { box-shadow: 0 12px 40px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.05); transition: box-shadow 0.5s ease; }
       @media (max-width: 768px) { .cinema-mode .device-frame { transform: none; } }
@@ -8722,6 +8992,8 @@
         solutionViewAdmin: false,
         adminPane: 'console',
         solutionViewMultiTenant: false,
+        uxPersona: 0,
+        uxDevice: 'win',
         lifecyclePlaying: false,
         lcStep: -1,
         lcTimers: [],
@@ -9098,7 +9370,7 @@
       // pop-out modal's Next button (which advances to the adjacent module).
       /* Dwell per lifecycle step (ms) — the tour timer and the rail's progress
          bar read the same array, so the bar can never disagree with the tour. */
-      const LC_DWELL = [12000, 8800, 11800, 11200, 8900, 8600, 8900];
+      const LC_DWELL = [27500, 8800, 11800, 11200, 8900, 8600, 8900];
       const LIFECYCLE_MODULES = [
         {view:'user',       stage:'RUN',       name:'User Experience',       icon:'monitor-smartphone'},
         {view:'setupstore', stage:'PACKAGE',   name:'Setup Store',           icon:'library'},
@@ -9287,6 +9559,7 @@
       ];
 
       const PHASE_CAPTIONS = {
+        approach: { default: 'User goes to the app...', catalog: 'User goes to the catalog...' },
         clicking: { default: 'Opening app...', catalog: 'User clicks Get...' },
         checking: { default: 'Verifying access & policy...' },
         routing:  { default: 'Selecting delivery path...' },
@@ -9311,7 +9584,7 @@
 
         const stageState = (stagePhases) => {
           if (!scenario) return '';
-          const idx = ['launch','catalog','clicking','checking','routing','config','done','final'];
+          const idx = ['launch','catalog','approach','clicking','checking','routing','config','done','final'];
           const currentIdx = idx.indexOf(phase);
           if (currentIdx < 0) return '';
           const lastIdx = idx.indexOf(stagePhases[stagePhases.length - 1]);
@@ -9321,7 +9594,7 @@
         };
 
         const progressPct = !scenario ? 0 :
-          phase === 'clicking' ? 8 : phase === 'checking' ? 28 :
+          phase === 'approach' ? 4 : phase === 'clicking' ? 8 : phase === 'checking' ? 28 :
           phase === 'routing' ? 48 : phase === 'config' ? 68 :
           phase === 'done' ? 88 : phase === 'final' ? 100 : 0;
 
@@ -9593,7 +9866,7 @@
 
         const stageState = (stagePhases) => {
           if (!scenario) return '';
-          const idx = ['launch','catalog','clicking','checking','routing','config','done','final'];
+          const idx = ['launch','catalog','approach','clicking','checking','routing','config','done','final'];
           const currentIdx = idx.indexOf(phase);
           if (currentIdx < 0) return '';
           const lastIdx = idx.indexOf(stagePhases[stagePhases.length - 1]);
@@ -9602,7 +9875,7 @@
           return '';
         };
         const progressPct = !scenario ? 0 :
-          phase === 'clicking' ? 8 : phase === 'checking' ? 28 :
+          phase === 'approach' ? 4 : phase === 'clicking' ? 8 : phase === 'checking' ? 28 :
           phase === 'routing' ? 48 : phase === 'config' ? 68 :
           phase === 'done' ? 88 : phase === 'final' ? 100 : 0;
         const checkDone = ['routing','config','done','final'].includes(phase);
@@ -9745,18 +10018,29 @@
         const idx = (typeof STATE.uxScenarioIdx === 'number' && STATE.uxScenarioIdx >= 0 && STATE.uxScenarioIdx < SCENARIOS.length)
           ? STATE.uxScenarioIdx : 0;
         const isCatalog = SCENARIOS[idx] && SCENARIOS[idx].id === 'catalog';
-        // Launch phase: user opens Application Workspace on their device
-        queue.push({ delay: 350, fn(){ STATE.flowScenarioIdx = idx; STATE.flowPhase = 'launch'; STATE.flowAppOpened = false; updateFlowDOM(); } });
-        // Catalog phase: workspace opens, user sees all their apps
-        queue.push({ delay: 600, fn(){ STATE.flowPhase = 'catalog'; updateFlowDOM(); } });
-        // Clicking phase: user selects an app from the catalog
-        queue.push({ delay: 600, fn(){ STATE.flowPhase = 'clicking'; updateFlowDOM(); } });
-        queue.push({ delay: 600, fn(){ STATE.flowPhase = 'checking'; updateFlowDOM(); animateChecks(); } });
-        queue.push({ delay: 750, fn(){ STATE.flowPhase = 'routing'; updateFlowDOM(); } });
-        queue.push({ delay: 650, fn(){ STATE.flowPhase = 'config'; updateFlowDOM(); } });
-        queue.push({ delay: 700, fn(){ STATE.flowPhase = 'done'; if (isCatalog) { STATE._firstOpenDone = false; STATE.flowAppOpened = true; } updateFlowDOM(); } });
-        queue.push({ delay: 800, fn(){ STATE.flowPhase = 'final'; updateFlowDOM(); } });
-        queue.push({ delay: 700, fn(){ STATE.flowRunning = false; STATE.flowPaused = false; refreshDemoControls(); } });
+        // Cinematic scene holds — keynote pacing for the user-story module;
+        // 'approach' is the cursor-travel beat between catalog and click.
+        const BEATS = [
+          ['launch',   2200],
+          ['catalog',  900],
+          ['approach', 1500],
+          ['clicking', 1500],
+          ['checking', 2200],
+          ['routing',  600],
+          ['config',   500],
+          ['done',     2400],
+          ['final',    3400],
+        ];
+        queue.push({ delay: 400, fn(){ STATE.flowScenarioIdx = idx; STATE.flowPhase = 'launch'; STATE.flowAppOpened = false; updateFlowDOM(); } });
+        BEATS.slice(1).forEach((b, i) => {
+          queue.push({ delay: BEATS[i][1], fn(){
+            STATE.flowPhase = b[0];
+            if (b[0] === 'done' && isCatalog) { STATE._firstOpenDone = false; STATE.flowAppOpened = true; }
+            updateFlowDOM();
+            if (b[0] === 'checking') animateChecks();
+          } });
+        });
+        queue.push({ delay: BEATS[BEATS.length - 1][1], fn(){ STATE.flowRunning = false; STATE.flowPaused = false; refreshDemoControls(); } });
         return queue;
       }
 
@@ -11623,6 +11907,307 @@
          embedded as a Teams tab. Same entitled catalog, same Salesforce
          click, pulse, and open — all driven by STATE.flowPhase so the three
          frames advance in lockstep. Synchronicity IS the message. */
+      /* ========== USER STORY — cinematic end-user experience ==========
+         One person's morning, told scene by scene on a single large, legible
+         stage — keynote pacing, keynote type. The flow queue drives the same
+         phase list; scenes map onto it: launch=meet the user, catalog=their
+         workspace, approach/clicking=the Catalog + one tap, checking=the app
+         opens, routing/config=same workspace on Mac + Cloud PC, done=a
+         different persona signs in, final=the payoff. */
+      function renderUserStory(){
+        const live = STATE.flowRunning && STATE.flowScenarioIdx >= 0;
+        const ph = live ? STATE.flowPhase : 'idle';
+        const isMaya = STATE.uxPersona !== 1;
+        const reqOn = isMaya || STATE.uxReqManual;
+        const SCENE_OF = { idle:0, launch:1, catalog:1, approach:2, clicking:3, checking:4, routing:4, config:4, done: reqOn ? 5 : 4, final: reqOn ? 6 : 4 };
+        const scene = SCENE_OF[ph] !== undefined ? SCENE_OF[ph] : 0;
+        const ended = reqOn ? ph === 'final' : ['done','final'].includes(ph);
+
+        // Real, recognizable app logos (icons8 CDN) with lettered-tile
+        // fallback if any icon fails to load offline.
+        const APPS = {
+          excel:      { n:'Excel',      l:'X',   c:'#107C41', s:'microsoft-excel-2019' },
+          word:       { n:'Word',       l:'W',   c:'#185ABD', s:'microsoft-word-2019' },
+          outlook:    { n:'Outlook',    l:'O',   c:'#106EBE', s:'microsoft-outlook-2019' },
+          teams:      { n:'Teams',      l:'T',   c:'#5B53D6', s:'microsoft-teams' },
+          sap:        { n:'SAP',        l:'SAP', c:'#0A6ED1', s:'sap' },
+          zoom:       { n:'Zoom',       l:'Z',   c:'#0B5CFF', s:'zoom' },
+          salesforce: { n:'Salesforce', l:'SF',  c:'#00A1E0', s:'salesforce' },
+          slack:      { n:'Slack',      l:'S',   c:'#E01E5A', s:'slack-new' },
+          chrome:     { n:'Chrome',     l:'C',   c:'#4285F4', s:'chrome' },
+          edge:       { n:'Edge',       l:'E',   c:'#0C8EC5', s:'ms-edge-new' },
+          onedrive:   { n:'OneDrive',   l:'OD',  c:'#0A5BD5', s:'microsoft-onedrive-2019' },
+          github:     { n:'GitHub',     l:'GH',  c:'#1A1A2E', s:'github' },
+          jira:       { n:'Jira',       l:'J',   c:'#2684FF', s:'jira' },
+          docker:     { n:'Docker',     l:'D',   c:'#2496ED', s:'docker' },
+          figma:      { n:'Figma',      l:'F',   c:'#A259FF', s:'figma' },
+          trello:     { n:'Trello',     l:'Tr',  c:'#0079BF', s:'trello' },
+          dropbox:    { n:'Dropbox',    l:'Db',  c:'#0061FF', s:'dropbox' },
+        };
+        const PERSONAS = [
+          { name:'Maya Chen', initials:'MC', role:'Finance', roleIcon:'calculator', accent:'#0F7A3F', wall:'#12123E', desk:'#16266B',
+            apps:['excel','word','outlook','zoom','sap','dropbox','teams','salesforce'], target:'teams' },
+          { name:'Alex Rivera', initials:'AR', role:'Sales', roleIcon:'briefcase', accent:'#0000CC', wall:'#301345', desk:'#3B1E5E',
+            apps:['outlook','excel','teams','zoom','slack','chrome','salesforce','dropbox'], target:'salesforce' },
+        ];
+        const baseIdx = STATE.uxPersona === 1 ? 1 : 0;
+        const p = PERSONAS[baseIdx];
+        const A = (id) => { const o = APPS[id] || { n:id, l:'?', c:'#8A8A9A' }; return { name:o.n, letter:o.l, color:o.c, img:o.s ? `https://img.icons8.com/color/96/${o.s}.png` : '' }; };
+        const target = A(p.target);
+        const first = p.name.split(' ')[0];
+
+        // Persistent story rail — the whole arc visible at once, the active
+        // chapter highlighted. Replaces the caption slideshow.
+        const CHAPTERS = [
+          [`${PERSONAS[baseIdx].name.split(' ')[0]} signs in`, `Sees every app ${PERSONAS[baseIdx].role} is entitled to \u2014 ready to go, nothing to install.`],
+          [`Clicks ${A(PERSONAS[baseIdx].target).name}`, 'One click. No install prompts, no license keys, no ticket.'],
+          ['It opens and runs', `Signed in automatically. Click ${PERSONAS[1 - baseIdx].name.split(' ')[0]} above \u2014 a different list, same one click.`],
+          ...(reqOn ? [['Requests an app', 'One click in the Catalog \u2014 the approval workflow runs automatically. No ticket, no waiting.']] : []),
+        ];
+        const chap = ({ 0:-1, 1:0, 2:1, 3:1, 4:2, 5:3, 6:3 })[scene];
+        const MICRO = [
+          '',
+          `${p.apps.length} apps \u2014 everything ${p.role} can access`,
+          `One click \u2014 ${target.name}`,
+          'Opening\u2026',
+          'Running \u2014 signed in automatically',
+          'Requesting Slack \u2014 one click',
+          'Approved \u2014 automation did the rest',
+        ];
+
+        const plus = `<span class="us-plus" style="left:8%;top:16%">+</span><span class="us-plus" style="right:12%;top:64%">+</span><span class="us-plus" style="left:22%;bottom:10%">+</span>`;
+
+        const tile = (app, o = {}) => `
+          <div class="us-app ${o.pop ? 'us-in' : ''} ${o.clicked ? 'us-clicked' : ''}" style="--d:${o.d || 0}ms">
+            <div class="us-app-ico ${o.glow ? 'us-glow' : ''}" style="background:${app.color}">${app.letter}
+              ${app.img ? `<img src="${app.img}" alt="" loading="lazy" onerror="this.remove()">` : ''}
+              ${o.pulse ? '<span class="us-pulse"></span>' : ''}
+            </div>
+            <span class="us-app-name">${app.name}</span>
+            ${o.tag ? `<span class="us-get ${o.tag !== 'Get' ? 'is-ok' : ''}">${o.tag}</span>` : ''}
+          </div>`;
+
+        const win = (tab, inner, o = {}) => `
+          <div class="us-win ${o.cls || ''}" style="--acc:${(o.p || p).accent}">
+            <div class="us-win-head" style="background:${(o.p || p).accent}">
+              <span class="us-win-mark">A</span><span class="us-win-brand">Acme Workspace</span>
+              <span class="us-win-user">${(o.p || p).initials}</span>
+            </div>
+            <div class="us-win-tabs">
+              <span class="us-tab ${tab === 'ws' ? 'is-on' : ''}">My workspace</span>
+              <button type="button" class="us-tab us-tab-btn ${tab === 'cat' ? 'is-on' : ''}" data-action="ux-request" title="Click to request an app">Catalog</button>
+            </div>
+            <div class="us-win-body">${inner}</div>
+          </div>`;
+
+        const wsInner = (pp, pop) => `
+          <div class="us-greet">Good morning, ${pp.name.split(' ')[0]}</div>
+          <div class="us-greet-sub">${pp.apps.length} apps \u2014 everything ${pp.role} has access to</div>
+          <div class="us-grid" style="grid-template-columns:repeat(4,1fr)">${pp.apps.map((id, i) => {
+            const isT = id === pp.target;
+            return tile(A(id), {
+              pop, d: 100 + i * 70,
+              glow: isT && ph === 'approach',
+              clicked: isT && ph === 'clicking',
+              pulse: isT && ph === 'clicking',
+            });
+          }).join('')}</div>`;
+
+        // Realistic app-open views — animate in ONCE (on 'checking'); later
+        // phase ticks re-render statically so nothing replays or flickers.
+        // Maya opens a Teams chat; Alex opens a Salesforce opportunity and
+        // scrolls through it.
+        const appInner = (anim) => {
+          const io = (d) => anim ? `us-in" style="--d:${d}ms` : 'us-still';
+          if (target.name === 'Salesforce') return `
+          <div class="us-appwin ${anim ? 'us-zoom' : ''}">
+            <div class="us-appwin-bar" style="background:${target.color}">
+              <span class="us-appwin-ico">${target.letter}${target.img ? `<img src="${target.img}" alt="" onerror="this.remove()">` : ''}</span><span>Salesforce</span>
+              <span class="us-appwin-dots"><i></i><i></i><i></i></span>
+            </div>
+            <div class="us-sf-clip">
+              <div class="us-sf-scroll ${anim ? 'us-sfanim' : 'us-sfdone'}">
+                <div class="us-sf-opp ${io(250)}">
+                  <span class="us-sf-opp-ico"><i data-lucide="trophy"></i></span>
+                  <div class="us-sf-opp-t"><span>Opportunity</span><b>Northwind Corp \u2014 Enterprise Renewal</b></div>
+                  <span class="us-sf-amt">$240,000</span>
+                </div>
+                <div class="us-sf-path ${io(450)}">
+                  ${['Qualify','Proposal','Negotiation','Closed Won'].map((s, i) => `<span class="us-sf-step ${i < 2 ? 'is-done' : i === 2 ? 'is-cur' : ''}">${i < 2 ? '\u2713 ' : ''}${s}</span>`).join('')}
+                </div>
+                <div class="us-sf-rows ${io(650)}">
+                  <div class="us-sf-row"><span>Close date</span><b>Sep 30, 2026</b></div>
+                  <div class="us-sf-row"><span>Owner</span><b>${p.name}</b></div>
+                  <div class="us-sf-row"><span>Next step</span><b>Pricing review with CFO \u00b7 Thu</b></div>
+                </div>
+                <div class="us-sf-act ${io(850)}">
+                  <span class="us-sf-act-t">Recent activity</span>
+                  <div class="us-sf-row"><span>Call \u00b7 yesterday</span><b>Renewal terms discussed</b></div>
+                  <div class="us-sf-row"><span>Email \u00b7 Mon</span><b>Proposal v2 sent</b></div>
+                </div>
+              </div>
+            </div>
+          </div>`;
+          const mate = ['Priya Patel','PP','#B4009E'];
+          return `
+          <div class="us-appwin ${anim ? 'us-zoom' : ''}">
+            <div class="us-appwin-bar" style="background:${target.color}">
+              <span class="us-appwin-ico">${target.letter}${target.img ? `<img src="${target.img}" alt="" onerror="this.remove()">` : ''}</span><span>Microsoft Teams</span>
+              <span class="us-appwin-dots"><i></i><i></i><i></i></span>
+            </div>
+            <div class="us-chat">
+              <div class="us-chat-top"><span class="us-chat-ch"># finance-team</span><span class="us-chat-day">Today</span></div>
+              <div class="us-msg ${io(300)}">
+                <span class="us-msg-ava" style="background:${mate[2]}">${mate[1]}</span>
+                <div class="us-msg-body"><span class="us-msg-name">${mate[0]} <i>9:58 AM</i></span><span class="us-msg-bubble">Morning ${first}! Standup moved to 10:30 today.</span></div>
+              </div>
+              <div class="us-msg us-msg-me ${io(650)}">
+                <div class="us-msg-body"><span class="us-msg-name">You <i>9:59 AM</i></span><span class="us-msg-bubble us-msg-bubble-me">Perfect \u2014 just signed in, everything was already set up.</span></div>
+                <span class="us-msg-ava" style="background:${p.accent}">${p.initials}</span>
+              </div>
+              <div class="us-chat-input ${io(900)}"><i data-lucide="plus"></i><span>Type a message</span><i data-lucide="send"></i></div>
+            </div>
+          </div>`;
+        };
+
+        // Persistent "signed in as" chip — anchors every scene to a person,
+        // and makes the persona hand-off unmistakable when it changes.
+        const who = (scene > 0) ? `
+          <div class="us-who">
+            <span class="us-who-ava" style="background:${p.accent}">${p.initials}</span>
+            <span class="us-who-txt">${p.name} \u00b7 ${p.role}</span>
+          </div>` : '';
+
+        // One device-chrome shell used by the picker, the live journey, and
+        // the any-device scene: 'win' laptop, 'mac' MacBook, 'vdi' browser.
+        const shell = (kind, inner, cls) => {
+          if (kind === 'vdi') return `
+            <div class="us-browser ${cls || ''}">
+              <div class="us-btabs"><span class="us-btab"><i data-lucide="cloud"></i>Virtual Desktop</span><span class="us-btab-ghost"></span></div>
+              <div class="us-burl"><span class="us-bdot"></span><span class="us-bdot"></span><span class="us-bdot"></span><span class="us-burl-bar"><i data-lucide="lock"></i>desktop.acme.com</span></div>
+              <div class="us-screen" style="background:${p.desk}">${inner}</div>
+            </div>`;
+          return `
+            <div class="us-lap ${cls || ''}">
+              <div class="us-screen" style="background:${p.desk}">
+                ${kind === 'mac' ? '<span class="us-notch"></span>' : '<span class="us-cam"></span>'}
+                ${kind === 'mac' ? `<div class="us-macbar"><i data-lucide="apple"></i><span class="us-macbar-r"><i data-lucide="wifi"></i><i data-lucide="battery"></i><span>Tue 10:24</span></span></div>` : ''}
+                ${inner}
+                ${kind === 'mac'
+                  ? `<div class="us-dock"><i style="background:#185ABD"></i><i style="background:#107C41"></i><i style="background:${p.accent}"></i><i style="background:#E01E5A"></i></div>`
+                  : `<div class="us-taskbar"><span class="us-tb-center"><span class="us-start"><i></i><i></i><i></i><i></i></span><span class="us-tb-dot" style="background:#185ABD"></span><span class="us-tb-dot" style="background:#107C41"></span><span class="us-tb-dot" style="background:${p.accent}"></span></span><span class="us-tb-clock">10:24</span></div>`}
+              </div>
+              <div class="us-lap-base ${kind === 'mac' ? 'us-lap-base-mac' : ''}"><i></i></div>
+            </div>`;
+        };
+        const dev = ['win','mac','vdi'].includes(STATE.uxDevice) ? STATE.uxDevice : 'win';
+
+        // Maya's Catalog request — anim=true on the request beat (cursor
+        // click), static afterwards with the tag flipped to Requested.
+        const catReq = (anim) => `
+          <div class="us-greet">Catalog</div>
+          <div class="us-greet-sub">Request anything \u2014 approval runs automatically</div>
+          <div class="us-grid" style="grid-template-columns:repeat(4,1fr)">${['trello','figma','slack','jira'].map((id, i) => {
+            const isT = id === 'slack';
+            return tile(A(id), {
+              pop: anim, d: 80 + i * 70,
+              clicked: isT && anim,
+              pulse: isT && anim,
+              tag: isT ? (anim ? 'Request' : 'Requested \u2713') : '',
+            });
+          }).join('')}</div>`;
+
+        let stage = '';
+        if (scene === 0) {
+          // Device picker — click any of the three; the journey plays inside
+          // that device and the experience is identical on every one.
+          const DEVS = [['win','Windows','monitor'],['mac','Mac','laptop'],['vdi','Virtual Desktop','cloud']];
+          stage = `<div class="us-pickwrap">
+              <div class="us-pick-hero us-in">
+                <span class="us-ava" style="background:${p.accent}">${p.initials}</span>
+                <div class="us-pick-hero-id">
+                  <div class="us-pick-hero-name">${p.name}</div>
+                  <span class="us-pick-hero-role"><i data-lucide="${p.roleIcon}"></i>${p.role} department</span>
+                </div>
+              </div>
+              <div class="us-pick-t">Where does ${first} sign in?</div>
+              <div class="us-pick-sub">Click a device \u2014 the experience is identical on all three</div>
+              <div class="us-devrow us-pickrow">
+                ${DEVS.map(([k, nm, ic], i) => `
+                  <button type="button" class="us-pick us-in focus-ring" style="--d:${i * 120}ms" data-action="pick-ux-device" data-dev="${k}">
+                    ${shell(k, `<div class="us-pick-inner"><span class="us-pick-mark" style="background:${p.accent}">A</span><span class="us-pick-name">Acme Workspace</span><span class="us-pick-go"><i data-lucide="play"></i>Start here</span></div>`)}
+                    <div class="us-dev-tag us-pick-tag"><i data-lucide="${ic}"></i><b>${nm}</b></div>
+                  </button>`).join('')}
+              </div>
+            </div>`;
+        } else if (scene >= 1 && scene <= 3) {
+          stage = shell(dev, win('ws', wsInner(p, ph === 'launch'), { cls: ph === 'launch' ? 'us-rise' : '' }), 'us-frame-lg');
+        } else {
+          const anim = ph === 'checking';
+          stage = `<div class="us-openwrap">
+              <div class="us-added ${anim ? 'us-in' : 'us-still'}" style="--d:700ms"><i data-lucide="check"></i>Open \u00b7 signed in automatically</div>
+              ${shell(dev, win('ws', appInner(anim)), 'us-frame-lg')}
+            </div>`;
+        }
+        // The us-added pill and us-flowcard are absolutely positioned overlays,
+        // so the device never moves between scenes 4→5→6 — no layout jumps.
+        const anim6 = ph === 'final';
+        if (scene === 5) {
+          stage = shell(dev, win('cat', catReq(true)), 'us-frame-lg');
+        } else if (scene === 6) {
+          stage = `<div class="us-openwrap us-openwrap-flow">
+              <div class="us-flowcard ${anim6 ? 'us-zoom' : ''}">
+                <div class="us-flowcard-t"><i data-lucide="workflow"></i>Approval workflow \u00b7 running automatically</div>
+                <div class="us-flowstep us-in" style="--d:200ms"><i data-lucide="send"></i><span>Request submitted</span><b>\u2713</b></div>
+                <div class="us-flowstep us-in" style="--d:1000ms"><i data-lucide="shield-check"></i><span>Policy check \u00b7 ${p.role} \u00b7 license available</span><b>\u2713</b></div>
+                <div class="us-flowstep us-flowstep-ok us-in" style="--d:1900ms"><i data-lucide="check-circle-2"></i><span>Approved \u2014 added to My workspace</span><b>\u2713</b></div>
+              </div>
+              <div class="us-flowdev">${shell(dev, win('cat', catReq(false)), 'us-frame-lg')}</div>
+            </div>`;
+        }
+
+        const cursor = (scene === 2 || scene === 3 || scene === 5) ? `<svg class="us-cursor ${scene === 2 ? 'us-cursor-travel' : scene === 5 ? 'us-cursor-click us-cursor-cat' : 'us-cursor-click'}" viewBox="0 0 24 24" fill="#1A1A2E" stroke="#fff" stroke-width="1.5" aria-hidden="true"><path d="M5 3l14 8-6 1.5L9.5 19z"/></svg>` : '';
+
+        return `
+          <div class="section-card p-4 us-card">
+            <div class="flex items-center justify-between mb-2 gap-2 flex-wrap">
+              ${ended
+                ? `<div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200" style="white-space:nowrap"><i data-lucide="check-circle" class="w-4 h-4 text-emerald-500" style="flex-shrink:0"></i><span class="text-xs font-semibold text-emerald-700">Done \u2014 try ${PERSONAS[1 - baseIdx].name.split(' ')[0]} \u00b7 ${PERSONAS[1 - baseIdx].role}</span></div>`
+                : '<div class="bts-label bts-label-user"><i data-lucide="user" class="w-3 h-3"></i> What the user sees</div>'}
+              <div class="us-personas">
+                <span class="us-personas-lab">User</span>
+                ${PERSONAS.map((pp, i) => `
+                  <button type="button" class="ux-scenario-pill ux-persona-pill ${baseIdx === i ? 'is-active' : ''}" data-action="pick-ux-persona" data-idx="${i}">
+                    <span class="ux-persona-dot" style="background:${pp.accent}"></span><span>${pp.name.split(' ')[0]} \u00b7 ${pp.role}</span>
+                  </button>`).join('')}
+              </div>
+              <div class="us-personas">
+                <span class="us-personas-lab">Device</span>
+                ${[['win','Windows'],['mac','Mac'],['vdi','Virtual desktop']].map(([k, nm]) => `
+                  <button type="button" class="ux-scenario-pill ux-persona-pill ${dev === k ? 'is-active' : ''}" data-action="pick-ux-device" data-dev="${k}"><span>${nm}</span></button>`).join('')}
+              </div>
+            </div>
+            <div style="display:none" aria-hidden="true">${Object.keys(APPS).map(k => `<img src="${A(k).img}" alt="">`).join('')}</div>
+            <div class="us-body2">
+              <div class="us-stage" style="background:#FFFFFF;border:1px solid #DDDDEE">
+                ${who}
+                ${cursor}
+                ${stage}
+                ${MICRO[scene] ? `<div class="us-substrip" role="status" aria-live="polite" aria-atomic="true">${MICRO[scene]}</div>` : ''}
+              </div>
+              <aside class="us-rail" aria-label="Journey steps">
+                <div class="us-rail-t">The journey</div>
+                ${CHAPTERS.map((c, i) => `
+                  <div class="us-step ${chap > i ? 'is-done' : ''} ${chap === i ? 'is-on' : ''}">
+                    <span class="us-step-n">${chap > i ? '\u2713' : i + 1}</span>
+                    <div class="us-step-tx"><b>${c[0]}</b><span>${c[1]}</span></div>
+                  </div>`).join('')}
+              </aside>
+            </div>
+          </div>
+        `;
+      }
+
       function renderUserView(){
         const sc = STATE.flowScenarioIdx;
         const phase = STATE.flowPhase;
@@ -11913,7 +12498,7 @@
          visible, then the devices below carry the value: one setup, and the
          same package installs itself on whatever people work on. */
       function renderAdminConsole(){
-        const PHASE_ORDER = ['idle','launch','catalog','clicking','checking','routing','config','done','final'];
+        const PHASE_ORDER = ['idle','launch','catalog','approach','clicking','checking','routing','config','done','final'];
         const at = (n) => PHASE_ORDER.indexOf(n);
         const sc = STATE.flowScenarioIdx;
         const scenario = sc >= 0 && sc < SCENARIOS.length ? SCENARIOS[sc] : null;
@@ -15163,7 +15748,7 @@
                       ${STATE.solutionViewAdmin ? renderConsoleModule() : ''}
                       ${STATE.solutionViewUpdate ? renderUpdateView() : ''}
                       ${STATE.solutionViewOnboarding ? renderOnboardingView() : ''}
-                      ${STATE.solutionViewUser ? renderUserView() : ''}
+                      ${STATE.solutionViewUser ? renderUserStory() : ''}
                       ${STATE.solutionViewDashboard ? renderDashboardView() : ''}
                       ${STATE.solutionViewAi ? renderAiView() : ''}
                       ${STATE.solutionViewMultiTenant ? renderMultiTenantView() : ''}
@@ -15184,7 +15769,7 @@
          panes with a switch: "Set it up" and "What it ships". The tour walks
          both; a viewer can click either. */
       function renderAutomationHub(){
-        const PHASE_ORDER = ['idle','launch','catalog','clicking','checking','routing','config','done','final'];
+        const PHASE_ORDER = ['idle','launch','catalog','approach','clicking','checking','routing','config','done','final'];
         const i = Math.max(0, PHASE_ORDER.indexOf(STATE.flowPhase));
         const started = i >= PHASE_ORDER.indexOf('launch');
         const shown = Math.max(0, Math.min(4, i - 1));
@@ -18581,7 +19166,8 @@
               else if (view === 'admin' && !STATE.flowRunning) startFlow();
               else if (view === 'update' && !STATE.updRunning) startUpd();
               else if (view === 'onboarding' && !STATE.obRunning) startOb();
-              else if (view === 'user' && !STATE.flowRunning) startFlow();
+              /* 'user' intentionally does NOT auto-start — the device picker
+                 is the first beat; the animation begins on device click. */
               else if (view === 'dashboard' && !STATE.drRunning) startDr();
               else if (view === 'ai' && !STATE.aiRunning) startAi();
               else if (view === 'multitenant' && !STATE.mtRunning) startMt();
@@ -18835,6 +19421,37 @@
               STATE.aiQueueIdx = 0;
               startAi();
             }
+            return;
+          }
+          if (action === 'ux-request') {
+            // Click the Catalog tab → run the request-an-app workflow now.
+            STATE.flowTimers.timeouts.forEach(id => clearTimeout(id)); STATE.flowTimers.timeouts = [];
+            STATE.uxReqManual = true;
+            STATE.flowRunning = true;
+            if (STATE.flowScenarioIdx < 0) STATE.flowScenarioIdx = STATE.uxScenarioIdx >= 0 ? STATE.uxScenarioIdx : 0;
+            STATE.flowPhase = 'done';
+            scrollPreserveRender();
+            const t = setTimeout(() => { STATE.flowPhase = 'final'; updateFlowDOM(); }, 2600);
+            STATE.flowTimers.timeouts.push(t);
+            return;
+          }
+          if (action === 'pick-ux-device') {
+            const dv = act.getAttribute('data-dev');
+            STATE.uxDevice = ['win','mac','vdi'].includes(dv) ? dv : 'win';
+            STATE.uxReqManual = false;
+            const fromStage = !!act.closest('.us-stage');
+            scrollPreserveRender();
+            if (fromStage && !STATE.flowRunning) startFlow();
+            return;
+          }
+          if (action === 'pick-ux-persona') {
+            const pi = parseInt(act.getAttribute('data-idx'), 10);
+            STATE.uxPersona = pi === 1 ? 1 : 0;
+            STATE.uxReqManual = false;
+            // Replay as this user when a run is underway or just finished —
+            // different permissions, different apps.
+            if (STATE.solutionViewUser && (STATE.flowRunning || STATE.flowScenarioIdx >= 0)) { resetFlow(); startFlow(); }
+            else scrollPreserveRender();
             return;
           }
           if (action === 'pick-ux-scenario') {
